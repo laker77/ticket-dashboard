@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Статистика тикетов</title>
+  <script async src="https://telegram.org/js/telegram-widget.js?7"
+          data-telegram-login="ВАШ_BOT_USERNAME" 
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Добро пожаловать!</h1>
+    <div id="login-section">
+      <p class="mb-2">Пожалуйста, войдите через Telegram:</p>
+      <!-- Telegram login widget появится здесь -->
+    </div>
+    <div id="dashboard" class="hidden">
+      <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-bold">Сегодня</h3>
+          <p id="today-tickets">—</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-bold">Неделя</h3>
+          <p id="week-tickets">—</p>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-bold">Месяц</h3>
+          <p id="month-tickets">—</p>
+        </div>
+      </div>
+      <div class="mt-4 bg-white p-4 rounded shadow">
+        <h3 class="font-bold">Общее время ответа:</h3>
+        <p id="total-time">—</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function onTelegramAuth(user) {
+      // Сохраняем Telegram ID и имя
+      const telegramId = user.id;
+      const firstName = user.first_name;
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+
+      // Подставляем имя или выводим приветствие
+      document.querySelector('h1').innerText = `Здравствуйте, ${firstName}!`;
+
+      // TODO: Получить данные из Google Таблицы по Telegram ID
+      // fetchUserStats(telegramId);
+    }
+  </script>
+</body>
+</html>
