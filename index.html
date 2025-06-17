@@ -209,7 +209,7 @@
         // Итог по неактивам
         const trTotal = document.createElement('tr');
         trTotal.innerHTML = `
-          <td class="border px-2 py-1 font-bold">Итого неактивов</td>
+          <td class="border px-2 py-1 font-bold">Загальна Кількість Неактивів</td>
           <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
         `;
         tbody.appendChild(trTotal);
@@ -224,7 +224,7 @@
             labels: chartLabels,
             datasets: [
               {
-                label: 'Тикеты',
+                label: 'Тікети',
                 data: chartTickets,
                 borderColor: 'rgba(59, 130, 246, 1)',
                 backgroundColor: 'rgba(59, 130, 246, 0.3)',
@@ -232,7 +232,7 @@
                 tension: 0.3,
               },
               {
-                label: 'Время в игре (часы)',
+                label: 'Час у грі (часы)',
                 data: chartTimeHours,
                 borderColor: 'rgba(16, 185, 129, 1)',
                 backgroundColor: 'rgba(16, 185, 129, 0.3)',
@@ -255,7 +255,7 @@
                 position: 'left',
                 title: {
                   display: true,
-                  text: 'Тикеты',
+                  text: 'Тікети',
                 },
                 beginAtZero: true,
               },
@@ -265,7 +265,7 @@
                 position: 'right',
                 title: {
                   display: true,
-                  text: 'Время (часы)',
+                  text: 'Час (години)',
                 },
                 beginAtZero: true,
                 grid: {
@@ -286,7 +286,7 @@
               },
               tooltip: {
                 callbacks: {
-                  label: ctx => ctx.dataset.label === 'Время в игре (часы)'
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
                     ? `${ctx.parsed.y} ч`
                     : ctx.parsed.y,
                 }
