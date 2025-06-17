@@ -26,19 +26,38 @@
         <div class="bg-white p-4 rounded shadow">
           <h3 class="font-bold">Сегодня</h3>
           <p id="today-tickets">—</p>
+          <p id="today-inactive" class="text-sm text-red-600">Неактивов: —</p>
         </div>
         <div class="bg-white p-4 rounded shadow">
           <h3 class="font-bold">Неделя</h3>
           <p id="week-tickets">—</p>
+          <p id="week-inactive" class="text-sm text-red-600">Неактивов: —</p>
         </div>
         <div class="bg-white p-4 rounded shadow">
           <h3 class="font-bold">Месяц</h3>
           <p id="month-tickets">—</p>
+          <p id="month-inactive" class="text-sm text-red-600">Неактивов: —</p>
         </div>
       </div>
       <div class="mt-4 bg-white p-4 rounded shadow">
-        <h3 class="font-bold">Общее время ответа:</h3>
+        <h3 class="font-bold">Общее время ответа (за месяц):</h3>
         <p id="total-time">—</p>
+      </div>
+      <div id="daily-stats" class="mt-6 bg-white p-4 rounded shadow overflow-x-auto">
+        <h3 class="font-bold mb-2">Детализация по дням:</h3>
+        <table class="w-full border-collapse border border-gray-300 text-sm">
+          <thead>
+            <tr>
+              <th class="border border-gray-300 p-2">Дата</th>
+              <th class="border border-gray-300 p-2">Тикеты</th>
+              <th class="border border-gray-300 p-2">Время (чч:мм)</th>
+              <th class="border border-gray-300 p-2">Неактив</th>
+            </tr>
+          </thead>
+          <tbody id="daily-table-body">
+            <!-- Здесь появятся строки с данными -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -65,6 +84,20 @@
       const mm = String(date.getMonth() + 1).padStart(2, '0');
       const yyyy = date.getFullYear();
       return `${dd}.${mm}.${yyyy}`;
+    }
+
+    // Конвертируем "ЧЧ:ММ:СС" в минуты
+    function timeStrToMinutes(timeStr) {
+      if (!timeStr || timeStr === 'Н') return 0;
+      const [hh, mm, ss] = timeStr.split(':').map(Number);
+      return hh * 60 + mm + ss / 60;
+    }
+
+    // Конвертируем минуты в "ЧЧ:ММ"
+    function minutesToTimeStr(mins) {
+      const hh = Math.floor(mins / 60);
+      const mm = Math.floor(mins % 60);
+      return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
     }
 
     async function fetchUserStatsByTelegram(telegramUsername) {
@@ -103,49 +136,73 @@
         // Индекс сегодняшнего дня
         const todayColIndex = ticketsHeaders.indexOf(todayStr);
 
-        // Тикеты за сегодня
+        // Тикеты и неактивы за сегодня
         const ticketsToday = todayColIndex >= 0 ? parseInt(userTicketsRow[todayColIndex]) || 0 : 0;
+        const inactiveToday = todayColIndex >= 0 && userTimeRow[todayColIndex] === 'Н' ? 1 : 0;
 
-        // Тикеты за неделю (последние 7 дней)
+        // Тикеты и неактивы за неделю (последние 7 дней)
         const weekStart = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
         const last7Dates = dateCols.filter(({h}) => {
           const dt = parseDate(h);
           return dt >= weekStart && dt <= today;
         });
 
-        let ticketsWeek = 0;
+        let ticketsWeek = 0, inactiveWeek = 0;
         last7Dates.forEach(({i}) => {
           ticketsWeek += parseInt(userTicketsRow[i]) || 0;
+          if(userTimeRow[i] === 'Н') inactiveWeek++;
         });
 
-        // Тикеты за месяц (последние 30 дней)
+        // Тикеты и неактивы за месяц (последние 30 дней)
         const monthStart = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000);
         const last30Dates = dateCols.filter(({h}) => {
           const dt = parseDate(h);
           return dt >= monthStart && dt <= today;
         });
 
-        let ticketsMonth = 0;
+        let ticketsMonth = 0, inactiveMonth = 0;
         last30Dates.forEach(({i}) => {
           ticketsMonth += parseInt(userTicketsRow[i]) || 0;
+          if(userTimeRow[i] === 'Н') inactiveMonth++;
         });
 
         // Время в игре за месяц (сумма по last30Dates)
-        let totalTimeHours = 0;
-
+        let totalTimeMinutes = 0;
         last30Dates.forEach(({i}) => {
           const timeStr = userTimeRow[i];
           if (timeStr && timeStr !== 'Н') {
-            const [hh, mm, ss] = timeStr.split(':').map(Number);
-            totalTimeHours += hh + mm / 60 + ss / 3600;
+            totalTimeMinutes += timeStrToMinutes(timeStr);
           }
         });
 
-        // Обновляем UI
+        // Обновляем UI основных показателей
         document.getElementById('today-tickets').innerText = ticketsToday;
+        document.getElementById('today-inactive').innerText = `Неактивов: ${inactiveToday}`;
         document.getElementById('week-tickets').innerText = ticketsWeek;
+        document.getElementById('week-inactive').innerText = `Неактивов: ${inactiveWeek}`;
         document.getElementById('month-tickets').innerText = ticketsMonth;
-        document.getElementById('total-time').innerText = totalTimeHours.toFixed(2) + ' ч';
+        document.getElementById('month-inactive').innerText = `Неактивов: ${inactiveMonth}`;
+        document.getElementById('total-time').innerText = minutesToTimeStr(totalTimeMinutes) + ' ч';
+
+        // Формируем таблицу по дням
+        const tbody = document.getElementById('daily-table-body');
+        tbody.innerHTML = '';
+
+        dateCols.forEach(({h, i}) => {
+          const tickets = parseInt(userTicketsRow[i]) || 0;
+          const timeStrRaw = userTimeRow[i];
+          const inactive = timeStrRaw === 'Н' ? 'Да' : 'Нет';
+          const timeStr = (timeStrRaw && timeStrRaw !== 'Н') ? minutesToTimeStr(timeStrToMinutes(timeStrRaw)) : '-';
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="border border-gray-300 p-2">${h}</td>
+            <td class="border border-gray-300 p-2">${tickets}</td>
+            <td class="border border-gray-300 p-2">${timeStr}</td>
+            <td class="border border-gray-300 p-2 text-center">${inactive}</td>
+          `;
+          tbody.appendChild(tr);
+        });
 
       } catch (error) {
         console.error(error);
