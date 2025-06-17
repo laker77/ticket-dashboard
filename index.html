@@ -44,14 +44,124 @@
   </div>
 
   <script>
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; // Вставь сюда ID своей таблицы Google Sheets
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   // Вставь сюда свой Google Sheets API ключ
+
+    async function getSheetData(sheetName) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      const res = await axios.get(url);
+      return res.data.values;
+    }
+
+    function parseDate(str) {
+      // Преобразуем '01.06.2025' -> Date
+      const [d, m, y] = str.split('.');
+      return new Date(`${y}-${m}-${d}`);
+    }
+
+    function formatDate(date) {
+      // Форматируем Date в 'DD.MM.YYYY'
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    async function fetchUserStatsByTelegram(telegramUsername) {
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const timeData = await getSheetData('Время_в_игре');
+
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+
+        const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
+        if (!userTicketsRow) {
+          alert('Пользователь не найден в таблице тикетов');
+          return;
+        }
+
+        const userName = userTicketsRow[nameColIndex];
+
+        const timeHeaders = timeData[0];
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
+        if (!userTimeRow) {
+          alert('Пользователь не найден в таблице времени');
+          return;
+        }
+
+        const today = new Date();
+        const todayStr = formatDate(today);
+
+        // Найдем даты в заголовках таблиц
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({h, i}))
+          .filter(({h}) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+
+        // Индекс сегодняшнего дня
+        const todayColIndex = ticketsHeaders.indexOf(todayStr);
+
+        // Тикеты за сегодня
+        const ticketsToday = todayColIndex >= 0 ? parseInt(userTicketsRow[todayColIndex]) || 0 : 0;
+
+        // Тикеты за неделю (последние 7 дней)
+        const weekStart = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
+        const last7Dates = dateCols.filter(({h}) => {
+          const dt = parseDate(h);
+          return dt >= weekStart && dt <= today;
+        });
+
+        let ticketsWeek = 0;
+        last7Dates.forEach(({i}) => {
+          ticketsWeek += parseInt(userTicketsRow[i]) || 0;
+        });
+
+        // Тикеты за месяц (последние 30 дней)
+        const monthStart = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000);
+        const last30Dates = dateCols.filter(({h}) => {
+          const dt = parseDate(h);
+          return dt >= monthStart && dt <= today;
+        });
+
+        let ticketsMonth = 0;
+        last30Dates.forEach(({i}) => {
+          ticketsMonth += parseInt(userTicketsRow[i]) || 0;
+        });
+
+        // Время в игре за месяц (сумма по last30Dates)
+        let totalTimeHours = 0;
+
+        last30Dates.forEach(({i}) => {
+          const timeStr = userTimeRow[i];
+          if (timeStr && timeStr !== 'Н') {
+            const [hh, mm, ss] = timeStr.split(':').map(Number);
+            totalTimeHours += hh + mm / 60 + ss / 3600;
+          }
+        });
+
+        // Обновляем UI
+        document.getElementById('today-tickets').innerText = ticketsToday;
+        document.getElementById('week-tickets').innerText = ticketsWeek;
+        document.getElementById('month-tickets').innerText = ticketsMonth;
+        document.getElementById('total-time').innerText = totalTimeHours.toFixed(2) + ' ч';
+
+      } catch (error) {
+        console.error(error);
+        alert('Ошибка при загрузке данных из Google Sheets');
+      }
+    }
+
     function onTelegramAuth(user) {
-      const telegramId = user.id;
+      const telegramUsername = '@' + user.username; // в таблице Telegram с @
       const firstName = user.first_name;
+
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
       document.querySelector('h1').innerText = `Здравствуйте, ${firstName}!`;
 
-      // TODO: получить и показать данные из Google Таблицы по telegramId
+      fetchUserStatsByTelegram(telegramUsername);
     }
   </script>
 </body>
