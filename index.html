@@ -2,10 +2,11 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Статистика тикетов</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
   <div class="container mx-auto p-4">
@@ -22,25 +23,30 @@
     </div>
     <div id="dashboard" class="hidden">
       <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold">Сегодня</h3>
-          <p id="today-tickets">—</p>
+          <h3 class="font-bold mb-2">Сегодня</h3>
+          <p>Тикеты: <span id="today-tickets">—</span></p>
+          <p>Время в игре: <span id="today-time">—</span></p>
         </div>
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold">Неделя</h3>
-          <p id="week-tickets">—</p>
+          <h3 class="font-bold mb-2">Неделя</h3>
+          <p>Тикеты: <span id="week-tickets">—</span></p>
+          <p>Время в игре: <span id="week-time">—</span></p>
         </div>
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold">Месяц</h3>
-          <p id="month-tickets">—</p>
+          <h3 class="font-bold mb-2">Месяц</h3>
+          <p>Тикеты: <span id="month-tickets">—</span></p>
+          <p>Время в игре: <span id="month-time">—</span></p>
         </div>
       </div>
-      <div class="mt-4 bg-white p-4 rounded shadow">
-        <h3 class="font-bold">Общее время ответа:</h3>
-        <p id="total-time">—</p>
+
+      <div class="bg-white p-4 rounded shadow mb-6">
+        <h3 class="font-bold mb-4">Динамика тикетов и времени за последний месяц</h3>
+        <canvas id="statsChart" height="150"></canvas>
       </div>
-      <div class="mt-6 bg-white p-4 rounded shadow">
+
+      <div class="bg-white p-4 rounded shadow">
         <h3 class="font-bold mb-2">Детальная статистика по дням:</h3>
         <table class="min-w-full text-left border-collapse">
           <thead>
@@ -58,8 +64,8 @@
   </div>
 
   <script>
-    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; // Твой ID таблицы
-    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';       // Твой API ключ
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
 
     async function getSheetData(sheetName) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
@@ -82,8 +88,7 @@
     function secondsToHHMMSS(seconds) {
       const h = Math.floor(seconds / 3600);
       const m = Math.floor((seconds % 3600) / 60);
-      const s = seconds % 60;
-      return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+      return h > 0 ? `${h}ч ${m}м` : `${m}м`;
     }
 
     async function fetchUserStatsByTelegram(telegramUsername) {
@@ -119,96 +124,176 @@
           .map((h, i) => ({h, i}))
           .filter(({h}) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
 
-        // Индекс сегодняшнего дня в тикетах
-        const todayColIndex = ticketsHeaders.indexOf(todayStr);
+        // Helper для подсчёта тикетов и времени в период
+        function sumTicketsAndTime(startDate, endDate) {
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
 
-        // Тикеты за сегодня
-        const ticketsToday = todayColIndex >= 0 ? parseInt(userTicketsRow[todayColIndex]) || 0 : 0;
-
-        // Подсчёт тикетов за неделю (7 дней включая сегодня)
-        const weekStart = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
-        const last7Dates = dateCols.filter(({h}) => {
-          const dt = parseDate(h);
-          return dt >= weekStart && dt <= today;
-        });
-
-        let ticketsWeek = 0;
-        last7Dates.forEach(({i}) => {
-          ticketsWeek += parseInt(userTicketsRow[i]) || 0;
-        });
-
-        // Подсчёт тикетов за месяц (30 дней включая сегодня)
-        const monthStart = new Date(today.getTime() - 29 * 24 * 60 * 60 * 1000);
-        const last30Dates = dateCols.filter(({h}) => {
-          const dt = parseDate(h);
-          return dt >= monthStart && dt <= today;
-        });
-
-        let ticketsMonth = 0;
-        last30Dates.forEach(({i}) => {
-          ticketsMonth += parseInt(userTicketsRow[i]) || 0;
-        });
-
-        // Подсчёт общего времени за месяц, сопоставляя даты по имени
-        let totalTimeSeconds = 0;
-        last30Dates.forEach(({h}) => {
-          const timeColIndex = timeHeaders.indexOf(h);
-          if (timeColIndex >= 0) {
-            const timeStr = userTimeRow[timeColIndex];
-            if (timeStr && timeStr !== 'Н') {
-              const [hh, mm, ss] = timeStr.split(':').map(Number);
-              totalTimeSeconds += hh * 3600 + mm * 60 + ss;
+          dateCols.forEach(({h, i}) => {
+            const dt = parseDate(h);
+            if (dt >= startDate && dt <= endDate) {
+              ticketsSum += parseInt(userTicketsRow[i]) || 0;
+              const timeColIndex = timeHeaders.indexOf(h);
+              if (timeColIndex >= 0) {
+                const timeStr = userTimeRow[timeColIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  timeSecondsSum += hh * 3600 + mm * 60 + ss;
+                }
+              }
             }
-          }
-        });
+          });
 
-        // Обновляем основные показатели
-        document.getElementById('today-tickets').innerText = ticketsToday;
-        document.getElementById('week-tickets').innerText = ticketsWeek;
-        document.getElementById('month-tickets').innerText = ticketsMonth;
-        document.getElementById('total-time').innerText = secondsToHHMMSS(totalTimeSeconds);
+          return {ticketsSum, timeSecondsSum};
+        }
 
-        // Отображаем детальную таблицу по дням
+        // Сегодня
+        const todayStats = sumTicketsAndTime(today, today);
+        // Неделя (7 дней включая сегодня)
+        const weekStart = new Date(today.getTime() - 6 * 24*60*60*1000);
+        const weekStats = sumTicketsAndTime(weekStart, today);
+        // Месяц (30 дней включая сегодня)
+        const monthStart = new Date(today.getTime() - 29 * 24*60*60*1000);
+        const monthStats = sumTicketsAndTime(monthStart, today);
+
+        // Обновляем UI
+        document.getElementById('today-tickets').innerText = todayStats.ticketsSum;
+        document.getElementById('today-time').innerText = secondsToHHMMSS(todayStats.timeSecondsSum);
+        document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
+        document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
+        document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
+
+        // Таблица детальной статистики
         const tbody = document.getElementById('daily-stats-body');
         tbody.innerHTML = '';
 
-        // Считаем кол-во неактивов ("Н") за месяц
         let inactiveCount = 0;
 
-        last30Dates.forEach(({h}) => {
-          // Индексы колонок по дате
-          const ticketColIndex = ticketsHeaders.indexOf(h);
-          const timeColIndex = timeHeaders.indexOf(h);
+        // Для графика — собираем данные
+        const chartLabels = [];
+        const chartTickets = [];
+        const chartTimeHours = [];
 
-          // Тикеты за день
-          const dayTickets = ticketColIndex >= 0 ? parseInt(userTicketsRow[ticketColIndex]) || 0 : 0;
+        dateCols.forEach(({h, i}) => {
+          const dt = parseDate(h);
+          if (dt >= monthStart && dt <= today) {
+            const dayTickets = parseInt(userTicketsRow[i]) || 0;
+            const timeColIndex = timeHeaders.indexOf(h);
+            let dayTimeStr = 'Н';
+            let dayTimeSeconds = 0;
+            if (timeColIndex >= 0) {
+              dayTimeStr = userTimeRow[timeColIndex] || 'Н';
+              if (dayTimeStr !== 'Н') {
+                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                dayTimeSeconds = hh * 3600 + mm * 60 + ss;
+              }
+            }
+            if (dayTimeStr === 'Н') inactiveCount++;
 
-          // Время в игре за день
-          let dayTimeStr = 'Н';
-          if (timeColIndex >= 0) {
-            dayTimeStr = userTimeRow[timeColIndex] || 'Н';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="border px-2 py-1">${h}</td>
+              <td class="border px-2 py-1">${dayTickets}</td>
+              <td class="border px-2 py-1">${dayTimeStr}</td>
+              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Да' : ''}</td>
+            `;
+            tbody.appendChild(tr);
+
+            chartLabels.push(h);
+            chartTickets.push(dayTickets);
+            chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
           }
-
-          if (dayTimeStr === 'Н') inactiveCount++;
-
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td class="border px-2 py-1">${h}</td>
-            <td class="border px-2 py-1">${dayTickets}</td>
-            <td class="border px-2 py-1">${dayTimeStr}</td>
-            <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Да' : ''}</td>
-          `;
-          tbody.appendChild(tr);
         });
 
-        // Добавляем количество неактивов внизу таблицы
+        // Итог по неактивам
         const trTotal = document.createElement('tr');
         trTotal.innerHTML = `
           <td class="border px-2 py-1 font-bold">Итого неактивов</td>
-          <td class="border px-2 py-1" colspan="3" class="font-bold">${inactiveCount}</td>
+          <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
         `;
         tbody.appendChild(trTotal);
 
+        // Создаём график
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+        window.statsChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartLabels,
+            datasets: [
+              {
+                label: 'Тикеты',
+                data: chartTickets,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                yAxisID: 'yTickets',
+                tension: 0.3,
+              },
+              {
+                label: 'Время в игре (часы)',
+                data: chartTimeHours,
+                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                yAxisID: 'yTime',
+                tension: 0.3,
+              }
+            ],
+          },
+          options: {
+            responsive: true,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            stacked: false,
+            scales: {
+              yTickets: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Тикеты',
+                },
+                beginAtZero: true,
+              },
+              yTime: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Время (часы)',
+                },
+                beginAtZero: true,
+                grid: {
+                  drawOnChartArea: false,
+                },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 45,
+                  maxTicksLimit: 15,
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Время в игре (часы)'
+                    ? `${ctx.parsed.y} ч`
+                    : ctx.parsed.y,
+                }
+              }
+            }
+          },
+        });
       } catch (error) {
         console.error(error);
         alert('Ошибка при загрузке данных из Google Sheets');
@@ -216,7 +301,7 @@
     }
 
     function onTelegramAuth(user) {
-      const telegramUsername = '@' + user.username; // добавляем @, как в таблице
+      const telegramUsername = '@' + user.username;
       const firstName = user.first_name;
 
       document.getElementById('login-section').classList.add('hidden');
