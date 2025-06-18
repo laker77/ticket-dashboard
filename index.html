@@ -595,7 +595,15 @@ if (userIndex !== -1) {
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("scriptMenu").style.display = "none";
   });
-    
+
+    function toggleScripts() {
+  const list = document.getElementById('scriptList');
+  if (list.style.display === 'flex') {
+    list.style.display = 'none';
+  } else {
+    list.style.display = 'flex';
+  }
+}
   </script>
 </body>
 </html>
