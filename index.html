@@ -187,6 +187,9 @@ table {
   display: none !important;
 }
 
+    .script-menu {
+  animation: fade-in 0.8s ease-out forwards;
+}
 
 
   @keyframes fade-in {
@@ -592,6 +595,8 @@ async function onTelegramAuth(user) {
   // Якщо користувач знайдений — показуємо дашборд
   document.getElementById('login-section').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('scriptMenu').classList.remove('hidden');
+  
   document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
 
   // Завантаження статистики
