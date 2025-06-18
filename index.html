@@ -191,6 +191,13 @@ table {
   animation: fade-in 0.8s ease-out forwards;
 }
 
+    h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1977FD;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
+}
 
   @keyframes fade-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -581,27 +588,32 @@ if (userIndex !== -1) {
     }
 async function onTelegramAuth(user) {
   const telegramUsername = '@' + user.username;
-  const firstName = user.first_name;
-
-  // Отримання даних з Google Sheets
+  
+  // Получаем данные из таблицы
   const ticketsData = await getSheetData('Май_2025_таблица');
   const ticketsHeaders = ticketsData[0];
   const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+  
+  // Находим игровой никнейм (колонка A - индекс 0)
   const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
-
+  
   if (!userTicketsRow) {
     alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-    return; // не пускаємо далі
+    return;
   }
-
-  // Якщо користувач знайдений — показуємо дашборд
+  
+  // Получаем игровой никнейм из первой колонки
+  const gameNickname = userTicketsRow[0];
+  
+  // Показываем дашборд
   document.getElementById('login-section').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('scriptMenu').classList.remove('hidden');
   
-  document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
-
-  // Завантаження статистики
+  // Используем игровой ник вместо имени из Telegram
+  document.querySelector('h1').innerText = `Вітаємо, ${gameNickname}!`;
+  
+  // Загружаем статистику
   fetchUserStatsByTelegram(telegramUsername);
 }
   function toggleScripts() {
