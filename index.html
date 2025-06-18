@@ -7,6 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
     @media (max-width: 640px) {
       .stats-grid {
         grid-template-columns: 1fr;
@@ -233,127 +234,10 @@ h1 {
     transform: scale(1.1);
   }
 }
- /* Стили для админ-панели */
-    .admin-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 2000;
-      padding: 20px;
-      overflow-y: auto;
-      display: none;
-    }
-    
-    .admin-panel.active {
-      display: block;
-      animation: fade-in 0.3s ease-out;
-    }
-    
-    .admin-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #1977FD;
-    }
-    
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .admin-table th {
-      background-color: #1a1a1a;
-      color: #1977FD;
-      padding: 12px 15px;
-      text-align: left;
-      position: sticky;
-      top: 0;
-    }
-    
-    .admin-table td {
-      padding: 10px 15px;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    
-    .admin-table tr:nth-child(even) {
-      background-color: #121315;
-    }
-    
-    .admin-table tr:hover {
-      background-color: #1e1e1e;
-    }
-    
-    .close-admin {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    
-    .close-admin:hover {
-      background: #e60000;
-    }
-    
-    .admin-btn {
-      position: fixed;
-      top: 20px;
-      right: 70px;
-      background-color: #1977FD;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 1001;
-      border: none;
-      font-weight: bold;
-      display: none;
-    }
-    
-    .admin-btn:hover {
-      background-color: #0d5fd1;
-    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
   <button id="logout-btn" class="hidden">Вийти</button>
-  <button id="admin-btn" class="admin-btn">Адмін-панель</button>
- <!-- Админ-панель -->
-  <div id="admin-panel" class="admin-panel">
-    <div class="admin-header">
-      <h2 class="text-2xl font-bold text-[#1977FD]">Адмін-панель</h2>
-      <button class="close-admin" id="close-admin">Закрити</button>
-    </div>
-    
-    <div class="mb-6">
-      <h3 class="text-xl font-semibold mb-4">Статистика всіх адміністраторів</h3>
-      <div class="table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Адміністратор</th>
-              <th>Вчора: Тікети</th>
-              <th>Вчора: Час</th>
-              <th>Тиждень: Тікети</th>
-              <th>Тиждень: Час</th>
-              <th>Місяць: Тікети</th>
-              <th>Місяць: Час</th>
-            </tr>
-          </thead>
-          <tbody id="admin-stats-body">
-            <!-- Данные будут заполнены скриптом -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
@@ -480,146 +364,6 @@ h1 {
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
 
-       // ... предыдущий код без изменений до функции fetchUserStatsByTelegram ...
-    
-    // Список администраторов (Telegram username)
-    const ADMINS = ['@laker77', '@ваш_админ1', '@ваш_админ2'];
-    
-    // Функция для загрузки данных всех администраторов
-    async function loadAdminStats() {
-      try {
-        const ticketsData = await getSheetData('Май_2025_таблица');
-        const timeData = await getSheetData('Время_в_игре');
-
-        const ticketsHeaders = ticketsData[0];
-        const timeHeaders = timeData[0];
-        
-        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
-        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
-        
-        const today = getDateWithoutTime(new Date());
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - 7);
-        const monthStart = new Date(today);
-        monthStart.setDate(today.getDate() - 30);
-        
-        const dateCols = ticketsHeaders
-          .map((h, i) => ({ h, i }))
-          .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
-
-        const adminStats = [];
-        
-        // Для каждого пользователя в таблице
-        for (let i = 1; i < ticketsData.length; i++) {
-          const userTicketsRow = ticketsData[i];
-          const userTelegram = userTicketsRow[telegramColIndex];
-          const userName = userTicketsRow[nameColIndex];
-          
-          // Находим строку времени для этого пользователя
-          let userTimeRow = null;
-          for (let j = 1; j < timeData.length; j++) {
-            if (timeData[j][timeNameColIndex] === userName) {
-              userTimeRow = timeData[j];
-              break;
-            }
-          }
-          
-          if (!userTimeRow) continue;
-          
-          // Функция для расчета статистики за период
-          const calculatePeriodStats = (startDate, endDate) => {
-            let ticketsSum = 0;
-            let timeSecondsSum = 0;
-
-            dateCols.forEach(({ h, i }) => {
-              const dt = parseDate(h);
-              if (dt >= startDate && dt <= endDate) {
-                ticketsSum += parseInt(userTicketsRow[i]) || 0;
-                const timeColIndex = timeHeaders.indexOf(h);
-                if (timeColIndex >= 0) {
-                  const timeStr = userTimeRow[timeColIndex];
-                  if (timeStr && timeStr !== 'Н') {
-                    const [hh, mm, ss] = timeStr.split(':').map(Number);
-                    timeSecondsSum += hh * 3600 + mm * 60 + ss;
-                  }
-                }
-              }
-            });
-
-            return { ticketsSum, timeSecondsSum };
-          };
-          
-          const yesterdayStats = calculatePeriodStats(yesterday, yesterday);
-          const weekStats = calculatePeriodStats(weekStart, yesterday);
-          const monthStats = calculatePeriodStats(monthStart, yesterday);
-          
-          adminStats.push({
-            name: userName,
-            telegram: userTelegram,
-            yesterdayTickets: yesterdayStats.ticketsSum,
-            yesterdayTime: secondsToHHMMSS(yesterdayStats.timeSecondsSum),
-            weekTickets: weekStats.ticketsSum,
-            weekTime: secondsToHHMMSS(weekStats.timeSecondsSum),
-            monthTickets: monthStats.ticketsSum,
-            monthTime: secondsToHHMMSS(monthStats.timeSecondsSum)
-          });
-        }
-        
-        // Сортируем по количеству тикетов за месяц
-        adminStats.sort((a, b) => b.monthTickets - a.monthTickets);
-        
-        // Заполняем таблицу
-        const tbody = document.getElementById('admin-stats-body');
-        tbody.innerHTML = '';
-        
-        adminStats.forEach(admin => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${admin.name} (${admin.telegram})</td>
-            <td>${admin.yesterdayTickets}</td>
-            <td>${admin.yesterdayTime}</td>
-            <td>${admin.weekTickets}</td>
-            <td>${admin.weekTime}</td>
-            <td>${admin.monthTickets}</td>
-            <td>${admin.monthTime}</td>
-          `;
-          tbody.appendChild(tr);
-        });
-        
-      } catch (error) {
-        console.error('Помилка завантаження адмін-панелі:', error);
-        alert('Не вдалося завантажити дані для адмін-панелі');
-      }
-    }
-    
-    // Функция для показа админ-панели
-    function showAdminPanel() {
-      document.getElementById('admin-panel').classList.add('active');
-      loadAdminStats();
-    }
-    
-    // Функция для скрытия админ-панели
-    function hideAdminPanel() {
-      document.getElementById('admin-panel').classList.remove('active');
-    }
-    
-    // Обновленная функция showDashboard
-    function showDashboard(nickname, telegramUsername) {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('scriptMenu').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.remove('hidden');
-      document.getElementById('welcome-header').innerText = `Вітаємо, ${nickname}!`;
-      
-      
-      // Показываем кнопку админ-панели, если пользователь админ
-      if (ADMINS.includes(telegramUsername)) {
-        document.getElementById('admin-btn').classList.remove('hidden');
-      }
-    
     async function fetchUserStatsByTelegram(telegramUsername) {
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
@@ -947,14 +691,6 @@ if (userIndex !== -1) {
       } else {
         showLoginForm();
       }
-   // Инициализация обработчиков событий
-    document.addEventListener('DOMContentLoaded', function() {
-      // ... существующие обработчики ...
-      
-      // Добавляем обработчики для админ-панели
-      document.getElementById('admin-btn').addEventListener('click', showAdminPanel);
-      document.getElementById('close-admin').addEventListener('click', hideAdminPanel);
-      
     });
 
     // ... остальной код без изменений ...
