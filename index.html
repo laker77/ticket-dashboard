@@ -100,6 +100,15 @@ table {
   color: #1977FD;
 }
 
+  @keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+
 @keyframes fadeInUp {
   to {
     opacity: 1;
@@ -142,6 +151,11 @@ table {
           <p>Тікети: <span id="yesterday-tickets">—</span></p>
           <p>Час у грі: <span id="yesterday-time">—</span></p>
         </div>
+        <div id="contest-rank" class="bg-[#121315] text-white p-4 rounded-xl shadow mb-6 border border-[#1977FD] animate-fade-in">
+  <h3 class="text-xl font-bold text-[#1977FD] mb-2">🎉 Конкурс "Кращий адмін"</h3>
+  <p class="mb-2">Ти зараз на <span id="current-rank" class="font-semibold text-yellow-300">…</span> місці серед усієї адміністрації!</p>
+  <p class="text-sm text-gray-300">📅 Конкурс триває до <span class="text-white">30 червня</span>. Більше тікетів і годин — вище шанс на перемогу!</p>
+</div>
         <div class="bg-white p-4 rounded shadow">
           <h3 class="font-bold mb-2">Тиждень</h3>
           <p>Тікети: <span id="week-tickets">—</span></p>
@@ -280,6 +294,48 @@ table {
         monthStart.setDate(today.getDate() - 30);
         const monthStats = sumTicketsAndTime(monthStart, yesterday);
 
+        // Рейтинг участника по тікетам + час
+const allUsers = ticketsData.slice(1).map(row => {
+  const name = row[nameColIndex];
+  const userTelegram = row[telegramColIndex];
+
+  let totalTickets = 0;
+  let totalSeconds = 0;
+
+  dateCols.forEach(({ h, i }) => {
+    const dt = parseDate(h);
+    if (dt >= monthStart && dt <= yesterday) {
+      totalTickets += parseInt(row[i]) || 0;
+      const tIndex = timeHeaders.indexOf(h);
+      const timeRow = timeData.find(r => r[timeNameColIndex] === name);
+      if (timeRow && tIndex >= 0) {
+        const timeStr = timeRow[tIndex];
+        if (timeStr && timeStr !== 'Н') {
+          const [hh, mm, ss] = timeStr.split(':').map(Number);
+          totalSeconds += hh * 3600 + mm * 60 + ss;
+        }
+      }
+    }
+  });
+
+  return { name, telegram: userTelegram, totalTickets, totalSeconds };
+});
+
+// Сортировка по тікетам, потом по часу
+allUsers.sort((a, b) => {
+  if (b.totalTickets !== a.totalTickets)
+    return b.totalTickets - a.totalTickets;
+  return b.totalSeconds - a.totalSeconds;
+});
+
+// Поиск текущего места
+const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
+if (userIndex !== -1) {
+  const place = userIndex + 1;
+  document.getElementById('current-rank').innerText = `${place}`;
+}
+
+        
         document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
         document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
         document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
