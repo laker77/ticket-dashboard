@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Статистика тикетов</title>
+  <title>Статистика тикетів</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Добро пожаловать!</h1>
+    <h1 class="text-2xl font-bold mb-4">Ласкаво просимо!</h1>
     <div id="login-section">
-      <p class="mb-2">Пожалуйста, войдите через Telegram:</p>
+      <p class="mb-2">Будь ласка, увійдіть через Telegram:</p>
       <script async src="https://telegram.org/js/telegram-widget.js?7"
               data-telegram-login="ticket_tracker_UG_bot" 
               data-size="large"
@@ -25,35 +25,35 @@
       <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Сегодня</h3>
-          <p>Тикеты: <span id="today-tickets">—</span></p>
-          <p>Время в игре: <span id="today-time">—</span></p>
+          <h3 class="font-bold mb-2">Вчора</h3>
+          <p>Тикети: <span id="today-tickets">—</span></p>
+          <p>Час в грі: <span id="today-time">—</span></p>
         </div>
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Неделя</h3>
-          <p>Тикеты: <span id="week-tickets">—</span></p>
-          <p>Время в игре: <span id="week-time">—</span></p>
+          <h3 class="font-bold mb-2">Тиждень</h3>
+          <p>Тикети: <span id="week-tickets">—</span></p>
+          <p>Час в грі: <span id="week-time">—</span></p>
         </div>
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Месяц</h3>
-          <p>Тикеты: <span id="month-tickets">—</span></p>
-          <p>Время в игре: <span id="month-time">—</span></p>
+          <h3 class="font-bold mb-2">Місяць</h3>
+          <p>Тикети: <span id="month-tickets">—</span></p>
+          <p>Час в грі: <span id="month-time">—</span></p>
         </div>
       </div>
 
       <div class="bg-white p-4 rounded shadow mb-6">
-        <h3 class="font-bold mb-4">Динамика тикетов и времени за последний месяц</h3>
+        <h3 class="font-bold mb-4">Динаміка тикетів та часу за останній місяць</h3>
         <canvas id="statsChart" height="150"></canvas>
       </div>
 
       <div class="bg-white p-4 rounded shadow">
-        <h3 class="font-bold mb-2">Детальная статистика по дням:</h3>
+        <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
         <table class="min-w-full text-left border-collapse">
           <thead>
             <tr>
               <th class="border px-2 py-1">Дата</th>
-              <th class="border px-2 py-1">Тикеты</th>
-              <th class="border px-2 py-1">Время в игре</th>
+              <th class="border px-2 py-1">Тикети</th>
+              <th class="border px-2 py-1">Час в грі</th>
               <th class="border px-2 py-1">Неактив</th>
             </tr>
           </thead>
@@ -88,7 +88,7 @@
     function secondsToHHMMSS(seconds) {
       const h = Math.floor(seconds / 3600);
       const m = Math.floor((seconds % 3600) / 60);
-      return h > 0 ? `${h}ч ${m}м` : `${m}м`;
+      return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
     }
 
     async function fetchUserStatsByTelegram(telegramUsername) {
@@ -102,7 +102,7 @@
 
         const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
         if (!userTicketsRow) {
-          alert('Пользователь не найден в таблице тикетов');
+          alert('Користувача не знайдено у таблиці тикетів');
           return;
         }
 
@@ -112,19 +112,20 @@
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
         const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
         if (!userTimeRow) {
-          alert('Пользователь не найден в таблице времени');
+          alert('Користувача не знайдено у таблиці часу');
           return;
         }
 
         const today = new Date();
-        const todayStr = formatDate(today);
+        const yesterday = new Date(today.getTime() - 24*60*60*1000);
+        const yesterdayStr = formatDate(yesterday);
 
-        // Даты из заголовков листа с тикетами
+        // Дати із заголовків листа з тикетами
         const dateCols = ticketsHeaders
           .map((h, i) => ({h, i}))
           .filter(({h}) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
 
-        // Helper для подсчёта тикетов и времени в период
+        // Helper для підрахунку тикетів і часу за період
         function sumTicketsAndTime(startDate, endDate) {
           let ticketsSum = 0;
           let timeSecondsSum = 0;
@@ -147,37 +148,37 @@
           return {ticketsSum, timeSecondsSum};
         }
 
-        // Сегодня
-        const todayStats = sumTicketsAndTime(today, today);
-        // Неделя (7 дней включая сегодня)
-        const weekStart = new Date(today.getTime() - 6 * 24*60*60*1000);
-        const weekStats = sumTicketsAndTime(weekStart, today);
-        // Месяц (30 дней включая сегодня)
-        const monthStart = new Date(today.getTime() - 29 * 24*60*60*1000);
-        const monthStats = sumTicketsAndTime(monthStart, today);
+        // Вчора
+        const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
+        // Тиждень (7 днів включно з вчора)
+        const weekStart = new Date(yesterday.getTime() - 6 * 24*60*60*1000);
+        const weekStats = sumTicketsAndTime(weekStart, yesterday);
+        // Місяць (30 днів включно з вчора)
+        const monthStart = new Date(yesterday.getTime() - 29 * 24*60*60*1000);
+        const monthStats = sumTicketsAndTime(monthStart, yesterday);
 
-        // Обновляем UI
-        document.getElementById('today-tickets').innerText = todayStats.ticketsSum;
-        document.getElementById('today-time').innerText = secondsToHHMMSS(todayStats.timeSecondsSum);
+        // Оновлюємо UI
+        document.getElementById('today-tickets').innerText = yesterdayStats.ticketsSum;
+        document.getElementById('today-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
         document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
         document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
         document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
         document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
 
-        // Таблица детальной статистики
+        // Таблиця детальної статистики
         const tbody = document.getElementById('daily-stats-body');
         tbody.innerHTML = '';
 
         let inactiveCount = 0;
 
-        // Для графика — собираем данные
+        // Для графіка — збираємо дані
         const chartLabels = [];
         const chartTickets = [];
         const chartTimeHours = [];
 
         dateCols.forEach(({h, i}) => {
           const dt = parseDate(h);
-          if (dt >= monthStart && dt <= today) {
+          if (dt >= monthStart && dt <= yesterday) {
             const dayTickets = parseInt(userTicketsRow[i]) || 0;
             const timeColIndex = timeHeaders.indexOf(h);
             let dayTimeStr = 'Н';
@@ -196,7 +197,7 @@
               <td class="border px-2 py-1">${h}</td>
               <td class="border px-2 py-1">${dayTickets}</td>
               <td class="border px-2 py-1">${dayTimeStr}</td>
-              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Да' : ''}</td>
+              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
             `;
             tbody.appendChild(tr);
 
@@ -206,15 +207,15 @@
           }
         });
 
-        // Итог по неактивам
+        // Підсумок по неактивам
         const trTotal = document.createElement('tr');
         trTotal.innerHTML = `
-          <td class="border px-2 py-1 font-bold">Итого неактивов</td>
+          <td class="border px-2 py-1 font-bold">Всього неактивів</td>
           <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
         `;
         tbody.appendChild(trTotal);
 
-        // Создаём график
+        // Створюємо графік
         const ctx = document.getElementById('statsChart').getContext('2d');
         if (window.statsChartInstance) window.statsChartInstance.destroy();
 
@@ -224,7 +225,7 @@
             labels: chartLabels,
             datasets: [
               {
-                label: 'Тикеты',
+                label: 'Тикети',
                 data: chartTickets,
                 borderColor: 'rgba(59, 130, 246, 1)',
                 backgroundColor: 'rgba(59, 130, 246, 0.3)',
@@ -232,7 +233,7 @@
                 tension: 0.3,
               },
               {
-                label: 'Время в игре (часы)',
+                label: 'Час в грі (години)',
                 data: chartTimeHours,
                 borderColor: 'rgba(16, 185, 129, 1)',
                 backgroundColor: 'rgba(16, 185, 129, 0.3)',
@@ -255,7 +256,7 @@
                 position: 'left',
                 title: {
                   display: true,
-                  text: 'Тикеты',
+                  text: 'Тикети',
                 },
                 beginAtZero: true,
               },
@@ -265,7 +266,7 @@
                 position: 'right',
                 title: {
                   display: true,
-                  text: 'Время (часы)',
+                  text: 'Час (години)',
                 },
                 beginAtZero: true,
                 grid: {
@@ -286,8 +287,8 @@
               },
               tooltip: {
                 callbacks: {
-                  label: ctx => ctx.dataset.label === 'Время в игре (часы)'
-                    ? `${ctx.parsed.y} ч`
+                  label: ctx => ctx.dataset.label === 'Час в грі (години)'
+                    ? `${ctx.parsed.y} г`
                     : ctx.parsed.y,
                 }
               }
@@ -296,7 +297,7 @@
         });
       } catch (error) {
         console.error(error);
-        alert('Ошибка при загрузке данных из Google Sheets');
+        alert('Помилка при завантаженні даних з Google Sheets');
       }
     }
 
@@ -306,7 +307,7 @@
 
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.querySelector('h1').innerText = `Здравствуйте, ${firstName}!`;
+      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
 
       fetchUserStatsByTelegram(telegramUsername);
     }
