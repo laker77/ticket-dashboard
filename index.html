@@ -574,38 +574,16 @@ if (userIndex !== -1) {
       }
     }
     
-  async function fetchUserStatsByTelegram(username) {
-    try {
-      const response = await fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`);
-      if (!response.ok) {
-        throw new Error('Користувач не знайдений');
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(error);
-      return null;
+     function onTelegramAuth(user) {
+      const telegramUsername = '@' + user.username;
+      const firstName = user.first_name;
+
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
+
+      fetchUserStatsByTelegram(telegramUsername);
     }
-  }
-
-  async function onTelegramAuth(user) {
-    const telegramUsername = '@' + user.username;
-    const firstName = user.first_name;
-
-    const userData = await fetchUserStatsByTelegram(telegramUsername);
-
-    if (!userData) {
-      // Пользователь не найден — перенаправляем на 404
-      window.location.href = "/test.html";
-      return;
-    }
-
-    // Пользователь найден — показываем интерфейс
-    document.getElementById('login-section').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    document.getElementById('scriptMenu').classList.remove('hidden');
-    document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
-  }
-</script>
+  </script>
 </body>
 </html>
