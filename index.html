@@ -68,11 +68,45 @@ body {
 }
 
 /* Фон таблицы и контейнера таблицы */
-.table-container {
-  background-color: #121315;
+/* Улучшение таблицы детальной статистики */
+.table-container table {
   border-radius: 12px;
-  padding: 10px;
-  overflow-x: auto;
+  overflow: hidden;
+  width: 100%;
+  border-spacing: 0;
+  font-size: 0.95rem;
+}
+
+.table-container thead {
+  background-color: #1d1f26;
+}
+
+.table-container th {
+  text-align: left;
+  padding: 12px;
+  background-color: #1d1f26;
+  color: #1977FD;
+  font-weight: 600;
+}
+
+.table-container td {
+  padding: 10px 12px;
+  border-top: 1px solid #2a2d38;
+}
+
+.table-container tbody tr:nth-child(even) {
+  background-color: #16181d;
+}
+
+.table-container tbody tr:hover {
+  background-color: #1e2230;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.table-container td.inactive-cell {
+  color: #F87171;
+  font-weight: bold;
+  text-align: center;
 }
 
 table {
