@@ -183,6 +183,10 @@ table {
 .script-item:hover {
   background-color: #333;
 }
+    .hidden {
+  display: none !important;
+}
+
 
 
   @keyframes fade-in {
@@ -228,7 +232,7 @@ table {
     </script>
   </div>
 </div>
-    <div class="script-menu" id="scriptMenu">
+    <div class="script-menu hidden" id="scriptMenu">
   <div class="menu-button" onclick="toggleScripts()">≡</div>
   <div class="script-list" id="scriptList">
     <div class="script-item">Скрипт 1.1</div>
@@ -592,17 +596,19 @@ function showScriptMenu() {
 }
 
 function onTelegramAuth(user) {
-  const telegramUsername = '@' + user.username;
-  const firstName = user.first_name;
-
+  // Скрываем форму входа
   document.getElementById('login-section').classList.add('hidden');
+  // Показываем дашборд
   document.getElementById('dashboard').classList.remove('hidden');
+  // Показываем меню
+  document.getElementById('scriptMenu').classList.remove('hidden');
+  
+  const firstName = user.first_name;
   document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
 
+  const telegramUsername = '@' + user.username;
   fetchUserStatsByTelegram(telegramUsername);
-  showScriptMenu(); // Вот здесь показываем меню
 }
-
   </script>
 </body>
 </html>
