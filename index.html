@@ -8,9 +8,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-[#050608] text-[#FFFBEF] font-sans">
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Ласкаво просимо!</h1>
+    <h1 class="text-2xl font-bold mb-4 text-[#1977FD]">Ласкаво просимо!</h1>
     <div id="login-section">
       <p class="mb-2">Будь ласка, авторизуйтесь через Telegram:</p>
       <script async src="https://telegram.org/js/telegram-widget.js?7"
@@ -22,39 +22,39 @@
       </script>
     </div>
     <div id="dashboard" class="hidden">
-      <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
+      <h2 class="text-xl font-semibold mb-2 text-[#1977FD]">Ваша статистика:</h2>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Сьогодні</h3>
+        <div class="bg-[#101214] p-4 rounded shadow text-[#FFFBEF]">
+          <h3 class="font-bold mb-2 text-[#1977FD]">Сьогодні</h3>
           <p>Тікети: <span id="today-tickets">—</span></p>
           <p>Час у грі: <span id="today-time">—</span></p>
         </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Тиждень</h3>
+        <div class="bg-[#101214] p-4 rounded shadow text-[#FFFBEF]">
+          <h3 class="font-bold mb-2 text-[#1977FD]">Тиждень</h3>
           <p>Тікети: <span id="week-tickets">—</span></p>
           <p>Час у грі: <span id="week-time">—</span></p>
         </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Місяць</h3>
-          <p>Тикеты: <span id="month-tickets">—</span></p>
+        <div class="bg-[#101214] p-4 rounded shadow text-[#FFFBEF]">
+          <h3 class="font-bold mb-2 text-[#1977FD]">Місяць</h3>
+          <p>Тікети: <span id="month-tickets">—</span></p>
           <p>Час у грі: <span id="month-time">—</span></p>
         </div>
       </div>
 
-      <div class="bg-white p-4 rounded shadow mb-6">
-        <h3 class="font-bold mb-4">Динаміка тікетів і часу за останній місяць</h3>
+      <div class="bg-[#101214] p-4 rounded shadow mb-6 text-[#FFFBEF]">
+        <h3 class="font-bold mb-4 text-[#1977FD]">Динаміка тікетів і часу за останній місяць</h3>
         <canvas id="statsChart" height="150"></canvas>
       </div>
 
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="font-bold mb-2">Детальная статистика по дням:</h3>
-        <table class="min-w-full text-left border-collapse">
+      <div class="bg-[#101214] p-4 rounded shadow text-[#FFFBEF]">
+        <h3 class="font-bold mb-2 text-[#1977FD]">Детальна статистика по днях:</h3>
+        <table class="min-w-full text-left border-collapse text-sm">
           <thead>
             <tr>
-              <th class="border px-2 py-1">Дата</th>
-              <th class="border px-2 py-1">Тікети</th>
-              <th class="border px-2 py-1">Час у грі</th>
-              <th class="border px-2 py-1">Неактив</th>
+              <th class="border border-[#1977FD] px-2 py-1">Дата</th>
+              <th class="border border-[#1977FD] px-2 py-1">Тікети</th>
+              <th class="border border-[#1977FD] px-2 py-1">Час у грі</th>
+              <th class="border border-[#1977FD] px-2 py-1">Неактив</th>
             </tr>
           </thead>
           <tbody id="daily-stats-body"></tbody>
@@ -62,6 +62,8 @@
       </div>
     </div>
   </div>
+</body>
+
 
   <script>
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
