@@ -573,17 +573,29 @@ if (userIndex !== -1) {
         alert('Помилка під час завантаження даних з Google Sheets');
       }
     }
-    
-     function onTelegramAuth(user) {
-      const telegramUsername = '@' + user.username;
-      const firstName = user.first_name;
+async function onTelegramAuth(user) {
+  const telegramUsername = '@' + user.username;
+  const firstName = user.first_name;
 
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
+  // Отримання даних з Google Sheets
+  const ticketsData = await getSheetData('Май_2025_таблица');
+  const ticketsHeaders = ticketsData[0];
+  const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+  const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
 
-      fetchUserStatsByTelegram(telegramUsername);
-    }
+  if (!userTicketsRow) {
+    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+    return; // не пускаємо далі
+  }
+
+  // Якщо користувач знайдений — показуємо дашборд
+  document.getElementById('login-section').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
+
+  // Завантаження статистики
+  fetchUserStatsByTelegram(telegramUsername);
+}
   </script>
 </body>
 </html>
