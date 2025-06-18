@@ -77,7 +77,6 @@
   const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
   const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
 
-  // Список админов по Telegram username (без @)
   const admins = ['laker_77', 'admin_username2'];
 
   async function getSheetData(sheetName) {
@@ -88,7 +87,7 @@
 
   function parseDate(str) {
     const [d, m, y] = str.split('.');
-    return new Date(`${y}-${m}-${d}`);
+    return new Date(`${y}-${m}-${d}T00:00:00`);
   }
 
   function formatDate(date) {
@@ -98,10 +97,32 @@
     return `${dd}.${mm}.${yyyy}`;
   }
 
-  function secondsToHHMMSS(seconds) {
+  // Преобразование секунд в "Xч Yм"
+  function secondsToHHMM(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
-    return h > 0 ? `${h}ч ${m}м` : `${m}м`;
+    if(h > 0) return `${h}ч ${m}м`;
+    return `${m}м`;
+  }
+
+  // Получить дату начала недели (понедельник 00:00:00) для даты
+  function getWeekStart(date) {
+    const d = new Date(date);
+    const day = d.getDay(); // 0 (воскресенье) ... 6 (суббота)
+    // День недели: если воскресенье (0), считаем как 7 для корректного вычисления
+    const diff = (day === 0 ? 7 : day) - 1; // сколько дней от понедельника
+    d.setHours(0,0,0,0);
+    d.setDate(d.getDate() - diff);
+    return d;
+  }
+
+  // Получить дату конца недели (воскресенье 23:59:59)
+  function getWeekEnd(date) {
+    const start = getWeekStart(date);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    end.setHours(23,59,59,999);
+    return end;
   }
 
   async function fetchUserStatsByTelegram(telegramUsername) {
@@ -119,7 +140,7 @@
         return;
       }
 
-      const userNameInGame = userTicketsRow[nameColIndex]; // Имя в игре для приветствия
+      const userNameInGame = userTicketsRow[nameColIndex];
 
       const timeHeaders = timeData[0];
       const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
@@ -130,14 +151,18 @@
       }
 
       const today = new Date();
-      const yesterday = new Date(today.getTime() - 24*60*60*1000);
-      const yesterdayStr = formatDate(yesterday);
+      today.setHours(0,0,0,0);
 
-      // Даты из заголовков листа с тикетами
+      // Вчера — именно "вчера" по дате без времени
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      // Получить даты столбцов с датами
       const dateCols = ticketsHeaders
         .map((h, i) => ({h, i}))
         .filter(({h}) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
 
+      // Функция суммирования тикетов и времени за период с включением границ
       function sumTicketsAndTime(startDate, endDate) {
         let ticketsSum = 0;
         let timeSecondsSum = 0;
@@ -146,6 +171,7 @@
           const dt = parseDate(h);
           if (dt >= startDate && dt <= endDate) {
             ticketsSum += parseInt(userTicketsRow[i]) || 0;
+
             const timeColIndex = timeHeaders.indexOf(h);
             if (timeColIndex >= 0) {
               const timeStr = userTimeRow[timeColIndex];
@@ -160,27 +186,42 @@
         return {ticketsSum, timeSecondsSum};
       }
 
-      // Вчора
+      // Статистика за вчера
       const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
-      // Неделя (7 дней включая вчера)
-      const weekStart = new Date(yesterday.getTime() - 6 * 24*60*60*1000);
-      const weekStats = sumTicketsAndTime(weekStart, yesterday);
-      // Месяц (30 дней включая вчера)
-      const monthStart = new Date(yesterday.getTime() - 29 * 24*60*60*1000);
-      const monthStats = sumTicketsAndTime(monthStart, yesterday);
 
-      // Обновляем UI
+      // Статистика за неделю: с понедельника 00:00:00 до воскресенья 23:59:59, в которой находится вчера
+      const weekStart = getWeekStart(yesterday);
+      const weekEnd = getWeekEnd(yesterday);
+      const weekStats = sumTicketsAndTime(weekStart, weekEnd);
+
+      // Статистика за месяц: последние 30 дней включая вчера (с 29 дней назад 00:00:00 до вчера 23:59:59)
+      const monthStart = new Date(yesterday);
+      monthStart.setDate(monthStart.getDate() - 29);
+      monthStart.setHours(0,0,0,0);
+      const monthEnd = new Date(yesterday);
+      monthEnd.setHours(23,59,59,999);
+      const monthStats = sumTicketsAndTime(monthStart, monthEnd);
+
+      // Обновляем пользовательский UI
       document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
-      document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
+      document.getElementById('yesterday-time').innerText = secondsToHHMM(yesterdayStats.timeSecondsSum);
+
       document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
-      document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
+      document.getElementById('week-time').innerText = secondsToHHMM(weekStats.timeSecondsSum);
+
       document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
-      document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
+      document.getElementById('month-time').innerText = secondsToHHMM(monthStats.timeSecondsSum);
 
       document.getElementById('welcome-header').innerText = `Вітаю, ${userNameInGame}!`;
 
+      // Для пользователя показываем детальную статистику по дням (до вчера)
       renderDailyStats(userTicketsRow, userTimeRow, dateCols, yesterday);
       renderChart(userTicketsRow, userTimeRow, dateCols);
+
+      // Если админ, показываем админ панель
+      if (admins.includes(telegramUsername)) {
+        showAdminPanel(userTicketsRow, userTimeRow, dateCols);
+      }
 
     } catch (error) {
       console.error(error);
@@ -196,7 +237,6 @@
     const sortedDates = [...dateCols].sort((a, b) => parseDate(a.h) - parseDate(b.h));
 
     sortedDates.forEach(({h, i}) => {
-      // Пропускаем сегодняшнюю дату, чтобы показывать до вчера
       if (parseDate(h) > yesterday) return;
 
       const tickets = parseInt(ticketsRow[i]) || 0;
@@ -236,75 +276,47 @@
         timeData.push(0);
       } else {
         const [hh, mm, ss] = timeStr.split(':').map(Number);
-        timeData.push(hh + mm/60 + ss/3600); // часы с дробями
+        timeData.push(hh + mm/60 + ss/3600);
       }
     });
 
     window.statsChartInstance = new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels,
         datasets: [
           {
             label: 'Тікети',
             data: ticketsData,
-            borderColor: '#1977FD',
-            backgroundColor: 'rgba(25, 119, 253, 0.3)',
-            yAxisID: 'y',
-            tension: 0.2,
-            fill: true,
-            pointRadius: 3,
+            backgroundColor: '#1977FD',
+            yAxisID: 'y1',
           },
           {
             label: 'Час у грі (години)',
             data: timeData,
-            borderColor: '#FED530',
-            backgroundColor: 'rgba(254, 213, 48, 0.3)',
-            yAxisID: 'y1',
-            tension: 0.2,
-            fill: true,
-            pointRadius: 3,
+            type: 'line',
+            borderColor: '#FFBD35',
+            backgroundColor: '#FFBD35',
+            yAxisID: 'y2',
+            fill: false,
+            tension: 0.3,
           },
         ]
       },
       options: {
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        stacked: false,
         scales: {
-          y: {
-            type: 'linear',
-            position: 'left',
-            title: {
-              display: true,
-              text: 'Тікети',
-              color: '#1977FD'
-            },
-            ticks: {
-              color: '#1977FD',
-            },
-          },
           y1: {
             type: 'linear',
-            position: 'right',
-            title: {
-              display: true,
-              text: 'Час у грі (години)',
-              color: '#FED530'
-            },
-            grid: {
-              drawOnChartArea: false,
-            },
-            ticks: {
-              color: '#FED530',
-            },
+            position: 'left',
+            beginAtZero: true,
+            title: {display: true, text: 'Тікети'}
           },
-          x: {
-            ticks: {
-              color: '#FFFBEF',
-            }
+          y2: {
+            type: 'linear',
+            position: 'right',
+            beginAtZero: true,
+            title: {display: true, text: 'Час у грі (години)'},
+            grid: {drawOnChartArea: false}
           }
         },
         plugins: {
@@ -313,72 +325,96 @@
               color: '#FFFBEF',
             }
           }
-        }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
       }
     });
   }
 
-  // Функция отображения админ панели
-  async function showAdminPanel() {
+  async function showAdminPanel(ticketsRow, timeRow, dateCols) {
     document.getElementById('admin-panel').classList.remove('hidden');
-    document.getElementById('dashboard').classList.remove('hidden'); // чтобы админ видел и свой дашборд
 
-    // Получаем данные таблицы для админа
-    try {
-      const ticketsData = await getSheetData('Май_2025_таблица');
-      const timeData = await getSheetData('Время_в_игре');
+    // Для админа показываем агрегированную статистику: за вчера, неделю, месяц
+    const adminContent = document.getElementById('admin-content');
+    adminContent.innerHTML = '';
 
-      const adminDiv = document.getElementById('admin-content');
-      adminDiv.innerHTML = '';
+    const today = new Date();
+    today.setHours(0,0,0,0);
 
-      // Показываем простую таблицу с количеством тикетов по пользователям за последние дни
-      const headers = ticketsData[0];
-      const dateCols = headers.filter(h => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
-      let html = `<table class="min-w-full text-left border-collapse text-sm">
-        <thead><tr>
-          <th class="border border-[#1977FD] px-2 py-1">Ім'я співробітника</th>
-          <th class="border border-[#1977FD] px-2 py-1">Telegram</th>`;
+    const weekStart = getWeekStart(yesterday);
+    const weekEnd = getWeekEnd(yesterday);
 
-      dateCols.forEach(date => {
-        html += `<th class="border border-[#1977FD] px-2 py-1">${date}</th>`;
+    const monthStart = new Date(yesterday);
+    monthStart.setDate(monthStart.getDate() - 29);
+    monthStart.setHours(0,0,0,0);
+    const monthEnd = new Date(yesterday);
+    monthEnd.setHours(23,59,59,999);
+
+    function sumTicketsAndTimePeriod(startDate, endDate) {
+      let ticketsSum = 0;
+      let timeSecondsSum = 0;
+
+      dateCols.forEach(({h, i}) => {
+        const dt = parseDate(h);
+        if (dt >= startDate && dt <= endDate) {
+          ticketsSum += parseInt(ticketsRow[i]) || 0;
+
+          const timeColIndex = timeHeaders.indexOf(h);
+          if (timeColIndex >= 0) {
+            const timeStr = timeRow[timeColIndex];
+            if (timeStr && timeStr !== 'Н') {
+              const [hh, mm, ss] = timeStr.split(':').map(Number);
+              timeSecondsSum += hh * 3600 + mm * 60 + ss;
+            }
+          }
+        }
       });
-      html += `</tr></thead><tbody>`;
-
-      for (let i = 1; i < ticketsData.length; i++) {
-        const row = ticketsData[i];
-        html += `<tr>`;
-        html += `<td class="border border-[#1977FD] px-2 py-1">${row[1] || ''}</td>`; // Имя сотрудника
-        html += `<td class="border border-[#1977FD] px-2 py-1">${row[3] || ''}</td>`; // Telegram
-        dateCols.forEach(date => {
-          const colIndex = headers.indexOf(date);
-          html += `<td class="border border-[#1977FD] px-2 py-1">${row[colIndex] || ''}</td>`;
-        });
-        html += `</tr>`;
-      }
-
-      html += '</tbody></table>';
-
-      adminDiv.innerHTML = html;
-
-    } catch (error) {
-      console.error(error);
-      alert('Помилка при завантаженні адмін даних.');
+      return {ticketsSum, timeSecondsSum};
     }
+
+    // ВАЖНО: timeHeaders нужна глобально, возьмем из времени
+    const timeHeaders = (await getSheetData('Время_в_игре'))[0];
+
+    const yesterdayStats = sumTicketsAndTimePeriod(yesterday, yesterday);
+    const weekStats = sumTicketsAndTimePeriod(weekStart, weekEnd);
+    const monthStats = sumTicketsAndTimePeriod(monthStart, monthEnd);
+
+    adminContent.innerHTML = `
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[#FFFBEF]">
+        <div class="bg-[#101214] p-4 rounded shadow">
+          <h3 class="font-bold mb-2 text-[#1977FD]">Вчора</h3>
+          <p>Тікети: ${yesterdayStats.ticketsSum}</p>
+          <p>Час у грі: ${secondsToHHMM(yesterdayStats.timeSecondsSum)}</p>
+        </div>
+        <div class="bg-[#101214] p-4 rounded shadow">
+          <h3 class="font-bold mb-2 text-[#1977FD]">Тиждень</h3>
+          <p>Тікети: ${weekStats.ticketsSum}</p>
+          <p>Час у грі: ${secondsToHHMM(weekStats.timeSecondsSum)}</p>
+        </div>
+        <div class="bg-[#101214] p-4 rounded shadow">
+          <h3 class="font-bold mb-2 text-[#1977FD]">Місяць</h3>
+          <p>Тікети: ${monthStats.ticketsSum}</p>
+          <p>Час у грі: ${secondsToHHMM(monthStats.timeSecondsSum)}</p>
+        </div>
+      </div>
+    `;
   }
 
   function onTelegramAuth(user) {
+    const username = user.username;
+    if (!username) {
+      alert('Не вдалося отримати ваш нікнейм Telegram');
+      return;
+    }
     document.getElementById('login-section').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
-
-    const username = user.username;
-
     fetchUserStatsByTelegram(username);
-
-    if (admins.includes(username)) {
-      showAdminPanel();
-    }
   }
 </script>
+
 </body>
 </html>
