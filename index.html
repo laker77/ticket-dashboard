@@ -8,71 +8,155 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
-    /* Стили для адаптивной таблицы */
-    @media (max-width: 640px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-      .table-container {
-        overflow-x: auto;
-      }
-      table {
-        font-size: 0.875rem;
-      }
-      th, td {
-        padding: 0.25rem 0.5rem;
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+    
+    .animate-fadeIn {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    
+    .stats-grid {
+      perspective: 1000px;
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px) rotateX(5deg);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .chart-container {
+      background: linear-gradient(145deg, #0a0c12, #0e1018);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(25, 119, 253, 0.1) 0%, transparent 70%);
+      z-index: 0;
+    }
+    
+    .glow-text {
+      text-shadow: 0 0 10px rgba(25, 119, 253, 0.7);
+    }
+    
+    .gradient-border {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #1977FD, #00C2FF);
+      border-radius: 14px;
+      z-index: -1;
     }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Ласкаво просимо!</h1>
-    <div id="login-section">
-      <p class="mb-2">Будь ласка, увійдіть через Telegram:</p>
-      <script async src="https://telegram.org/js/telegram-widget.js?7"
-              data-telegram-login="ticket_tracker_UG_bot" 
-              data-size="large"
-              data-userpic="false"
-              data-request-access="write"
-              data-onauth="onTelegramAuth(user)">
-      </script>
+<body class="bg-[#050608] text-[#FFFBEF] font-sans min-h-screen">
+  <div class="container mx-auto p-4 max-w-6xl">
+    <div class="text-center mb-8 mt-4">
+      <h1 class="text-4xl font-bold mb-2 glow-text text-[#1977FD] animate-float">Статистика тікетів</h1>
+      <div class="h-1 w-32 bg-gradient-to-r from-[#1977FD] to-[#00C2FF] mx-auto rounded-full"></div>
     </div>
+    
+    <div id="login-section" class="max-w-md mx-auto bg-[#0a0c12] rounded-2xl p-8 shadow-2xl gradient-border">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-[#1977FD] mb-2">Ласкаво просимо!</h2>
+        <p class="text-[#FFFBEF]">Будь ласка, увійдіть через Telegram:</p>
+      </div>
+      <div class="flex justify-center">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-radius="20"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+    </div>
+    
     <div id="dashboard" class="hidden">
-      <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stats-grid">
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">За вчора</h3>
-          <p>Тікети: <span id="yesterday-tickets">—</span></p>
-          <p>Час у грі: <span id="yesterday-time">—</span></p>
+      <div class="text-center mb-10">
+        <h1 id="welcome-text" class="text-3xl font-bold text-[#1977FD] glow-text mb-2"></h1>
+        <div class="h-1 w-24 bg-gradient-to-r from-[#1977FD] to-[#00C2FF] mx-auto rounded-full mb-6"></div>
+      </div>
+      
+      <h2 class="text-2xl font-bold mb-6 text-[#1977FD] glow-text">Ваша статистика:</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 stats-grid">
+        <div class="card-hover bg-[#0a0c12] p-6 rounded-xl shadow-xl gradient-border animate-fadeIn delay-1">
+          <h3 class="font-bold mb-4 text-xl text-[#1977FD]">За вчора</h3>
+          <div class="space-y-2">
+            <p class="flex justify-between"><span>Тікети:</span> <span id="yesterday-tickets" class="font-bold">—</span></p>
+            <p class="flex justify-between"><span>Час у грі:</span> <span id="yesterday-time" class="font-bold">—</span></p>
+          </div>
         </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Тиждень</h3>
-          <p>Тікети: <span id="week-tickets">—</span></p>
-          <p>Час у грі: <span id="week-time">—</span></p>
+        
+        <div class="card-hover bg-[#0a0c12] p-6 rounded-xl shadow-xl gradient-border animate-fadeIn delay-2">
+          <h3 class="font-bold mb-4 text-xl text-[#1977FD]">Тиждень</h3>
+          <div class="space-y-2">
+            <p class="flex justify-between"><span>Тікети:</span> <span id="week-tickets" class="font-bold">—</span></p>
+            <p class="flex justify-between"><span>Час у грі:</span> <span id="week-time" class="font-bold">—</span></p>
+          </div>
         </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Місяць</h3>
-          <p>Тікети: <span id="month-tickets">—</span></p>
-          <p>Час у грі: <span id="month-time">—</span></p>
+        
+        <div class="card-hover bg-[#0a0c12] p-6 rounded-xl shadow-xl gradient-border animate-fadeIn delay-3">
+          <h3 class="font-bold mb-4 text-xl text-[#1977FD]">Місяць</h3>
+          <div class="space-y-2">
+            <p class="flex justify-between"><span>Тікети:</span> <span id="month-tickets" class="font-bold">—</span></p>
+            <p class="flex justify-between"><span>Час у грі:</span> <span id="month-time" class="font-bold">—</span></p>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white p-4 rounded shadow mb-6">
-        <h3 class="font-bold mb-4">Динаміка тікетів та часу за останній місяць</h3>
-        <canvas id="statsChart" height="150"></canvas>
+      <div class="chart-container p-6 mb-10 animate-fadeIn delay-2">
+        <h3 class="font-bold mb-4 text-xl text-[#1977FD] glow-text">Динаміка тікетів та часу за останній місяць</h3>
+        <canvas id="statsChart" height="180"></canvas>
       </div>
 
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
-        <div class="table-container">
+      <div class="bg-[#0a0c12] rounded-xl shadow-xl p-6 gradient-border animate-fadeIn delay-3">
+        <h3 class="font-bold mb-4 text-xl text-[#1977FD] glow-text">Детальна статистика по днях:</h3>
+        <div class="overflow-x-auto">
           <table class="min-w-full text-left border-collapse">
             <thead>
-              <tr>
-                <th class="border px-2 py-1">Дата</th>
-                <th class="border px-2 py-1">Тікети</th>
-                <th class="border px-2 py-1">Час у грі</th>
-                <th class="border px-2 py-1">Неактив</th>
+              <tr class="bg-[#0e1018]">
+                <th class="border border-[#1c1f2b] px-4 py-3 text-[#1977FD]">Дата</th>
+                <th class="border border-[#1c1f2b] px-4 py-3 text-[#1977FD]">Тікети</th>
+                <th class="border border-[#1c1f2b] px-4 py-3 text-[#1977FD]">Час у грі</th>
+                <th class="border border-[#1c1f2b] px-4 py-3 text-[#1977FD]">Неактив</th>
               </tr>
             </thead>
             <tbody id="daily-stats-body"></tbody>
@@ -110,9 +194,28 @@
       return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
     }
 
-    // Функция для получения даты без времени
-    function getDateWithoutTime(date) {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    // Получение начала недели (понедельник)
+    function getWeekStart(date) {
+      const day = date.getDay();
+      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(date.setDate(diff));
+    }
+
+    // Получение конца недели (воскресенье)
+    function getWeekEnd(date) {
+      const start = getWeekStart(new Date(date));
+      start.setDate(start.getDate() + 6);
+      return start;
+    }
+
+    // Получение начала месяца
+    function getMonthStart(date) {
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    // Получение конца месяца
+    function getMonthEnd(date) {
+      return new Date(date.getFullYear(), date.getMonth() + 1, 0);
     }
 
     async function fetchUserStatsByTelegram(telegramUsername) {
@@ -123,6 +226,7 @@
         const ticketsHeaders = ticketsData[0];
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const nicknameColIndex = ticketsHeaders.indexOf('Никнейм');
 
         const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
         if (!userTicketsRow) {
@@ -131,6 +235,7 @@
         }
 
         const userName = userTicketsRow[nameColIndex];
+        const userNickname = userTicketsRow[nicknameColIndex] || userName;
 
         const timeHeaders = timeData[0];
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
@@ -140,9 +245,15 @@
           return;
         }
 
-        const today = getDateWithoutTime(new Date());
+        const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
+        
+        // Периоды для статистики
+        const weekStart = getWeekStart(new Date(yesterday));
+        const weekEnd = getWeekEnd(new Date(yesterday));
+        const monthStart = getMonthStart(new Date(yesterday));
+        const monthEnd = getMonthEnd(new Date(yesterday));
 
         const dateCols = ticketsHeaders
           .map((h, i) => ({ h, i }))
@@ -170,20 +281,12 @@
           return { ticketsSum, timeSecondsSum };
         }
 
-        // Исправление периодов:
-        // Вчера: только один день (yesterday)
+        // Статистика за периоды
         const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
-        
-        // Неделя: 7 дней назад до вчера
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - 7);
-        const weekStats = sumTicketsAndTime(weekStart, yesterday);
-        
-        // Месяц: 30 дней назад до вчера
-        const monthStart = new Date(today);
-        monthStart.setDate(today.getDate() - 30);
-        const monthStats = sumTicketsAndTime(monthStart, yesterday);
+        const weekStats = sumTicketsAndTime(weekStart, weekEnd);
+        const monthStats = sumTicketsAndTime(monthStart, monthEnd);
 
+        // Обновление DOM
         document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
         document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
         document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
@@ -191,6 +294,7 @@
         document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
         document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
 
+        // Детальная статистика по дням
         const tbody = document.getElementById('daily-stats-body');
         tbody.innerHTML = '';
         let inactiveCount = 0;
@@ -200,8 +304,7 @@
 
         dateCols.forEach(({ h, i }) => {
           const dt = parseDate(h);
-          // Выводим данные только до вчера включительно
-          if (dt >= monthStart && dt <= yesterday) {
+          if (dt >= monthStart && dt <= monthEnd) {
             const dayTickets = parseInt(userTicketsRow[i]) || 0;
             const timeColIndex = timeHeaders.indexOf(h);
             let dayTimeStr = 'Н';
@@ -216,11 +319,12 @@
             if (dayTimeStr === 'Н') inactiveCount++;
 
             const tr = document.createElement('tr');
+            tr.className = 'hover:bg-[#0e1018]';
             tr.innerHTML = `
-              <td class="border px-2 py-1">${h}</td>
-              <td class="border px-2 py-1">${dayTickets}</td>
-              <td class="border px-2 py-1">${dayTimeStr}</td>
-              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
+              <td class="border border-[#1c1f2b] px-4 py-2">${h}</td>
+              <td class="border border-[#1c1f2b] px-4 py-2 text-center">${dayTickets}</td>
+              <td class="border border-[#1c1f2b] px-4 py-2 text-center">${dayTimeStr}</td>
+              <td class="border border-[#1c1f2b] px-4 py-2 text-center">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
             `;
             tbody.appendChild(tr);
 
@@ -231,12 +335,14 @@
         });
 
         const trTotal = document.createElement('tr');
+        trTotal.className = 'bg-[#0e1018] font-bold';
         trTotal.innerHTML = `
-          <td class="border px-2 py-1 font-bold">Усього неактивів</td>
-          <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
+          <td class="border border-[#1c1f2b] px-4 py-2">Усього неактивів</td>
+          <td class="border border-[#1c1f2b] px-4 py-2 text-center" colspan="3">${inactiveCount}</td>
         `;
         tbody.appendChild(trTotal);
 
+        // График
         const ctx = document.getElementById('statsChart').getContext('2d');
         if (window.statsChartInstance) window.statsChartInstance.destroy();
 
@@ -248,69 +354,79 @@
               {
                 label: 'Тікети',
                 data: chartTickets,
-                borderColor: 'rgba(59, 130, 246, 1)',
-                backgroundColor: 'rgba(59, 130, 246, 0.3)',
-                yAxisID: 'yTickets',
+                borderColor: '#1977FD',
+                backgroundColor: 'rgba(25, 119, 253, 0.2)',
+                borderWidth: 2,
+                pointBackgroundColor: '#1977FD',
+                pointBorderColor: '#FFFBEF',
+                pointRadius: 4,
+                pointHoverRadius: 6,
                 tension: 0.3,
+                fill: false,
               },
               {
                 label: 'Час у грі (години)',
                 data: chartTimeHours,
-                borderColor: 'rgba(16, 185, 129, 1)',
-                backgroundColor: 'rgba(16, 185, 129, 0.3)',
-                yAxisID: 'yTime',
+                borderColor: '#00C2FF',
+                backgroundColor: 'rgba(0, 194, 255, 0.2)',
+                borderWidth: 2,
+                pointBackgroundColor: '#00C2FF',
+                pointBorderColor: '#FFFBEF',
+                pointRadius: 4,
+                pointHoverRadius: 6,
                 tension: 0.3,
+                fill: false,
               }
             ],
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             interaction: {
               mode: 'index',
               intersect: false,
             },
-            stacked: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#FFFBEF',
+                  font: {
+                    size: 14
+                  }
+                }
+              },
+              tooltip: {
+                backgroundColor: '#0a0c12',
+                titleColor: '#1977FD',
+                bodyColor: '#FFFBEF',
+                borderColor: '#1977FD',
+                borderWidth: 1,
+                padding: 12,
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                    ? `${ctx.parsed.y} год`
+                    : `${ctx.parsed.y} тікетів`,
+                }
+              }
+            },
             scales: {
-              yTickets: {
-                type: 'linear',
-                display: true,
-                position: 'left',
-                title: {
-                  display: true,
-                  text: 'Тікети',
-                },
-                beginAtZero: true,
-              },
-              yTime: {
-                type: 'linear',
-                display: true,
-                position: 'right',
-                title: {
-                  display: true,
-                  text: 'Час (години)',
-                },
-                beginAtZero: true,
-                grid: {
-                  drawOnChartArea: false,
-                },
-              },
               x: {
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.05)'
+                },
                 ticks: {
+                  color: '#FFFBEF',
                   maxRotation: 90,
                   minRotation: 45,
                   maxTicksLimit: 15,
                 }
-              }
-            },
-            plugins: {
-              legend: {
-                position: 'top',
               },
-              tooltip: {
-                callbacks: {
-                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
-                    ? `${ctx.parsed.y} год`
-                    : ctx.parsed.y,
+              y: {
+                grid: {
+                  color: 'rgba(255, 255, 255, 0.05)'
+                },
+                ticks: {
+                  color: '#FFFBEF'
                 }
               }
             }
@@ -329,9 +445,26 @@
 
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
-
-      fetchUserStatsByTelegram(telegramUsername);
+      
+      // Показываем анимацию
+      document.querySelectorAll('.animate-fadeIn').forEach(el => {
+        el.style.opacity = 0;
+      });
+      
+      setTimeout(() => {
+        document.querySelectorAll('.animate-fadeIn').forEach(el => {
+          el.style.opacity = 1;
+        });
+      }, 10);
+      
+      // Будем использовать никнейм из таблицы
+      // Временно используем имя из Telegram, пока не загрузим данные
+      document.getElementById('welcome-text').innerText = `Вітаю, ${firstName}!`;
+      
+      fetchUserStatsByTelegram(telegramUsername).then(() => {
+        // После загрузки данных обновим приветствие
+        // Фактическое обновление происходит внутри fetchUserStatsByTelegram
+      });
     }
   </script>
 </body>
