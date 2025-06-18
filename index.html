@@ -597,8 +597,12 @@ async function onTelegramAuth(user) {
   fetchUserStatsByTelegram(telegramUsername);
 }
   function toggleScripts() {
-    const list = document.getElementById('scriptList');
-    list.style.display = list.style.display === 'flex' ? 'none' : 'flex';
+    const menu = document.getElementById('scriptList');
+    if (menu.style.display === 'flex') {
+      menu.style.display = 'none';
+    } else {
+      menu.style.display = 'flex';
+    }
   }
     </script>
 </body>
