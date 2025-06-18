@@ -573,44 +573,39 @@ if (userIndex !== -1) {
         alert('Помилка під час завантаження даних з Google Sheets');
       }
     }
-
-   function onTelegramAuth(user) {
-  const telegramUsername = '@' + user.username;
-
-  fetchUserStatsByTelegram(telegramUsername)
-    .then(data => {
-      if (!data) {
-        alert('Такого пользователя нет в базе.');
-        return;
-      }
-
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('scriptMenu').classList.remove('hidden');
-
-      const firstName = user.first_name;
-      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
-
-      console.log('Данные пользователя:', data);
-    })
-    .catch(err => {
-      console.error('Ошибка при получении данных пользователя:', err);
-      window.location.href = "/test.html"; // редирект на 404
-    });
-}
-
-function fetchUserStatsByTelegram(username) {
-  return fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`)
-    .then(response => {
+<script>
+  async function fetchUserStatsByTelegram(username) {
+    try {
+      const response = await fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`);
       if (!response.ok) {
-        throw new Error("Пользователь не найден");
+        throw new Error('Користувач не знайдений');
       }
-      return response.json();
-    });
-}
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
 
+  async function onTelegramAuth(user) {
+    const telegramUsername = '@' + user.username;
+    const firstName = user.first_name;
 
+    const userData = await fetchUserStatsByTelegram(telegramUsername);
 
-  </script>
+    if (!userData) {
+      // Пользователь не найден — перенаправляем на 404
+      window.location.href = "/404.html";
+      return;
+    }
+
+    // Пользователь найден — показываем интерфейс
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('scriptMenu').classList.remove('hidden');
+    document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
+  }
+</script>
 </body>
 </html>
