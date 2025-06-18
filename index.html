@@ -587,23 +587,22 @@ if (userIndex !== -1) {
   }
 
   // Показывать меню только после авторизации
-  function showScriptMenu() {
-    document.getElementById("scriptMenu").style.display = "block";
-  }
-
-  // Скрываем меню по умолчанию
-  document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("scriptMenu").style.display = "none";
-  });
-
-    function toggleScripts() {
-  const list = document.getElementById('scriptList');
-  if (list.style.display === 'flex') {
-    list.style.display = 'none';
-  } else {
-    list.style.display = 'flex';
-  }
+function showScriptMenu() {
+  document.getElementById("scriptMenu").style.display = "block";
 }
+
+function onTelegramAuth(user) {
+  const telegramUsername = '@' + user.username;
+  const firstName = user.first_name;
+
+  document.getElementById('login-section').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
+
+  fetchUserStatsByTelegram(telegramUsername);
+  showScriptMenu(); // Вот здесь показываем меню
+}
+
   </script>
 </body>
 </html>
