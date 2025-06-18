@@ -602,30 +602,22 @@ if (userIndex !== -1) {
     });
 }
 
-function onTelegramAuth(user) {
-  const telegramUsername = '@' + user.username;
-
-  fetchUserStatsByTelegram(telegramUsername)
-    .then(data => {
-      if (!data) {
-        // Пользователь не найден — редиректим на страницу ошибки 404
-        window.location.href = 'test.html';  // путь укажи свой
-        return;
+function fetchUserStatsByTelegram(username) {
+  fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Пользователь не найден");
       }
-
-      // Пользователь найден — показываем дашборд
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('scriptMenu').classList.remove('hidden');
-
-      const firstName = user.first_name;
-      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
-
-      // Дополнительная логика
+      return response.json();
     })
-    .catch(err => {
-      console.error('Ошибка при получении данных пользователя:', err);
-      alert('Ошибка сервера. Попробуйте позже.');
+    .then(data => {
+      // Пользователь найден — делаем что нужно
+      console.log("Данные пользователя:", data);
+    })
+    .catch(error => {
+      console.error(error);
+      // Переход на страницу 404
+      window.location.href = "/404.html";
     });
 }
 
