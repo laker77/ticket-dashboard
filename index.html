@@ -229,6 +229,11 @@ table {
 </head>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 <body class="bg-gray-100 text-gray-800 font-sans">
+  <body class="bg-gray-100 text-gray-800 font-sans">
+  <!-- Добавляем кнопку выхода -->
+  <button id="logout-btn" class="fixed top-4 right-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition hidden">
+    Вийти
+  </button>
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Ласкаво просимо!</h1>
 <div id="login-section">
@@ -586,44 +591,87 @@ if (userIndex !== -1) {
         alert('Помилка під час завантаження даних з Google Sheets');
       }
     }
-async function onTelegramAuth(user) {
-  const telegramUsername = '@' + user.username;
-  
-  // Получаем данные из таблицы
-  const ticketsData = await getSheetData('Май_2025_таблица');
-  const ticketsHeaders = ticketsData[0];
-  const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-  
-  // Находим игровой никнейм (колонка A - индекс 0)
-  const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
-  
-  if (!userTicketsRow) {
-    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-    return;
-  }
-  
-  // Получаем игровой никнейм из первой колонки
-  const gameNickname = userTicketsRow[0];
-  
-  // Показываем дашборд
-  document.getElementById('login-section').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
-  document.getElementById('scriptMenu').classList.remove('hidden');
-  
-  // Используем игровой ник вместо имени из Telegram
-  document.querySelector('h1').innerText = `Вітаємо, ${gameNickname}!`;
-  
-  // Загружаем статистику
-  fetchUserStatsByTelegram(telegramUsername);
-}
-  function toggleScripts() {
-    const menu = document.getElementById('scriptList');
-    if (menu.style.display === 'flex') {
-      menu.style.display = 'none';
-    } else {
-      menu.style.display = 'flex';
+ async function onTelegramAuth(user) {
+      const telegramUsername = '@' + user.username;
+      
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          // Сохраняем данные пользователя
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0]
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          
+          // Показываем дашборд
+          showDashboard(userData.nickname, telegramUsername);
+        } else {
+          // Если пользователь не найден
+          localStorage.removeItem('tg_auth');
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Помилка під час завантаження даних');
+        showLoginForm();
+      }
     }
-  }
-    </script>
+
+    // Функция для показа дашборда
+    function showDashboard(nickname, telegramUsername) {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('scriptMenu').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
+      fetchUserStatsByTelegram(telegramUsername);
+    }
+
+    // Функция для показа формы входа
+    function showLoginForm() {
+      document.getElementById('login-section').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('scriptMenu').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.querySelector('h1').innerText = 'Ласкаво просимо!';
+    }
+
+    // Функция выхода
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    // Проверка сохраненной сессии при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      // Добавляем обработчик для кнопки выхода
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      // Проверяем сохраненную сессию
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username);
+        } catch (e) {
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        showLoginForm();
+      }
+    });
+
+    // ... остальной код без изменений ...
+  </script>
 </body>
 </html>
