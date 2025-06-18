@@ -574,27 +574,6 @@ if (userIndex !== -1) {
       }
     }
 
-    function onTelegramAuth(user) {
-      const telegramUsername = '@' + user.username;
-      const firstName = user.first_name;
-
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
-
-      fetchUserStatsByTelegram(telegramUsername);
-    }
-    
-  function toggleScripts() {
-    const list = document.getElementById("scriptList");
-    list.style.display = list.style.display === "flex" ? "none" : "flex";
-  }
-
-  // Показывать меню только после авторизации
-function showScriptMenu() {
-  document.getElementById("scriptMenu").style.display = "block";
-}
-
 function onTelegramAuth(user) {
   // Скрываем форму входа
   document.getElementById('login-section').classList.add('hidden');
@@ -602,13 +581,14 @@ function onTelegramAuth(user) {
   document.getElementById('dashboard').classList.remove('hidden');
   // Показываем меню
   document.getElementById('scriptMenu').classList.remove('hidden');
-  
+
   const firstName = user.first_name;
   document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
 
   const telegramUsername = '@' + user.username;
   fetchUserStatsByTelegram(telegramUsername);
 }
+
   </script>
 </body>
 </html>
