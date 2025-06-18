@@ -60,6 +60,41 @@ body {
   animation: pulse 3s infinite ease-in-out;
 }
 
+    /* Фон всей панели с графиком */
+.bg-white.p-4.rounded.shadow.mb-6 {
+  background-color: #121315 !important;
+  color: #FFFBEF;
+  box-shadow: 0 0 20px #1977FDAA;
+}
+
+/* Фон таблицы и контейнера таблицы */
+.table-container {
+  background-color: #121315;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 0 15px #1977FD88;
+  overflow-x: auto;
+}
+
+table {
+  background-color: #121315;
+  color: #FFFBEF;
+  border-color: #2a2d38;
+}
+
+/* Фон блоков статистики за Вчора, Тиждень, Місяць */
+.grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div {
+  background-color: #121315 !important;
+  color: #FFFBEF !important;
+  box-shadow: 0 0 20px #1977FDAA;
+  border-radius: 14px;
+}
+
+/* Заголовки в статистических блоках — чуть светлее */
+.grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div h3 {
+  color: #9bb6ff;
+}
+
 @keyframes fadeInUp {
   to {
     opacity: 1;
