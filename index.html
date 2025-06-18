@@ -329,6 +329,12 @@ h1 {
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
 
+     // Новая функция toggleScripts
+    function toggleScripts() {
+      const menu = document.getElementById('scriptList');
+      menu.classList.toggle('hidden');
+    }
+    
     async function getSheetData(sheetName) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
       const res = await axios.get(url);
@@ -685,11 +691,6 @@ if (userIndex !== -1) {
       } else {
         showLoginForm();
       }
-         // Новая функция toggleScripts
-    function toggleScripts() {
-      const menu = document.getElementById('scriptList');
-      menu.classList.toggle('hidden');
-    }
     });
 
     // ... остальной код без изменений ...
