@@ -596,6 +596,10 @@ async function onTelegramAuth(user) {
   // Завантаження статистики
   fetchUserStatsByTelegram(telegramUsername);
 }
-  </script>
+  function toggleScripts() {
+    const list = document.getElementById('scriptList');
+    list.style.display = list.style.display === 'flex' ? 'none' : 'flex';
+  }
+    </script>
 </body>
 </html>
