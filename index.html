@@ -70,44 +70,46 @@ body {
 /* Фон таблицы и контейнера таблицы */
 /* Улучшение таблицы детальной статистики */
 .table-container table {
-  border-radius: 12px;
-  overflow: hidden;
   width: 100%;
-  border-spacing: 0;
-  font-size: 0.95rem;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  background-color: #1a1a1a;
+  color: #dcdcdc;
 }
 
 .table-container thead {
-  background-color: #1d1f26;
+  background-color: #222;
 }
 
 .table-container th {
   text-align: left;
-  padding: 12px;
-  background-color: #1d1f26;
-  color: #1977FD;
-  font-weight: 600;
+  padding: 10px 12px;
+  font-weight: 500;
+  color: #b0b0b0;
 }
 
 .table-container td {
   padding: 10px 12px;
-  border-top: 1px solid #2a2d38;
+  border-top: 1px solid #2c2c2c;
 }
 
 .table-container tbody tr:nth-child(even) {
-  background-color: #16181d;
+  background-color: #1e1e1e;
 }
 
 .table-container tbody tr:hover {
-  background-color: #1e2230;
-  transition: background-color 0.2s ease-in-out;
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease;
 }
 
 .table-container td.inactive-cell {
-  color: #F87171;
-  font-weight: bold;
+  color: #888;
   text-align: center;
+  font-style: italic;
 }
+
 
 table {
   background-color: #121315;
