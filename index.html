@@ -67,7 +67,7 @@
     </div>
 
     <!-- Админ панель -->
-    <div id="admin-panel" class="hidden">
+    <div id="admin-panel" class="hidden mt-12 border-t border-[#1977FD] pt-6">
       <h2 class="text-xl font-bold mb-4 text-[#1977FD]">Адмін панель</h2>
       <div id="admin-content" class="overflow-x-auto"></div>
     </div>
@@ -207,8 +207,8 @@
       tr.innerHTML = `
         <td class="border border-[#1977FD] px-2 py-1">${h}</td>
         <td class="border border-[#1977FD] px-2 py-1">${tickets}</td>
-        <td class="border border-[#1977FD] px-2 py-1">${timeStr}</td>
-        <td class="border border-[#1977FD] px-2 py-1">${isInactive ? 'Так' : ''}</td>
+        <td class="border border-[#1977FD] px-2 py-1">${isInactive ? 'Неактивний' : timeStr}</td>
+        <td class="border border-[#1977FD] px-2 py-1">${isInactive ? '✔️' : ''}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -220,7 +220,7 @@
       window.statsChartInstance.destroy();
     }
 
-    // Сортируем даты по возрастанию
+    // Отсортировать по дате
     const sortedDates = [...dateCols].sort((a, b) => parseDate(a.h) - parseDate(b.h));
 
     const labels = [];
@@ -231,12 +231,12 @@
       labels.push(h);
       ticketsData.push(parseInt(ticketsRow[i]) || 0);
 
-      const timeStr = timeRow[i];
-      if (!timeStr || timeStr === 'Н') {
+      const timeStr = timeRow[i] || '00:00:00';
+      if (timeStr === 'Н') {
         timeData.push(0);
       } else {
         const [hh, mm, ss] = timeStr.split(':').map(Number);
-        timeData.push(hh * 3600 + mm * 60 + ss);
+        timeData.push(hh + mm/60 + ss/3600); // часы с дробями
       }
     });
 
@@ -249,94 +249,136 @@
             label: 'Тікети',
             data: ticketsData,
             borderColor: '#1977FD',
-            backgroundColor: 'rgba(25, 119, 253, 0.2)',
+            backgroundColor: 'rgba(25, 119, 253, 0.3)',
+            yAxisID: 'y',
+            tension: 0.2,
             fill: true,
-            tension: 0.4,
             pointRadius: 3,
-            pointHoverRadius: 5,
           },
           {
-            label: 'Час у грі (сек)',
+            label: 'Час у грі (години)',
             data: timeData,
-            borderColor: '#33cc33',
-            backgroundColor: 'rgba(51, 204, 51, 0.2)',
+            borderColor: '#FED530',
+            backgroundColor: 'rgba(254, 213, 48, 0.3)',
+            yAxisID: 'y1',
+            tension: 0.2,
             fill: true,
-            tension: 0.4,
             pointRadius: 3,
-            pointHoverRadius: 5,
           },
         ]
       },
       options: {
-        responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        stacked: false,
         scales: {
           y: {
-            beginAtZero: true,
+            type: 'linear',
+            position: 'left',
+            title: {
+              display: true,
+              text: 'Тікети',
+              color: '#1977FD'
+            },
+            ticks: {
+              color: '#1977FD',
+            },
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            title: {
+              display: true,
+              text: 'Час у грі (години)',
+              color: '#FED530'
+            },
+            grid: {
+              drawOnChartArea: false,
+            },
+            ticks: {
+              color: '#FED530',
+            },
+          },
+          x: {
+            ticks: {
+              color: '#FFFBEF',
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#FFFBEF',
+            }
           }
         }
       }
     });
   }
 
-  // Админка: загрузка всех пользователей и вывод таблицы
-  async function loadAdminData() {
+  // Функция отображения админ панели
+  async function showAdminPanel() {
+    document.getElementById('admin-panel').classList.remove('hidden');
+    document.getElementById('dashboard').classList.remove('hidden'); // чтобы админ видел и свой дашборд
+
+    // Получаем данные таблицы для админа
     try {
       const ticketsData = await getSheetData('Май_2025_таблица');
       const timeData = await getSheetData('Время_в_игре');
 
-      const ticketHeaders = ticketsData[0];
-      const telegramIdx = ticketHeaders.indexOf('Telegram');
-      const nameIdx = ticketHeaders.indexOf('Имя сотрудника');
+      const adminDiv = document.getElementById('admin-content');
+      adminDiv.innerHTML = '';
 
-      let html = '<table class="min-w-full text-left border-collapse text-sm">';
-      html += `
-        <thead>
-          <tr>
-            <th class="border border-[#1977FD] px-2 py-1">Ім’я</th>
-            <th class="border border-[#1977FD] px-2 py-1">Telegram</th>
-            <th class="border border-[#1977FD] px-2 py-1">Тікети за місяць</th>
-          </tr>
-        </thead><tbody>`;
+      // Показываем простую таблицу с количеством тикетов по пользователям за последние дни
+      const headers = ticketsData[0];
+      const dateCols = headers.filter(h => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
 
-      // Даты для подсчёта месяца
-      const dateCols = ticketHeaders
-        .map((h, i) => ({h, i}))
-        .filter(({h}) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+      let html = `<table class="min-w-full text-left border-collapse text-sm">
+        <thead><tr>
+          <th class="border border-[#1977FD] px-2 py-1">Ім'я співробітника</th>
+          <th class="border border-[#1977FD] px-2 py-1">Telegram</th>`;
 
-      // Для каждого пользователя подсчёт тикетов за весь месяц (последние 30 дней)
-      ticketsData.slice(1).forEach(row => {
-        const ticketsSum = dateCols.reduce((sum, {i}) => sum + (parseInt(row[i]) || 0), 0);
-        html += `<tr>
-          <td class="border px-2 py-1">${row[nameIdx]}</td>
-          <td class="border px-2 py-1">${row[telegramIdx]}</td>
-          <td class="border px-2 py-1">${ticketsSum}</td>
-        </tr>`;
+      dateCols.forEach(date => {
+        html += `<th class="border border-[#1977FD] px-2 py-1">${date}</th>`;
       });
+      html += `</tr></thead><tbody>`;
+
+      for (let i = 1; i < ticketsData.length; i++) {
+        const row = ticketsData[i];
+        html += `<tr>`;
+        html += `<td class="border border-[#1977FD] px-2 py-1">${row[1] || ''}</td>`; // Имя сотрудника
+        html += `<td class="border border-[#1977FD] px-2 py-1">${row[3] || ''}</td>`; // Telegram
+        dateCols.forEach(date => {
+          const colIndex = headers.indexOf(date);
+          html += `<td class="border border-[#1977FD] px-2 py-1">${row[colIndex] || ''}</td>`;
+        });
+        html += `</tr>`;
+      }
 
       html += '</tbody></table>';
 
-      document.getElementById('admin-content').innerHTML = html;
-    } catch (e) {
-      document.getElementById('admin-content').innerText = 'Помилка при завантаженні даних.';
-      console.error(e);
+      adminDiv.innerHTML = html;
+
+    } catch (error) {
+      console.error(error);
+      alert('Помилка при завантаженні адмін даних.');
     }
   }
 
-  // Вызов при авторизации через Telegram
   function onTelegramAuth(user) {
     document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
 
-    if (admins.includes(user.username)) {
-      document.getElementById('admin-panel').classList.remove('hidden');
-      loadAdminData();
-    } else {
-      document.getElementById('dashboard').classList.remove('hidden');
-      fetchUserStatsByTelegram(user.username);
+    const username = user.username;
+
+    fetchUserStatsByTelegram(username);
+
+    if (admins.includes(username)) {
+      showAdminPanel();
     }
   }
-
-  window.onTelegramAuth = onTelegramAuth; // сделать функцию глобальной для Telegram виджета
-
 </script>
 </body>
 </html>
