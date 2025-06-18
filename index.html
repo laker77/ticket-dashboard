@@ -8,7 +8,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
-    /* Стили для адаптивной таблицы */
     @media (max-width: 640px) {
       .stats-grid {
         grid-template-columns: 1fr;
@@ -37,7 +36,6 @@ body {
   margin: 60px auto;
   box-shadow: 0 0 30px #1977FDAA;
   text-align: center;
-
   animation: fadeInUp 1.2s ease forwards;
   opacity: 0;
   transform: translateY(30px);
@@ -60,15 +58,11 @@ body {
   animation: pulse 3s infinite ease-in-out;
 }
 
-    /* Фон всей панели с графиком */
 .bg-white.p-4.rounded.shadow.mb-6 {
   background-color: #121315 !important;
   color: #FFFBEF;
-  
 }
 
-/* Фон таблицы и контейнера таблицы */
-/* Улучшение таблицы детальной статистики */
 .table-container table {
   width: 100%;
   border-collapse: collapse;
@@ -104,34 +98,25 @@ body {
   transition: background-color 0.2s ease;
 }
 
-.table-container td.inactive-cell {
-  color: #888;
-  text-align: center;
-  font-style: italic;
-}
-
-
 table {
   background-color: #121315;
   color: #FFFBEF;
   border-color: #2a2d38;
 }
 
-/* Фон блоков статистики за Вчора, Тиждень, Місяць */
 .grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div {
   background-color: #121315 !important;
   color: #FFFBEF !important;
   border-radius: 14px;
 }
 
-  .bg-white.p-4.rounded.shadow {
+.bg-white.p-4.rounded.shadow {
   background-color: #121315 !important;
   color: #FFFBEF;
   box-shadow: none !important;
   border-radius: 14px;
 }
 
-/* Заголовки в статистических блоках — чуть светлее */
 .grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div h3 {
   color: #1977FD;
 }
@@ -163,12 +148,16 @@ table {
 
 .script-list {
   margin-top: 8px;
-  display: none;
+  display: flex;
   flex-direction: column;
   background-color: #1e1e1e;
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.script-list.hidden {
+  display: none !important;
 }
 
 .script-item {
@@ -178,20 +167,22 @@ table {
   cursor: pointer;
   transition: background-color 0.2s ease;
   font-size: 14px;
+  display: block;
+  text-decoration: none;
 }
 
 .script-item:hover {
   background-color: #333;
 }
-    .hidden {
+.hidden {
   display: none !important;
 }
 
-    .script-menu {
+.script-menu {
   animation: fade-in 0.8s ease-out forwards;
 }
 
-    h1 {
+h1 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
   color: #1977FD;
@@ -199,14 +190,32 @@ table {
   text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
 }
 
-  @keyframes fade-in {
+#logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background-color 0.3s;
+  border: none;
+  font-weight: bold;
+}
+
+#logout-btn:hover {
+  background-color: #e60000;
+}
+
+@keyframes fade-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in {
   animation: fade-in 0.8s ease-out forwards;
 }
-
 
 @keyframes fadeInUp {
   to {
@@ -227,27 +236,34 @@ table {
 }
   </style>
 </head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 <body class="bg-gray-100 text-gray-800 font-sans">
-  <body class="bg-gray-100 text-gray-800 font-sans">
-  <!-- Добавляем кнопку выхода -->
-  <button id="logout-btn" class="fixed top-4 right-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition hidden">
-    Вийти
-  </button>
+  <button id="logout-btn" class="hidden">Вийти</button>
+
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Ласкаво просимо!</h1>
-<div id="login-section">
-  <p>Будь ласка, увійдіть через Telegram:</p>
-  <div class="telegram-button-wrapper">
-    <script async src="https://telegram.org/js/telegram-widget.js?7"
-            data-telegram-login="ticket_tracker_UG_bot" 
-            data-size="large"
-            data-userpic="false"
-            data-request-access="write"
-            data-onauth="onTelegramAuth(user)">
-    </script>
-  </div>
-</div>
+    <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
+    <div id="login-section">
+      <p>Будь ласка, увійдіть через Telegram:</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+    </div>
+    <div class="script-menu hidden" id="scriptMenu">
+      <div class="menu-button" onclick="toggleScripts()">≡</div>
+      <div class="script-list hidden" id="scriptList">
+        <a href="script1.1.html" class="script-item">Скрипт 1.1</a>
+        <a href="script1.2.html" class="script-item">Скрипт 1.2</a>
+        <a href="script1.3.html" class="script-item">Скрипт 1.3</a>
+        <a href="script1.4.html" class="script-item">Скрипт 1.4</a>
+        <a href="script1.5.html" class="script-item">Скрипт 1.5</a>
+        <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
+      </div>
+    </div>
    <div class="script-menu hidden" id="scriptMenu">
   <div class="menu-button" onclick="toggleScripts()">≡</div>
   <div class="script-list" id="scriptList">
@@ -669,6 +685,11 @@ if (userIndex !== -1) {
       } else {
         showLoginForm();
       }
+         // Новая функция toggleScripts
+    function toggleScripts() {
+      const menu = document.getElementById('scriptList');
+      menu.classList.toggle('hidden');
+    }
     });
 
     // ... остальной код без изменений ...
