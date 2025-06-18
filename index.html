@@ -136,6 +136,64 @@ table {
   color: #1977FD;
 }
 
+  .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 180px;
+  height: 100vh;
+  background-color: #181818;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: sans-serif;
+  border-right: 1px solid #2c2c2c;
+  z-index: 10;
+}
+
+.menu-item {
+  background-color: #2a2a2a;
+  color: #dcdcdc;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: #3a3a3a;
+}
+
+.submenu {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 10px;
+  margin-top: 4px;
+}
+
+.submenu-item {
+  background-color: #232323;
+  color: #bfbfbf;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.submenu-item:hover {
+  background-color: #333;
+}
+
+.main-content {
+  margin-left: 200px; /* отступ, чтобы не перекрывалось меню */
+  padding: 20px;
+}
+
+
   @keyframes fade-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -165,6 +223,15 @@ table {
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
+  <div class="sidebar">
+  <div class="menu-item" onclick="toggleSubmenu()">Скрипты</div>
+  <div class="submenu" id="submenu">
+    <div class="submenu-item">Скрипт 1.1</div>
+    <div class="submenu-item">Скрипт 1.2</div>
+    <div class="submenu-item">Скрипт 1.3</div>
+    <div class="submenu-item">Скрипт 1.4</div>
+  </div>
+</div>
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4">Ласкаво просимо!</h1>
 <div id="login-section">
@@ -522,6 +589,12 @@ if (userIndex !== -1) {
 
       fetchUserStatsByTelegram(telegramUsername);
     }
+    
+  function toggleSubmenu() {
+    const submenu = document.getElementById("submenu");
+    submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
+  }
+    
   </script>
 </body>
 </html>
