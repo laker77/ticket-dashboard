@@ -573,7 +573,7 @@ if (userIndex !== -1) {
         alert('Помилка під час завантаження даних з Google Sheets');
       }
     }
-<script>
+    
   async function fetchUserStatsByTelegram(username) {
     try {
       const response = await fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`);
