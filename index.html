@@ -7,6 +7,23 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    /* Стили для адаптивной таблицы */
+    @media (max-width: 640px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      table {
+        font-size: 0.875rem;
+      }
+      th, td {
+        padding: 0.25rem 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
   <div class="container mx-auto p-4">
@@ -23,11 +40,11 @@
     </div>
     <div id="dashboard" class="hidden">
       <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stats-grid">
         <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Вчора</h3>
-          <p>Тікети: <span id="today-tickets">—</span></p>
-          <p>Час у грі: <span id="today-time">—</span></p>
+          <h3 class="font-bold mb-2">За вчора</h3>
+          <p>Тікети: <span id="yesterday-tickets">—</span></p>
+          <p>Час у грі: <span id="yesterday-time">—</span></p>
         </div>
         <div class="bg-white p-4 rounded shadow">
           <h3 class="font-bold mb-2">Тиждень</h3>
@@ -48,17 +65,19 @@
 
       <div class="bg-white p-4 rounded shadow">
         <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
-        <table class="min-w-full text-left border-collapse">
-          <thead>
-            <tr>
-              <th class="border px-2 py-1">Дата</th>
-              <th class="border px-2 py-1">Тікети</th>
-              <th class="border px-2 py-1">Час у грі</th>
-              <th class="border px-2 py-1">Неактив</th>
-            </tr>
-          </thead>
-          <tbody id="daily-stats-body"></tbody>
-        </table>
+        <div class="table-container">
+          <table class="min-w-full text-left border-collapse">
+            <thead>
+              <tr>
+                <th class="border px-2 py-1">Дата</th>
+                <th class="border px-2 py-1">Тікети</th>
+                <th class="border px-2 py-1">Час у грі</th>
+                <th class="border px-2 py-1">Неактив</th>
+              </tr>
+            </thead>
+            <tbody id="daily-stats-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -75,7 +94,7 @@
 
     function parseDate(str) {
       const [d, m, y] = str.split('.');
-      return new Date(`${y}-${m}-${d}T00:00:00`);
+      return new Date(y, m-1, d);
     }
 
     function formatDate(date) {
@@ -91,70 +110,49 @@
       return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
     }
 
+    // Функция для получения даты без времени
+    function getDateWithoutTime(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
     async function fetchUserStatsByTelegram(telegramUsername) {
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
         const timeData = await getSheetData('Время_в_игре');
 
-        console.log('Дані тікетів:', ticketsData);
-        console.log('Дані часу:', timeData);
-        console.log('Шукаємо Telegram:', telegramUsername);
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
 
-        const ticketsHeaders = ticketsData[0].map(h => h.trim());
-        const telegramColIndex = ticketsHeaders.findIndex(h => h.toLowerCase() === 'telegram');
-        const nameColIndex = ticketsHeaders.findIndex(h => h.toLowerCase() === 'имя сотрудника');
-
-        if (telegramColIndex === -1) {
-          alert('Не знайдено стовпця Telegram у таблиці тікетів');
-          return;
-        }
-        if (nameColIndex === -1) {
-          alert('Не знайдено стовпця Имя сотрудника у таблиці тікетів');
-          return;
-        }
-
-        // Поиск пользователя по telegram с учётом регистра и пробелов
-        const userTicketsRow = ticketsData.find(row => {
-          if (!row[telegramColIndex]) return false;
-          return row[telegramColIndex].trim().toLowerCase() === telegramUsername.trim().toLowerCase();
-        });
-
+        const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
         if (!userTicketsRow) {
-          alert('Користувача не знайдено у таблиці тікетів');
-          console.log('Telegram user не знайдено в таблиці:', telegramUsername);
+          alert('Користувача не знайдено в таблиці тікетів');
           return;
         }
 
-        const userName = (userTicketsRow[nameColIndex] || '').trim();
+        const userName = userTicketsRow[nameColIndex];
 
-        const timeHeaders = timeData[0].map(h => h.trim());
-        const timeNameColIndex = timeHeaders.findIndex(h => h.toLowerCase() === 'имя сотрудника');
-
-        if (timeNameColIndex === -1) {
-          alert('Не знайдено стовпця Имя сотрудника у таблиці часу');
-          return;
-        }
-
-        const userTimeRow = timeData.find(row => (row[timeNameColIndex] || '').trim() === userName);
+        const timeHeaders = timeData[0];
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
         if (!userTimeRow) {
-          alert('Користувача не знайдено у таблиці часу');
+          alert('Користувача не знайдено в таблиці часу');
           return;
         }
 
-        const today = new Date();
+        const today = getDateWithoutTime(new Date());
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
 
-        // Даты из заголовков листа с тикетами
         const dateCols = ticketsHeaders
-          .map((h, i) => ({h, i}))
-          .filter(({h}) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+          .map((h, i) => ({ h, i }))
+          .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
 
         function sumTicketsAndTime(startDate, endDate) {
           let ticketsSum = 0;
           let timeSecondsSum = 0;
 
-          dateCols.forEach(({h, i}) => {
+          dateCols.forEach(({ h, i }) => {
             const dt = parseDate(h);
             if (dt >= startDate && dt <= endDate) {
               ticketsSum += parseInt(userTicketsRow[i]) || 0;
@@ -169,49 +167,41 @@
             }
           });
 
-          return {ticketsSum, timeSecondsSum};
+          return { ticketsSum, timeSecondsSum };
         }
 
-        // Вчора
-        const yesterdayStart = new Date(yesterday);
-        yesterdayStart.setHours(0,0,0,0);
-        const yesterdayEnd = new Date(yesterday);
-        yesterdayEnd.setHours(23,59,59,999);
-        const yesterdayStats = sumTicketsAndTime(yesterdayStart, yesterdayEnd);
+        // Исправление периодов:
+        // Вчера: только один день (yesterday)
+        const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
+        
+        // Неделя: 7 дней назад до вчера
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        const weekStats = sumTicketsAndTime(weekStart, yesterday);
+        
+        // Месяц: 30 дней назад до вчера
+        const monthStart = new Date(today);
+        monthStart.setDate(today.getDate() - 30);
+        const monthStats = sumTicketsAndTime(monthStart, yesterday);
 
-        // Тиждень (7 днів включно з вчора)
-        const weekStart = new Date(yesterday);
-        weekStart.setDate(yesterday.getDate() - 6);
-        weekStart.setHours(0,0,0,0);
-        const weekStats = sumTicketsAndTime(weekStart, yesterdayEnd);
-
-        // Місяць (30 днів включно з вчора)
-        const monthStart = new Date(yesterday);
-        monthStart.setDate(yesterday.getDate() - 29);
-        monthStart.setHours(0,0,0,0);
-        const monthStats = sumTicketsAndTime(monthStart, yesterdayEnd);
-
-        // Обновлення UI
-        document.getElementById('today-tickets').innerText = yesterdayStats.ticketsSum;
-        document.getElementById('today-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
+        document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
+        document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
         document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
         document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
         document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
         document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
 
-        // Таблиця детальної статистики
         const tbody = document.getElementById('daily-stats-body');
         tbody.innerHTML = '';
-
         let inactiveCount = 0;
-
         const chartLabels = [];
         const chartTickets = [];
         const chartTimeHours = [];
 
-        dateCols.forEach(({h, i}) => {
+        dateCols.forEach(({ h, i }) => {
           const dt = parseDate(h);
-          if (dt >= monthStart && dt <= yesterdayEnd) {
+          // Выводим данные только до вчера включительно
+          if (dt >= monthStart && dt <= yesterday) {
             const dayTickets = parseInt(userTicketsRow[i]) || 0;
             const timeColIndex = timeHeaders.indexOf(h);
             let dayTimeStr = 'Н';
@@ -226,11 +216,12 @@
             if (dayTimeStr === 'Н') inactiveCount++;
 
             const tr = document.createElement('tr');
-            tr.innerHTML = 
-              `<td class="border px-2 py-1">${h}</td>
-               <td class="border px-2 py-1">${dayTickets}</td>
-               <td class="border px-2 py-1">${dayTimeStr}</td>
-               <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>`;
+            tr.innerHTML = `
+              <td class="border px-2 py-1">${h}</td>
+              <td class="border px-2 py-1">${dayTickets}</td>
+              <td class="border px-2 py-1">${dayTimeStr}</td>
+              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
+            `;
             tbody.appendChild(tr);
 
             chartLabels.push(h);
@@ -240,12 +231,12 @@
         });
 
         const trTotal = document.createElement('tr');
-        trTotal.innerHTML = 
-          `<td class="border px-2 py-1 font-bold">Усього неактивів</td>
-           <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>`;
+        trTotal.innerHTML = `
+          <td class="border px-2 py-1 font-bold">Усього неактивів</td>
+          <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
+        `;
         tbody.appendChild(trTotal);
 
-        // Графік
         const ctx = document.getElementById('statsChart').getContext('2d');
         if (window.statsChartInstance) window.statsChartInstance.destroy();
 
@@ -270,7 +261,7 @@
                 yAxisID: 'yTime',
                 tension: 0.3,
               }
-            ]
+            ],
           },
           options: {
             responsive: true,
@@ -288,6 +279,7 @@
                   display: true,
                   text: 'Тікети',
                 },
+                beginAtZero: true,
               },
               yTime: {
                 type: 'linear',
@@ -295,26 +287,51 @@
                 position: 'right',
                 title: {
                   display: true,
-                  text: 'Години',
+                  text: 'Час (години)',
                 },
+                beginAtZero: true,
                 grid: {
                   drawOnChartArea: false,
                 },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 45,
+                  maxTicksLimit: 15,
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                    ? `${ctx.parsed.y} год`
+                    : ctx.parsed.y,
+                }
               }
             }
-          }
+          },
         });
 
-      } catch (err) {
-        console.error(err);
-        alert('Сталася помилка при завантаженні статистики');
+      } catch (error) {
+        console.error(error);
+        alert('Помилка під час завантаження даних з Google Sheets');
       }
     }
 
     function onTelegramAuth(user) {
-      document.getElementById('login-section').style.display = 'none';
+      const telegramUsername = '@' + user.username;
+      const firstName = user.first_name;
+
+      document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      fetchUserStatsByTelegram(user.username);
+      document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
+
+      fetchUserStatsByTelegram(telegramUsername);
     }
   </script>
 </body>
