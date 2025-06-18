@@ -574,18 +574,16 @@ if (userIndex !== -1) {
       }
     }
 
-    function onTelegramAuth(user) {
+   function onTelegramAuth(user) {
   const telegramUsername = '@' + user.username;
 
   fetchUserStatsByTelegram(telegramUsername)
     .then(data => {
       if (!data) {
-        // Пользователь не найден в базе
         alert('Такого пользователя нет в базе.');
-        return; // не продолжаем
+        return;
       }
 
-      // Если пользователь найден — показываем интерфейс
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
       document.getElementById('scriptMenu').classList.remove('hidden');
@@ -593,33 +591,24 @@ if (userIndex !== -1) {
       const firstName = user.first_name;
       document.querySelector('h1').innerText = `Вітаємо, ${firstName}!`;
 
-      // Можно дополнительно работать с данными пользователя из базы
       console.log('Данные пользователя:', data);
     })
     .catch(err => {
       console.error('Ошибка при получении данных пользователя:', err);
-      alert('Ошибка сервера. Попробуйте позже.');
+      window.location.href = "/404.html"; // редирект на 404
     });
 }
 
 function fetchUserStatsByTelegram(username) {
-  fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`)
+  return fetch(`/api/getUserStats?telegram=${encodeURIComponent(username)}`)
     .then(response => {
       if (!response.ok) {
         throw new Error("Пользователь не найден");
       }
       return response.json();
-    })
-    .then(data => {
-      // Пользователь найден — делаем что нужно
-      console.log("Данные пользователя:", data);
-    })
-    .catch(error => {
-      console.error(error);
-      // Переход на страницу 404
-      window.location.href = "/404.html";
     });
 }
+
 
 
   </script>
