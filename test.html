@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Адмін Панель</title>
+  <title>Деталізована Адмін Панель</title>
   <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
@@ -76,10 +76,7 @@
     .admin-table tbody tr:hover {
       background-color: #2a2a2a;
       transition: background-color 0.2s ease;
-    }
-
-    .highlight {
-      background-color: #1e3a8a !important;
+      cursor: pointer;
     }
 
     .rank-badge {
@@ -218,24 +215,190 @@
       100% { transform: rotate(360deg); }
     }
 
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: #121315;
+      margin: 5% auto;
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 1000px;
+      position: relative;
+      box-shadow: 0 0 30px rgba(25, 119, 253, 0.5);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 30px;
+      color: #aaa;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: #fff;
+    }
+
+    .employee-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #2a2d38;
+    }
+
+    .employee-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .employee-info {
+      flex-grow: 1;
+    }
+
+    .employee-name {
+      font-size: 1.8rem;
+      margin: 0 0 5px 0;
+      color: #1977FD;
+    }
+
+    .employee-telegram {
+      font-size: 1.1rem;
+      color: #60a5fa;
+      margin-bottom: 15px;
+    }
+
+    .employee-stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      padding: 12px 20px;
+      min-width: 150px;
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #3b82f6;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: #94a3b8;
+    }
+
+    .week-container {
+      margin-bottom: 30px;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .week-header {
+      background-color: #222;
+      padding: 12px 20px;
+      font-weight: bold;
+      color: #60a5fa;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background-color: #2a2d38;
+    }
+
+    .day-cell {
+      background-color: #121315;
+      padding: 15px;
+      min-height: 120px;
+      position: relative;
+    }
+
+    .day-date {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #94a3b8;
+    }
+
+    .day-stats {
+      margin-bottom: 8px;
+    }
+
+    .day-stat {
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+
+    .day-norm {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      padding: 5px;
+      text-align: center;
+      font-size: 0.8rem;
+      border-radius: 0 0 5px 5px;
+    }
+
+    .norm-fulfilled {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+    }
+
+    .norm-stretched {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+    }
+
+    .norm-missing {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    .norm-fired {
+      background-color: rgba(156, 163, 175, 0.2);
+      color: #9ca3af;
+    }
+
     @media (max-width: 768px) {
-      .admin-header {
+      .days-grid {
+        grid-template-columns: repeat(1, 1fr);
+      }
+      
+      .employee-header {
         flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
+        text-align: center;
       }
       
-      .admin-table {
-        font-size: 0.8rem;
-      }
-      
-      .admin-table th, 
-      .admin-table td {
-        padding: 8px 10px;
-      }
-      
-      .summary-cards {
-        grid-template-columns: 1fr;
+      .employee-stats {
+        justify-content: center;
       }
     }
 
@@ -252,7 +415,7 @@
 <body class="bg-gray-100 text-gray-800 font-sans">
   <div class="admin-container">
     <div class="admin-header">
-      <h1 class="admin-title">Адмін Панель</h1>
+      <h1 class="admin-title">Деталізована Адмін Панель</h1>
       <div class="admin-actions">
         <button id="refresh-btn" class="admin-btn primary">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -285,10 +448,10 @@
       </div>
       
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.2s">
-        <h3>Попередження</h3>
-        <p>Низька активність: <span id="low-activity" class="value">...</span></p>
-        <p>Не авторизовані: <span id="never-logged" class="value">...</span></p>
-        <p>Потребують перевірки: <span id="need-review" class="value">...</span></p>
+        <h3>Виконання норм</h3>
+        <p>Норма виконана: <span id="norm-fulfilled" class="value">...</span></p>
+        <p>Норма натягнута: <span id="norm-stretched" class="value">...</span></p>
+        <p>Проблемні: <span id="problematic" class="value">...</span></p>
       </div>
     </div>
 
@@ -324,16 +487,55 @@
     </div>
   </div>
 
+  <!-- Модальное окно с детальной информацией -->
+  <div id="employee-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      
+      <div class="employee-header">
+        <div class="employee-avatar" id="employee-avatar">JD</div>
+        <div class="employee-info">
+          <h2 class="employee-name" id="employee-name">Іван Петренко</h2>
+          <div class="employee-telegram" id="employee-telegram">@ivan_p</div>
+          <div class="employee-stats">
+            <div class="stat-card">
+              <div class="stat-value" id="employee-rank">3</div>
+              <div class="stat-label">Місце</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="employee-total-tickets">215</div>
+              <div class="stat-label">Тікети (місяць)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="employee-total-time">98.5 год</div>
+              <div class="stat-label">Час (місяць)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="employee-norm-fulfilled">12</div>
+              <div class="stat-label">Норма виконана</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="weeks-container">
+        <!-- Недели будут заполнены через JavaScript -->
+      </div>
+    </div>
+  </div>
+
   <script>
     // ID Google таблицы и API ключ
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
     
     // Список разрешенных администраторов
-    const allowedAdmins = ['@laker_77', '@admin1', '@admin2'];
+    const allowedAdmins = ['@laker_77'];
     
     // Данные для таблицы
     let employeesData = [];
+    let ticketsData = [];
+    let timeData = [];
     
     // Функция для получения данных из Google Sheets
     async function getSheetData(sheetName) {
@@ -390,6 +592,29 @@
       return `<span class="rank-badge ${rankClass}">${rank}</span>`;
     }
     
+    // Функция для определения выполнения нормы
+    function getNormStatus(tickets, timeSeconds) {
+      if (timeSeconds === 0 && tickets === 0) return "Звільнений";
+      
+      const hours = timeSeconds / 3600;
+      
+      if (tickets >= 15 && hours >= 3) return "Норма виконана";
+      if (tickets >= 10 && hours >= 2) return "Норма натягнута";
+      if (tickets === 0 && hours < 2) return "Норма відсутня";
+      return "Норма не виконана";
+    }
+    
+    // Функция для получения класса нормы
+    function getNormClass(normStatus) {
+      switch(normStatus) {
+        case "Норма виконана": return "norm-fulfilled";
+        case "Норма натягнута": return "norm-stretched";
+        case "Норма відсутня": return "norm-missing";
+        case "Звільнений": return "norm-fired";
+        default: return "norm-missing";
+      }
+    }
+    
     // Функция для расчета статистики
     async function calculateAdminStats() {
       try {
@@ -404,8 +629,8 @@
         monthStart.setDate(today.getDate() - 30);
         
         // Получаем данные из Google Sheets
-        const ticketsData = await getSheetData('Май_2025_таблица');
-        const timeData = await getSheetData('Время_в_игре');
+        ticketsData = await getSheetData('Май_2025_таблица');
+        timeData = await getSheetData('Время_в_игре');
         
         if (!ticketsData || !timeData) {
           throw new Error("Не вдалося отримати дані з Google Sheets");
@@ -431,6 +656,9 @@
         let maxTimeToday = 0;
         let maxTicketsEmployee = "";
         let maxTimeEmployee = "";
+        let normFulfilledCount = 0;
+        let normStretchedCount = 0;
+        let problematicCount = 0;
         
         // Проходим по всем сотрудникам
         for (let i = 1; i < ticketsData.length; i++) {
@@ -450,6 +678,9 @@
           let weekTime = 0;
           let monthTickets = 0;
           let monthTime = 0;
+          let normFulfilled = 0;
+          let normStretched = 0;
+          let problematic = 0;
           
           // Проходим по всем датам
           for (const { h: dateStr, i: dateIndex } of dateCols) {
@@ -497,6 +728,12 @@
             if (date >= monthStart && date <= today) {
               monthTickets += tickets;
               monthTime += timeSeconds;
+              
+              // Считаем выполнение нормы
+              const normStatus = getNormStatus(tickets, timeSeconds);
+              if (normStatus === "Норма виконана") normFulfilled++;
+              else if (normStatus === "Норма натягнута") normStretched++;
+              else if (normStatus === "Норма відсутня" || normStatus === "Звільнений") problematic++;
             }
           }
           
@@ -507,8 +744,18 @@
               day: { tickets: dayTickets, time: dayTime },
               week: { tickets: weekTickets, time: weekTime },
               month: { tickets: monthTickets, time: monthTime }
+            },
+            norms: {
+              fulfilled: normFulfilled,
+              stretched: normStretched,
+              problematic: problematic
             }
           });
+          
+          // Общая статистика по нормам
+          normFulfilledCount += normFulfilled;
+          normStretchedCount += normStretched;
+          problematicCount += problematic;
         }
         
         // Сортируем сотрудников по рейтингу (месяц)
@@ -538,18 +785,10 @@
         document.getElementById('top-contest').textContent = 
           employees[0] ? `${employees[0].name} - 1 місце` : "Немає даних";
         
-        // Предупреждения (упрощенная версия)
-        const lowActivity = employees.filter(e => 
-          e.stats.week.tickets < 10 || e.stats.week.time < 3600
-        ).length;
-        
-        const neverLogged = employees.filter(e => 
-          e.stats.month.tickets === 0 && e.stats.month.time === 0
-        ).length;
-        
-        document.getElementById('low-activity').textContent = `${lowActivity} співробітників`;
-        document.getElementById('never-logged').textContent = `${neverLogged} співробітників`;
-        document.getElementById('need-review').textContent = "0 співробітників";
+        // Статистика по нормам
+        document.getElementById('norm-fulfilled').textContent = normFulfilledCount;
+        document.getElementById('norm-stretched').textContent = normStretchedCount;
+        document.getElementById('problematic').textContent = problematicCount;
         
         return employees;
         
@@ -576,6 +815,7 @@
         }
         
         const row = document.createElement("tr");
+        row.dataset.employeeId = employee.telegram;
         
         row.innerHTML = `
           <td>
@@ -594,6 +834,143 @@
         
         tbody.appendChild(row);
       });
+      
+      // Добавляем обработчики клика
+      document.querySelectorAll('#admin-stats-body tr').forEach(row => {
+        row.addEventListener('click', () => {
+          const employeeId = row.dataset.employeeId;
+          const employee = data.find(emp => emp.telegram === employeeId);
+          if (employee) {
+            showEmployeeDetails(employee);
+          }
+        });
+      });
+    }
+    
+    // Функция для отображения деталей сотрудника
+    function showEmployeeDetails(employee) {
+      // Заполняем заголовок
+      document.getElementById('employee-name').textContent = employee.name;
+      document.getElementById('employee-telegram').textContent = employee.telegram;
+      document.getElementById('employee-avatar').textContent = 
+        employee.name.split(' ').map(n => n[0]).join('');
+      
+      document.getElementById('employee-rank').textContent = employee.rank;
+      document.getElementById('employee-total-tickets').textContent = employee.stats.month.tickets;
+      document.getElementById('employee-total-time').textContent = 
+        secondsToHHMMSS(employee.stats.month.time);
+      document.getElementById('employee-norm-fulfilled').textContent = 
+        employee.norms ? employee.norms.fulfilled : 0;
+      
+      // Создаем недели
+      const weeksContainer = document.getElementById('weeks-container');
+      weeksContainer.innerHTML = '';
+      
+      // Получаем даты за месяц
+      const dateCols = ticketsData[0]
+        .map((h, i) => ({ h, i }))
+        .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+      
+      // Находим строку сотрудника
+      const nameColIndex = ticketsData[0].indexOf('Имя сотрудника');
+      const ticketRow = ticketsData.find(row => row[nameColIndex] === employee.name);
+      
+      // Находим строку времени сотрудника
+      const timeNameColIndex = timeData[0].indexOf('Имя сотрудника');
+      const timeRow = timeData.find(row => row[timeNameColIndex] === employee.name);
+      
+      if (!ticketRow || !timeRow) return;
+      
+      // Группируем дни по неделям
+      const weeks = {};
+      dateCols.forEach(({ h: dateStr }) => {
+        const date = parseDate(dateStr);
+        const year = date.getFullYear();
+        const weekNum = getWeekNumber(date);
+        const weekKey = `${year}-W${weekNum}`;
+        
+        if (!weeks[weekKey]) {
+          weeks[weekKey] = [];
+        }
+        
+        weeks[weekKey].push({
+          date: dateStr,
+          dateObj: date
+        });
+      });
+      
+      // Сортируем недели
+      const sortedWeeks = Object.keys(weeks).sort().reverse();
+      
+      // Создаем блоки для каждой недели
+      sortedWeeks.forEach(weekKey => {
+        const week = weeks[weekKey];
+        const weekDates = week.map(d => d.dateObj);
+        const minDate = new Date(Math.min(...weekDates));
+        const maxDate = new Date(Math.max(...weekDates));
+        
+        const weekContainer = document.createElement('div');
+        weekContainer.className = 'week-container';
+        
+        weekContainer.innerHTML = `
+          <div class="week-header">
+            Тиждень ${formatDate(minDate)} - ${formatDate(maxDate)}
+          </div>
+          <div class="days-grid" id="days-${weekKey}"></div>
+        `;
+        
+        weeksContainer.appendChild(weekContainer);
+        
+        const daysGrid = document.getElementById(`days-${weekKey}`);
+        
+        // Сортируем дни недели
+        week.sort((a, b) => a.dateObj - b.dateObj);
+        
+        // Добавляем дни
+        week.forEach(day => {
+          const dateStr = day.date;
+          const date = day.dateObj;
+          
+          // Получаем данные по дням
+          const tickets = parseInt(ticketRow[ticketsData[0].indexOf(dateStr)]) || 0;
+          
+          const timeColIndex = timeData[0].indexOf(dateStr);
+          let timeSeconds = 0;
+          if (timeColIndex >= 0 && timeRow[timeColIndex] && timeRow[timeColIndex] !== 'Н') {
+            timeSeconds = timeToSeconds(timeRow[timeColIndex]);
+          }
+          
+          // Определяем норму
+          const normStatus = getNormStatus(tickets, timeSeconds);
+          const normClass = getNormClass(normStatus);
+          
+          const dayCell = document.createElement('div');
+          dayCell.className = 'day-cell';
+          
+          dayCell.innerHTML = `
+            <div class="day-date">${dateStr}</div>
+            <div class="day-stats">
+              <div class="day-stat">Тікети: <b>${tickets}</b></div>
+              <div class="day-stat">Час: <b>${secondsToHHMMSS(timeSeconds)}</b></div>
+            </div>
+            <div class="day-norm ${normClass}">${normStatus}</div>
+          `;
+          
+          daysGrid.appendChild(dayCell);
+        });
+      });
+      
+      // Показываем модальное окно
+      document.getElementById('employee-modal').style.display = 'block';
+    }
+    
+    // Функция для получения номера недели
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return weekNo;
     }
     
     // Функция для обновления данных
@@ -645,6 +1022,19 @@
         document.getElementById("admin-logout-btn").addEventListener("click", function() {
           localStorage.removeItem("tg_auth");
           window.location.href = "index.html";
+        });
+        
+        // Обработка закрытия модального окна
+        document.querySelector('.close-modal').addEventListener('click', function() {
+          document.getElementById('employee-modal').style.display = 'none';
+        });
+        
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+          const modal = document.getElementById('employee-modal');
+          if (event.target === modal) {
+            modal.style.display = 'none';
+          }
         });
         
       } catch (e) {
