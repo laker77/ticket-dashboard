@@ -345,6 +345,9 @@
       font-weight: bold;
       margin-bottom: 8px;
       color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .day-stats {
@@ -356,36 +359,17 @@
       margin-bottom: 3px;
     }
 
-    .day-norm {
-      position: absolute;
-      bottom: 10px;
-      left: 0;
-      right: 0;
-      padding: 5px;
-      text-align: center;
-      font-size: 0.8rem;
-      border-radius: 0 0 5px 5px;
+    .norm-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
     }
 
-    .norm-fulfilled {
-      background-color: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-    }
-
-    .norm-stretched {
-      background-color: rgba(245, 158, 11, 0.2);
-      color: #f59e0b;
-    }
-
-    .norm-missing {
-      background-color: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    .norm-fired {
-      background-color: rgba(156, 163, 175, 0.2);
-      color: #9ca3af;
-    }
+    .norm-fulfilled { background-color: #10b981; }
+    .norm-stretched { background-color: #f59e0b; }
+    .norm-missing { background-color: #ef4444; }
+    .norm-fired { background-color: #94a3b8; }
 
     @media (max-width: 768px) {
       .days-grid {
@@ -436,14 +420,14 @@
       <div class="summary-card animate-fade-in-up">
         <h3>Загальна статистика</h3>
         <p>Співробітників: <span id="total-employees" class="value">...</span></p>
-        <p>Зараз онлайн: <span id="online-employees" class="value">...</span></p>
         <p>Тікетів за день: <span id="total-tickets" class="value">...</span></p>
+        <p>Час за день: <span id="total-time" class="value">...</span></p>
       </div>
       
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s">
         <h3>Топ співробітників</h3>
-        <p>Тікети (день): <span id="top-tickets" class="value">...</span></p>
-        <p>Час у грі (день): <span id="top-time" class="value">...</span></p>
+        <p>Тікети (вчора): <span id="top-tickets" class="value">...</span></p>
+        <p>Час у грі (вчора): <span id="top-time" class="value">...</span></p>
         <p>Конкурс: <span id="top-contest" class="value">...</span></p>
       </div>
       
@@ -469,9 +453,8 @@
           <thead>
             <tr>
               <th>Співробітник</th>
-              <th>Статус</th>
-              <th>Тікети (день)</th>
-              <th>Час (день)</th>
+              <th>Тікети (вчора)</th>
+              <th>Час (вчора)</th>
               <th>Тікети (тиждень)</th>
               <th>Час (тиждень)</th>
               <th>Тікети (місяць)</th>
@@ -574,14 +557,6 @@
       return hours * 3600 + minutes * 60 + seconds;
     }
     
-    // Функция для получения статуса сотрудника
-    function getStatusElement(dayTickets, dayTime) {
-      if (dayTickets > 0 || dayTime > 0) {
-        return `<span class="status-indicator online"></span> Онлайн`;
-      }
-      return `<span class="status-indicator offline"></span> Офлайн`;
-    }
-    
     // Функция для получения рейтинга
     function getRankElement(rank) {
       let rankClass = "";
@@ -650,15 +625,18 @@
         
         // Массив для сотрудников
         const employees = [];
-        let onlineCount = 0;
-        let totalTicketsToday = 0;
-        let maxTicketsToday = 0;
-        let maxTimeToday = 0;
+        let totalTicketsYesterday = 0;
+        let totalTimeYesterday = 0;
+        let maxTicketsYesterday = 0;
+        let maxTimeYesterday = 0;
         let maxTicketsEmployee = "";
         let maxTimeEmployee = "";
         let normFulfilledCount = 0;
         let normStretchedCount = 0;
         let problematicCount = 0;
+        
+        // Формат даты для вчера
+        const yesterdayStr = formatDate(yesterday);
         
         // Проходим по всем сотрудникам
         for (let i = 1; i < ticketsData.length; i++) {
@@ -672,8 +650,8 @@
           if (!timeRow) continue;
           
           // Статистика
-          let dayTickets = 0;
-          let dayTime = 0;
+          let yesterdayTickets = 0;
+          let yesterdayTime = 0;
           let weekTickets = 0;
           let weekTime = 0;
           let monthTickets = 0;
@@ -694,26 +672,22 @@
               timeSeconds = timeToSeconds(timeRow[timeColIndex]);
             }
             
-            // Сегодняшний день
-            if (date.toDateString() === today.toDateString()) {
-              dayTickets = tickets;
-              dayTime = timeSeconds;
+            // Вчерашний день
+            if (dateStr === yesterdayStr) {
+              yesterdayTickets = tickets;
+              yesterdayTime = timeSeconds;
               
-              // Если есть активность сегодня - онлайн
-              if (tickets > 0 || timeSeconds > 0) {
-                onlineCount++;
-              }
+              // Общая статистика за вчера
+              totalTicketsYesterday += tickets;
+              totalTimeYesterday += timeSeconds;
               
-              // Общая статистика за сегодня
-              totalTicketsToday += tickets;
-              
-              // Находим лидеров за сегодня
-              if (tickets > maxTicketsToday) {
-                maxTicketsToday = tickets;
+              // Находим лидеров за вчера
+              if (tickets > maxTicketsYesterday) {
+                maxTicketsYesterday = tickets;
                 maxTicketsEmployee = employeeName;
               }
-              if (timeSeconds > maxTimeToday) {
-                maxTimeToday = timeSeconds;
+              if (timeSeconds > maxTimeYesterday) {
+                maxTimeYesterday = timeSeconds;
                 maxTimeEmployee = employeeName;
               }
             }
@@ -741,7 +715,7 @@
             name: employeeName,
             telegram: telegram,
             stats: {
-              day: { tickets: dayTickets, time: dayTime },
+              yesterday: { tickets: yesterdayTickets, time: yesterdayTime },
               week: { tickets: weekTickets, time: weekTime },
               month: { tickets: monthTickets, time: monthTime }
             },
@@ -773,14 +747,14 @@
         
         // Обновляем карточки с общей статистикой
         document.getElementById('total-employees').textContent = employees.length;
-        document.getElementById('online-employees').textContent = onlineCount;
-        document.getElementById('total-tickets').textContent = totalTicketsToday;
+        document.getElementById('total-tickets').textContent = totalTicketsYesterday;
+        document.getElementById('total-time').textContent = secondsToHHMMSS(totalTimeYesterday);
         
         document.getElementById('top-tickets').textContent = 
-          maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsToday}` : "Немає даних";
+          maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsYesterday}` : "Немає даних";
         
         document.getElementById('top-time').textContent = 
-          maxTimeEmployee ? `${maxTimeEmployee} - ${secondsToHHMMSS(maxTimeToday)}` : "Немає даних";
+          maxTimeEmployee ? `${maxTimeEmployee} - ${secondsToHHMMSS(maxTimeYesterday)}` : "Немає даних";
         
         document.getElementById('top-contest').textContent = 
           employees[0] ? `${employees[0].name} - 1 місце` : "Немає даних";
@@ -822,9 +796,8 @@
             <div class="font-medium">${employee.name}</div>
             <div class="text-sm text-gray-400">${employee.telegram}</div>
           </td>
-          <td>${getStatusElement(employee.stats.day.tickets, employee.stats.day.time)}</td>
-          <td>${employee.stats.day.tickets}</td>
-          <td>${secondsToHHMMSS(employee.stats.day.time)}</td>
+          <td>${employee.stats.yesterday.tickets}</td>
+          <td>${secondsToHHMMSS(employee.stats.yesterday.time)}</td>
           <td>${employee.stats.week.tickets}</td>
           <td>${secondsToHHMMSS(employee.stats.week.time)}</td>
           <td>${employee.stats.month.tickets}</td>
@@ -948,12 +921,14 @@
           dayCell.className = 'day-cell';
           
           dayCell.innerHTML = `
-            <div class="day-date">${dateStr}</div>
+            <div class="day-date">
+              <span class="norm-indicator ${normClass}"></span>
+              ${dateStr}
+            </div>
             <div class="day-stats">
               <div class="day-stat">Тікети: <b>${tickets}</b></div>
               <div class="day-stat">Час: <b>${secondsToHHMMSS(timeSeconds)}</b></div>
             </div>
-            <div class="day-norm ${normClass}">${normStatus}</div>
           `;
           
           daysGrid.appendChild(dayCell);
