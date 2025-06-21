@@ -6,7 +6,6 @@
   <title>Адмін Панель</title>
   <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
     body {
@@ -63,12 +62,6 @@
       padding: 12px 15px;
       font-weight: 500;
       color: #b0b0b0;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .admin-table th:hover {
-      background-color: #2a2a2a;
     }
 
     .admin-table td {
@@ -110,15 +103,6 @@
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .search-box {
-      flex-grow: 1;
-      min-width: 250px;
     }
 
     .search-box input {
@@ -129,28 +113,6 @@
       background-color: #1a1a1a;
       color: #FFFBEF;
       font-size: 1rem;
-    }
-
-    .filter-box {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .filter-btn {
-      padding: 8px 15px;
-      border-radius: 8px;
-      background-color: #1a1a1a;
-      color: #FFFBEF;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 0.9rem;
-    }
-
-    .filter-btn.active {
-      background-color: #3b82f6;
-      color: white;
     }
 
     .summary-cards {
@@ -241,10 +203,26 @@
       background-color: #dc2626;
     }
 
+    .loader {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #3b82f6;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 30px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     @media (max-width: 768px) {
-      .search-container {
+      .admin-header {
         flex-direction: column;
-        align-items: stretch;
+        gap: 15px;
+        align-items: flex-start;
       }
       
       .admin-table {
@@ -276,17 +254,11 @@
     <div class="admin-header">
       <h1 class="admin-title">Адмін Панель</h1>
       <div class="admin-actions">
-        <button class="admin-btn primary">
+        <button id="refresh-btn" class="admin-btn primary">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
+            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
           </svg>
-          Новий співробітник
-        </button>
-        <button class="admin-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-          </svg>
-          Налаштування
+          Оновити
         </button>
         <button id="admin-logout-btn" class="admin-btn logout">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -300,23 +272,23 @@
     <div class="summary-cards">
       <div class="summary-card animate-fade-in-up">
         <h3>Загальна статистика</h3>
-        <p>Активних співробітників: <span class="value">24</span></p>
-        <p>Зараз онлайн: <span class="value">18</span></p>
-        <p>Тікетів за день: <span class="value">147</span></p>
+        <p>Співробітників: <span id="total-employees" class="value">...</span></p>
+        <p>Зараз онлайн: <span id="online-employees" class="value">...</span></p>
+        <p>Тікетів за день: <span id="total-tickets" class="value">...</span></p>
       </div>
       
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s">
         <h3>Топ співробітників</h3>
-        <p>Тікети (день): <span class="value">Марія - 21</span></p>
-        <p>Час у грі (день): <span class="value">Олексій - 6г 45хв</span></p>
-        <p>Конкурс: <span class="value">Андрій - 1 місце</span></p>
+        <p>Тікети (день): <span id="top-tickets" class="value">...</span></p>
+        <p>Час у грі (день): <span id="top-time" class="value">...</span></p>
+        <p>Конкурс: <span id="top-contest" class="value">...</span></p>
       </div>
       
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.2s">
         <h3>Попередження</h3>
-        <p>Низька активність: <span class="value">3 співробітники</span></p>
-        <p>Не авторизовані: <span class="value">2 співробітники</span></p>
-        <p>Потребують перевірки: <span class="value">1 співробітник</span></p>
+        <p>Низька активність: <span id="low-activity" class="value">...</span></p>
+        <p>Не авторизовані: <span id="never-logged" class="value">...</span></p>
+        <p>Потребують перевірки: <span id="need-review" class="value">...</span></p>
       </div>
     </div>
 
@@ -324,179 +296,91 @@
       <div class="search-box">
         <input type="text" id="search-input" placeholder="Пошук співробітників...">
       </div>
-      <div class="filter-box">
-        <button class="filter-btn active">Усі</button>
-        <button class="filter-btn">Онлайн</button>
-        <button class="filter-btn">Офлайн</button>
-        <button class="filter-btn">Топ 10</button>
-      </div>
     </div>
 
-    <div class="table-container">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th data-sort="name">Співробітник</th>
-            <th data-sort="status">Статус</th>
-            <th data-sort="day-tickets">Тікети (день)</th>
-            <th data-sort="day-time">Час (день)</th>
-            <th data-sort="week-tickets">Тікети (тиждень)</th>
-            <th data-sort="week-time">Час (тиждень)</th>
-            <th data-sort="month-tickets">Тікети (місяць)</th>
-            <th data-sort="month-time">Час (місяць)</th>
-            <th data-sort="rank">Місце</th>
-            <th>Дії</th>
-          </tr>
-        </thead>
-        <tbody id="admin-stats-body">
-          <!-- Данные будут заполнены через JavaScript -->
-        </tbody>
-      </table>
+    <div id="loader" class="loader"></div>
+    
+    <div id="admin-stats-container" class="hidden">
+      <div class="table-container">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Співробітник</th>
+              <th>Статус</th>
+              <th>Тікети (день)</th>
+              <th>Час (день)</th>
+              <th>Тікети (тиждень)</th>
+              <th>Час (тиждень)</th>
+              <th>Тікети (місяць)</th>
+              <th>Час (місяць)</th>
+              <th>Місце</th>
+            </tr>
+          </thead>
+          <tbody id="admin-stats-body">
+            <!-- Данные будут заполнены через JavaScript -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
-    // Список разрешенных администраторов
-    const allowedAdmins = ['@laker_77', '@admin1', '@admin2', '@supervisor'];
+    // ID Google таблицы и API ключ
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
     
-    // Данные сотрудников (в реальном приложении будут загружаться с сервера)
-    const employees = [
-      {
-        id: 1,
-        name: "Іван Петренко",
-        telegram: "@ivan_p",
-        status: "online",
-        lastLogin: "2023-06-19 14:30",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 15, time: 4.5 },
-          week: { tickets: 87, time: 32.1 },
-          month: { tickets: 215, time: 98.5 }
-        },
-        rank: 3
-      },
-      {
-        id: 2,
-        name: "Марія Сидорова",
-        telegram: "@maria_s",
-        status: "online",
-        lastLogin: "2023-06-19 14:15",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 21, time: 5.8 },
-          week: { tickets: 102, time: 36.7 },
-          month: { tickets: 278, time: 124.2 }
-        },
-        rank: 1
-      },
-      {
-        id: 3,
-        name: "Олексій Коваленко",
-        telegram: "@alex_k",
-        status: "online",
-        lastLogin: "2023-06-19 13:45",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 18, time: 6.75 },
-          week: { tickets: 95, time: 38.5 },
-          month: { tickets: 245, time: 112.3 }
-        },
-        rank: 2
-      },
-      {
-        id: 4,
-        name: "Андрій Мельник",
-        telegram: "@andriy_m",
-        status: "offline",
-        lastLogin: "2023-06-18 18:20",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 8, time: 2.3 },
-          week: { tickets: 42, time: 15.8 },
-          month: { tickets: 156, time: 68.9 }
-        },
-        rank: 7
-      },
-      {
-        id: 5,
-        name: "Юлія Шевченко",
-        telegram: "@julia_s",
-        status: "online",
-        lastLogin: "2023-06-19 12:10",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 12, time: 3.9 },
-          week: { tickets: 68, time: 24.6 },
-          month: { tickets: 192, time: 87.4 }
-        },
-        rank: 5
-      },
-      {
-        id: 6,
-        name: "Віктор Павленко",
-        telegram: "@viktor_p",
-        status: "offline",
-        lastLogin: "2023-06-17 16:40",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 0, time: 0 },
-          week: { tickets: 24, time: 9.2 },
-          month: { tickets: 103, time: 45.1 }
-        },
-        rank: 12
-      },
-      {
-        id: 7,
-        name: "Катерина Бондаренко",
-        telegram: "@kateryna_b",
-        status: "online",
-        lastLogin: "2023-06-19 11:25",
-        hasLoggedIn: true,
-        stats: {
-          day: { tickets: 14, time: 4.2 },
-          week: { tickets: 73, time: 26.8 },
-          month: { tickets: 201, time: 92.7 }
-        },
-        rank: 4
-      },
-      {
-        id: 8,
-        name: "Сергій Ткаченко",
-        telegram: "@sergiy_t",
-        status: "never-logged",
-        lastLogin: null,
-        hasLoggedIn: false,
-        stats: {
-          day: { tickets: 0, time: 0 },
-          week: { tickets: 0, time: 0 },
-          month: { tickets: 0, time: 0 }
-        },
-        rank: 24
-      }
-    ];
-
-    // Функция для форматирования времени
-    function formatTime(hours) {
-      if (hours === 0) return "0г 0хв";
-      
-      const fullHours = Math.floor(hours);
-      const minutes = Math.round((hours - fullHours) * 60);
-      return `${fullHours}г ${minutes}хв`;
+    // Список разрешенных администраторов
+    const allowedAdmins = ['@laker_77', '@admin1', '@admin2'];
+    
+    // Данные для таблицы
+    let employeesData = [];
+    
+    // Функция для получения данных из Google Sheets
+    async function getSheetData(sheetName) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      const res = await axios.get(url);
+      return res.data.values;
     }
-
-    // Функция для отображения статуса
-    function getStatusElement(status, hasLoggedIn) {
-      if (!hasLoggedIn) {
-        return `<span class="status-indicator never-logged"></span> Не авторизований`;
-      }
+    
+    // Функция для преобразования даты
+    function parseDate(str) {
+      const [d, m, y] = str.split('.');
+      return new Date(y, m-1, d);
+    }
+    
+    // Функция для форматирования даты
+    function formatDate(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+    
+    // Функция для форматирования времени
+    function secondsToHHMMSS(seconds) {
+      if (seconds === 0) return "0г 0хв";
       
-      if (status === "online") {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      return `${hours}г ${minutes}хв`;
+    }
+    
+    // Функция для преобразования времени в секунды
+    function timeToSeconds(timeStr) {
+      if (!timeStr || timeStr === 'Н') return 0;
+      const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+      return hours * 3600 + minutes * 60 + seconds;
+    }
+    
+    // Функция для получения статуса сотрудника
+    function getStatusElement(dayTickets, dayTime) {
+      if (dayTickets > 0 || dayTime > 0) {
         return `<span class="status-indicator online"></span> Онлайн`;
       }
       return `<span class="status-indicator offline"></span> Офлайн`;
     }
-
-    // Функция для отображения рейтинга
+    
+    // Функция для получения рейтинга
     function getRankElement(rank) {
       let rankClass = "";
       if (rank === 1) rankClass = "rank-1";
@@ -505,13 +389,192 @@
       
       return `<span class="rank-badge ${rankClass}">${rank}</span>`;
     }
-
-    // Функция для отображения данных сотрудников в таблице
-    function renderEmployeeTable(data) {
+    
+    // Функция для расчета статистики
+    async function calculateAdminStats() {
+      try {
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        
+        const monthStart = new Date(today);
+        monthStart.setDate(today.getDate() - 30);
+        
+        // Получаем данные из Google Sheets
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const timeData = await getSheetData('Время_в_игре');
+        
+        if (!ticketsData || !timeData) {
+          throw new Error("Не вдалося отримати дані з Google Sheets");
+        }
+        
+        const ticketsHeaders = ticketsData[0];
+        const timeHeaders = timeData[0];
+        
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        
+        // Получаем все даты из заголовков
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({ h, i }))
+          .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+        
+        // Массив для сотрудников
+        const employees = [];
+        let onlineCount = 0;
+        let totalTicketsToday = 0;
+        let maxTicketsToday = 0;
+        let maxTimeToday = 0;
+        let maxTicketsEmployee = "";
+        let maxTimeEmployee = "";
+        
+        // Проходим по всем сотрудникам
+        for (let i = 1; i < ticketsData.length; i++) {
+          const ticketRow = ticketsData[i];
+          const employeeName = ticketRow[nameColIndex];
+          const telegram = ticketRow[telegramColIndex];
+          
+          // Находим соответствующую строку во времени
+          const timeRow = timeData.find(row => row[timeNameColIndex] === employeeName);
+          
+          if (!timeRow) continue;
+          
+          // Статистика
+          let dayTickets = 0;
+          let dayTime = 0;
+          let weekTickets = 0;
+          let weekTime = 0;
+          let monthTickets = 0;
+          let monthTime = 0;
+          
+          // Проходим по всем датам
+          for (const { h: dateStr, i: dateIndex } of dateCols) {
+            const date = parseDate(dateStr);
+            const tickets = parseInt(ticketRow[dateIndex]) || 0;
+            
+            // Время
+            const timeColIndex = timeHeaders.indexOf(dateStr);
+            let timeSeconds = 0;
+            if (timeColIndex >= 0 && timeRow[timeColIndex] && timeRow[timeColIndex] !== 'Н') {
+              timeSeconds = timeToSeconds(timeRow[timeColIndex]);
+            }
+            
+            // Сегодняшний день
+            if (date.toDateString() === today.toDateString()) {
+              dayTickets = tickets;
+              dayTime = timeSeconds;
+              
+              // Если есть активность сегодня - онлайн
+              if (tickets > 0 || timeSeconds > 0) {
+                onlineCount++;
+              }
+              
+              // Общая статистика за сегодня
+              totalTicketsToday += tickets;
+              
+              // Находим лидеров за сегодня
+              if (tickets > maxTicketsToday) {
+                maxTicketsToday = tickets;
+                maxTicketsEmployee = employeeName;
+              }
+              if (timeSeconds > maxTimeToday) {
+                maxTimeToday = timeSeconds;
+                maxTimeEmployee = employeeName;
+              }
+            }
+            
+            // За неделю
+            if (date >= weekStart && date <= today) {
+              weekTickets += tickets;
+              weekTime += timeSeconds;
+            }
+            
+            // За месяц
+            if (date >= monthStart && date <= today) {
+              monthTickets += tickets;
+              monthTime += timeSeconds;
+            }
+          }
+          
+          employees.push({
+            name: employeeName,
+            telegram: telegram,
+            stats: {
+              day: { tickets: dayTickets, time: dayTime },
+              week: { tickets: weekTickets, time: weekTime },
+              month: { tickets: monthTickets, time: monthTime }
+            }
+          });
+        }
+        
+        // Сортируем сотрудников по рейтингу (месяц)
+        employees.sort((a, b) => {
+          if (b.stats.month.tickets !== a.stats.month.tickets) {
+            return b.stats.month.tickets - a.stats.month.tickets;
+          }
+          return b.stats.month.time - a.stats.month.time;
+        });
+        
+        // Проставляем места
+        employees.forEach((emp, index) => {
+          emp.rank = index + 1;
+        });
+        
+        // Обновляем карточки с общей статистикой
+        document.getElementById('total-employees').textContent = employees.length;
+        document.getElementById('online-employees').textContent = onlineCount;
+        document.getElementById('total-tickets').textContent = totalTicketsToday;
+        
+        document.getElementById('top-tickets').textContent = 
+          maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsToday}` : "Немає даних";
+        
+        document.getElementById('top-time').textContent = 
+          maxTimeEmployee ? `${maxTimeEmployee} - ${secondsToHHMMSS(maxTimeToday)}` : "Немає даних";
+        
+        document.getElementById('top-contest').textContent = 
+          employees[0] ? `${employees[0].name} - 1 місце` : "Немає даних";
+        
+        // Предупреждения (упрощенная версия)
+        const lowActivity = employees.filter(e => 
+          e.stats.week.tickets < 10 || e.stats.week.time < 3600
+        ).length;
+        
+        const neverLogged = employees.filter(e => 
+          e.stats.month.tickets === 0 && e.stats.month.time === 0
+        ).length;
+        
+        document.getElementById('low-activity').textContent = `${lowActivity} співробітників`;
+        document.getElementById('never-logged').textContent = `${neverLogged} співробітників`;
+        document.getElementById('need-review').textContent = "0 співробітників";
+        
+        return employees;
+        
+      } catch (error) {
+        console.error('Помилка під час отримання даних:', error);
+        alert('Помилка під час завантаження даних. Спробуйте оновити сторінку.');
+        return [];
+      }
+    }
+    
+    // Функция для отображения данных сотрудников
+    function renderEmployeeTable(data, searchQuery = "") {
       const tbody = document.getElementById("admin-stats-body");
       tbody.innerHTML = "";
       
+      const lowerQuery = searchQuery.toLowerCase();
+      
       data.forEach(employee => {
+        // Фильтр по поиску
+        if (searchQuery && 
+            !employee.name.toLowerCase().includes(lowerQuery) &&
+            !employee.telegram.toLowerCase().includes(lowerQuery)) {
+          return;
+        }
+        
         const row = document.createElement("tr");
         
         row.innerHTML = `
@@ -519,99 +582,35 @@
             <div class="font-medium">${employee.name}</div>
             <div class="text-sm text-gray-400">${employee.telegram}</div>
           </td>
-          <td>${getStatusElement(employee.status, employee.hasLoggedIn)}</td>
+          <td>${getStatusElement(employee.stats.day.tickets, employee.stats.day.time)}</td>
           <td>${employee.stats.day.tickets}</td>
-          <td>${formatTime(employee.stats.day.time)}</td>
+          <td>${secondsToHHMMSS(employee.stats.day.time)}</td>
           <td>${employee.stats.week.tickets}</td>
-          <td>${formatTime(employee.stats.week.time)}</td>
+          <td>${secondsToHHMMSS(employee.stats.week.time)}</td>
           <td>${employee.stats.month.tickets}</td>
-          <td>${formatTime(employee.stats.month.time)}</td>
+          <td>${secondsToHHMMSS(employee.stats.month.time)}</td>
           <td>${getRankElement(employee.rank)}</td>
-          <td>
-            <button class="admin-btn" title="Переглянути деталі">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </td>
         `;
         
         tbody.appendChild(row);
       });
     }
-
-    // Функция для поиска сотрудников
-    function searchEmployees(query) {
-      if (!query) return employees;
+    
+    // Функция для обновления данных
+    async function refreshData() {
+      document.getElementById('loader').classList.remove('hidden');
+      document.getElementById('admin-stats-container').classList.add('hidden');
       
-      const lowerQuery = query.toLowerCase();
-      return employees.filter(emp => 
-        emp.name.toLowerCase().includes(lowerQuery) || 
-        emp.telegram.toLowerCase().includes(lowerQuery)
-      );
+      employeesData = await calculateAdminStats();
+      
+      document.getElementById('loader').classList.add('hidden');
+      document.getElementById('admin-stats-container').classList.remove('hidden');
+      
+      renderEmployeeTable(employeesData);
     }
-
-    // Функция сортировки таблицы
-    function sortTable(column, direction) {
-      const sorted = [...employees];
-      
-      sorted.sort((a, b) => {
-        let valA, valB;
-        
-        switch(column) {
-          case "name":
-            valA = a.name.toLowerCase();
-            valB = b.name.toLowerCase();
-            break;
-          case "status":
-            // Порядок: online > offline > never-logged
-            const statusOrder = { "online": 1, "offline": 2, "never-logged": 3 };
-            valA = statusOrder[a.status] || 4;
-            valB = statusOrder[b.status] || 4;
-            break;
-          case "day-tickets":
-            valA = a.stats.day.tickets;
-            valB = b.stats.day.tickets;
-            break;
-          case "day-time":
-            valA = a.stats.day.time;
-            valB = b.stats.day.time;
-            break;
-          case "week-tickets":
-            valA = a.stats.week.tickets;
-            valB = b.stats.week.tickets;
-            break;
-          case "week-time":
-            valA = a.stats.week.time;
-            valB = b.stats.week.time;
-            break;
-          case "month-tickets":
-            valA = a.stats.month.tickets;
-            valB = b.stats.month.tickets;
-            break;
-          case "month-time":
-            valA = a.stats.month.time;
-            valB = b.stats.month.time;
-            break;
-          case "rank":
-            valA = a.rank;
-            valB = b.rank;
-            break;
-          default:
-            return 0;
-        }
-        
-        if (valA < valB) return direction === "asc" ? -1 : 1;
-        if (valA > valB) return direction === "asc" ? 1 : -1;
-        return 0;
-      });
-      
-      renderEmployeeTable(sorted);
-    }
-
+    
     // Инициализация страницы
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", async function() {
       // Проверка авторизации администратора
       const savedAuth = localStorage.getItem("tg_auth");
       if (!savedAuth) {
@@ -622,82 +621,37 @@
       
       try {
         const userData = JSON.parse(savedAuth);
-        const telegramUsername = userData.username;
+        const telegramUsername = userData.username.toLowerCase();
         
         // Проверка, является ли пользователь администратором
-        if (!allowedAdmins.includes(telegramUsername.toLowerCase())) {
+        if (!allowedAdmins.some(admin => admin.toLowerCase() === telegramUsername)) {
           alert("Ви не маєте доступу до адмін панелі");
           window.location.href = "index.html";
           return;
         }
+        
+        // Загрузка данных
+        await refreshData();
+        
+        // Обработка поиска
+        document.getElementById("search-input").addEventListener("input", function(e) {
+          renderEmployeeTable(employeesData, e.target.value);
+        });
+        
+        // Обработка кнопки обновления
+        document.getElementById("refresh-btn").addEventListener("click", refreshData);
+        
+        // Обработка кнопки выхода
+        document.getElementById("admin-logout-btn").addEventListener("click", function() {
+          localStorage.removeItem("tg_auth");
+          window.location.href = "index.html";
+        });
+        
       } catch (e) {
+        console.error("Помилка ініціалізації:", e);
         localStorage.removeItem("tg_auth");
         window.location.href = "index.html";
       }
-      
-      // Отображение данных
-      renderEmployeeTable(employees);
-      
-      // Обработка поиска
-      document.getElementById("search-input").addEventListener("input", function(e) {
-        const results = searchEmployees(e.target.value);
-        renderEmployeeTable(results);
-      });
-      
-      // Обработка сортировки
-      const headers = document.querySelectorAll(".admin-table th[data-sort]");
-      headers.forEach(header => {
-        header.addEventListener("click", function() {
-          const sortBy = this.getAttribute("data-sort");
-          const currentDir = this.getAttribute("data-dir") || "asc";
-          const newDir = currentDir === "asc" ? "desc" : "asc";
-          
-          // Сброс направления для всех заголовков
-          headers.forEach(h => h.removeAttribute("data-dir"));
-          
-          // Установка нового направления
-          this.setAttribute("data-dir", newDir);
-          
-          // Сортировка
-          sortTable(sortBy, newDir);
-        });
-      });
-      
-      // Обработка кнопки выхода
-      document.getElementById("admin-logout-btn").addEventListener("click", function() {
-        localStorage.removeItem("tg_auth");
-        window.location.href = "index.html";
-      });
-      
-      // Обработка фильтров
-      const filterBtns = document.querySelectorAll(".filter-btn");
-      filterBtns.forEach(btn => {
-        btn.addEventListener("click", function() {
-          // Удаляем активный класс у всех кнопок
-          filterBtns.forEach(b => b.classList.remove("active"));
-          
-          // Добавляем активный класс текущей кнопке
-          this.classList.add("active");
-          
-          // Применяем фильтр
-          const filterType = this.textContent.trim();
-          let filtered = [...employees];
-          
-          switch(filterType) {
-            case "Онлайн":
-              filtered = employees.filter(emp => emp.status === "online" && emp.hasLoggedIn);
-              break;
-            case "Офлайн":
-              filtered = employees.filter(emp => emp.status === "offline" && emp.hasLoggedIn);
-              break;
-            case "Топ 10":
-              filtered = [...employees].sort((a, b) => a.rank - b.rank).slice(0, 10);
-              break;
-          }
-          
-          renderEmployeeTable(filtered);
-        });
-      });
     });
   </script>
 </body>
