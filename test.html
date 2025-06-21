@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
+    /* Стили остаются без изменений */
     body {
       background-color: #050608 !important;
       color: #FFFBEF !important;
@@ -417,13 +418,15 @@
     </div>
 
     <div class="summary-cards">
+      <!-- Обновленный первый блок: Тикеты за периоды -->
       <div class="summary-card animate-fade-in-up">
-        <h3>Загальна статистика</h3>
-        <p>Співробітників: <span id="total-employees" class="value">...</span></p>
-        <p>Тікетів за день: <span id="total-tickets" class="value">...</span></p>
-        <p>Час за день: <span id="total-time" class="value">...</span></p>
+        <h3>Тикети</h3>
+        <p>За вчора: <span id="total-tickets-yesterday" class="value">...</span></p>
+        <p>За тиждень: <span id="total-tickets-week" class="value">...</span></p>
+        <p>За місяць: <span id="total-tickets-month" class="value">...</span></p>
       </div>
       
+      <!-- Центральный блок без изменений -->
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s">
         <h3>Топ співробітників</h3>
         <p>Тікети (вчора): <span id="top-tickets" class="value">...</span></p>
@@ -431,11 +434,10 @@
         <p>Конкурс: <span id="top-contest" class="value">...</span></p>
       </div>
       
+      <!-- Обновленный третий блок: Только количество сотрудников -->
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.2s">
-        <h3>Виконання норм</h3>
-        <p>Норма виконана: <span id="norm-fulfilled" class="value">...</span></p>
-        <p>Норма натягнута: <span id="norm-stretched" class="value">...</span></p>
-        <p>Проблемні: <span id="problematic" class="value">...</span></p>
+        <h3>Співробітники</h3>
+        <p>Кількість: <span id="total-employees" class="value">...</span></p>
       </div>
     </div>
 
@@ -512,8 +514,15 @@
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
     
-    // Список разрешенных администраторов
-    const allowedAdmins = ['@laker_77'];
+    // Обновленный список разрешенных администраторов
+    const allowedAdmins = [
+      '@laker_77',
+      '@noxx_uagtaV',
+      '@c10mm',
+      '@zhdanovrostyslav',
+      '@Hermaeus_Mora_1679',
+      '@liquid_ug'
+    ];
     
     // Данные для таблицы
     let employeesData = [];
@@ -567,15 +576,15 @@
       return `<span class="rank-badge ${rankClass}">${rank}</span>`;
     }
     
-    // Функция для определения выполнения нормы
+    // Обновленная функция для определения выполнения нормы
     function getNormStatus(tickets, timeSeconds) {
-      if (timeSeconds === 0 && tickets === 0) return "Звільнений";
+      // Если время равно 0 - статус всегда "Звільнений" (неактив)
+      if (timeSeconds === 0) return "Звільнений";
       
       const hours = timeSeconds / 3600;
       
       if (tickets >= 15 && hours >= 3) return "Норма виконана";
       if (tickets >= 10 && hours >= 2) return "Норма натягнута";
-      if (tickets === 0 && hours < 2) return "Норма відсутня";
       return "Норма не виконана";
     }
     
@@ -584,7 +593,6 @@
       switch(normStatus) {
         case "Норма виконана": return "norm-fulfilled";
         case "Норма натягнута": return "norm-stretched";
-        case "Норма відсутня": return "norm-missing";
         case "Звільнений": return "norm-fired";
         default: return "norm-missing";
       }
@@ -626,14 +634,12 @@
         // Массив для сотрудников
         const employees = [];
         let totalTicketsYesterday = 0;
-        let totalTimeYesterday = 0;
+        let totalTicketsWeek = 0;
+        let totalTicketsMonth = 0;
         let maxTicketsYesterday = 0;
         let maxTimeYesterday = 0;
         let maxTicketsEmployee = "";
         let maxTimeEmployee = "";
-        let normFulfilledCount = 0;
-        let normStretchedCount = 0;
-        let problematicCount = 0;
         
         // Формат даты для вчера
         const yesterdayStr = formatDate(yesterday);
@@ -656,9 +662,6 @@
           let weekTime = 0;
           let monthTickets = 0;
           let monthTime = 0;
-          let normFulfilled = 0;
-          let normStretched = 0;
-          let problematic = 0;
           
           // Проходим по всем датам
           for (const { h: dateStr, i: dateIndex } of dateCols) {
@@ -679,7 +682,6 @@
               
               // Общая статистика за вчера
               totalTicketsYesterday += tickets;
-              totalTimeYesterday += timeSeconds;
               
               // Находим лидеров за вчера
               if (tickets > maxTicketsYesterday) {
@@ -702,14 +704,12 @@
             if (date >= monthStart && date <= today) {
               monthTickets += tickets;
               monthTime += timeSeconds;
-              
-              // Считаем выполнение нормы
-              const normStatus = getNormStatus(tickets, timeSeconds);
-              if (normStatus === "Норма виконана") normFulfilled++;
-              else if (normStatus === "Норма натягнута") normStretched++;
-              else if (normStatus === "Норма відсутня" || normStatus === "Звільнений") problematic++;
             }
           }
+          
+          // Суммируем общие показатели
+          totalTicketsWeek += weekTickets;
+          totalTicketsMonth += monthTickets;
           
           employees.push({
             name: employeeName,
@@ -718,18 +718,8 @@
               yesterday: { tickets: yesterdayTickets, time: yesterdayTime },
               week: { tickets: weekTickets, time: weekTime },
               month: { tickets: monthTickets, time: monthTime }
-            },
-            norms: {
-              fulfilled: normFulfilled,
-              stretched: normStretched,
-              problematic: problematic
             }
           });
-          
-          // Общая статистика по нормам
-          normFulfilledCount += normFulfilled;
-          normStretchedCount += normStretched;
-          problematicCount += problematic;
         }
         
         // Сортируем сотрудников по рейтингу (месяц)
@@ -747,8 +737,9 @@
         
         // Обновляем карточки с общей статистикой
         document.getElementById('total-employees').textContent = employees.length;
-        document.getElementById('total-tickets').textContent = totalTicketsYesterday;
-        document.getElementById('total-time').textContent = secondsToHHMMSS(totalTimeYesterday);
+        document.getElementById('total-tickets-yesterday').textContent = totalTicketsYesterday;
+        document.getElementById('total-tickets-week').textContent = totalTicketsWeek;
+        document.getElementById('total-tickets-month').textContent = totalTicketsMonth;
         
         document.getElementById('top-tickets').textContent = 
           maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsYesterday}` : "Немає даних";
@@ -758,11 +749,6 @@
         
         document.getElementById('top-contest').textContent = 
           employees[0] ? `${employees[0].name} - 1 місце` : "Немає даних";
-        
-        // Статистика по нормам
-        document.getElementById('norm-fulfilled').textContent = normFulfilledCount;
-        document.getElementById('norm-stretched').textContent = normStretchedCount;
-        document.getElementById('problematic').textContent = problematicCount;
         
         return employees;
         
@@ -832,8 +818,6 @@
       document.getElementById('employee-total-tickets').textContent = employee.stats.month.tickets;
       document.getElementById('employee-total-time').textContent = 
         secondsToHHMMSS(employee.stats.month.time);
-      document.getElementById('employee-norm-fulfilled').textContent = 
-        employee.norms ? employee.norms.fulfilled : 0;
       
       // Создаем недели
       const weeksContainer = document.getElementById('weeks-container');
@@ -905,7 +889,8 @@
           const date = day.dateObj;
           
           // Получаем данные по дням
-          const tickets = parseInt(ticketRow[ticketsData[0].indexOf(dateStr)]) || 0;
+          const tickets = parseInt(ticketRow[ticketsData[0].indexOf(dateStr)]) || 
+            0;
           
           const timeColIndex = timeData[0].indexOf(dateStr);
           let timeSeconds = 0;
