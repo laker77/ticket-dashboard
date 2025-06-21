@@ -8,7 +8,6 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
-    /* Стили остаются без изменений */
     body {
       background-color: #050608 !important;
       color: #FFFBEF !important;
@@ -19,27 +18,6 @@
       max-width: 1400px;
       margin: 0 auto;
       padding: 20px;
-    }
-
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 8px;
-    }
-
-    .online {
-      background-color: #4ade80;
-      box-shadow: 0 0 8px #4ade80;
-    }
-
-    .offline {
-      background-color: #f87171;
-    }
-
-    .never-logged {
-      background-color: #94a3b8;
     }
 
     .admin-table {
@@ -418,7 +396,6 @@
     </div>
 
     <div class="summary-cards">
-      <!-- Обновленный первый блок: Тикеты за периоды -->
       <div class="summary-card animate-fade-in-up">
         <h3>Тикети</h3>
         <p>За вчора: <span id="total-tickets-yesterday" class="value">...</span></p>
@@ -426,7 +403,6 @@
         <p>За місяць: <span id="total-tickets-month" class="value">...</span></p>
       </div>
       
-      <!-- Центральный блок без изменений -->
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s">
         <h3>Топ співробітників</h3>
         <p>Тікети (вчора): <span id="top-tickets" class="value">...</span></p>
@@ -434,7 +410,6 @@
         <p>Конкурс: <span id="top-contest" class="value">...</span></p>
       </div>
       
-      <!-- Обновленный третий блок: Только количество сотрудников -->
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.2s">
         <h3>Співробітники</h3>
         <p>Кількість: <span id="total-employees" class="value">...</span></p>
@@ -522,7 +497,7 @@
       '@zhdanovrostyslav',
       '@Hermaeus_Mora_1679',
       '@liquid_ug'
-    ];
+    ].map(admin => admin.toLowerCase()); // Приводим все к нижнему регистру
     
     // Данные для таблицы
     let employeesData = [];
@@ -889,8 +864,7 @@
           const date = day.dateObj;
           
           // Получаем данные по дням
-          const tickets = parseInt(ticketRow[ticketsData[0].indexOf(dateStr)]) || 
-            0;
+          const tickets = parseInt(ticketRow[ticketsData[0].indexOf(dateStr)]) || 0;
           
           const timeColIndex = timeData[0].indexOf(dateStr);
           let timeSeconds = 0;
@@ -958,11 +932,22 @@
       
       try {
         const userData = JSON.parse(savedAuth);
-        const telegramUsername = userData.username.toLowerCase();
+        const telegramUsername = userData.username ? userData.username.toLowerCase() : null;
+        
+        // Отладочная информация
+        console.log("Telegram User Data:", userData);
+        console.log("Username from Telegram:", telegramUsername);
+        console.log("Allowed Admins:", allowedAdmins);
+        
+        if (!telegramUsername) {
+          alert("Не вдалося отримати ім'я користувача з Telegram");
+          window.location.href = "index.html";
+          return;
+        }
         
         // Проверка, является ли пользователь администратором
-        if (!allowedAdmins.some(admin => admin.toLowerCase() === telegramUsername)) {
-          alert("Ви не маєте доступу до адмін панелі");
+        if (!allowedAdmins.includes(telegramUsername)) {
+          alert("Ви не маєте доступу до адмін панелі. Ваш тег: " + telegramUsername);
           window.location.href = "index.html";
           return;
         }
