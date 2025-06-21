@@ -265,62 +265,61 @@ h1 {
         <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
       </div>
     </div>
-   <div class="script-menu hidden" id="scriptMenu">
-  <div class="menu-button" onclick="toggleScripts()">≡</div>
-  <div class="script-list" id="scriptList">
-    <a href="script1.1.html" class="script-item">Скрипт 1.1</a>
-    <a href="script1.2.html" class="script-item">Скрипт 1.2</a>
-    <a href="script1.3.html" class="script-item">Скрипт 1.3</a>
-    <a href="script1.4.html" class="script-item">Скрипт 1.4</a>
-    <a href="script1.5.html" class="script-item">Скрипт 1.5</a>
-    <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
-  </div>
-</div>
+    
     <div id="dashboard" class="hidden">
-      <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stats-grid">
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">За вчора</h3>
-          <p>Тікети: <span id="yesterday-tickets">—</span></p>
-          <p>Час у грі: <span id="yesterday-time">—</span></p>
-        </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Тиждень</h3>
-          <p>Тікети: <span id="week-tickets">—</span></p>
-          <p>Час у грі: <span id="week-time">—</span></p>
-        </div>
-        <div class="bg-white p-4 rounded shadow">
-          <h3 class="font-bold mb-2">Місяць</h3>
-          <p>Тікети: <span id="month-tickets">—</span></p>
-          <p>Час у грі: <span id="month-time">—</span></p>
-        </div>
+      <!-- Блок для администраторов -->
+      <div id="admin-notice" class="hidden bg-[#121315] p-6 rounded-xl mb-6 border border-[#1977FD]">
+        <h3 class="text-xl font-bold text-[#1977FD] mb-3">👑 Ви - адміністратор системи</h3>
+        <p class="mb-2">Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+        <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
       </div>
+      
+      <div id="stats-section">
+        <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stats-grid">
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">За вчора</h3>
+            <p>Тікети: <span id="yesterday-tickets">—</span></p>
+            <p>Час у грі: <span id="yesterday-time">—</span></p>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">Тиждень</h3>
+            <p>Тікети: <span id="week-tickets">—</span></p>
+            <p>Час у грі: <span id="week-time">—</span></p>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">Місяць</h3>
+            <p>Тікети: <span id="month-tickets">—</span></p>
+            <p>Час у грі: <span id="month-time">—</span></p>
+          </div>
+        </div>
 
-  <div id="contest-rank" class="bg-[#121315] text-white p-4 rounded-xl shadow mb-6 border border-[#1977FD] animate-fade-in">
-  <h3 class="text-xl font-bold text-[#1977FD] mb-2">🎉 Конкурс "Кращий адмін"</h3>
-  <p class="mb-2">Ти зараз на <span id="current-rank" class="font-semibold text-yellow-300">…</span> місці серед усієї адміністрації!</p>
-  <p class="text-sm text-gray-300">📅 Конкурс триває до <span class="text-white">30 червня</span>. Більше тікетів і годин — вище шанс на перемогу!</p>
-</div>
+        <div id="contest-rank" class="bg-[#121315] text-white p-4 rounded-xl shadow mb-6 border border-[#1977FD] animate-fade-in">
+          <h3 class="text-xl font-bold text-[#1977FD] mb-2">🎉 Конкурс "Кращий адмін"</h3>
+          <p class="mb-2">Ти зараз на <span id="current-rank" class="font-semibold text-yellow-300">…</span> місці серед усієї адміністрації!</p>
+          <p class="text-sm text-gray-300">📅 Конкурс триває до <span class="text-white">30 червня</span>. Більше тікетів і годин — вище шанс на перемогу!</p>
+        </div>
 
-      <div class="bg-white p-4 rounded shadow mb-6">
-        <h3 class="font-bold mb-4">Динаміка тікетів та часу за останній місяць</h3>
-        <canvas id="statsChart" height="150"></canvas>
-      </div>
+        <div class="bg-white p-4 rounded shadow mb-6">
+          <h3 class="font-bold mb-4">Динаміка тікетів та часу за останній місяць</h3>
+          <canvas id="statsChart" height="150"></canvas>
+        </div>
 
-      <div class="bg-white p-4 rounded shadow">
-        <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
-        <div class="table-container">
-          <table class="min-w-full text-left border-collapse">
-            <thead>
-              <tr>
-                <th class="border px-2 py-1">Дата</th>
-                <th class="border px-2 py-1">Тікети</th>
-                <th class="border px-2 py-1">Час у грі</th>
-                <th class="border px-2 py-1">Неактив</th>
-              </tr>
-            </thead>
-            <tbody id="daily-stats-body"></tbody>
-          </table>
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
+          <div class="table-container">
+            <table class="min-w-full text-left border-collapse">
+              <thead>
+                <tr>
+                  <th class="border px-2 py-1">Дата</th>
+                  <th class="border px-2 py-1">Тікети</th>
+                  <th class="border px-2 py-1">Час у грі</th>
+                  <th class="border px-2 py-1">Неактив</th>
+                </tr>
+              </thead>
+              <tbody id="daily-stats-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -329,8 +328,17 @@ h1 {
   <script>
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+    
+    // Список администраторов с доступом
+    const allowedAdmins = [
+      '@laker_77',
+      '@liquid_ug',
+      '@Hermaeus_Mora_1679',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav'
+    ];
 
-     // Новая функция toggleScripts
     function toggleScripts() {
       const menu = document.getElementById('scriptList');
       menu.classList.toggle('hidden');
@@ -360,7 +368,6 @@ h1 {
       return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
     }
 
-    // Функция для получения даты без времени
     function getDateWithoutTime(date) {
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
@@ -420,62 +427,54 @@ h1 {
           return { ticketsSum, timeSecondsSum };
         }
 
-        // Исправление периодов:
-        // Вчера: только один день (yesterday)
         const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
         
-        // Неделя: 7 дней назад до вчера
         const weekStart = new Date(today);
         weekStart.setDate(today.getDate() - 7);
         const weekStats = sumTicketsAndTime(weekStart, yesterday);
         
-        // Месяц: 30 дней назад до вчера
         const monthStart = new Date(today);
         monthStart.setDate(today.getDate() - 30);
         const monthStats = sumTicketsAndTime(monthStart, yesterday);
 
-        // Рейтинг участника по тікетам + час
-const allUsers = ticketsData.slice(1).map(row => {
-  const name = row[nameColIndex];
-  const userTelegram = row[telegramColIndex];
+        const allUsers = ticketsData.slice(1).map(row => {
+          const name = row[nameColIndex];
+          const userTelegram = row[telegramColIndex];
 
-  let totalTickets = 0;
-  let totalSeconds = 0;
+          let totalTickets = 0;
+          let totalSeconds = 0;
 
-  dateCols.forEach(({ h, i }) => {
-    const dt = parseDate(h);
-    if (dt >= monthStart && dt <= yesterday) {
-      totalTickets += parseInt(row[i]) || 0;
-      const tIndex = timeHeaders.indexOf(h);
-      const timeRow = timeData.find(r => r[timeNameColIndex] === name);
-      if (timeRow && tIndex >= 0) {
-        const timeStr = timeRow[tIndex];
-        if (timeStr && timeStr !== 'Н') {
-          const [hh, mm, ss] = timeStr.split(':').map(Number);
-          totalSeconds += hh * 3600 + mm * 60 + ss;
+          dateCols.forEach(({ h, i }) => {
+            const dt = parseDate(h);
+            if (dt >= monthStart && dt <= yesterday) {
+              totalTickets += parseInt(row[i]) || 0;
+              const tIndex = timeHeaders.indexOf(h);
+              const timeRow = timeData.find(r => r[timeNameColIndex] === name);
+              if (timeRow && tIndex >= 0) {
+                const timeStr = timeRow[tIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  totalSeconds += hh * 3600 + mm * 60 + ss;
+                }
+              }
+            }
+          });
+
+          return { name, telegram: userTelegram, totalTickets, totalSeconds };
+        });
+
+        allUsers.sort((a, b) => {
+          if (b.totalTickets !== a.totalTickets)
+            return b.totalTickets - a.totalTickets;
+          return b.totalSeconds - a.totalSeconds;
+        });
+
+        const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
+        if (userIndex !== -1) {
+          const place = userIndex + 1;
+          document.getElementById('current-rank').innerText = `${place}`;
         }
-      }
-    }
-  });
 
-  return { name, telegram: userTelegram, totalTickets, totalSeconds };
-});
-
-// Сортировка по тікетам, потом по часу
-allUsers.sort((a, b) => {
-  if (b.totalTickets !== a.totalTickets)
-    return b.totalTickets - a.totalTickets;
-  return b.totalSeconds - a.totalSeconds;
-});
-
-// Поиск текущего места
-const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
-if (userIndex !== -1) {
-  const place = userIndex + 1;
-  document.getElementById('current-rank').innerText = `${place}`;
-}
-
-        
         document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
         document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
         document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
@@ -492,7 +491,6 @@ if (userIndex !== -1) {
 
         dateCols.forEach(({ h, i }) => {
           const dt = parseDate(h);
-          // Выводим данные только до вчера включительно
           if (dt >= monthStart && dt <= yesterday) {
             const dayTickets = parseInt(userTicketsRow[i]) || 0;
             const timeColIndex = timeHeaders.indexOf(h);
@@ -614,9 +612,22 @@ if (userIndex !== -1) {
         alert('Помилка під час завантаження даних з Google Sheets');
       }
     }
- async function onTelegramAuth(user) {
+
+    async function onTelegramAuth(user) {
       const telegramUsername = '@' + user.username;
       
+      // Проверка на администратора
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        showDashboard(userData.nickname, telegramUsername, true);
+        return;
+      }
+
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
         const ticketsHeaders = ticketsData[0];
@@ -627,17 +638,14 @@ if (userIndex !== -1) {
         );
         
         if (userTicketsRow) {
-          // Сохраняем данные пользователя
           const userData = {
             username: telegramUsername,
-            nickname: userTicketsRow[0]
+            nickname: userTicketsRow[0],
+            isAdmin: false
           };
           localStorage.setItem('tg_auth', JSON.stringify(userData));
-          
-          // Показываем дашборд
-          showDashboard(userData.nickname, telegramUsername);
+          showDashboard(userData.nickname, telegramUsername, false);
         } else {
-          // Если пользователь не найден
           localStorage.removeItem('tg_auth');
           alert('Користувача не знайдено в таблиці. Доступ заборонено.');
           showLoginForm();
@@ -649,17 +657,25 @@ if (userIndex !== -1) {
       }
     }
 
-    // Функция для показа дашборда
-    function showDashboard(nickname, telegramUsername) {
+    function showDashboard(nickname, telegramUsername, isAdmin) {
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
       document.getElementById('scriptMenu').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
       document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
-      fetchUserStatsByTelegram(telegramUsername);
+      
+      if (isAdmin) {
+        document.getElementById('admin-notice').classList.remove('hidden');
+        document.getElementById('stats-section').classList.add('hidden');
+        document.getElementById('contest-rank').classList.add('hidden');
+      } else {
+        document.getElementById('admin-notice').classList.add('hidden');
+        document.getElementById('stats-section').classList.remove('hidden');
+        document.getElementById('contest-rank').classList.remove('hidden');
+        fetchUserStatsByTelegram(telegramUsername);
+      }
     }
 
-    // Функция для показа формы входа
     function showLoginForm() {
       document.getElementById('login-section').classList.remove('hidden');
       document.getElementById('dashboard').classList.add('hidden');
@@ -668,23 +684,19 @@ if (userIndex !== -1) {
       document.querySelector('h1').innerText = 'Ласкаво просимо!';
     }
 
-    // Функция выхода
     function logout() {
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
 
-    // Проверка сохраненной сессии при загрузке
     document.addEventListener('DOMContentLoaded', function() {
-      // Добавляем обработчик для кнопки выхода
       document.getElementById('logout-btn').addEventListener('click', logout);
       
-      // Проверяем сохраненную сессию
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
         try {
           const userData = JSON.parse(savedAuth);
-          showDashboard(userData.nickname, userData.username);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
         } catch (e) {
           localStorage.removeItem('tg_auth');
           showLoginForm();
@@ -693,8 +705,6 @@ if (userIndex !== -1) {
         showLoginForm();
       }
     });
-
-    // ... остальной код без изменений ...
   </script>
 </body>
 </html>
