@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
+    /* Стили остаются без изменений */
     body {
       background-color: #050608 !important;
       color: #FFFBEF !important;
@@ -373,6 +374,18 @@
     .animate-fade-in-up {
       animation: fadeInUp 0.5s ease-out forwards;
     }
+    
+    .debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      z-index: 10000;
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -470,10 +483,6 @@
               <div class="stat-value" id="employee-total-time">98.5 год</div>
               <div class="stat-label">Час (місяць)</div>
             </div>
-            <div class="stat-card">
-              <div class="stat-value" id="employee-norm-fulfilled">12</div>
-              <div class="stat-label">Норма виконана</div>
-            </div>
           </div>
         </div>
       </div>
@@ -483,6 +492,8 @@
       </div>
     </div>
   </div>
+
+  <div id="debug-info" class="debug-info hidden"></div>
 
   <script>
     // ID Google таблицы и API ключ
@@ -497,7 +508,7 @@
       '@zhdanovrostyslav',
       '@Hermaeus_Mora_1679',
       '@liquid_ug'
-    ].map(admin => admin.toLowerCase()); // Приводим все к нижнему регистру
+    ].map(admin => admin.toLowerCase().trim());
     
     // Данные для таблицы
     let employeesData = [];
@@ -507,8 +518,14 @@
     // Функция для получения данных из Google Sheets
     async function getSheetData(sheetName) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-      const res = await axios.get(url);
-      return res.data.values;
+      try {
+        const res = await axios.get(url);
+        return res.data.values;
+      } catch (error) {
+        console.error('Помилка під час отримання даних:', error);
+        showDebugInfo(`Помилка завантаження даних: ${error.message}`);
+        return null;
+      }
     }
     
     // Функция для преобразования даты
@@ -729,7 +746,7 @@
         
       } catch (error) {
         console.error('Помилка під час отримання даних:', error);
-        alert('Помилка під час завантаження даних. Спробуйте оновити сторінку.');
+        showDebugInfo(`Помилка завантаження даних: ${error.message}`);
         return [];
       }
     }
@@ -907,6 +924,13 @@
       return weekNo;
     }
     
+    // Функция для отображения отладочной информации
+    function showDebugInfo(message) {
+      const debugDiv = document.getElementById('debug-info');
+      debugDiv.textContent = message;
+      debugDiv.classList.remove('hidden');
+    }
+    
     // Функция для обновления данных
     async function refreshData() {
       document.getElementById('loader').classList.remove('hidden');
@@ -922,33 +946,57 @@
     
     // Инициализация страницы
     document.addEventListener("DOMContentLoaded", async function() {
+      // Показать отладочную информацию
+      showDebugInfo("Завантаження...");
+      
       // Проверка авторизации администратора
       const savedAuth = localStorage.getItem("tg_auth");
+      
       if (!savedAuth) {
-        alert("Будь ласка, увійдіть через головну сторінку");
-        window.location.href = "index.html";
+        showDebugInfo("Будь ласка, увійдіть через головну сторінку");
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
         return;
       }
       
       try {
         const userData = JSON.parse(savedAuth);
-        const telegramUsername = userData.username ? userData.username.toLowerCase() : null;
+        const telegramUsername = userData.username ? userData.username.toLowerCase().trim() : null;
         
         // Отладочная информация
-        console.log("Telegram User Data:", userData);
-        console.log("Username from Telegram:", telegramUsername);
-        console.log("Allowed Admins:", allowedAdmins);
+        const debugInfo = [
+          `Користувач: ${telegramUsername || 'не визначено'}`,
+          `Дозволені адміни: ${allowedAdmins.join(', ')}`,
+          `Дата: ${new Date().toLocaleString()}`
+        ].join(' | ');
+        
+        showDebugInfo(debugInfo);
         
         if (!telegramUsername) {
-          alert("Не вдалося отримати ім'я користувача з Telegram");
-          window.location.href = "index.html";
+          showDebugInfo("Не вдалося отримати ім'я користувача з Telegram");
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 3000);
           return;
         }
         
         // Проверка, является ли пользователь администратором
         if (!allowedAdmins.includes(telegramUsername)) {
-          alert("Ви не маєте доступу до адмін панелі. Ваш тег: " + telegramUsername);
-          window.location.href = "index.html";
+          showDebugInfo(`Доступ заборонено. Ваш тег: ${telegramUsername}`);
+          
+          // Дополнительная информация для отладки
+          console.error("Доступ заборонено. Деталі:");
+          console.table({
+            "Ваш username": telegramUsername,
+            "Дозволені адміни": allowedAdmins,
+            "Збіг": allowedAdmins.includes(telegramUsername) ? "Так" : "Ні",
+            "Час": new Date().toISOString()
+          });
+          
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 5000);
           return;
         }
         
@@ -984,8 +1032,11 @@
         
       } catch (e) {
         console.error("Помилка ініціалізації:", e);
+        showDebugInfo(`Помилка: ${e.message}`);
         localStorage.removeItem("tg_auth");
-        window.location.href = "index.html";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 3000);
       }
     });
   </script>
