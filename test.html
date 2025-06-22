@@ -8,10 +8,10 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
-    /* Оптимизированные стили */
+    /* Оптимизированные стили с улучшенной читаемостью */
     body {
       background-color: #050608;
-      color: #FFFBEF;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
@@ -28,7 +28,7 @@
       overflow: hidden;
       font-size: 0.9rem;
       background-color: #1a1a1a;
-      color: #dcdcdc;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
     }
 
     .admin-table thead {
@@ -63,6 +63,7 @@
     .admin-table td {
       padding: 12px 15px;
       border-top: 1px solid #2c2c2c;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
     }
 
     .admin-table tbody tr:nth-child(even) {
@@ -85,6 +86,7 @@
       line-height: 24px;
       font-weight: bold;
       font-size: 0.85rem;
+      color: white; /* Добавлен белый цвет текста */
     }
 
     .rank-1 { background: linear-gradient(135deg, #fcd34d, #f59e0b); }
@@ -96,8 +98,6 @@
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 20px;
-      display: flex;
-      gap: 15px;
     }
 
     .search-box {
@@ -110,21 +110,8 @@
       border-radius: 8px;
       border: none;
       background-color: #1a1a1a;
-      color: #FFFBEF;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
       font-size: 1rem;
-    }
-
-    .date-filter {
-      display: flex;
-      gap: 10px;
-    }
-
-    .date-filter input {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      background-color: #1a1a1a;
-      color: #FFFBEF;
     }
 
     .summary-cards {
@@ -140,6 +127,7 @@
       padding: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
     }
 
     .summary-card:hover {
@@ -188,7 +176,7 @@
       padding: 8px 16px;
       border-radius: 8px;
       background-color: #1a1a1a;
-      color: #FFFBEF;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
       border: none;
       cursor: pointer;
       transition: all 0.2s;
@@ -255,6 +243,7 @@
       max-width: 1000px;
       position: relative;
       box-shadow: 0 0 30px rgba(25, 119, 253, 0.5);
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
     }
 
     .close-modal {
@@ -290,6 +279,7 @@
       justify-content: center;
       font-size: 36px;
       font-weight: bold;
+      color: white;
     }
 
     .employee-info {
@@ -320,6 +310,7 @@
       padding: 12px 20px;
       min-width: 150px;
       transition: transform 0.3s;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
     }
 
     .stat-card:hover {
@@ -364,6 +355,7 @@
       padding: 15px;
       min-height: 120px;
       position: relative;
+      color: #FFFFFF; /* Изменен на белый для лучшей читаемости */
     }
 
     .day-date {
@@ -437,10 +429,6 @@
       .employee-stats {
         justify-content: center;
       }
-
-      .search-container {
-        flex-direction: column;
-      }
     }
 
     @keyframes fadeInUp {
@@ -495,13 +483,10 @@
       </div>
     </div>
 
+    <!-- Убрана фильтрация по датам -->
     <div class="search-container">
       <div class="search-box">
         <input type="text" id="search-input" placeholder="Пошук співробітників...">
-      </div>
-      <div class="date-filter">
-        <input type="date" id="start-date">
-        <input type="date" id="end-date">
       </div>
     </div>
 
@@ -650,15 +635,11 @@
       return `<span class="rank-badge ${rankClass}">${rank}</span>`;
     }
     
-    // Обновленная функция для определения выполнения нормы
+    // Функция для определения выполнения нормы (оставляем только для индикатора)
     function getNormStatus(tickets, timeSeconds) {
-      // Если время равно 0 - статус всегда "Звільнений" (неактив)
       if (timeSeconds === 0) return "Звільнений";
-      
-      const hours = timeSeconds / 3600;
-      
-      if (tickets >= 15 && hours >= 3) return "Норма виконана";
-      if (tickets >= 10 && hours >= 2) return "Норма натягнута";
+      if (tickets >= 15 && timeSeconds >= 10800) return "Норма виконана"; // 3 часа = 10800 секунд
+      if (tickets >= 10 && timeSeconds >= 7200) return "Норма натягнута"; // 2 часа = 7200 секунд
       return "Норма не виконана";
     }
     
@@ -1036,7 +1017,7 @@
             timeSeconds = timeToSeconds(timeRow[timeColIndex]);
           }
           
-          // Определяем норму
+          // Определяем норму (только для индикатора)
           const normStatus = getNormStatus(tickets, timeSeconds);
           const normClass = getNormClass(normStatus);
           
@@ -1051,7 +1032,6 @@
             <div class="day-stats">
               <div class="day-stat">Тікети: <b>${tickets}</b></div>
               <div class="day-stat">Час: <b>${secondsToHHMMSS(timeSeconds)}</b></div>
-              <div class="day-stat">${normStatus}</div>
             </div>
           `;
           
