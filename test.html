@@ -8,10 +8,10 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <style>
-    /* Стили остаются без изменений */
+    /* Оптимизированные стили */
     body {
-      background-color: #050608 !important;
-      color: #FFFBEF !important;
+      background-color: #050608;
+      color: #FFFBEF;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
@@ -42,6 +42,22 @@
       padding: 12px 15px;
       font-weight: 500;
       color: #b0b0b0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .admin-table th:hover {
+      background-color: #333;
+    }
+
+    .admin-table th.sorted-asc::after {
+      content: " ▲";
+      font-size: 0.8em;
+    }
+
+    .admin-table th.sorted-desc::after {
+      content: " ▼";
+      font-size: 0.8em;
     }
 
     .admin-table td {
@@ -80,6 +96,12 @@
       border-radius: 10px;
       padding: 15px;
       margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .search-box {
+      flex-grow: 1;
     }
 
     .search-box input {
@@ -90,6 +112,19 @@
       background-color: #1a1a1a;
       color: #FFFBEF;
       font-size: 1rem;
+    }
+
+    .date-filter {
+      display: flex;
+      gap: 10px;
+    }
+
+    .date-filter input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background-color: #1a1a1a;
+      color: #FFFBEF;
     }
 
     .summary-cards {
@@ -104,6 +139,11 @@
       border-radius: 12px;
       padding: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+
+    .summary-card:hover {
+      transform: translateY(-5px);
     }
 
     .summary-card h3 {
@@ -279,6 +319,11 @@
       border-radius: 10px;
       padding: 12px 20px;
       min-width: 150px;
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: scale(1.05);
     }
 
     .stat-value {
@@ -351,6 +396,34 @@
     .norm-missing { background-color: #ef4444; }
     .norm-fired { background-color: #94a3b8; }
 
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 8px;
+      background-color: #3b82f6;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 10000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notification.error {
+      background-color: #ef4444;
+    }
+
+    .notification.success {
+      background-color: #10b981;
+    }
+
     @media (max-width: 768px) {
       .days-grid {
         grid-template-columns: repeat(1, 1fr);
@@ -364,6 +437,10 @@
       .employee-stats {
         justify-content: center;
       }
+
+      .search-container {
+        flex-direction: column;
+      }
     }
 
     @keyframes fadeInUp {
@@ -373,18 +450,6 @@
     
     .animate-fade-in-up {
       animation: fadeInUp 0.5s ease-out forwards;
-    }
-    
-    .debug-info {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      z-index: 10000;
     }
   </style>
 </head>
@@ -426,12 +491,17 @@
       <div class="summary-card animate-fade-in-up" style="animation-delay: 0.2s">
         <h3>Співробітники</h3>
         <p>Кількість: <span id="total-employees" class="value">...</span></p>
+        <p>Середня активність: <span id="avg-activity" class="value">...</span></p>
       </div>
     </div>
 
     <div class="search-container">
       <div class="search-box">
         <input type="text" id="search-input" placeholder="Пошук співробітників...">
+      </div>
+      <div class="date-filter">
+        <input type="date" id="start-date">
+        <input type="date" id="end-date">
       </div>
     </div>
 
@@ -442,14 +512,14 @@
         <table class="admin-table">
           <thead>
             <tr>
-              <th>Співробітник</th>
-              <th>Тікети (вчора)</th>
-              <th>Час (вчора)</th>
-              <th>Тікети (тиждень)</th>
-              <th>Час (тиждень)</th>
-              <th>Тікети (місяць)</th>
-              <th>Час (місяць)</th>
-              <th>Місце</th>
+              <th data-sort="name">Співробітник</th>
+              <th data-sort="yesterday-tickets">Тікети (вчора)</th>
+              <th data-sort="yesterday-time">Час (вчора)</th>
+              <th data-sort="week-tickets">Тікети (тиждень)</th>
+              <th data-sort="week-time">Час (тиждень)</th>
+              <th data-sort="month-tickets">Тікети (місяць)</th>
+              <th data-sort="month-time">Час (місяць)</th>
+              <th data-sort="rank">Місце</th>
             </tr>
           </thead>
           <tbody id="admin-stats-body">
@@ -493,7 +563,7 @@
     </div>
   </div>
 
-  <div id="debug-info" class="debug-info hidden"></div>
+  <div id="notification" class="notification"></div>
 
   <script>
     // ID Google таблицы и API ключ
@@ -514,6 +584,18 @@
     let employeesData = [];
     let ticketsData = [];
     let timeData = [];
+    let currentSort = { column: 'rank', direction: 'asc' };
+    
+    // Функция для отображения уведомлений
+    function showNotification(message, type = 'info') {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type} show`;
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
     
     // Функция для получения данных из Google Sheets
     async function getSheetData(sheetName) {
@@ -523,7 +605,7 @@
         return res.data.values;
       } catch (error) {
         console.error('Помилка під час отримання даних:', error);
-        showDebugInfo(`Помилка завантаження даних: ${error.message}`);
+        showNotification('Помилка завантаження даних', 'error');
         return null;
       }
     }
@@ -628,6 +710,7 @@
         let totalTicketsYesterday = 0;
         let totalTicketsWeek = 0;
         let totalTicketsMonth = 0;
+        let totalActiveDays = 0;
         let maxTicketsYesterday = 0;
         let maxTimeYesterday = 0;
         let maxTicketsEmployee = "";
@@ -654,6 +737,7 @@
           let weekTime = 0;
           let monthTickets = 0;
           let monthTime = 0;
+          let activeDays = 0;
           
           // Проходим по всем датам
           for (const { h: dateStr, i: dateIndex } of dateCols) {
@@ -665,6 +749,7 @@
             let timeSeconds = 0;
             if (timeColIndex >= 0 && timeRow[timeColIndex] && timeRow[timeColIndex] !== 'Н') {
               timeSeconds = timeToSeconds(timeRow[timeColIndex]);
+              if (timeSeconds > 0) activeDays++;
             }
             
             // Вчерашний день
@@ -702,6 +787,7 @@
           // Суммируем общие показатели
           totalTicketsWeek += weekTickets;
           totalTicketsMonth += monthTickets;
+          totalActiveDays += activeDays;
           
           employees.push({
             name: employeeName,
@@ -733,6 +819,12 @@
         document.getElementById('total-tickets-week').textContent = totalTicketsWeek;
         document.getElementById('total-tickets-month').textContent = totalTicketsMonth;
         
+        // Рассчитываем среднюю активность
+        const avgActivity = totalActiveDays > 0 
+          ? Math.round((totalActiveDays / employees.length) * 100) / 100 
+          : 0;
+        document.getElementById('avg-activity').textContent = `${avgActivity} дн/м`;
+        
         document.getElementById('top-tickets').textContent = 
           maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsYesterday}` : "Немає даних";
         
@@ -746,9 +838,64 @@
         
       } catch (error) {
         console.error('Помилка під час отримання даних:', error);
-        showDebugInfo(`Помилка завантаження даних: ${error.message}`);
+        showNotification('Помилка завантаження даних', 'error');
         return [];
       }
+    }
+    
+    // Функция для сортировки данных
+    function sortData(data, column, direction = 'asc') {
+      return [...data].sort((a, b) => {
+        let valueA, valueB;
+        
+        switch(column) {
+          case 'name':
+            valueA = a.name.toLowerCase();
+            valueB = b.name.toLowerCase();
+            return direction === 'asc' 
+              ? valueA.localeCompare(valueB) 
+              : valueB.localeCompare(valueA);
+            
+          case 'yesterday-tickets':
+            valueA = a.stats.yesterday.tickets;
+            valueB = b.stats.yesterday.tickets;
+            break;
+            
+          case 'yesterday-time':
+            valueA = a.stats.yesterday.time;
+            valueB = b.stats.yesterday.time;
+            break;
+            
+          case 'week-tickets':
+            valueA = a.stats.week.tickets;
+            valueB = b.stats.week.tickets;
+            break;
+            
+          case 'week-time':
+            valueA = a.stats.week.time;
+            valueB = b.stats.week.time;
+            break;
+            
+          case 'month-tickets':
+            valueA = a.stats.month.tickets;
+            valueB = b.stats.month.tickets;
+            break;
+            
+          case 'month-time':
+            valueA = a.stats.month.time;
+            valueB = b.stats.month.time;
+            break;
+            
+          case 'rank':
+          default:
+            valueA = a.rank;
+            valueB = b.rank;
+        }
+        
+        return direction === 'asc' 
+          ? valueA - valueB 
+          : valueB - valueA;
+      });
     }
     
     // Функция для отображения данных сотрудников
@@ -904,6 +1051,7 @@
             <div class="day-stats">
               <div class="day-stat">Тікети: <b>${tickets}</b></div>
               <div class="day-stat">Час: <b>${secondsToHHMMSS(timeSeconds)}</b></div>
+              <div class="day-stat">${normStatus}</div>
             </div>
           `;
           
@@ -924,13 +1072,6 @@
       return weekNo;
     }
     
-    // Функция для отображения отладочной информации
-    function showDebugInfo(message) {
-      const debugDiv = document.getElementById('debug-info');
-      debugDiv.textContent = message;
-      debugDiv.classList.remove('hidden');
-    }
-    
     // Функция для обновления данных
     async function refreshData() {
       document.getElementById('loader').classList.remove('hidden');
@@ -941,19 +1082,17 @@
       document.getElementById('loader').classList.add('hidden');
       document.getElementById('admin-stats-container').classList.remove('hidden');
       
-      renderEmployeeTable(employeesData);
+      const sortedData = sortData(employeesData, currentSort.column, currentSort.direction);
+      renderEmployeeTable(sortedData);
     }
     
     // Инициализация страницы
     document.addEventListener("DOMContentLoaded", async function() {
-      // Показать отладочную информацию
-      showDebugInfo("Завантаження...");
-      
       // Проверка авторизации администратора
       const savedAuth = localStorage.getItem("tg_auth");
       
       if (!savedAuth) {
-        showDebugInfo("Будь ласка, увійдіть через головну сторінку");
+        showNotification("Будь ласка, увійдіть через головну сторінку", "error");
         setTimeout(() => {
           window.location.href = "index.html";
         }, 2000);
@@ -964,10 +1103,8 @@
         const userData = JSON.parse(savedAuth);
         const telegramUsername = userData.username ? userData.username.toLowerCase().trim() : null;
         
-        showDebugInfo(debugInfo);
-        
         if (!telegramUsername) {
-          showDebugInfo("Не вдалося отримати ім'я користувача з Telegram");
+          showNotification("Не вдалося отримати ім'я користувача з Telegram", "error");
           setTimeout(() => {
             window.location.href = "index.html";
           }, 3000);
@@ -976,17 +1113,7 @@
         
         // Проверка, является ли пользователь администратором
         if (!allowedAdmins.includes(telegramUsername)) {
-          showDebugInfo(`Доступ заборонено. Ваш тег: ${telegramUsername}`);
-          
-          // Дополнительная информация для отладки
-          console.error("Доступ заборонено. Деталі:");
-          console.table({
-            "Ваш username": telegramUsername,
-            "Дозволені адміни": allowedAdmins,
-            "Збіг": allowedAdmins.includes(telegramUsername) ? "Так" : "Ні",
-            "Час": new Date().toISOString()
-          });
-          
+          showNotification("Доступ заборонено. Ви не є адміністратором", "error");
           setTimeout(() => {
             window.location.href = "index.html";
           }, 5000);
@@ -1023,9 +1150,39 @@
           }
         });
         
+        // Добавляем сортировку таблицы
+        document.querySelectorAll('.admin-table th[data-sort]').forEach(th => {
+          th.addEventListener('click', () => {
+            const column = th.dataset.sort;
+            
+            // Сбрасываем стили для всех заголовков
+            document.querySelectorAll('.admin-table th').forEach(h => {
+              h.classList.remove('sorted-asc', 'sorted-desc');
+            });
+            
+            // Определяем направление сортировки
+            if (currentSort.column === column) {
+              currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+              currentSort.column = column;
+              currentSort.direction = 'asc';
+            }
+            
+            // Добавляем стили для текущего заголовка
+            th.classList.add(`sorted-${currentSort.direction}`);
+            
+            // Сортируем и отображаем данные
+            const sortedData = sortData(employeesData, column, currentSort.direction);
+            renderEmployeeTable(sortedData);
+          });
+        });
+        
+        // Показываем приветствие
+        showNotification(`Вітаємо, ${userData.nickname || 'адміністраторе'}!`, 'success');
+        
       } catch (e) {
         console.error("Помилка ініціалізації:", e);
-        showDebugInfo(`Помилка: ${e.message}`);
+        showNotification(`Помилка: ${e.message}`, 'error');
         localStorage.removeItem("tg_auth");
         setTimeout(() => {
           window.location.href = "index.html";
