@@ -239,24 +239,24 @@ h1 {
 /* Стили для нового меню суперадминов */
 .super-script-menu {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  top: 70px; /* Расположено под первым меню */
+  left: 20px;
   z-index: 1000;
 }
 
 .super-script-list {
-  margin-bottom: 8px;
   display: flex;
   flex-direction: column;
   background-color: #1e1e1e;
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid #ffd700; /* Золотая рамка */
 }
 
 .super-script-item {
   padding: 8px 12px;
-  color: #ffd700;
+  color: #ffd700; /* Золотой текст */
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -268,6 +268,26 @@ h1 {
 .super-script-item:hover {
   background-color: #333;
   color: #fff;
+}
+
+.super-menu-button {
+  width: 40px;
+  height: 40px;
+  background-color: #1a1a1a;
+  color: #ffd700; /* Золотой цвет иконки */
+  font-size: 22px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #ffd700; /* Золотая рамка */
+}
+
+.super-menu-button:hover {
+  background-color: #333;
+  transform: scale(1.05);
 }
   </style>
 </head>
@@ -288,6 +308,8 @@ h1 {
         </script>
       </div>
     </div>
+    
+    <!-- Основное меню -->
     <div class="script-menu hidden" id="scriptMenu">
       <div class="menu-button" onclick="toggleScripts()">≡</div>
       <div class="script-list hidden" id="scriptList">
@@ -300,9 +322,9 @@ h1 {
       </div>
     </div>
     
-    <!-- Новое меню для суперадминов -->
+    <!-- Новое меню для суперадминов (расположено под основным) -->
     <div class="super-script-menu hidden" id="superScriptMenu">
-      <div class="menu-button" onclick="toggleSuperScripts()">≡</div>
+      <div class="super-menu-button" onclick="toggleSuperScripts()">≡</div>
       <div class="super-script-list hidden" id="superScriptList">
         <a href="super-script1.html" class="super-script-item">Супер скрипт 1</a>
         <a href="super-script2.html" class="super-script-item">Супер скрипт 2</a>
