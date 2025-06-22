@@ -964,13 +964,6 @@
         const userData = JSON.parse(savedAuth);
         const telegramUsername = userData.username ? userData.username.toLowerCase().trim() : null;
         
-        // Отладочная информация
-        const debugInfo = [
-          `Користувач: ${telegramUsername || 'не визначено'}`,
-          `Дозволені адміни: ${allowedAdmins.join(', ')}`,
-          `Дата: ${new Date().toLocaleString()}`
-        ].join(' | ');
-        
         showDebugInfo(debugInfo);
         
         if (!telegramUsername) {
