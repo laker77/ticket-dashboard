@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адміністративні команди | Ukraine GTA 5</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        :root {
+            --bg-dark: #050608;
+            --card-bg: #1a1a1a;
+            --card-border: #2a2a2a;
+            --accent-blue: #3b82f6;
+            --accent-light: #60a5fa;
+            --text-light: #ffffff;
+            --text-muted: #a3a3a3;
+            --level-1: #4ade80;
+            --level-2: #60a5fa;
+            --level-3: #f87171;
+            --level-4: #fbbf24;
+            --level-5: #c084fc;
+            --level-6: #f472b6;
+            --scrollbar: #3b82f6;
+            --scrollbar-bg: #1a1a1a;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent-blue);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .search-container {
+            max-width: 700px;
+            margin: 40px auto;
+            position: relative;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 18px 25px;
+            padding-left: 60px;
+            border-radius: 50px;
+            background: rgba(30, 30, 30, 0.7);
+            border: 1px solid var(--card-border);
+            color: var(--text-light);
+            font-size: 1.1rem;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+        }
+        
+        .commands-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .level-card {
+            background: rgba(26, 26, 26, 0.7);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .level-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .level-1 .card-header { background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), transparent); }
+        .level-2 .card-header { background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), transparent); }
+        .level-3 .card-header { background: linear-gradient(135deg, rgba(248, 113, 113, 0.15), transparent); }
+        .level-4 .card-header { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), transparent); }
+        .level-5 .card-header { background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), transparent); }
+        .level-6 .card-header { background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), transparent); }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+        
+        .level-1 .card-icon { background: var(--level-1); }
+        .level-2 .card-icon { background: var(--level-2); }
+        .level-3 .card-icon { background: var(--level-3); }
+        .level-4 .card-icon { background: var(--level-4); }
+        .level-5 .card-icon { background: var(--level-5); }
+        .level-6 .card-icon { background: var(--level-6); }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .level-1 .card-title { color: var(--level-1); }
+        .level-2 .card-title { color: var(--level-2); }
+        .level-3 .card-title { color: var(--level-3); }
+        .level-4 .card-title { color: var(--level-4); }
+        .level-5 .card-title { color: var(--level-5); }
+        .level-6 .card-title { color: var(--level-6); }
+        
+        .card-content {
+            padding: 0 25px 25px;
+            overflow-y: auto;
+            max-height: 500px;
+            flex-grow: 1;
+        }
+        
+        /* Кастомный скроллбар */
+        .card-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .card-content::-webkit-scrollbar-track {
+            background: var(--scrollbar-bg);
+            border-radius: 4px;
+        }
+        
+        .card-content::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 4px;
+        }
+        
+        .card-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-light);
+        }
+        
+        .command {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(40, 40, 40, 0.5);
+            transition: all 0.3s ease;
+            border-left: 3px solid var(--card-border);
+            overflow: hidden;
+        }
+        
+        .command:hover {
+            background: rgba(50, 50, 50, 0.7);
+            border-left-color: var(--accent-blue);
+            transform: translateX(5px);
+        }
+        
+        .command-name {
+            font-family: 'Courier New', monospace;
+            color: var(--accent-blue);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            word-break: break-word;
+        }
+        
+        .command-name i {
+            color: var(--accent-light);
+            flex-shrink: 0;
+        }
+        
+        .command-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+        
+        .param {
+            color: #f0abfc;
+            font-style: italic;
+            white-space: nowrap;
+        }
+        
+        .optional {
+            color: #a3a3a3;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            color: var(--text-muted);
+            margin-top: 60px;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .footer-logo {
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+        }
+        
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .level-card {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .level-card:nth-child(1) { animation-delay: 0.1s; }
+        .level-card:nth-child(2) { animation-delay: 0.2s; }
+        .level-card:nth-child(3) { animation-delay: 0.3s; }
+        .level-card:nth-child(4) { animation-delay: 0.4s; }
+        .level-card:nth-child(5) { animation-delay: 0.5s; }
+        .level-card:nth-child(6) { animation-delay: 0.6s; }
+        
+        @media (max-width: 768px) {
+            .commands-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .search-box {
+                padding: 15px 20px;
+                padding-left: 50px;
+                font-size: 1rem;
+            }
+            
+            .search-icon {
+                left: 20px;
+            }
+            
+            .card-header {
+                padding: 20px;
+            }
+            
+            .card-content {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-terminal"></i>
+                <h1>Адміністративні команди</h1>
+            </div>
+            <p class="subtitle">Повний перелік команд для адміністрації сервера Ukraine GTA 5 RolePlay. Команди згруповані за рівнями доступу.</p>
+            
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-box" placeholder="Пошук команди...">
+            </div>
+        </header>
+        
+        <div class="commands-container">
+           <!-- Хелпер 1 -->
+<div class="level-card level-1">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-hands-helping"></i>
+        </div>
+        <h2 class="card-title">Хелпер 1</h2>
+    </div>
+    <div class="card-content">
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /a <span class="param">[повідомлення]</span></div>
+            <div class="command-desc">Надіслати повідомлення в адміністративний чат.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /ans <span class="param">[dinamic ID]</span> <span class="param">[повідомлення]</span></div>
+            <div class="command-desc">Відповісти гравцю через адміністративний інтерфейс.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /admins</div>
+            <div class="command-desc">Показує список активних адміністраторів на сервері.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /goto <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Телепортуватися до вибраного гравця за його ID.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /gethere <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Телепортувати зазначеного гравця до себе.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /goback</div>
+            <div class="command-desc">Повернутися на останню позицію, з якої ви використовували команду /goto.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /posc</div>
+            <div class="command-desc">Скопіювати свої поточні координати в буфер обміну.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /vehposc</div>
+            <div class="command-desc">Скопіювати координати автомобіля, у якому ви перебуваєте, в буфер обміну.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /red</div>
+            <div class="command-desc">Увімкнути або вимкнути червоний нік (зазвичай для позначення адміністратора).</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /inv</div>
+            <div class="command-desc">Увімкнути або вимкнути режим невидимості.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /sp</div>
+            <div class="command-desc">Слідкування за гравцем.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /spoff</div>
+            <div class="command-desc">Вийти з слідкування.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /ahistory <span class="param">[static ID]</span></div>
+            <div class="command-desc">Переглянути історію покарань гравця.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /return <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Повернути гравця на останню позицію (після /gethere або /masstp).</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /gm</div>
+            <div class="command-desc">Увімкнути/вимкнути безсмертя.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /dl</div>
+            <div class="command-desc">[1] Увімкнути адмін мод / [2] Вимкнути адмін мод.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /vehhere <span class="param">[auto ID]</span></div>
+            <div class="command-desc">Телепортувати авто до себе та перевернути.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /dynamic <span class="param">[static ID]</span></div>
+            <div class="command-desc">Дізнатись динамічний ID гравця.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /repair <span class="param">[auto ID]</span></div>
+            <div class="command-desc">Відремонтувати автомобіль.</div>
+        </div>
+    </div>
+</div>
+
+            
+          <!-- Мл.Адміністратор 2 -->
+<div class="level-card level-2">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-user-shield"></i>
+        </div>
+        <h2 class="card-title">Мл.Адміністратор 2</h2>
+    </div>
+    <div class="card-content">
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /flist</div>
+            <div class="command-desc">Переглянути список організацій.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /jail <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Посадити гравця у в'язницю за містом.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /offjail <span class="param">[static ID]</span></div>
+            <div class="command-desc">Посадити гравця у в'язницю за містом (offline).</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /unjail <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Випустити з в'язниці гравця.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /uncuff <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Зняти кайданки з гравця.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /ftp <span class="param">[fraction ID]</span></div>
+            <div class="command-desc">Телепортуватися до обраної організації за її ID.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /hp <span class="param">[dinamic ID]</span> <span class="param">[Кількість ХП]</span></div>
+            <div class="command-desc">Змінити кількість здоров'я гравця. Може реанімувати, якщо гравець знаходиться у лежачому стані.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /mute <span class="param">[dinamic ID]</span> <span class="param">[хвилини]</span> <span class="param">[причина]</span></div>
+            <div class="command-desc">Заборонити текстовий і голосовий чат гравцю на певний час із зазначенням причини.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /offmute <span class="param">[static ID]</span> <span class="param">[хвилини]</span> <span class="param">[причина]</span></div>
+            <div class="command-desc">Заборонити текстовий і голосовий чат гравцю на певний час із зазначенням причини (offline).</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /unmute <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Зняти заборону на текстовий та голосовий чат гравцю.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /slap <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Дати стусана гравцю (зазвичай це легке покарання).</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /farmtp <span class="param">[farm ID]</span></div>
+            <div class="command-desc">Телепортуватися до ферми за її ID.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /kill <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Вбити зазначеного гравця.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /stats <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Переглянути статистику персонажа за його ID.</div>
+        </div>
+
+        <div class="command">
+            <div class="command-name"><i class="fas fa-code"></i> /reviving <span class="param">[dinamic ID]</span></div>
+            <div class="command-desc">Відродити гравця.</div>
+        </div>
+    </div>
+</div>
+
+            
+            <!-- Мл.Адміністратор 3 -->
+            <div class="level-card level-3">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <h2 class="card-title">Мл.Адміністратор 3</h2>
+                </div>
+                <div class="card-content">
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /kick <span class="param">[dinamic ID]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Відключити гравця із сервера із зазначенням причини.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /warn <span class="param">[dinamic ID]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Видати попередження (варн) гравцю за порушення правил із зазначенням причини.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /offwarn <span class="param">[static ID]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Видати офлайн попередження гравцеві із зазначенням причини.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /ban <span class="param">[dinamic ID]</span> <span class="param">[days]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Заблокувати гравця на вказану кількість днів із поясненням причини.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /offban <span class="param">[static ID]</span> <span class="param">[days]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Заблокувати гравця офлайн на вказану кількість днів із поясненням причини.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /unban <span class="param">[static ID]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Розблокувати гравця.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /tpos <span class="param">[x][y][z]</span></div>
+                        <div class="command-desc">Телепортуватись по координатам.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Адміністратор 4 -->
+            <div class="level-card level-4">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h2 class="card-title">Адміністратор 4</h2>
+                </div>
+                <div class="card-content">
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /msg <span class="param">[повідомлення]</span></div>
+                        <div class="command-desc">Надіслати повідомлення в загальний чат сервера.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /hardban <span class="param">[dinamic ID]</span> <span class="param">[дні]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Заблокувати всі 3 персонажа гравця.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /offhardban <span class="param">[static ID]</span> <span class="param">[дні]</span> <span class="param">[причина]</span></div>
+                        <div class="command-desc">Заблокувати всі 3 персонажа гравця (offline).</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /unwarn <span class="param">[dinamic ID]</span></div>
+                        <div class="command-desc">Зняти всі попередження (варни) з гравця.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /skick <span class="param">[dinamic ID]</span></div>
+                        <div class="command-desc">Тихо відключити гравця від сервера без повідомлення в чаті.</div>
+                    </div>
+                    
+                    <div class="command">
+                        <div class="command-name"><i class="fas fa-code"></i> /setfuel <span class="param">[auto ID]</span> <span class="param">[літри]</span></div>
+                        <div class="command-desc">Встановити кількість пального в транспорті.</div>
+                    </div>
+                </div>
+            </div>
+            
+<!-- Ст.Адміністратор 5 -->
+<div class="level-card level-5">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-user-graduate"></i>
+        </div>
+        <h2 class="card-title">Ст.Адміністратор 5</h2>
+    </div>
+    <div class="card-content">
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /fsetleader <span class="param">[dinamic ID]</span> <span class="param">[fraction ID]</span></div><div class="command-desc">Змінити лідера організації.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /fsetleaderoff <span class="param">[static ID]</span> <span class="param">[fraction ID]</span></div><div class="command-desc">Змінити лідера організації офлайн.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /fadd <span class="param">[dinamic ID]</span> <span class="param">[fraction ID]</span></div><div class="command-desc">Додати гравця до організації.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /fgiverank <span class="param">[dinamic ID]</span> <span class="param">[rank]</span></div><div class="command-desc">Змінити ранг гравця.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /fuval <span class="param">[dinamic ID]</span></div><div class="command-desc">Звільнити гравця з організації.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /hpall <span class="param">[радіус]</span></div><div class="command-desc">Відновити HP усім у радіусі.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /removeFromVeh <span class="param">[static ID]</span></div><div class="command-desc">Відштовхнути гравця з авто.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /setd <span class="param">[number]</span></div><div class="command-desc">Змінити вимірювання.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /bus</div><div class="command-desc">Телепорт до автобусної станції.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /farmfill <span class="param">[farm ID]</span> <span class="param">[field ID]</span> <span class="param">[crop]</span></div><div class="command-desc">Засіяти поле на фермі.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /farmsoil <span class="param">[farm ID]</span></div><div class="command-desc">Удобрити поле на фермі.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /gotohouse <span class="param">[house ID]</span></div><div class="command-desc">Телепорт до будинку.</div></div>
+    </div>
+</div>
+
+           <!-- Головний Куратор 6 -->
+<div class="level-card level-6">
+    <div class="card-header">
+        <div class="card-icon">
+            <i class="fas fa-crown"></i>
+        </div>
+        <h2 class="card-title">Головний Куратор 6</h2>
+    </div>
+    <div class="card-content">
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /gotobiz <span class="param">[biz ID]</span></div><div class="command-desc">Телепорт до бізнесу.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /getbizid</div><div class="command-desc">Отримати ID бізнесу, в якому перебуває гравець.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /masstp</div><div class="command-desc">Увімкнути/вимкнути масовий телепорт.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /skin <span class="param">[dinamic ID]</span> <span class="param">[skin ID]</span></div><div class="command-desc">Змінити скін гравця.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /satiety <span class="param">[dinamic ID]</span></div><div class="command-desc">Поповнити ситість.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /thirst <span class="param">[dinamic ID]</span></div><div class="command-desc">Поповнити спрагу.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /getspawner</div><div class="command-desc">Хто заспавнив транспорт.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /pos</div><div class="command-desc">Записати координати у файл.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /bsetzoneowner <span class="param">[band ID]</span></div><div class="command-desc">Передати зону банді.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /mcapt <span class="param">[biz ID]</span></div><div class="command-desc">Почати захоплення бізнесу.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /permban <span class="param">[dinamic ID]</span> <span class="param">[причина]</span></div><div class="command-desc">Пермабан гравця.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /offpermban <span class="param">[static ID]</span> <span class="param">[причина]</span></div><div class="command-desc">Пермабан гравця (offline).</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /captcreate <span class="param">[zone ID]</span> <span class="param">[hours]</span> <span class="param">[attackFaction]</span> <span class="param">[playersQuantity]</span> <span class="param">[weapon]</span></div><div class="command-desc">Створити капт.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /captstart <span class="param">[zone ID]</span></div><div class="command-desc">Почати капт.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /captstop <span class="param">[zone ID]</span></div><div class="command-desc">Зупинити капт.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /setbizfaction <span class="param">[fraction ID]</span></div><div class="command-desc">Встановити кришування мафії.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /bzstart</div><div class="command-desc">Почати бізвар.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /bzstop</div><div class="command-desc">Зупинити бізвар.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /questskip <span class="param">[dinamic ID]</span></div><div class="command-desc">Пропустити стартове завдання.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /veh <span class="param">[назва авто]</span></div><div class="command-desc">Створити автомобіль</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /purgeOn</div><div class="command-desc">Увімкнути Судну ніч.</div></div>
+        <div class="command"><div class="command-name"><i class="fas fa-code"></i> /purgeOff</div><div class="command-desc">Вимкнути Судну ніч.</div></div>
+    </div>
+</div>
+    </div>
+
+    <script>
+        // Поиск по командам
+        const searchBox = document.querySelector('.search-box');
+        const commands = document.querySelectorAll('.command');
+        
+        searchBox.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            commands.forEach(command => {
+                const commandText = command.textContent.toLowerCase();
+                if (commandText.includes(searchTerm)) {
+                    command.style.display = 'block';
+                    
+                    // Анимация выделения
+                    command.style.animation = 'highlight 0.5s ease';
+                    setTimeout(() => {
+                        command.style.animation = '';
+                    }, 500);
+                } else {
+                    command.style.display = 'none';
+                }
+            });
+        });
+        
+        // Анимация карточек при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const levelCards = document.querySelectorAll('.level-card');
+            
+            levelCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 150 * index);
+            });
+        });
+    </script>
+</body>
+</html>
