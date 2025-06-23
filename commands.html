@@ -846,25 +846,24 @@
             showLoginForm();
         }
 
-        // Проверка сохраненной сессии при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            // Добавляем обработчик для кнопки выхода
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            
-            // Проверяем сохраненную сессию
-            const savedAuth = localStorage.getItem('tg_auth');
-            if (savedAuth) {
-                try {
-                    showContent();
-                } catch (e) {
-                    localStorage.removeItem('tg_auth');
-                    showLoginForm();
-                }
-            } else {
+    // Проверка сохраненной сессии при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        // Добавляем обработчик для кнопки выхода
+        document.getElementById('logout-btn').addEventListener('click', logout);
+        
+        // Проверяем сохраненную сессию
+          const savedAuth = localStorage.getItem('tg_auth');
+        if (savedAuth) {
+            try {
+                showContent();
+            } catch (e) {
+                localStorage.removeItem('tg_auth');
                 showLoginForm();
             }
+        } else {
+            showLoginForm();
+        }
 
-        
         // Поиск по командам
         const searchBox = document.querySelector('.search-box');
         const commands = document.querySelectorAll('.command');
@@ -889,20 +888,19 @@
         });
         
         // Анимация карточек при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            const levelCards = document.querySelectorAll('.level-card');
+        const levelCards = document.querySelectorAll('.level-card');
+        
+        levelCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             
-            levelCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 150 * index);
-            });
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 150 * index);
         });
+    });
     </script>
 </body>
 </html>
