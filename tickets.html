@@ -7,6 +7,78 @@
     <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+         /* Стили авторизации */
+        #login-section {
+            background-color: #121824;
+            padding: 40px 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: 60px auto;
+            box-shadow: 0 0 30px #1977FDAA;
+            text-align: center;
+            animation: fadeInUp 1.2s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        #login-section p {
+            margin-bottom: 25px;
+            color: #FFFBEF;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 15px #1977FD;
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        #logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s;
+            border: none;
+            font-weight: bold;
+        }
+        
+        #logout-btn:hover {
+            background-color: #e60000;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 15px #1977FD;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px #1977FD;
+                transform: scale(1.1);
+            }
+        }
+        
         * {
             margin: 0;
             padding: 0;
