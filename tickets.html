@@ -740,138 +740,154 @@
     </div>
     
     <script>
-          const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+  const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+  const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+  const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
 
-        async function getSheetData(sheetName) {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-            const res = await axios.get(url);
-            return res.data.values;
-        }
+  async function getSheetData(sheetName) {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+    try {
+      const res = await axios.get(url);
+      return res.data.values;
+    } catch (error) {
+      console.error('Помилка отримання даних:', error);
+      throw new Error('Помилка завантаження даних з таблиці');
+    }
+  }
 
-        async function onTelegramAuth(user) {
-            const telegramUsername = '@' + user.username;
-            
-            try {
-                const ticketsData = await getSheetData('Май_2025_таблица');
-                const ticketsHeaders = ticketsData[0];
-                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                
-                const userTicketsRow = ticketsData.find(row => 
-                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-                );
-                
-                if (userTicketsRow) {
-                    // Сохраняем данные пользователя
-                    const userData = {
-                        username: telegramUsername,
-                    };
-                    localStorage.setItem('tg_auth', JSON.stringify(userData));
-                    
-                    // Показываем контент
-                    showContent();
-                } else {
-                    // Если пользователь не найден
-                    localStorage.removeItem('tg_auth');
-                    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-                    showLoginForm();
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Помилка під час завантаження даних');
-                showLoginForm();
-            }
-        }
+  async function onTelegramAuth(user) {
+    if (!user || !user.username) {
+      alert('Не отримано дані користувача Telegram');
+      return;
+    }
+    
+    const telegramUsername = '@' + user.username.toLowerCase();
+    console.log('Авторизація:', telegramUsername);
+    
+    try {
+      const ticketsData = await getSheetData('Май_2025_таблица');
+      const ticketsHeaders = ticketsData[0];
+      
+      // Пошук колонки з нормалізацією
+      const telegramColIndex = ticketsHeaders.findIndex(header => 
+        header.trim().toLowerCase() === 'telegram'
+      );
 
-        // Функция для показа контента
-        function showContent() {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
-            document.getElementById('logout-btn').classList.remove('hidden');
-        }
+      if (telegramColIndex === -1) {
+        throw new Error('Колонка Telegram не знайдена в таблиці');
+      }
 
-        // Функция для показа формы входа
-        function showLoginForm() {
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('content').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-        }
+      // Пошук користувача з нормалізацією даних
+      const userFound = ticketsData.slice(1).some(row => {
+        const rowUsername = (row[telegramColIndex] || '').trim().toLowerCase();
+        return rowUsername === telegramUsername;
+      });
 
-        // Функция выхода
-        function logout() {
-            localStorage.removeItem('tg_auth');
-            showLoginForm();
-        }
+      if (userFound) {
+        console.log('Доступ дозволено для:', telegramUsername);
+        localStorage.setItem('tg_auth', JSON.stringify({
+          username: telegramUsername,
+          timestamp: Date.now()
+        }));
+        showContent();
+      } else {
+        console.warn('Доступ заборонено:', telegramUsername);
+        localStorage.removeItem('tg_auth');
+        alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+        showLoginForm();
+      }
+    } catch (error) {
+      console.error('Помилка авторизації:', error);
+      alert(`Помилка: ${error.message || 'Перевірте консоль для деталей'}`);
+      showLoginForm();
+    }
+  }
 
-    // Проверка сохраненной сессии при загрузке
-    document.addEventListener('DOMContentLoaded', function() {
-        // Добавляем обработчик для кнопки выхода
-        document.getElementById('logout-btn').addEventListener('click', logout);
+  // Перевірка сесії при завантаженні
+  function initAuthCheck() {
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) logoutBtn.addEventListener('click', logout);
+
+    try {
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        const authData = JSON.parse(savedAuth);
+        const sessionAge = Date.now() - (authData.timestamp || 0);
         
-        // Проверяем сохраненную сессию
-          const savedAuth = localStorage.getItem('tg_auth');
-        if (savedAuth) {
-            try {
-                showContent();
-            } catch (e) {
-                localStorage.removeItem('tg_auth');
-                showLoginForm();
-            }
+        if (sessionAge < SESSION_TIMEOUT) {
+          showContent();
+          return;
         } else {
-            showLoginForm();
+          console.log('Сесія закінчилася');
         }
+      }
+    } catch (e) {
+      console.error('Помилка перевірки сесії:', e);
+    }
+    showLoginForm();
+  }
 
-        // Анимация при прокрутке
-        document.addEventListener('DOMContentLoaded', function() {
-            // Функция для проверки видимости элемента
-            function isElementInViewport(el) {
-                const rect = el.getBoundingClientRect();
-                return (
-                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-                    rect.bottom >= 0
-                );
-            }
-            
-            // Функция для обработки появления элементов
-            function handleScroll() {
-                const elements = document.querySelectorAll('.message, .system-note');
-                
-                elements.forEach(el => {
-                    if (isElementInViewport(el)) {
-                        el.classList.add('visible');
-                    }
-                });
-            }
-            
-            // Инициализация при загрузке
-            handleScroll();
-            
-            // Обработка события прокрутки
-            window.addEventListener('scroll', handleScroll);
-            
-            // Анимация карточек
-            const sections = document.querySelectorAll('.section, .ticket-card');
-            sections.forEach(section => {
-                section.style.opacity = 0;
-                section.style.transform = 'translateY(30px)';
-                section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                
-                if (isElementInViewport(section)) {
-                    section.style.opacity = 1;
-                    section.style.transform = 'translateY(0)';
-                }
-            });
-            
-            // Обработка для карточек
-            window.addEventListener('scroll', function() {
-                sections.forEach(section => {
-                    if (isElementInViewport(section)) {
-                        section.style.opacity = 1;
-                        section.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-        });
-    </script>
+  function showContent() {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('content').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
+  }
+
+  function showLoginForm() {
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('content').classList.add('hidden');
+    document.getElementById('logout-btn').classList.add('hidden');
+  }
+
+  function logout() {
+    localStorage.removeItem('tg_auth');
+    showLoginForm();
+  }
+
+  // Анімація при прокрутці
+  function initScrollAnimations() {
+    function isElementInViewport(el) {
+      const rect = el.getBoundingClientRect();
+      return (
+        rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.bottom >= 0
+      );
+    }
+
+    function handleScroll() {
+      const elements = document.querySelectorAll('.message, .system-note');
+      elements.forEach(el => {
+        if (isElementInViewport(el)) {
+          el.classList.add('visible');
+        }
+      });
+
+      const sections = document.querySelectorAll('.section, .ticket-card');
+      sections.forEach(section => {
+        if (isElementInViewport(section)) {
+          section.style.opacity = 1;
+          section.style.transform = 'translateY(0)';
+        }
+      });
+    }
+
+    // Ініціалізація при завантаженні
+    const sections = document.querySelectorAll('.section, .ticket-card');
+    sections.forEach(section => {
+      section.style.opacity = 0;
+      section.style.transform = 'translateY(30px)';
+      section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    });
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+  }
+
+  // Основна ініціалізація
+  document.addEventListener('DOMContentLoaded', function() {
+    initAuthCheck();
+    initScrollAnimations();
+  });
+</script>
 </body>
 </html>
