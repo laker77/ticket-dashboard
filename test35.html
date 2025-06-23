@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трекер сесій | UG5.dev</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary: #1977FD;
+            --dark: #050608;
+            --darker: #030405;
+            --light: #f8fafc;
+            --gray: #1a1a1a;
+            --gray-light: #2c2c2c;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Навигационная панель */
+        .navbar {
+            background-color: var(--darker);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            background-color: var(--gray);
+            color: var(--primary);
+        }
+        
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        .burger-menu span {
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 10px;
+            transition: all 0.3s linear;
+        }
+        
+        /* Мобильное меню */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 70%;
+            max-width: 300px;
+            background-color: var(--darker);
+            z-index: 999;
+            padding: 80px 20px 20px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-nav a {
+            display: block;
+            padding: 15px;
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--gray-light);
+            transition: background-color 0.2s;
+        }
+        
+        .mobile-nav a:hover {
+            background-color: var(--gray);
+            color: var(--primary);
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 998;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Основное содержимое */
+        .content {
+            margin-top: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            background-color: var(--gray);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .section-title {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        
+        #logInput {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            background-color: var(--darker);
+            color: var(--light);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        
+        #processButton {
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+            display: block;
+            margin: 0 auto;
+            font-weight: 500;
+        }
+        
+        #processButton:hover {
+            background-color: #0d5fd3;
+        }
+        
+        /* Таблица результатов */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        #resultTable {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background-color: var(--darker);
+            color: var(--light);
+        }
+        
+        #resultTable thead {
+            background-color: var(--gray-light);
+        }
+        
+        #resultTable th {
+            text-align: left;
+            padding: 14px 16px;
+            font-weight: 500;
+            color: #b0b0b0;
+        }
+        
+        #resultTable td {
+            padding: 12px 16px;
+            border-top: 1px solid var(--gray-light);
+        }
+        
+        #resultTable tbody tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        #resultTable tbody tr:hover {
+            background-color: rgba(25, 119, 253, 0.1);
+            transition: background-color 0.2s ease;
+        }
+        
+        #totalTime {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: bold;
+            padding: 10px 0;
+            text-align: center;
+            background-color: var(--darker);
+            border-radius: 8px;
+            margin-top: 20px;
+            padding: 15px;
+        }
+        
+        .save-icon {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #10b981;
+            transition: all 0.3s;
+        }
+        
+        .save-icon:hover {
+            transform: scale(1.2);
+            color: #047857;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .notification.error {
+            background-color: #ef4444;
+        }
+        
+        .notification.success {
+            background-color: #10b981;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .burger-menu {
+                display: flex;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            #resultTable th, 
+            #resultTable td {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигационная панель -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="logo">UG5.dev</div>
+            <nav class="nav-links">
+                <a href="comparison (2).html" class="nav-link">Лог Складу</a>
+                <a href="https://ukraine-gta5.com.ua/cabinet/login" class="nav-link">Особистий кабінет</a>
+                <a href="https://forum.ukraine-gta5.com.ua/index.php" class="nav-link">Форум</a>
+                <a href="https://github.com/orgs/UKRAINEGTA5/projects/3/views/1?filterQuery=" class="nav-link">Github</a>
+            </nav>
+            <button class="burger-menu" id="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+    
+    <!-- Мобильное меню -->
+    <div class="mobile-nav" id="mobile-nav">
+        <a href="comparison (2).html">Лог Складу</a>
+        <a href="https://ukraine-gta5.com.ua/cabinet/login">Особистий кабінет</a>
+        <a href="https://forum.ukraine-gta5.com.ua/index.php">Форум</a>
+        <a href="https://github.com/orgs/UKRAINEGTA5/projects/3/views/1?filterQuery=">Github</a>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Основное содержимое -->
+    <div class="container content">
+        <div class="section">
+            <h2 class="section-title">Вставте лог</h2>
+            <textarea id="logInput" placeholder="Вставте лог тут..."></textarea>
+            <button id="processButton">Обробити</button>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Результати</h2>
+            <div class="table-container">
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>Дата підключення</th>
+                            <th>Static ID</th>
+                            <th>Час онлайн</th>
+                            <th>Дата відключення</th>
+                            <th>Зберегти в таблицю</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Результаты будут добавлены сюда -->
+                    </tbody>
+                </table>
+            </div>
+            <h3 id="totalTime">Загальний час онлайн: 00:00:00</h3>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Конфигурация Google Sheets
+        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+        
+        // Элементы бургер-меню
+        const burgerMenu = document.getElementById('burger-menu');
+        const mobileNav = document.getElementById('mobile-nav');
+        const overlay = document.getElementById('overlay');
+        
+        // Обработчики для бургер-меню
+        burgerMenu.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        
+        overlay.addEventListener('click', () => {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        
+        // Обработчик для кнопки обработки лога
+        document.getElementById("processButton").addEventListener("click", processLog);
+
+        // Функция для показа уведомлений
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Функция для сохранения данных в Google Sheets
+        async function saveToGoogleSheet(playerId, connectDate, onlineTimeSeconds) {
+            try {
+                // Преобразуем дату в формат таблицы (DD.MM.YYYY)
+                const [year, month, day] = connectDate.split('-');
+                const formattedDate = `${day}.${month}.${year}`;
+                
+                // Преобразуем секунды в формат HH:MM:SS
+                const hours = Math.floor(onlineTimeSeconds / 3600);
+                const minutes = Math.floor((onlineTimeSeconds % 3600) / 60);
+                const seconds = Math.floor(onlineTimeSeconds % 60);
+                const onlineTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Получаем данные листа "Время_в_игре"
+                const sheetName = 'Время_в_игре';
+                const response = await axios.get(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${sheetName}?key=${API_KEY}`
+                );
+                
+                const values = response.data.values;
+                if (!values || values.length === 0) {
+                    throw new Error('Лист пустий');
+                }
+                
+                // Находим индекс столбца по дате
+                const dateColumns = values[0].slice(2); // Пропускаем первые 2 столбца (Имя и Static ID)
+                const dateIndex = dateColumns.findIndex(date => date === formattedDate);
+                
+                if (dateIndex === -1) {
+                    throw new Error('Дата не знайдена у заголовках');
+                }
+                
+                // Находим индекс строки по Static ID
+                let rowIndex = -1;
+                for (let i = 1; i < values.length; i++) {
+                    if (values[i][1] == playerId) {
+                        rowIndex = i;
+                        break;
+                    }
+                }
+                
+                if (rowIndex === -1) {
+                    throw new Error('Співробітник не знайдений');
+                }
+                
+                // Обновляем значение в таблице
+                const columnIndex = dateIndex + 2; // Учитываем первые 2 столбца
+                
+                // Формируем диапазон для обновления
+                const range = `${sheetName}!${getColumnLetter(columnIndex)}${rowIndex + 1}`;
+                
+                // Обновляем значение в таблице
+                await axios.put(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?valueInputOption=USER_ENTERED&key=${API_KEY}`,
+                    {
+                        values: [[onlineTime]]
+                    }
+                );
+                
+                showNotification('Дані успішно збережено в Google Таблицю', 'success');
+                return true;
+            } catch (error) {
+                console.error('Помилка при збереженні даних:', error);
+                showNotification(`Помилка: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        // Функция для преобразования индекса столбца в букву (A, B, C, ...)
+        function getColumnLetter(columnIndex) {
+            let letter = '';
+            while (columnIndex >= 0) {
+                letter = String.fromCharCode(65 + (columnIndex % 26)) + letter;
+                columnIndex = Math.floor(columnIndex / 26) - 1;
+                if (columnIndex < 0) break;
+            }
+            return letter;
+        }
+
+        function processLog() {
+            const logText = document.getElementById('logInput').value.trim();
+            if (!logText) {
+                showNotification('Будь ласка, вставте лог', 'error');
+                return;
+            }
+
+            let logs = logText.split('\n').filter(line => line.trim() !== '').reverse();
+            const sessions = {};
+            let totalTime = 0;
+            const activeSessions = {};
+
+            logs.forEach(log => {
+                const connectMatch = log.match(/\[([0-9]{2}\.[0-9]{2}\.[0-9]{4}), ([0-9]{2}:[0-9]{2}:[0-9]{2})\] Static ID: (\d+) \| \[characterInit\]: Авторизував персонажа/);
+                const disconnectMatch = log.match(/\[([0-9]{2}\.[0-9]{2}\.[0-9]{4}), ([0-9]{2}:[0-9]{2}:[0-9]{2})\] Static ID: (\d+) \| \[characterInit\]: Деавторизував персонажа/);
+
+                if (connectMatch) {
+                    const [ , date, time, playerId] = connectMatch;
+                    activeSessions[playerId] = new Date(`${date.split('.').reverse().join('-')}T${time}`);
+                } else if (disconnectMatch) {
+                    const [ , date, time, playerId] = disconnectMatch;
+                    if (activeSessions[playerId]) {
+                        let startTimestamp = activeSessions[playerId];
+                        let endTimestamp = new Date(`${date.split('.').reverse().join('-')}T${time}`);
+                        delete activeSessions[playerId];
+
+                        let sessionDuration = (endTimestamp - startTimestamp) / 1000;
+                        totalTime += sessionDuration;
+
+                        if (!sessions[playerId]) sessions[playerId] = [];
+                        splitSessionByDays(playerId, startTimestamp, endTimestamp, sessions);
+                    }
+                }
+            });
+
+            let resultTable = document.getElementById('resultTable');
+            // Очищаем только тело таблицы
+            const tbody = resultTable.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            // Об'єднання сесій з однаковими датами входу та виходу
+            const mergedSessions = {};
+            for (const playerId in sessions) {
+                mergedSessions[playerId] = [];
+                sessions[playerId].forEach(session => {
+                    const existingSession = mergedSessions[playerId].find(s => 
+                        s.start === session.start && s.end === session.end
+                    );
+                    if (existingSession) {
+                        existingSession.duration += session.duration;
+                    } else {
+                        mergedSessions[playerId].push({ ...session });
+                    }
+                });
+            }
+
+            // Виведення результатів
+            for (const playerId in mergedSessions) {
+                mergedSessions[playerId].forEach(session => {
+                    let row = tbody.insertRow();
+                    row.insertCell().textContent = session.start;
+                    row.insertCell().textContent = playerId;
+                    const timeCell = row.insertCell();
+                    timeCell.textContent = formatTime(session.duration);
+                    timeCell.dataset.seconds = session.duration; // Сохраняем секунды для экспорта
+                    row.insertCell().textContent = session.end;
+                    
+                    // Добавляем иконку сохранения
+                    const saveCell = row.insertCell();
+                    const saveIcon = document.createElement('span');
+                    saveIcon.className = 'save-icon';
+                    saveIcon.innerHTML = '💾';
+                    saveIcon.title = 'Зберегти в Google Таблицю';
+                    saveIcon.onclick = async function() {
+                        saveIcon.innerHTML = '⏳';
+                        const success = await saveToGoogleSheet(
+                            playerId, 
+                            session.start, 
+                            session.duration
+                        );
+                        saveIcon.innerHTML = success ? '✅' : '❌';
+                        setTimeout(() => {
+                            saveIcon.innerHTML = '💾';
+                        }, 2000);
+                    };
+                    saveCell.appendChild(saveIcon);
+                });
+            }
+
+            // Добавляем активные сессии (которые не были закрыты)
+            for (const playerId in activeSessions) {
+                let row = tbody.insertRow();
+                const startDate = formatDateWithoutTime(activeSessions[playerId]);
+                
+                row.insertCell().textContent = startDate;
+                row.insertCell().textContent = playerId;
+                const timeCell = row.insertCell();
+                timeCell.textContent = '00:00:00';
+                timeCell.dataset.seconds = 0;
+                row.insertCell().textContent = 'Активна';
+                
+                // Добавляем иконку сохранения
+                const saveCell = row.insertCell();
+                const saveIcon = document.createElement('span');
+                saveIcon.className = 'save-icon';
+                saveIcon.innerHTML = '💾';
+                saveIcon.title = 'Зберегти в Google Таблицю';
+                saveIcon.onclick = async function() {
+                    saveIcon.innerHTML = '⏳';
+                    const success = await saveToGoogleSheet(
+                        playerId, 
+                        startDate, 
+                        0
+                    );
+                    saveIcon.innerHTML = success ? '✅' : '❌';
+                    setTimeout(() => {
+                        saveIcon.innerHTML = '💾';
+                    }, 2000);
+                };
+                saveCell.appendChild(saveIcon);
+            }
+
+            document.getElementById('totalTime').innerText = `Загальний час онлайн: ${formatTime(totalTime)}`;
+            
+            if (Object.keys(mergedSessions).length === 0 && Object.keys(activeSessions).length === 0) {
+                showNotification('У лозі не знайдено жодної сесії', 'error');
+            } else {
+                const sessionCount = Object.keys(mergedSessions).length + Object.keys(activeSessions).length;
+                showNotification(`Знайдено ${sessionCount} сесій`, 'success');
+            }
+        }
+
+        function splitSessionByDays(playerId, startTimestamp, endTimestamp, sessions) {
+            let currentStart = startTimestamp;
+            while (currentStart < endTimestamp) {
+                let endOfDay = new Date(currentStart);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                if (endOfDay >= endTimestamp) {
+                    endOfDay = endTimestamp;
+                }
+
+                let duration = (endOfDay - currentStart) / 1000;
+                sessions[playerId].push({
+                    start: formatDateWithoutTime(currentStart),
+                    end: formatDateWithoutTime(endOfDay),
+                    duration: duration
+                });
+
+                currentStart = new Date(endOfDay);
+                currentStart.setSeconds(currentStart.getSeconds() + 1);
+            }
+        }
+
+        function formatDateWithoutTime(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+    </script>
+</body>
+</html>
