@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мануал з роботи з тікетами | Ukraine GTA 5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -289,57 +288,6 @@
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
         
-        .logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: rgba(59, 130, 246, 0.2);
-            color: var(--accent-blue);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 100;
-            font-weight: bold;
-        }
-
-        .logout-btn:hover {
-            background: rgba(59, 130, 246, 0.3);
-        }
-
-        .login-section {
-            text-align: center;
-            padding: 40px;
-            margin-top: 50px;
-            background: rgba(26, 26, 26, 0.7);
-            border-radius: 16px;
-            max-width: 600px;
-            margin: 100px auto 0;
-            border: 1px solid var(--card-border);
-        }
-        
-        .login-title {
-            font-size: 2rem;
-            margin-bottom: 30px;
-            color: var(--accent-light);
-        }
-        
-        .login-description {
-            margin-bottom: 30px;
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .access-denied {
-            color: #EF4444;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.2rem;
@@ -360,500 +308,383 @@
             .message {
                 max-width: 100%;
             }
-            
-            .login-section {
-                margin: 50px 20px 0;
-                padding: 25px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Кнопка выхода -->
-        <div id="logout-btn" class="logout-btn hidden">
-            <i class="fas fa-sign-out-alt"></i> Вийти
-        </div>
-
-        <!-- Секция входа -->
-        <div id="login-section" class="login-section">
-            <h2 class="login-title"><i class="fas fa-lock"></i> Вхід в адмін-панель</h2>
-            <p class="login-description">Будь ласка, увійдіть за допомогою Telegram для доступу до адміністративних матеріалів. Доступ мають лише авторизовані адміністратори сервера.</p>
-            <div id="telegram-login-container"></div>
-            <div id="access-denied" class="access-denied hidden">Доступ заборонено. Ваш Telegram не знайдено в базі адміністраторів.</div>
-        </div>
-
-        <!-- Основной контент (скрыт до входа) -->
-        <div id="content" class="hidden">
-            <header>
-                <div class="header-content">
-                    <h1><i class="fas fa-headset"></i> Мануал з роботи з тікетами</h1>
-                    <p>Вітаємо вас, шановний адміністраторе!</p>
-                </div>
-            </header>
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-headset"></i> Мануал з роботи з тікетами</h1>
+                <p>Вітаємо вас, шановний адміністраторе!</p>
+            </div>
+        </header>
+        
+        <div class="section">
+            <p>Цей розділ присвячений важливій темі — як правильно та ефективно відповідати на тікети від гравців. Робота з тікетами — це не просто технічне завдання, а ключовий елемент високоякісного сервісу, який ми прагнемо надавати кожному користувачеві.</p>
             
-            <div class="section">
-                <p>Цей розділ присвячений важливій темі — як правильно та ефективно відповідати на тікети від гравців. Робота з тікетами — це не просто технічне завдання, а ключовий елемент високоякісного сервісу, який ми прагнемо надавати кожному користувачеві.</p>
+            <p>З моменту, коли ви прийняли тікет — ви повністю відповідальні за його вирішення. Ваш головний пріоритет — надати гравцю оперативну, чітку та ввічливу допомогу. Ми прагнемо, щоб кожен користувач залишався задоволеним і відчував, що потрапив у спільноту з надійною та уважною адміністрацією.</p>
+            
+            <p>Наша мета — бути кращими, а не просто "не гіршими за інших". Ми не рівняємось на ті проєкти, де відповіді затягуються на 10, 30 чи навіть 120 хвилин. Ми діємо швидко. Гравець не повинен чекати — він має отримати підтримку одразу.</p>
+            
+            <p>У цьому мануалі ви знайдете приклади правильної побудови відповідей, шаблони та поради, які допоможуть вам професійно та ефективно обробляти будь-який запит. Разом ми створимо сервіс, яким будемо пишатися.</p>
+        </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-list-ol"></i> Хронологія обробки тікетів</h2>
+            <p>У цьому розділі ми розглянемо чітку послідовність дій, яку повинен виконувати кожен адміністратор під час роботи з тікетами. Дотримання цієї структури дозволить забезпечити якісне та професійне обслуговування гравців.</p>
+            
+            <div class="step">
+                <h3><i class="fas fa-user-tie"></i> 1. Представлення</h3>
+                <p>Після прийняття тікету перше, що ви повинні зробити — представитись, щоб гравець одразу зрозумів, з ким веде діалог.</p>
                 
-                <p>З моменту, коли ви прийняли тікет — ви повністю відповідальні за його вирішення. Ваш головний пріоритет — надати гравцю оперативну, чітку та ввічливу допомогу. Ми прагнемо, щоб кожен користувач залишався задоволеним і відчував, що потрапив у спільноту з надійною та уважною адміністрацією.</p>
-                
-                <p>Наша мета — бути кращими, а не просто "не гіршими за інших". Ми не рівняємось на ті проєкти, де відповіді затягуються на 10, 30 чи навіть 120 хвилин. Ми діємо швидко. Гравець не повинен чекати — він має отримати підтримку одразу.</p>
-                
-                <p>У цьому мануалі ви знайдете приклади правильної побудови відповідей, шаблони та поради, які допоможуть вам професійно та ефективно обробляти будь-який запит. Разом ми створимо сервіс, яким будемо пишатися.</p>
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Приклад правильної відповіді:</span>
+                    </div>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            Вітаю, шановний гравцю! На зв’язку Хелпер Kriss Noxx, починаю працювати над вашим зверненням.
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="section">
-                <h2><i class="fas fa-list-ol"></i> Хронологія обробки тікетів</h2>
-                <p>У цьому розділі ми розглянемо чітку послідовність дій, яку повинен виконувати кожен адміністратор під час роботи з тікетами. Дотримання цієї структури дозволить забезпечити якісне та професійне обслуговування гравців.</p>
+            <div class="step">
+                <h3><i class="fas fa-search"></i> 2. Аналіз ситуації та відповідь по суті</h3>
+                <p>Ваша відповідь має виходити із ситуації, з якою звернувся гравець. Вона повинна бути чіткою, ввічливою та інформативною. Адміністрація не повинна порушувати правил, навіть якщо гравець просить про щось нестандартне — натомість слід пояснити можливі дії в рамках RP-сценарію.</p>
                 
-                <div class="step">
-                    <h3><i class="fas fa-user-tie"></i> 1. Представлення</h3>
-                    <p>Після прийняття тікету перше, що ви повинні зробити — представитись, щоб гравець одразу зрозумів, з ким веде діалог.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Приклад правильної відповіді:</span>
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Ситуація:</span>
+                    </div>
+                    <div class="dialog-container">
+                        <div class="message player-message">
+                            Дайте ХП
                         </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Вітаю, шановний гравцю! На зв’язку Хелпер Kriss Noxx, починаю працювати над вашим зверненням.
-                            </div>
+                    </div>
+                    
+                    <div class="example-title" style="margin-top: 30px;">
+                        <i class="fas fa-star"></i>
+                        <span>Правильна відповідь:</span>
+                    </div>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            На жаль, шановний гравцю, адміністрація не видає ХП. Ви можете звернутися за допомогою до працівників EMS у центральній лікарні Los Santos або Sandy Shores. Також є можливість придбати аптечку у магазині 24/7, позначеному на карті іконкою кошика.
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <div class="step">
+                <h3><i class="fas fa-question-circle"></i> 3. Перевірка наявності додаткових питань</h3>
+                <p>Після того як відповідь надана, обов’язково запитайте, чи залишились у гравця ще якісь запитання.</p>
                 
-                <div class="step">
-                    <h3><i class="fas fa-search"></i> 2. Аналіз ситуації та відповідь по суті</h3>
-                    <p>Ваша відповідь має виходити із ситуації, з якою звернувся гравець. Вона повинна бути чіткою, ввічливою та інформативною. Адміністрація не повинна порушувати правил, навіть якщо гравець просить про щось нестандартне — натомість слід пояснити можливі дії в рамках RP-сценарію.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Ситуація:</span>
-                        </div>
-                        <div class="dialog-container">
-                            <div class="message player-message">
-                                Дайте ХП
-                            </div>
-                        </div>
-                        
-                        <div class="example-title" style="margin-top: 30px;">
-                            <i class="fas fa-star"></i>
-                            <span>Правильна відповідь:</span>
-                        </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                На жаль, шановний гравцю, адміністрація не видає ХП. Ви можете звернутися за допомогою до працівників EMS у центральній лікарні Los Santos або Sandy Shores. Також є можливість придбати аптечку у магазині 24/7, позначеному на карті іконкою кошика.
-                            </div>
-                        </div>
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Форма запитання:</span>
                     </div>
-                </div>
-                
-                <div class="step">
-                    <h3><i class="fas fa-question-circle"></i> 3. Перевірка наявності додаткових питань</h3>
-                    <p>Після того як відповідь надана, обов’язково запитайте, чи залишились у гравця ще якісь запитання.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Форма запитання:</span>
-                        </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Шановний гравцю, чи залишилися у вас ще запитання?
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p>Якщо гравець відповідає, що питань більше немає:</p>
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Завершення тікету:</span>
-                        </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Дякую за звернення! Бажаю приємної гри та відмінного настрою на Ukraine GTA 5.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p>Якщо гравець не відповідає — зачекайте 5 хвилин з моменту останнього повідомлення, після чого надайте фінальну відповідь:</p>
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Приклад відповіді при відсутності реакції:</span>
-                        </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Шановний гравцю, не отримав від вас відповіді. Закриваю тікет. Бажаю приємної гри та відмінного настрою!
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <h3><i class="fas fa-exclamation-triangle"></i> ⚠️ Приклад: "ТП, мене вбивають"</h3>
-                    <p>Покрокові дії:</p>
-                    <ol>
-                        <li>Приймаєте тікет та телепортуєтесь до гравця в інвізі (невидимості), починаєте слідкувати за ситуацією.</li>
-                        <li>Якщо підтверджується порушення правил — видаєте покарання гравцю-порушнику згідно з регламентом.</li>
-                        <li>Даєте відповідь у тікеті відповідно до шаблону:</li>
-                    </ol>
-                    
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Приклад відповіді:</span>
-                        </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Вітаю, на зв’язку Адміністратор [Ваше ім’я та прізвище]. Порушення було зафіксовано, гравця покарано згідно з правилами.
-                            </div>
-                        </div>
-                        <p style="text-align: center; margin: 15px 0;">Або:</p>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Вітаю, на зв’язку Адміністратор [Ваше ім’я та прізвище]. Порушень у діях інших гравців не виявлено.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <p>Завершуєте тікет стандартним запитанням:</p>
                     <div class="dialog-container">
                         <div class="message admin-message">
                             Шановний гравцю, чи залишилися у вас ще запитання?
                         </div>
                     </div>
-                    
-                    <p>— Якщо є питання — відповідаєте.<br>
-                    — Якщо питань немає — закриваєте тікет:</p>
-                    
-                    <div class="example">
-                        <div class="example-title">
-                            <i class="fas fa-star"></i>
-                            <span>Приклад завершення:</span>
+                </div>
+                
+                <p>Якщо гравець відповідає, що питань більше немає:</p>
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Завершення тікету:</span>
+                    </div>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            Дякую за звернення! Бажаю приємної гри та відмінного настрою на Ukraine GTA 5.
                         </div>
-                        <div class="dialog-container">
-                            <div class="message admin-message">
-                                Дякую за звернення! Бажаю приємної гри та відмінного настрою!
-                            </div>
+                    </div>
+                </div>
+                
+                <p>Якщо гравець не відповідає — зачекайте 5 хвилин з моменту останнього повідомлення, після чого надайте фінальну відповідь:</p>
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Приклад відповіді при відсутності реакції:</span>
+                    </div>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            Шановний гравцю, не отримав від вас відповіді. Закриваю тікет. Бажаю приємної гри та відмінного настрою!
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="section">
-                <h2><i class="fas fa-ticket-alt"></i> Приклади тікетів</h2>
-                <p>Нижче будуть наведені приклади, як правильно відповідати на тікети в різних ситуаціях.</p>
+            <div class="step">
+                <h3><i class="fas fa-exclamation-triangle"></i> ⚠️ Приклад: "ТП, мене вбивають"</h3>
+                <p>Покрокові дії:</p>
+                <ol>
+                    <li>Приймаєте тікет та телепортуєтесь до гравця в інвізі (невидимості), починаєте слідкувати за ситуацією.</li>
+                    <li>Якщо підтверджується порушення правил — видаєте покарання гравцю-порушнику згідно з регламентом.</li>
+                    <li>Даєте відповідь у тікеті відповідно до шаблону:</li>
+                </ol>
                 
-                <!-- Тікет 1 -->
-                <div class="ticket-card">
-                    <div class="ticket-header">
-                        <h3>Тікет 1 <span class="priority">Термінова допомога</span></h3>
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Приклад відповіді:</span>
                     </div>
-                    <div class="ticket-content">
-                        <div class="dialog-container">
-                            <div class="message player-message">
-                                доброї ночі. зламалася фура, а евакуатора немає. допоможіть будь ласка.
-                            </div>
-                            
-                            <div class="message admin-message">
-                                Вітаю, на зв'язку Хелпер Ivan Gromov, починаю працювати за вашим зверненням.
-                            </div>
-                            
-                            <div class="system-note">
-                                *Телепортуєтесь до гравця, оцінюєте ситуацію, якщо пізня година та немає працівників на Евакуаторі, то ремонтуєте автомобіль. 
-                            </div>
-                            
-                            <div class="system-note">
-                                * Після того як поремонтували, запитуєте в тікеті чи ще є запитання у гравця*
-                            </div>
-                            
-                            <div class="message admin-message">
-                                У вас залишились ще запитання? 
-                            </div>
-                            
-                            <div class="message player-message">
-                                так. вибачте будь ласка випадково залив не те паливо. можете з цим допомогти?
-                            </div>
-                            
-                            <div class="system-note">
-                                *Заливаєте йому 1 літр, після чого сповіщаєте його в тікеті*
-                            </div>
-                            
-                            <div class="message admin-message">
-                                Заправив вам 1 літр доїдте до найближчої заправки та залийте правильне паливо. 
-                            </div>
-                            
-                            <div class="message player-message">
-                                дякую велике
-                            </div>
-                            
-                            <div class="message admin-message">
-                                Закриваю тікет. Бажаю Приємної гри та відмінного настрою на Ukraine Gta 5.
-                            </div>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            Вітаю, на зв’язку Адміністратор [Ваше ім’я та прізвище]. Порушення було зафіксовано, гравця покарано згідно з правилами.
+                        </div>
+                    </div>
+                    <p style="text-align: center; margin: 15px 0;">Або:</p>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            Вітаю, на зв’язку Адміністратор [Ваше ім’я та прізвище]. Порушень у діях інших гравців не виявлено.
                         </div>
                     </div>
                 </div>
                 
-                <!-- Тікет 2 -->
-                <div class="ticket-card">
-                    <div class="ticket-header">
-                        <h3>Тікет 2 <span class="priority">Інформаційне запитання</span></h3>
-                    </div>
-                    <div class="ticket-content">
-                        <div class="dialog-container">
-                            <div class="message player-message">
-                                -У що можна пограти в казино? Знайшов тыльки покер
-                            </div>
-                            
-                            <div class="message admin-message">
-                                -Вітаю, на зв'язку Хелпер Ivan Gromov, починаю працювати за вашим зверненням. 
-                            </div>
-                            
-                            <div class="system-note">
-                                Тут телепортація є необов'язковою, ви можете пояснити гравцю всю інформацію в тікеті: 
-                            </div>
-                            
-                            <div class="message admin-message">
-                                -В нашому казино є всього 3 гри, а саме: Рулетка, де ви можете поставити червоне або чорне, Покер - в якому ви можете пограти з гравцями та Кубики, це ви можете зі своїм другом кинути куби, у кого випаде більше той виграв. 
-                            </div>
-                            
-                            <div class="message player-message">
-                                -в що я можу пограти сам?
-                            </div>
-                            
-                            <div class="message admin-message">
-                                -Самостійно ви можете пограти в рулетку, там не потрібні додаткові гравці для гри. 
-                            </div>
-                            
-                            <div class="message admin-message">
-                                У вас залишились ще запитання? 
-                            </div>
-                            
-                            <div class="message player-message">
-                                -Ні дякую. 
-                            </div>
-                            
-                            <div class="message admin-message">
-                                -Приємної гри та відмінного настрою на Ukraine Gta 5. 
-                            </div>
-                        </div>
+                <p>Завершуєте тікет стандартним запитанням:</p>
+                <div class="dialog-container">
+                    <div class="message admin-message">
+                        Шановний гравцю, чи залишилися у вас ще запитання?
                     </div>
                 </div>
                 
-                <!-- Тікет 3 -->
-                <div class="ticket-card">
-                    <div class="ticket-header">
-                        <h3>Тікет 3 <span class="priority">Питання щодо ліцензій</span></h3>
+                <p>— Якщо є питання — відповідаєте.<br>
+                — Якщо питань немає — закриваєте тікет:</p>
+                
+                <div class="example">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i>
+                        <span>Приклад завершення:</span>
                     </div>
-                    <div class="ticket-content">
-                        <div class="dialog-container">
-                            <div class="message player-message">
-                                как получитть лецензию на оружие
-                            </div>
-                            
-                            <div class="message admin-message">
-                                -Вітаю, на зв'язку Хелпер Ivan Gromov, починаю працювати за вашим зверненням.  
-                            </div>
-                            
-                            <div class="message admin-message">
-                                - Ліцензію ви можете отримати у працівників LSPD або BCSD, зазвичай вони стоять в холлі своїх будівель. 
-                            </div>
-                            
-                            <div class="message player-message">
-                                - ага а если их нету?
-                            </div>
-                            
-                            <div class="message admin-message">
-                                - Зараз їх зміна закінчена, спробуйте зранку або перегляньте графік видачі ліцензій на зброю на форумі у розділі данної фракції. 
-                            </div>
-                            
-                            <div class="message admin-message">
-                                - Вам потрібна ще якась допомога?
-                            </div>
-                            
-                            <div class="message player-message">
-                                - та было бы хорошо если бы мне ножи кто то купил или продал лицензию
-                            </div>
-                            
-                            <div class="message admin-message">
-                                - Ножі можна купити на маркеплейсі, якщо у вас є планешт ви можете зайти на маркет плейс та при наявності Дарк флеш увійти у дарк нет та там купити зброю. Якщо у вас планшета немає, ви можете придбати його в магазині 24 на 7, який на карті позначений кошиком, дарк флеш ви можете купити або на маркет плейсі, або знайти у смітниках, або на роботі "Шукач Скарбів". 
-                            </div>
-                            
-                            <div class="message player-message">
-                                - все спасибо сейчас постараюсь разобраться с почтой
-                            </div>
-                            
-                            <div class="message admin-message">
-                                -Приємної гри та відмінного настрою на Ukraine Gta 5.  
-                            </div>
+                    <div class="dialog-container">
+                        <div class="message admin-message">
+                            Дякую за звернення! Бажаю приємної гри та відмінного настрою!
                         </div>
                     </div>
-                </div>
-                
-                <div class="signature">
-                    <i class="fas fa-hands-helping"></i> Разом ми створимо сервіс, яким будемо пишатися!
                 </div>
             </div>
-            
-            <footer>
-                <p>© 2023 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-                <p class="logo">UGTA5.RP</p>
-                <p style="margin-top: 15px; opacity: 0.7;"><i class="fas fa-star"></i> Швидкість. Якість. Повага. <i class="fas fa-star"></i></p>
-            </footer>
         </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-ticket-alt"></i> Приклади тікетів</h2>
+            <p>Нижче будуть наведені приклади, як правильно відповідати на тікети в різних ситуаціях.</p>
+            
+            <!-- Тікет 1 -->
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3>Тікет 1 <span class="priority">Термінова допомога</span></h3>
+                </div>
+                <div class="ticket-content">
+                    <div class="dialog-container">
+                        <div class="message player-message">
+                            доброї ночі. зламалася фура, а евакуатора немає. допоможіть будь ласка.
+                        </div>
+                        
+                        <div class="message admin-message">
+                            Вітаю, на зв'язку Хелпер Ivan Gromov, починаю працювати за вашим зверненням.
+                        </div>
+                        
+                        <div class="system-note">
+                            *Телепортуєтесь до гравця, оцінюєте ситуацію, якщо пізня година та немає працівників на Евакуаторі, то ремонтуєте автомобіль. 
+                        </div>
+                        
+                        <div class="system-note">
+                            * Після того як поремонтували, запитуєте в тікеті чи ще є запитання у гравця*
+                        </div>
+                        
+                        <div class="message admin-message">
+                            У вас залишились ще запитання? 
+                        </div>
+                        
+                        <div class="message player-message">
+                            так. вибачте будь ласка випадково залив не те паливо. можете з цим допомогти?
+                        </div>
+                        
+                        <div class="system-note">
+                            *Заливаєте йому 1 літр, після чого сповіщаєте його в тікеті*
+                        </div>
+                        
+                        <div class="message admin-message">
+                            Заправив вам 1 літр доїдте до найближчої заправки та залийте правильне паливо. 
+                        </div>
+                        
+                        <div class="message player-message">
+                            дякую велике
+                        </div>
+                        
+                        <div class="message admin-message">
+                            Закриваю тікет. Бажаю Приємної гри та відмінного настрою на Ukraine Gta 5.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Тікет 2 -->
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3>Тікет 2 <span class="priority">Інформаційне запитання</span></h3>
+                </div>
+                <div class="ticket-content">
+                    <div class="dialog-container">
+                        <div class="message player-message">
+                            -У що можна пограти в казино? Знайшов тыльки покер
+                        </div>
+                        
+                        <div class="message admin-message">
+                            -Вітаю, на зв'язку Хелпер Ivan Gromov, починаю працювати за вашим зверненням. 
+                        </div>
+                        
+                        <div class="system-note">
+                            Тут телепортація є необов'язковою, ви можете пояснити гравцю всю інформацію в тікеті: 
+                        </div>
+                        
+                        <div class="message admin-message">
+                            -В нашому казино є всього 3 гри, а саме: Рулетка, де ви можете поставити червоне або чорне, Покер - в якому ви можете пограти з гравцями та Кубики, це ви можете зі своїм другом кинути куби, у кого випаде більше той виграв. 
+                        </div>
+                        
+                        <div class="message player-message">
+                            -в що я можу пограти сам?
+                        </div>
+                        
+                        <div class="message admin-message">
+                            -Самостійно ви можете пограти в рулетку, там не потрібні додаткові гравці для гри. 
+                        </div>
+                        
+                        <div class="message admin-message">
+                            У вас залишились ще запитання? 
+                        </div>
+                        
+                        <div class="message player-message">
+                            -Ні дякую. 
+                        </div>
+                        
+                        <div class="message admin-message">
+                            -Приємної гри та відмінного настрою на Ukraine Gta 5. 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Тікет 3 -->
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <h3>Тікет 3 <span class="priority">Питання щодо ліцензій</span></h3>
+                </div>
+                <div class="ticket-content">
+                    <div class="dialog-container">
+                        <div class="message player-message">
+                            как получитть лецензию на оружие
+                        </div>
+                        
+                        <div class="message admin-message">
+                            -Вітаю, на зв'язку Хелпер Ivan Gromov, починаю працювати за вашим зверненням.  
+                        </div>
+                        
+                        <div class="message admin-message">
+                            - Ліцензію ви можете отримати у працівників LSPD або BCSD, зазвичай вони стоять в холлі своїх будівель. 
+                        </div>
+                        
+                        <div class="message player-message">
+                            - ага а если их нету?
+                        </div>
+                        
+                        <div class="message admin-message">
+                            - Зараз їх зміна закінчена, спробуйте зранку або перегляньте графік видачі ліцензій на зброю на форумі у розділі данної фракції. 
+                        </div>
+                        
+                        <div class="message admin-message">
+                            - Вам потрібна ще якась допомога?
+                        </div>
+                        
+                        <div class="message player-message">
+                            - та было бы хорошо если бы мне ножи кто то купил или продал лицензию
+                        </div>
+                        
+                        <div class="message admin-message">
+                            - Ножі можна купити на маркеплейсі, якщо у вас є планешт ви можете зайти на маркет плейс та при наявності Дарк флеш увійти у дарк нет та там купити зброю. Якщо у вас планшета немає, ви можете придбати його в магазині 24 на 7, який на карті позначений кошиком, дарк флеш ви можете купити або на маркет плейсі, або знайти у смітниках, або на роботі "Шукач Скарбів". 
+                        </div>
+                        
+                        <div class="message player-message">
+                            - все спасибо сейчас постараюсь разобраться с почтой
+                        </div>
+                        
+                        <div class="message admin-message">
+                            -Приємної гри та відмінного настрою на Ukraine Gta 5.  
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="signature">
+                <i class="fas fa-hands-helping"></i> Разом ми створимо сервіс, яким будемо пишатися!
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+            <p class="logo">UGTA5.RP</p>
+            <p style="margin-top: 15px; opacity: 0.7;"><i class="fas fa-star"></i> Швидкість. Якість. Повага. <i class="fas fa-star"></i></p>
+        </footer>
     </div>
-
+    
     <script>
-        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-
-        async function getSheetData(sheetName) {
-          const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-          const res = await axios.get(url);
-          return res.data.values;
-        }
-
-        async function onTelegramAuth(user) {
-          const telegramUsername = '@' + user.username;
-          
-          try {
-            const ticketsData = await getSheetData('Май_2025_таблица');
-            const ticketsHeaders = ticketsData[0];
-            const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-            
-            const userTicketsRow = ticketsData.find(row => 
-              row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-            );
-            
-            if (userTicketsRow) {
-              // Сохраняем данные пользователя
-              const userData = {
-                username: telegramUsername,
-                id: user.id
-              };
-              localStorage.setItem('tg_auth', JSON.stringify(userData));
-              
-              // Показываем контент
-              showContent();
-            } else {
-              // Если пользователь не найден
-              localStorage.removeItem('tg_auth');
-              document.getElementById('access-denied').classList.remove('hidden');
-              setTimeout(() => {
-                document.getElementById('access-denied').classList.add('hidden');
-              }, 5000);
-            }
-          } catch (error) {
-            console.error(error);
-            alert('Помилка під час завантаження даних');
-          }
-        }
-
-        // Функция для показа контента
-        function showContent() {
-          document.getElementById('login-section').classList.add('hidden');
-          document.getElementById('content').classList.remove('hidden');
-          document.getElementById('logout-btn').classList.remove('hidden');
-        }
-
-        // Функция для показа формы входа
-        function showLoginForm() {
-          document.getElementById('login-section').classList.remove('hidden');
-          document.getElementById('content').classList.add('hidden');
-          document.getElementById('logout-btn').classList.add('hidden');
-          document.getElementById('access-denied').classList.add('hidden');
-        }
-
-        // Функция выхода
-        function logout() {
-          localStorage.removeItem('tg_auth');
-          showLoginForm();
-        }
-
-        // Проверка сохраненной сессии при загрузке
+        // Анимация при прокрутке
         document.addEventListener('DOMContentLoaded', function() {
-          // Добавляем обработчик для кнопки выхода
-          document.getElementById('logout-btn').addEventListener('click', logout);
-          
-          // Загружаем виджет Telegram
-          const telegramScript = document.createElement('script');
-          telegramScript.src = 'https://telegram.org/js/telegram-widget.js?22';
-          telegramScript.async = true;
-          telegramScript.onload = () => {
-            // Создаем виджет после загрузки скрипта
-            const widgetContainer = document.getElementById('telegram-login-container');
-            const widget = document.createElement('div');
-            widget.innerHTML = `
-              <script async
-                data-telegram-login="ugta5_rp_bot"
-                data-size="large"
-                data-onauth="onTelegramAuth(user)"
-                data-request-access="write"
-              ></script>
-            `;
-            widgetContainer.appendChild(widget);
-          };
-          document.head.appendChild(telegramScript);
-          
-          // Проверяем сохраненную сессию
-          const savedAuth = localStorage.getItem('tg_auth');
-          if (savedAuth) {
-            try {
-              const userData = JSON.parse(savedAuth);
-              showContent();
-            } catch (e) {
-              localStorage.removeItem('tg_auth');
-              showLoginForm();
+            // Функция для проверки видимости элемента
+            function isElementInViewport(el) {
+                const rect = el.getBoundingClientRect();
+                return (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.bottom >= 0
+                );
             }
-          } else {
-            showLoginForm();
-          }
-
-          // Анимация при прокрутке
-          function isElementInViewport(el) {
-            const rect = el.getBoundingClientRect();
-            return (
-              rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-              rect.bottom >= 0
-            );
-          }
-          
-          function handleScroll() {
-            const elements = document.querySelectorAll('.message, .system-note');
-            elements.forEach(el => {
-              if (isElementInViewport(el)) {
-                el.classList.add('visible');
-              }
-            });
-          }
-          
-          handleScroll();
-          window.addEventListener('scroll', handleScroll);
-          
-          const sections = document.querySelectorAll('.section, .ticket-card');
-          sections.forEach(section => {
-            section.style.opacity = 0;
-            section.style.transform = 'translateY(30px)';
-            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
             
-            if (isElementInViewport(section)) {
-              section.style.opacity = 1;
-              section.style.transform = 'translateY(0)';
+            // Функция для обработки появления элементов
+            function handleScroll() {
+                const elements = document.querySelectorAll('.message, .system-note');
+                
+                elements.forEach(el => {
+                    if (isElementInViewport(el)) {
+                        el.classList.add('visible');
+                    }
+                });
             }
-          });
-          
-          window.addEventListener('scroll', function() {
+            
+            // Инициализация при загрузке
+            handleScroll();
+            
+            // Обработка события прокрутки
+            window.addEventListener('scroll', handleScroll);
+            
+            // Анимация карточек
+            const sections = document.querySelectorAll('.section, .ticket-card');
             sections.forEach(section => {
-              if (isElementInViewport(section)) {
-                section.style.opacity = 1;
-                section.style.transform = 'translateY(0)';
-              }
+                section.style.opacity = 0;
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                
+                if (isElementInViewport(section)) {
+                    section.style.opacity = 1;
+                    section.style.transform = 'translateY(0)';
+                }
             });
-          });
+            
+            // Обработка для карточек
+            window.addEventListener('scroll', function() {
+                sections.forEach(section => {
+                    if (isElementInViewport(section)) {
+                        section.style.opacity = 1;
+                        section.style.transform = 'translateY(0)';
+                    }
+                });
+            });
         });
     </script>
 </body>
