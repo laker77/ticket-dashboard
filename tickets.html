@@ -743,6 +743,14 @@
   const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
   const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
   const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
+  const allowedAdmins = [
+    '@laker_77',
+    '@liquid_ug',
+    '@Hermaeus_Mora_1679',
+    '@c10mm',
+    '@noxx_uagtaV',
+    '@zhdanovrostyslav'
+  ];
 
   async function getSheetData(sheetName) {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
@@ -764,6 +772,19 @@
     const telegramUsername = '@' + user.username.toLowerCase();
     console.log('Авторизація:', telegramUsername);
     
+    // Проверка на администратора
+    if (allowedAdmins.includes(telegramUsername)) {
+      const userData = {
+        username: telegramUsername,
+        nickname: user.first_name || user.username,
+        isAdmin: true,
+        timestamp: Date.now()
+      };
+      localStorage.setItem('tg_auth', JSON.stringify(userData));
+      showContent();
+      return;
+    }
+
     try {
       const ticketsData = await getSheetData('Май_2025_таблица');
       const ticketsHeaders = ticketsData[0];
@@ -787,6 +808,8 @@
         console.log('Доступ дозволено для:', telegramUsername);
         localStorage.setItem('tg_auth', JSON.stringify({
           username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: false,
           timestamp: Date.now()
         }));
         showContent();
@@ -819,28 +842,13 @@
           return;
         } else {
           console.log('Сесія закінчилася');
+          localStorage.removeItem('tg_auth');
         }
       }
     } catch (e) {
       console.error('Помилка перевірки сесії:', e);
+      localStorage.removeItem('tg_auth');
     }
-    showLoginForm();
-  }
-
-  function showContent() {
-    document.getElementById('login-section').classList.add('hidden');
-    document.getElementById('content').classList.remove('hidden');
-    document.getElementById('logout-btn').classList.remove('hidden');
-  }
-
-  function showLoginForm() {
-    document.getElementById('login-section').classList.remove('hidden');
-    document.getElementById('content').classList.add('hidden');
-    document.getElementById('logout-btn').classList.add('hidden');
-  }
-
-  function logout() {
-    localStorage.removeItem('tg_auth');
     showLoginForm();
   }
 
@@ -883,9 +891,35 @@
     window.addEventListener('scroll', handleScroll);
   }
 
+  function showContent() {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('content').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
+  }
+
+  function showLoginForm() {
+    document.getElementById('login-section').classList.remove('hidden');
+    document.getElementById('content').classList.add('hidden');
+    document.getElementById('logout-btn').classList.add('hidden');
+  }
+
+  function logout() {
+    localStorage.removeItem('tg_auth');
+    showLoginForm();
+  }
+
   // Основна ініціалізація
   document.addEventListener('DOMContentLoaded', function() {
-    initAuthCheck();
+    // Подключаем Axios явно, если он еще не загружен
+    if (typeof axios === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js';
+      script.onload = initAuthCheck;
+      document.head.appendChild(script);
+    } else {
+      initAuthCheck();
+    }
+    
     initScrollAnimations();
   });
 </script>
