@@ -322,144 +322,138 @@ h1 {
     letter-spacing: 0.5px;
 }
    
-    /* Стили для администраторов недели */
-    .top-admins-section {
-      background: linear-gradient(135deg, #1a2a4f, #2c3e50);
-      border: 2px solid #1977FD;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 25px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 5px 25px rgba(25, 119, 253, 0.3);
-    }
-    
-    .top-admins-section::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #1977FD, #00c6ff);
-    }
-    
-    .top-admins-title {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: #FFFBEF;
-      text-shadow: 0 0 10px rgba(25, 119, 253, 0.7);
-      font-weight: 700;
-    }
-    
-    .top-admins-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 15px;
-    }
-    
-    .admin-card {
-      background: rgba(26, 30, 46, 0.8);
-      border-radius: 12px;
-      width: 180px;
-      padding: 15px;
-      text-align: center;
-      position: relative;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-    
-    .admin-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(25, 119, 253, 0.4);
-    }
-    
-    .admin-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid;
-      margin: 0 auto 12px;
-      display: block;
-    }
-    
-    .medal {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      font-size: 2rem;
-      filter: drop-shadow(0 3px 5px rgba(0,0,0,0.3));
-    }
-    
-    .admin-name {
-      font-weight: 600;
-      margin-bottom: 5px;
-      color: #FFFBEF;
-      font-size: 1.1rem;
-    }
-    
-    .admin-stats {
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-    
-    .admin-stat-value {
-      color: #FFFBEF;
-      font-weight: 600;
-    }
-    
-    .week-info {
-      text-align: center;
-      color: #aaa;
-      font-size: 0.9rem;
-      margin-top: 10px;
-    }
-    
-    /* Анимации для медалей */
-    @keyframes gold-glow {
-      0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-      50% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.9); }
-      100% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-    }
-    
-    @keyframes silver-glow {
-      0% { text-shadow: 0 0 5px rgba(192, 192, 192, 0.5); }
-      50% { text-shadow: 0 0 20px rgba(192, 192, 192, 0.9); }
-      100% { text-shadow: 0 0 5px rgba(192, 192, 192, 0.5); }
-    }
-    
-    @keyframes bronze-glow {
-      0% { text-shadow: 0 0 5px rgba(205, 127, 50, 0.5); }
-      50% { text-shadow: 0 0 20px rgba(205, 127, 50, 0.9); }
-      100% { text-shadow: 0 0 5px rgba(205, 127, 50, 0.5); }
-    }
-    
-    .gold { 
-      color: gold;
-      border-color: gold;
-      animation: gold-glow 2s infinite;
-    }
-    
-    .silver { 
-      color: silver;
-      border-color: silver;
-      animation: silver-glow 2s infinite;
-    }
-    
-    .bronze { 
-      color: #cd7f32;
-      border-color: #cd7f32;
-      animation: bronze-glow 2s infinite;
-    }
-    
-    .normal { 
-      color: #1977FD;
-      border-color: #1977FD;
-    }
+/* Стили для администраторов недели */
+.top-admins-section {
+  background: #121315;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+}
+
+.top-admins-title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.top-admins-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: #3b82f6;
+}
+
+.top-admins-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.admin-card {
+  background: #1a1a1a;
+  border-radius: 10px;
+  width: 160px;
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid #2a2a2a;
+}
+
+.admin-card:hover {
+  transform: translateY(-3px);
+  border-color: #3b82f6;
+}
+
+.admin-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid;
+  margin: 0 auto 12px;
+  display: block;
+}
+
+.medal {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 1.8rem;
+}
+
+.admin-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #f0f0f0;
+  font-size: 1rem;
+}
+
+.admin-stats {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 5px;
+}
+
+.admin-stat-value {
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.week-info {
+  text-align: center;
+  color: #777;
+  font-size: 0.85rem;
+  margin-top: 15px;
+  font-style: italic;
+}
+
+/* Цвета медалей */
+.gold { 
+  color: #d4af37;
+  border-color: #d4af37;
+}
+
+.silver { 
+  color: #c0c0c0;
+  border-color: #c0c0c0;
+}
+
+.bronze { 
+  color: #cd7f32;
+  border-color: #cd7f32;
+}
+
+.normal { 
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .admin-card {
+    width: 140px;
+    padding: 12px;
+  }
+  
+  .admin-avatar {
+    width: 60px;
+    height: 60px;
+  }
+}
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
