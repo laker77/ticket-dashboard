@@ -299,83 +299,134 @@ h1 {
   color: #fff;
 }
 
+       /* Добавляем новые стили для новостей и праздничной плашки */
+    .news-container {
+      background: linear-gradient(135deg, #121824, #1a2435);
+      border: 1px solid #1977FD;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 25px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(25, 119, 253, 0.3);
+    }
 
-/* Стили для новостей */
-.news-card {
-  min-width: 300px;
-  background: #1a1c24;
-  border-radius: 12px;
-  padding: 16px;
-  margin: 0 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease;
-}
+    .news-title {
+      color: #1977FD;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
+    }
 
-.news-card:hover {
-  transform: translateY(-5px);
-}
+    .news-card {
+      background-color: rgba(18, 24, 36, 0.8);
+      border: 1px solid #2a3b5c;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px 0;
+      transition: all 0.3s ease;
+      position: relative;
+      min-height: 150px;
+    }
 
-.news-date {
-  color: #1977FD;
-  font-size: 0.85rem;
-  margin-bottom: 5px;
-}
+    .news-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(25, 119, 253, 0.4);
+      border-color: #1977FD;
+    }
 
-.news-title {
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #ffd700;
-}
+    .news-card h4 {
+      color: #ffd700;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      border-bottom: 1px solid #2a3b5c;
+      padding-bottom: 5px;
+    }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
+    .news-card p {
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+    .news-date {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      color: #7f8c9a;
+      font-size: 0.8rem;
+    }
 
-/* Стили для карточек администраторов */
-.top-admin-card {
-  background: linear-gradient(145deg, #1e2029, #181a22);
-  border-radius: 12px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
-}
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
 
-.top-admin-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(25, 119, 253, 0.3);
-}
+    .carousel-btn {
+      background-color: #1977FD;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
 
-.admin-avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 10px;
-  border: 2px solid #1977FD;
-}
+    .carousel-btn:hover {
+      background-color: #0d5fd6;
+      transform: scale(1.1);
+    }
 
-.admin-rank {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 30px;
-  height: 30px;
-  background: #ffd700;
-  color: #000;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
+    .anniversary-banner {
+      background: linear-gradient(90deg, #ff8a00, #ff0080);
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(255, 138, 0, 0.5);
+      animation: pulse 2s infinite;
+    }
 
-    
+    .anniversary-banner p {
+      margin: 0;
+      font-weight: bold;
+      font-size: 1.1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ff0;
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: confetti-fall 5s linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      0% { transform: translateY(-10px) rotate(0deg); }
+      100% { transform: translateY(100px) rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px rgba(255, 138, 0, 0.5); }
+      50% { box-shadow: 0 0 25px rgba(255, 138, 0, 0.8); }
+      100% { box-shadow: 0 0 10px rgba(255, 138, 0, 0.5); }
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -383,6 +434,27 @@ h1 {
 
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
+    
+    <!-- Праздничная плашка ДОЛЖНА БЫТЬ ЗДЕСЬ -->
+    <div id="anniversary-banner" class="anniversary-banner hidden">
+      <p>🎉 Сьогодні ми святкуємо 3 річницю проєкту! Не забудь привітати в групі з річницею! 🎉</p>
+    </div>
+    
+    <!-- Блок новостей ДОЛЖЕН БЫТЬ ЗДЕСЬ -->
+    <div id="news-container" class="hidden">
+      <div class="news-container">
+        <h3 class="news-title">Останні новини та оновлення</h3>
+        <div id="news-carousel">
+          <!-- Новости будут добавляться динамически через JavaScript -->
+        </div>
+        <div class="carousel-controls">
+          <button id="prev-news" class="carousel-btn">←</button>
+          <button id="next-news" class="carousel-btn">→</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Секция авторизации должна оставаться отдельно -->
     <div id="login-section">
       <p>Будь ласка, увійдіть через Telegram:</p>
       <div class="telegram-button-wrapper">
@@ -430,36 +502,7 @@ h1 {
       </div>
     </div>
     
-<div id="dashboard" class="hidden">
-  <!-- Праздничная плашка -->
-  <div id="anniversary-banner" class="bg-gradient-to-r from-yellow-500 to-yellow-300 text-black text-center p-3 rounded-lg mb-4 animate-pulse hidden">
-    <strong>🎉 Увага!</strong> Сьогодні ми святкуємо 3 річницю проєкту, не забудь привітати в групі з річницею!
-  </div>
-
-  <!-- Блок новостей -->
-  <div id="news-section" class="bg-[#121315] p-4 rounded-xl mb-6 border border-[#1977FD]">
-    <h2 class="text-xl font-bold text-[#1977FD] mb-4">Dev Блог & Оновлення</h2>
-    <div class="news-container relative">
-      <button id="news-prev" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full z-10">←</button>
-      
-      <div class="news-cards flex overflow-x-auto py-2 px-12 scrollbar-hide">
-        <!-- Карточки новостей будут здесь -->
-      </div>
-      
-      <button id="news-next" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full z-10">→</button>
-    </div>
-  </div>
-
-  <!-- Топ администраторов недели -->
-  <div id="top-admins-section" class="bg-[#121315] p-4 rounded-xl mb-6 border border-[#1977FD]">
-    <h2 class="text-xl font-bold text-[#1977FD] mb-4">⭐ Адміністратори Тижня</h2>
-    <div class="top-admins-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-      <!-- Карточки администраторов будут здесь -->
-    </div>
-  </div>
-  
-  
-  <!-- Остальной код dashboard... -->
+    <div id="dashboard" class="hidden">
       <!-- Блок для администраторов -->
       <div id="admin-notice" class="hidden bg-[#121315] p-6 rounded-xl mb-6 border border-[#1977FD]">
         <h3 class="text-xl font-bold text-[#1977FD] mb-3">👑 Ви - адміністратор системи</h3>
@@ -539,163 +582,6 @@ h1 {
       '@Hermaeus_Mora_1679',
       '@c10mm'
     ];
-
-    const newsData = [
-  { id: 1, date: '20.06.2025', title: 'Оновлення 1.5.0', content: 'Додано нову систему тікетів, покращено інтерфейс адмін-панелі.' },
-  { id: 2, date: '18.06.2025', title: 'Фікс багів', content: 'Виправлено проблеми з відображенням статистики у деяких адміністраторів.' },
-  { id: 3, date: '15.06.2025', title: 'Нові правила', content: 'Оновлено правила серверу. Просимо всіх адміністраторів ознайомитись.' },
-  { id: 4, date: '12.06.2025', title: 'Система мотивації', content: 'Запроваджено нову систему мотивації для адміністраторів. Деталі в особисті повідомлення.' },
-  { id: 5, date: '10.06.2025', title: 'Технічні роботи', content: '28 червня очікуйте технічні роботи на сервері. Триватимуть 2 години.' }
-];
-
-// Функция для рендеринга новостей
-function renderNews() {
-  const container = document.querySelector('.news-cards');
-  container.innerHTML = '';
-  
-  newsData.forEach(news => {
-    const card = document.createElement('div');
-    card.className = 'news-card flex-shrink-0';
-    card.innerHTML = `
-      <div class="news-date">${news.date}</div>
-      <h3 class="news-title">${news.title}</h3>
-      <p class="text-gray-300">${news.content}</p>
-    `;
-    container.appendChild(card);
-  });
-}
-
-// Функция для рендеринга топ-администраторов
-async function renderTopAdmins() {
-  try {
-    const container = document.querySelector('.top-admins-container');
-    container.innerHTML = '<p class="text-center">Завантаження даних...</p>';
-    
-    const ticketsData = await getSheetData('Май_2025_таблица');
-    const timeData = await getSheetData('Время_в_игре');
-    
-    const ticketsHeaders = ticketsData[0];
-    const timeHeaders = timeData[0];
-    
-    const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
-    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-    
-    const today = getDateWithoutTime(new Date());
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() - 7);
-    
-    const dateCols = ticketsHeaders
-      .map((h, i) => ({ h, i }))
-      .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
-    
-    const admins = [];
-    
-    ticketsData.slice(1).forEach(row => {
-      const name = row[nameColIndex];
-      const telegram = row[telegramColIndex];
-      
-      let tickets = 0;
-      let timeSeconds = 0;
-      
-      dateCols.forEach(({ h, i }) => {
-        const dt = parseDate(h);
-        if (dt >= weekStart && dt <= today) {
-          tickets += parseInt(row[i]) || 0;
-          
-          const timeIndex = timeHeaders.indexOf(h);
-          if (timeIndex >= 0) {
-            const timeRow = timeData.find(r => r[0] === name);
-            if (timeRow && timeRow[timeIndex] && timeRow[timeIndex] !== 'Н') {
-              const [hh, mm, ss] = timeRow[timeIndex].split(':').map(Number);
-              timeSeconds += hh * 3600 + mm * 60 + ss;
-            }
-          }
-        }
-      });
-      
-      if (tickets > 0) {
-        admins.push({
-          name,
-          telegram,
-          tickets,
-          timeSeconds, // Добавлено для сортировки
-          time: secondsToHHMM(timeSeconds)
-        });
-      }
-    });
-    
-    // Исправленная сортировка
-    admins.sort((a, b) => {
-      if (b.tickets !== a.tickets) return b.tickets - a.tickets;
-      return b.timeSeconds - a.timeSeconds;
-    });
-    
-    const topAdmins = admins.slice(0, 5);
-    container.innerHTML = '';
-    
-    topAdmins.forEach((admin, index) => {
-      const card = document.createElement('div');
-      card.className = 'top-admin-card relative';
-      card.innerHTML = `
-        <div class="admin-rank">${index + 1}</div>
-        <div class="admin-avatar-placeholder bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center" style="width: 70px; height: 70px;">
-          <span class="text-xl">${admin.name.charAt(0)}</span>
-        </div>
-        <h3 class="font-bold">${admin.name}</h3>
-        <p class="text-sm text-gray-400">${admin.telegram}</p>
-        <div class="mt-3">
-          <p><span class="text-[#1977FD]">Тікети:</span> ${admin.tickets}</p>
-          <p><span class="text-[#1977FD]">Час:</span> ${admin.time}</p>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-    
-  } catch (error) {
-    console.error('Помилка завантаження топу адміністраторів:', error);
-    document.querySelector('.top-admins-container').innerHTML = 
-      '<p class="text-center text-red-400">Помилка завантаження даних</p>';
-  }
-}
-    admins.sort((a, b) => {
-      if (b.tickets !== a.tickets) return b.tickets - a.tickets;
-      return b.timeSeconds - a.timeSeconds;
-    });
-    
-    const topAdmins = admins.slice(0, 5);
-    container.innerHTML = '';
-    
-    topAdmins.forEach((admin, index) => {
-      const card = document.createElement('div');
-      card.className = 'top-admin-card relative';
-      card.innerHTML = `
-        <div class="admin-rank">${index + 1}</div>
-        <div class="admin-avatar-placeholder bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center" style="width: 70px; height: 70px;">
-          <span class="text-xl">${admin.name.charAt(0)}</span>
-        </div>
-        <h3 class="font-bold">${admin.name}</h3>
-        <p class="text-sm text-gray-400">${admin.telegram}</p>
-        <div class="mt-3">
-          <p><span class="text-[#1977FD]">Тікети:</span> ${admin.tickets}</p>
-          <p><span class="text-[#1977FD]">Час:</span> ${admin.time}</p>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-    
-  } catch (error) {
-    console.error('Помилка завантаження топу адміністраторів:', error);
-    document.querySelector('.top-admins-container').innerHTML = 
-      '<p class="text-center text-red-400">Помилка завантаження даних</p>';
-  }
-}
-
-// Функция конвертации секунд в часы
-function secondsToHHMM(seconds) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  return `${h}г ${m}хв`;
-}    
 
     function toggleScripts() {
       const menu = document.getElementById('scriptList');
@@ -1014,21 +900,8 @@ function secondsToHHMM(seconds) {
       }
     }
 
-     // Объявляем функцию глобально
-  window.onTelegramAuth = function(user) {
-    const telegramUsername = '@' + user.username;
-    
-    // Проверка на администратора
-    if (allowedAdmins.includes(telegramUsername)) {
-      const userData = {
-        username: telegramUsername,
-        nickname: user.first_name || user.username,
-        isAdmin: true
-      };
-      localStorage.setItem('tg_auth', JSON.stringify(userData));
-      showDashboard(userData.nickname, telegramUsername, true);
-      return;
-    }
+    async function onTelegramAuth(user) {
+      const telegramUsername = '@' + user.username;
       
       // Проверка на администратора
       if (allowedAdmins.includes(telegramUsername)) {
@@ -1077,28 +950,6 @@ function secondsToHHMM(seconds) {
       document.getElementById('menuContainer').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
       document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
-
-        // Показываем праздничную плашку
-  const today = new Date();
-  if (today.getDate() === 24 && today.getMonth() === 5) { // 24 июня (месяц 5 = июнь)
-    document.getElementById('anniversary-banner').classList.remove('hidden');
-  }
-  
-  // Рендерим новости и администраторов
-  renderNews();
-  renderTopAdmins();
-  
-  // Добавляем обработчики для новостей
-  document.getElementById('news-next').addEventListener('click', () => {
-    const container = document.querySelector('.news-cards');
-    container.scrollBy({ left: 320, behavior: 'smooth' });
-  });
-  
-  document.getElementById('news-prev').addEventListener('click', () => {
-    const container = document.querySelector('.news-cards');
-    container.scrollBy({ left: -320, behavior: 'smooth' });
-  });
-
       
       // Показываем супер-меню только для суперадминов
       if (superAdmins.includes(telegramUsername)) {
@@ -1148,17 +999,95 @@ function secondsToHHMM(seconds) {
         showLoginForm();
       }
     });
-  </script>
-<!-- Перенесите этот блок в конец body -->
-<div class="telegram-button-wrapper">
-  <script async src="https://telegram.org/js/telegram-widget.js?7"
-          data-telegram-login="ticket_tracker_UG_bot" 
-          data-size="large"
-          data-userpic="false"
-          data-request-access="write"
-          data-onauth="onTelegramAuth(user)">
-  </script>
-</div>
 
+      // Новости для отображения
+  const newsItems = [
+    {
+      title: "Оновлення 1.5.0",
+      content: "Додано нову систему відстеження активності адміністраторів. Тепер доступна детальна статистика за кожен день.",
+      date: "15.06.2025"
+    },
+    {
+      title: "Dev Блог: Покращення UI",
+      content: "Ми повністю оновили інтерфейс кабінету адміністратора. Додано темну тему, оптимізовано відображення на мобільних пристроях.",
+      date: "10.06.2025"
+    },
+    {
+      title: "Нові можливості для суперадмінів",
+      content: "Додано розділ моніторингу складу адміністраторів. Тепер суперадміни можуть швидко перевіряти наявність адмінів на серверах.",
+      date: "05.06.2025"
+    },
+    {
+      title: "Оновлення системи тікетів",
+      content: "Покращено алгоритм розподілу тікетів між адміністраторами. Додано автоматичне сортування за пріоритетом.",
+      date: "28.05.2025"
+    }
+  ];
+
+  let currentNewsIndex = 0;
+
+  function renderNews() {
+    const carousel = document.getElementById('news-carousel');
+    if (!carousel) return;
+    carousel.innerHTML = '';
+    
+    const news = newsItems[currentNewsIndex];
+    const newsCard = document.createElement('div');
+    newsCard.className = 'news-card';
+    newsCard.innerHTML = `
+      <h4>${news.title}</h4>
+      <p>${news.content}</p>
+      <div class="news-date">${news.date}</div>
+    `;
+    
+    carousel.appendChild(newsCard);
+  }
+
+  function checkAnniversary() {
+    const today = new Date();
+    const anniversary = new Date(2025, 5, 25); // 25 июня
+
+    if (
+      today.getDate() === anniversary.getDate() &&
+      today.getMonth() === anniversary.getMonth() &&
+      today.getFullYear() === anniversary.getFullYear()
+    ) {
+      const banner = document.getElementById('anniversary-banner');
+      if (!banner) return;
+
+      banner.classList.remove('hidden');
+      
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.animationDelay = `${Math.random() * 3}s`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        banner.appendChild(confetti);
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    
+    const savedAuth = localStorage.getItem('tg_auth');
+    if (savedAuth) {
+      try {
+        const userData = JSON.parse(savedAuth);
+        showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+      } catch (e) {
+        localStorage.removeItem('tg_auth');
+        showLoginForm();
+      }
+    } else {
+      showLoginForm();
+    }
+
+    // Вызовы для новостей и годовщины
+    renderNews();
+    checkAnniversary();
+  });
+  </script>
 </body>
 </html>
