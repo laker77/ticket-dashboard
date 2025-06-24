@@ -299,134 +299,25 @@ h1 {
   color: #fff;
 }
 
-       /* Добавляем новые стили для новостей и праздничной плашки */
-    .news-container {
-      background: linear-gradient(135deg, #121824, #1a2435);
-      border: 1px solid #1977FD;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 25px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(25, 119, 253, 0.3);
-    }
-
-    .news-title {
-      color: #1977FD;
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 15px;
-      text-align: center;
-      text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
-    }
-
-    .news-card {
-      background-color: rgba(18, 24, 36, 0.8);
-      border: 1px solid #2a3b5c;
-      border-radius: 12px;
-      padding: 15px;
-      margin: 10px 0;
-      transition: all 0.3s ease;
-      position: relative;
-      min-height: 150px;
-    }
-
-    .news-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(25, 119, 253, 0.4);
-      border-color: #1977FD;
-    }
-
-    .news-card h4 {
-      color: #ffd700;
-      margin-bottom: 10px;
-      font-size: 1.2rem;
-      border-bottom: 1px solid #2a3b5c;
-      padding-bottom: 5px;
-    }
-
-    .news-card p {
-      color: #e0e0e0;
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
-    .news-date {
-      position: absolute;
-      bottom: 10px;
-      right: 15px;
-      color: #7f8c9a;
-      font-size: 0.8rem;
-    }
-
-    .carousel-controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .carousel-btn {
-      background-color: #1977FD;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-
-    .carousel-btn:hover {
-      background-color: #0d5fd6;
-      transform: scale(1.1);
-    }
-
     .anniversary-banner {
-      background: linear-gradient(90deg, #ff8a00, #ff0080);
-      color: white;
-      text-align: center;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(255, 138, 0, 0.5);
-      animation: pulse 2s infinite;
-    }
+    background: linear-gradient(90deg, #2c3e50, #4a6582);
+    color: #ecf0f1;
+    text-align: center;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #34495e;
+}
 
-    .anniversary-banner p {
-      margin: 0;
-      font-weight: bold;
-      font-size: 1.1rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: #ff0;
-      border-radius: 50%;
-      opacity: 0.7;
-      animation: confetti-fall 5s linear infinite;
-    }
-
-    @keyframes confetti-fall {
-      0% { transform: translateY(-10px) rotate(0deg); }
-      100% { transform: translateY(100px) rotate(360deg); }
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px rgba(255, 138, 0, 0.5); }
-      50% { box-shadow: 0 0 25px rgba(255, 138, 0, 0.8); }
-      100% { box-shadow: 0 0 10px rgba(255, 138, 0, 0.5); }
-    }
+.anniversary-banner p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+   
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -440,20 +331,6 @@ h1 {
       <p>🎉 Сьогодні ми святкуємо 3 річницю проєкту! Не забудь привітати в групі з річницею! 🎉</p>
     </div>
     
-    <!-- Блок новостей ДОЛЖЕН БЫТЬ ЗДЕСЬ -->
-    <div id="news-container" class="hidden">
-      <div class="news-container">
-        <h3 class="news-title">Останні новини та оновлення</h3>
-        <div id="news-carousel">
-          <!-- Новости будут добавляться динамически через JavaScript -->
-        </div>
-        <div class="carousel-controls">
-          <button id="prev-news" class="carousel-btn">←</button>
-          <button id="next-news" class="carousel-btn">→</button>
-        </div>
-      </div>
-    </div>
-
     <!-- Секция авторизации должна оставаться отдельно -->
     <div id="login-section">
       <p>Будь ласка, увійдіть через Telegram:</p>
