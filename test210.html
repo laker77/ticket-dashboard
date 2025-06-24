@@ -398,8 +398,24 @@
         .level-card:nth-child(6) { animation-delay: 0.6s; }
         .level-card:nth-child(7) { animation-delay: 0.7s; }
         
+        /* Широкая карточка для вопросов */
+        .faq-wide {
+            grid-column: 1 / -1;
+            max-height: none;
+        }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
         @media (max-width: 768px) {
             .commands-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .faq-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -462,8 +478,8 @@
             </header>
         
             <div class="commands-container">
-                <!-- Питання та Відповіді -->
-                <div class="level-card level-faq">
+                <!-- Питання та Відповіді - ШИРОКАЯ КАРТОЧКА -->
+                <div class="level-card level-faq faq-wide">
                     <div class="card-header">
                         <div class="card-icon">
                             <i class="fas fa-question-circle"></i>
@@ -471,204 +487,207 @@
                         <h2 class="card-title">Питання та Відповіді</h2>
                     </div>
                     <div class="card-content">
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?</div>
-                            <div class="faq-answer">Відповідь: Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом.</div>
-                        </div>
+                        <div class="faq-grid">
+                            <!-- Вопросы организованы в сетку 2 колонки -->
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?</div>
+                                <div class="faq-answer">Відповідь: Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Скільки днів адміністратор зобов’язаний зберігати докази після видачі покарання?</div>
-                            <div class="faq-answer">Відповідь: 7 днів.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Скільки днів адміністратор зобов’язаний зберігати докази після видачі покарання?</div>
+                                <div class="faq-answer">Відповідь: 7 днів.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде, якщо адміністратор використає F2 без інвізу?</div>
-                            <div class="faq-answer">Відповідь: Попередження або догана.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде, якщо адміністратор використає F2 без інвізу?</div>
+                                <div class="faq-answer">Відповідь: Попередження або догана.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор змінити або скасувати покарання, видане іншим адміном?</div>
-                            <div class="faq-answer">Відповідь: Ні, це заборонено.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор змінити або скасувати покарання, видане іншим адміном?</div>
+                                <div class="faq-answer">Відповідь: Ні, це заборонено.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Скільки усних попереджень прирівнюється до одного письмового?</div>
-                            <div class="faq-answer">Відповідь: Два.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Скільки усних попереджень прирівнюється до одного письмового?</div>
+                                <div class="faq-answer">Відповідь: Два.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Коли адміністратор може вийти у відпустку і на який термін?</div>
-                            <div class="faq-answer">Відповідь: За погодженням ГА/ЗГА, максимум на 5 днів.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Коли адміністратор може вийти у відпустку і на який термін?</div>
+                                <div class="faq-answer">Відповідь: За погодженням ГА/ЗГА, максимум на 5 днів.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор перебувати в фракції, за якою він не стежить?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор перебувати в фракції, за якою він не стежить?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що потрібно адміну, щоб отримати підвищення?</div>
-                            <div class="faq-answer">Відповідь: Не мати активних попереджень і бути активним на поточному рівні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що потрібно адміну, щоб отримати підвищення?</div>
+                                <div class="faq-answer">Відповідь: Не мати активних попереджень і бути активним на поточному рівні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору використовувати адмін-команди для розваг?</div>
-                            <div class="faq-answer">Відповідь: Ні, тільки за узгодженням з ГА.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору використовувати адмін-команди для розваг?</div>
+                                <div class="faq-answer">Відповідь: Ні, тільки за узгодженням з ГА.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Який формат ніку повинен мати адміністратор у Discord?</div>
-                            <div class="faq-answer">Відповідь: Посада | Ім’я Прізвище (наприклад: Cur.LSPD | Sergo Buffalo).</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Який формат ніку повинен мати адміністратор у Discord?</div>
+                                <div class="faq-answer">Відповідь: Посада | Ім’я Прізвище (наприклад: Cur.LSPD | Sergo Buffalo).</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за обман адміністрації або надання підроблених доказів?</div>
-                            <div class="faq-answer">Відповідь: Бан 15–30 днів.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за обман адміністрації або надання підроблених доказів?</div>
+                                <div class="faq-answer">Відповідь: Бан 15–30 днів.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що робити, якщо адміністратор бачить порушення, граючи на RP-персонажі?</div>
-                            <div class="faq-answer">Відповідь: Оформити запит на покарання в Discord адміністрації.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що робити, якщо адміністратор бачить порушення, граючи на RP-персонажі?</div>
+                                <div class="faq-answer">Відповідь: Оформити запит на покарання в Discord адміністрації.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має адміністрація право ігнорувати репорт?</div>
-                            <div class="faq-answer">Відповідь: Ні, за це видається дисциплінарне покарання.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має адміністрація право ігнорувати репорт?</div>
+                                <div class="faq-answer">Відповідь: Ні, за це видається дисциплінарне покарання.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору використовувати адмінку під час гри за RP-персонажа?</div>
-                            <div class="faq-answer">Відповідь: Ні, якщо це не виконання обов’язків.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору використовувати адмінку під час гри за RP-персонажа?</div>
+                                <div class="faq-answer">Відповідь: Ні, якщо це не виконання обов’язків.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору мати майно?</div>
-                            <div class="faq-answer">Відповідь: Ні, заборонено мати будинки та бізнеси, автомобілі дозволено.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору мати майно?</div>
+                                <div class="faq-answer">Відповідь: Ні, заборонено мати будинки та бізнеси, автомобілі дозволено.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде, якщо адміністратор ображає гравців?</div>
-                            <div class="faq-answer">Відповідь: Зняття з посади та блокування.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде, якщо адміністратор ображає гравців?</div>
+                                <div class="faq-answer">Відповідь: Зняття з посади та блокування.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що має зробити адміністратор після виявлення грубого порушення гравцем?</div>
-                            <div class="faq-answer">Відповідь: Видати покарання згідно правил проєкту.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що має зробити адміністратор після виявлення грубого порушення гравцем?</div>
+                                <div class="faq-answer">Відповідь: Видати покарання згідно правил проєкту.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору перебувати на керуючих посадах на інших проєктах?</div>
-                            <div class="faq-answer">Відповідь: Ні, це заборонено.(Зняття + ЧСА )</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору перебувати на керуючих посадах на інших проєктах?</div>
+                                <div class="faq-answer">Відповідь: Ні, це заборонено.(Зняття + ЧСА )</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору видати покарання без доказів?</div>
-                            <div class="faq-answer">Відповідь: Ні, він забов’язаний мати відеодоказ та зберігати його протягом 7 днів.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору видати покарання без доказів?</div>
+                                <div class="faq-answer">Відповідь: Ні, він забов’язаний мати відеодоказ та зберігати його протягом 7 днів.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор відмовитись відповідати на тікет без поважної причини?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор відмовитись відповідати на тікет без поважної причини?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору грати на твинку, маючи адмін-акаунт?</div>
-                            <div class="faq-answer">Відповідь: Тільки якщо твинк не має відношення до адміністрації та адміністративна норма виконана.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи можна адміністратору грати на твинку, маючи адмін-акаунт?</div>
+                                <div class="faq-answer">Відповідь: Тільки якщо твинк не має відношення до адміністрації та адміністративна норма виконана.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що робити, якщо адміністратор хоче змінити нікнейм?</div>
-                            <div class="faq-answer">Відповідь: Погодити з головною адміністрацією та подати запит на форму у відповідний розділ.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що робити, якщо адміністратор хоче змінити нікнейм?</div>
+                                <div class="faq-answer">Відповідь: Погодити з головною адміністрацією та подати запит на форму у відповідний розділ.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор бути підписаний в Discord як “JustAdmin”?</div>
-                            <div class="faq-answer">Відповідь: Ні, лише згідно з форматом.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор бути підписаний в Discord як “JustAdmin”?</div>
+                                <div class="faq-answer">Відповідь: Ні, лише згідно з форматом.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи зобов’язаний адміністратор пояснити причину покарання гравцю?</div>
-                            <div class="faq-answer">Відповідь: Так, якщо це не порушує політику безпеки.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи зобов’язаний адміністратор пояснити причину покарання гравцю?</div>
+                                <div class="faq-answer">Відповідь: Так, якщо це не порушує політику безпеки.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має право адміністратор зберігати особисту інформацію гравців?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має право адміністратор зберігати особисту інформацію гравців?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде, якщо адміністратор змінить покарання іншого адміна без погодження?</div>
-                            <div class="faq-answer">Відповідь: Дисциплінарне стягнення.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде, якщо адміністратор змінить покарання іншого адміна без погодження?</div>
+                                <div class="faq-answer">Відповідь: Дисциплінарне стягнення.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за використання адмін-команд не за призначенням?</div>
-                            <div class="faq-answer">Відповідь: Попередження або догана.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за використання адмін-команд не за призначенням?</div>
+                                <div class="faq-answer">Відповідь: Попередження або догана.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор створити скаргу з доказами від іншого гравця?</div>
-                            <div class="faq-answer">Відповідь: Ні, він забов’язаний передати форму у адмін чаті.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи може адміністратор створити скаргу з доказами від іншого гравця?</div>
+                                <div class="faq-answer">Відповідь: Ні, він забов’язаний передати форму у адмін чаті.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Яке покарання за блат?</div>
-                            <div class="faq-answer">Відповідь: Зняття з посади + бан на 30 днів + ЧС адміністрації.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Яке покарання за блат?</div>
+                                <div class="faq-answer">Відповідь: Зняття з посади + бан на 30 днів + ЧС адміністрації.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи зобов’язаний адміністратор відповідати культурно в Discord-обговореннях?</div>
-                            <div class="faq-answer">Відповідь: Так.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи зобов’язаний адміністратор відповідати культурно в Discord-обговореннях?</div>
+                                <div class="faq-answer">Відповідь: Так.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має право адміністратор розповідати про результати та розголошувати відповіді з співбесіди?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має право адміністратор розповідати про результати та розголошувати відповіді з співбесіди?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за грубість у сторону головної адміністрації?</div>
-                            <div class="faq-answer">Відповідь: Попередження або зняття з посади.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за грубість у сторону головної адміністрації?</div>
+                                <div class="faq-answer">Відповідь: Попередження або зняття з посади.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено критикувати рішення адміністрації публічно?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено критикувати рішення адміністрації публічно?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору мати фракційне майно?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору мати фракційне майно?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи зобов’язаний адміністратор попереджати про свою неактивність?</div>
-                            <div class="faq-answer">Відповідь: Так.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи зобов’язаний адміністратор попереджати про свою неактивність?</div>
+                                <div class="faq-answer">Відповідь: Так.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору передавати адмін-права іншій особі?</div>
-                            <div class="faq-answer">Відповідь: Ні.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи дозволено адміністратору передавати адмін-права іншій особі?</div>
+                                <div class="faq-answer">Відповідь: Ні.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має право адміністратор виконувати дії в RP-чаті від імені RP-персонажа?</div>
-                            <div class="faq-answer">Відповідь: Так, лише якщо він не використовує при цьому адмін-команди.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Чи має право адміністратор виконувати дії в RP-чаті від імені RP-персонажа?</div>
+                                <div class="faq-answer">Відповідь: Так, лише якщо він не використовує при цьому адмін-команди.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за ігнорування скарги на форумі протягом більше 48 годин?</div>
-                            <div class="faq-answer">Відповідь: Догана або попередження.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Що буде за ігнорування скарги на форумі протягом більше 48 годин?</div>
+                                <div class="faq-answer">Відповідь: Догана або попередження.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Який статус має адміністратор у грі?</div>
-                            <div class="faq-answer">Відповідь: NonRP персонаж.</div>
-                        </div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Який статус має адміністратор у грі?</div>
+                                <div class="faq-answer">Відповідь: NonRP персонаж.</div>
+                            </div>
 
-                        <div class="faq-item">
-                            <div class="faq-question"><i class="fas fa-question"></i> Питання: Яке покарання за дискредитацію адміністрації на форумі чи в грі?</div>
-                            <div class="faq-answer">Відповідь: Mute / Ban / зняття з посади (залежно від ситуації).</div>
+                            <div class="faq-item">
+                                <div class="faq-question"><i class="fas fa-question"></i> Питання: Яке покарання за дискредитацію адміністрації на форумі чи в грі?</div>
+                                <div class="faq-answer">Відповідь: Mute / Ban / зняття з посади (залежно від ситуації).</div>
+                            </div>
                         </div>
                     </div>
                 </div>
