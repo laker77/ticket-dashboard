@@ -227,6 +227,215 @@ h1 {
   background-color: #e60000;
 }
 
+    /* Новые стили для блока новостей */
+    .news-section {
+      background-color: #121315;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid #2a2a2a;
+    }
+    
+    .news-title {
+      text-align: center;
+      font-size: 1.7rem;
+      margin-bottom: 25px;
+      color: #e0e0e0;
+      font-weight: 600;
+      position: relative;
+      letter-spacing: 0.5px;
+    }
+    
+    .news-title::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      border-radius: 3px;
+    }
+    
+    .news-container {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .news-card {
+      flex: 0 0 calc(33.333% - 20px);
+      max-width: calc(33.333% - 20px);
+      background: linear-gradient(145deg, #1a1a1a, #151515);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      transition: all 0.4s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-top: 1px solid #2a2a2a;
+      overflow: hidden;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .news-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+      border-top: 1px solid #3b82f6;
+    }
+    
+    .news-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    
+    .news-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .news-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    
+    .news-card-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f0f0f0;
+      margin: 0;
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .news-card-title::before {
+      content: "📌";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 1.2rem;
+    }
+    
+    .news-date {
+      font-size: 0.85rem;
+      color: #888;
+      background-color: #222;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+    
+    .news-content {
+      color: #aaa;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      flex-grow: 1;
+    }
+    
+    .news-image-container {
+      height: 140px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 15px;
+    }
+    
+    .news-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .news-card:hover .news-image {
+      transform: scale(1.05);
+    }
+    
+    .news-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    .read-more {
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      color: white;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      opacity: 0.8;
+    }
+    
+    .news-card:hover .read-more {
+      opacity: 1;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .news-card:nth-child(1) { animation: fadeIn 0.6s ease forwards; }
+    .news-card:nth-child(2) { animation: fadeIn 0.8s ease forwards; }
+    .news-card:nth-child(3) { animation: fadeIn 1.0s ease forwards; }
+    .news-card:nth-child(4) { animation: fadeIn 1.2s ease forwards; }
+    .news-card:nth-child(5) { animation: fadeIn 1.4s ease forwards; }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .news-card:hover .news-image-container::after {
+      content: "👁️ Переглянути";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      text-align: center;
+      padding: 5px;
+      font-size: 0.8rem;
+      animation: pulse 1.5s infinite;
+    }
+    
+    /* Адаптивность для мобильных */
+    @media (max-width: 1024px) {
+      .news-card {
+        flex: 0 0 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .news-card {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+    }
+
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -589,6 +798,123 @@ h1 {
           <!-- Карточки администраторов будут добавлены сюда -->
         </div>
       </div>
+
+       <!-- Секция новостей -->
+      <div id="news-section" class="news-section hidden">
+        <h2 class="news-title">✏️ Dev Блог: Оновлення та Новинки</h2>
+        <div class="news-container">
+          <!-- Новость 1 -->
+          <div class="news-card">
+            <div class="news-header">
+              <h3 class="news-card-title">Оновлення системи тікетів</h3>
+              <span class="news-date">24.06.2025</span>
+            </div>
+            <div class="news-content">
+              <p>Ми повністю оновили систему обробки тікетів. Тепер адміністратори можуть:</p>
+              <ul style="padding-left: 20px; margin-top: 8px;">
+                <li>• Швидше відповідати на запити</li>
+                <li>• Використовувати шаблонні відповіді</li>
+                <li>• Отримувати автоматичні нагадування</li>
+              </ul>
+            </div>
+            <div class="news-image-container">
+              <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600" alt="Система тікетів" class="news-image">
+            </div>
+            <div class="news-footer">
+              <a href="#" class="read-more">Детальніше</a>
+            </div>
+          </div>
+          
+          <!-- Новость 2 -->
+          <div class="news-card">
+            <div class="news-header">
+              <h3 class="news-card-title">Новий дизайн кабінету</h3>
+              <span class="news-date">18.06.2025</span>
+            </div>
+            <div class="news-content">
+              <p>Запустили оновлений дизайн особистого кабінету адміністратора. Основні зміни:</p>
+              <ul style="padding-left: 20px; margin-top: 8px;">
+                <li>• Покращена навігація</li>
+                <li>• Швидший доступ до інструментів</li>
+                <li>• Адаптивний дизайн для мобільних</li>
+              </ul>
+            </div>
+            <div class="news-image-container">
+              <img src="https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?q=80&w=600" alt="Новий дизайн" class="news-image">
+            </div>
+            <div class="news-footer">
+              <a href="#" class="read-more">Детальніше</a>
+            </div>
+          </div>
+          
+          <!-- Новость 3 -->
+          <div class="news-card">
+            <div class="news-header">
+              <h3 class="news-card-title">Оновлення безпеки</h3>
+              <span class="news-date">12.06.2025</span>
+            </div>
+            <div class="news-content">
+              <p>Впровадили нові заходи безпеки для захисту даних адміністраторів та користувачів:</p>
+              <ul style="padding-left: 20px; margin-top: 8px;">
+                <li>• Двофакторна аутентифікація</li>
+                <li>• Шифрування даних</li>
+                <li>• Моніторинг підозрілої активності</li>
+              </ul>
+            </div>
+            <div class="news-image-container">
+              <img src="https://images.unsplash.com/photo-1558494941-1c2d5b0e9c7c?q=80&w=600" alt="Безпека" class="news-image">
+            </div>
+            <div class="news-footer">
+              <a href="#" class="read-more">Детальніше</a>
+            </div>
+          </div>
+          
+          <!-- Новость 4 -->
+          <div class="news-card">
+            <div class="news-header">
+              <h3 class="news-card-title">Нові скрипти</h3>
+              <span class="news-date">05.06.2025</span>
+            </div>
+            <div class="news-content">
+              <p>Додали нові корисні скрипти для адміністраторів:</p>
+              <ul style="padding-left: 20px; margin-top: 8px;">
+                <li>• Автоматичне відстеження активності</li>
+                <li>• Аналітика робочого часу</li>
+                <li>• Швидкий доступ до бази знань</li>
+                <li>• Інструменти для модерації</li>
+              </ul>
+            </div>
+            <div class="news-image-container">
+              <img src="https://images.unsplash.com/photo-1555066932-e78dd8fb77bb?q=80&w=600" alt="Скрипти" class="news-image">
+            </div>
+            <div class="news-footer">
+              <a href="#" class="read-more">Детальніше</a>
+            </div>
+          </div>
+          
+          <!-- Новость 5 -->
+          <div class="news-card">
+            <div class="news-header">
+              <h3 class="news-card-title">Мобільний додаток</h3>
+              <span class="news-date">28.05.2025</span>
+            </div>
+            <div class="news-content">
+              <p>Запустили бета-версію мобільного додатку для адміністраторів. Основні функції:</p>
+              <ul style="padding-left: 20px; margin-top: 8px;">
+                <li>• Сповіщення про нові тікети</li>
+                <li>• Швидкий доступ до статистики</li>
+                <li>• Управління завданнями в дорозі</li>
+              </ul>
+            </div>
+            <div class="news-image-container">
+              <img src="https://images.unsplash.com/photo-1607252650355-f7fd0460ccdb?q=80&w=600" alt="Мобільний додаток" class="news-image">
+            </div>
+            <div class="news-footer">
+              <a href="#" class="read-more">Детальніше</a>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- Блок для администраторов -->
       <div id="admin-notice" class="hidden bg-[#121315] p-6 rounded-xl mb-6 border border-[#1977FD]">
@@ -670,6 +996,8 @@ h1 {
       '@c10mm'
     ];
 
+    
+    
     function toggleScripts() {
       const menu = document.getElementById('scriptList');
       const superMenu = document.getElementById('superScriptList');
@@ -1214,6 +1542,7 @@ h1 {
       document.getElementById('dashboard').classList.remove('hidden');
       document.getElementById('menuContainer').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('news-section').classList.remove('hidden'); // Показываем новости
       document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
       
       // Показываем супер-меню только для суперадминов
@@ -1233,7 +1562,7 @@ h1 {
         document.getElementById('contest-rank').classList.add('hidden');
       } else {
         document.getElementById('admin-notice').classList.add('hidden');
-        document.getElementById('stats-section').classList.remove('hidden');
+        document.getElementById('stats-section').class classList.remove('hidden');
         document.getElementById('contest-rank').classList.remove('hidden');
         fetchUserStatsByTelegram(telegramUsername);
       }
@@ -1244,6 +1573,7 @@ h1 {
       document.getElementById('dashboard').classList.add('hidden');
       document.getElementById('menuContainer').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('news-section').classList.add('hidden'); // Скрываем новости
       document.querySelector('h1').innerText = 'Ласкаво просимо!';
       document.getElementById('top-admins-section').classList.add('hidden');
     }
