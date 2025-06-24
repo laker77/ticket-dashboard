@@ -298,6 +298,56 @@ h1 {
   background-color: #333;
   color: #fff;
 }
+
+.anniversary-banner {
+    background: linear-gradient(90deg, #2c3e50, #4a6582);
+    color: #ecf0f1;
+    text-align: center;
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #34495e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.anniversary-banner p {
+    margin: 0;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 2;
+}
+
+.confetti {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: confetti-fall 8s linear infinite;
+}
+
+/* Приглушенные цвета конфетти */
+.confetti:nth-child(1) { background-color: #f1c40f; top: -10px; left: 10%; animation-delay: 0s; }
+.confetti:nth-child(2) { background-color: #e74c3c; top: -10px; left: 30%; animation-delay: 1.5s; }
+.confetti:nth-child(3) { background-color: #2ecc71; top: -10px; left: 50%; animation-delay: 3s; }
+.confetti:nth-child(4) { background-color: #9b59b6; top: -10px; left: 70%; animation-delay: 4.5s; }
+.confetti:nth-child(5) { background-color: #3498db; top: -10px; left: 90%; animation-delay: 6s; }
+
+@keyframes confetti-fall {
+    0% { 
+        transform: translateY(0) rotate(0deg) scale(1); 
+        opacity: 0.6;
+    }
+    100% { 
+        transform: translateY(70px) rotate(360deg) scale(0.8); 
+        opacity: 0;
+    }
+}
+    
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -305,6 +355,13 @@ h1 {
 
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
+
+      <!-- Праздничная плашка ДОЛЖНА БЫТЬ ЗДЕСЬ -->
+    <div id="anniversary-banner" class="anniversary-banner hidden">
+      <p>🎉 Сьогодні ми святкуємо 3 річницю проєкту! Не забудь привітати в групі з річницею! 🎉</p>
+    </div>
+    
+    
     <div id="login-section">
       <p>Будь ласка, увійдіть через Telegram:</p>
       <div class="telegram-button-wrapper">
