@@ -22,6 +22,10 @@
       th, td {
         padding: 0.25rem 0.5rem;
       }
+      .top-admins-container {
+        flex-direction: column;
+        align-items: center;
+      }
     }
 body {
   background-color: #050608 !important;
@@ -318,6 +322,203 @@ h1 {
     letter-spacing: 0.5px;
 }
    
+/* Обновленные стили для администраторов недели */
+.top-admins-section {
+  background: #121315;
+  border-radius: 16px;
+  padding: 25px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #2a2a2a;
+}
+
+.top-admins-title {
+  text-align: center;
+  font-size: 1.7rem;
+  margin-bottom: 25px;
+  color: #e0e0e0;
+  font-weight: 600;
+  position: relative;
+  letter-spacing: 0.5px;
+}
+
+.top-admins-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 3px;
+}
+
+.top-admins-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.admin-card {
+  background: linear-gradient(145deg, #1a1a1a, #151515);
+  border-radius: 12px;
+  width: 170px;
+  padding: 20px 15px;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border-top: 1px solid #2a2a2a;
+}
+
+.admin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+  border-top: 1px solid #3b82f6;
+}
+
+.admin-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 15px;
+  display: block;
+  position: relative;
+  background: #1f1f1f;
+  padding: 5px;
+}
+
+/* Стили для рамки аватарки в зависимости от места */
+.admin-card.gold .admin-avatar {
+  border: 3px solid #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.admin-card.silver .admin-avatar {
+  border: 3px solid #c0c0c0;
+  box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
+}
+
+.admin-card.bronze .admin-avatar {
+  border: 3px solid #cd7f32;
+  box-shadow: 0 0 15px rgba(205, 127, 50, 0.2);
+}
+
+.admin-card.normal .admin-avatar {
+  border: 3px solid #3b82f6;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.medal {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  font-size: 2.2rem;
+  z-index: 2;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+}
+
+.admin-name {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #f0f0f0;
+  font-size: 1.05rem;
+  letter-spacing: 0.3px;
+}
+
+.admin-stats {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-stat-value {
+  color: #e0e0e0;
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+.week-info {
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: 20px;
+  font-style: italic;
+  position: relative;
+  padding-top: 15px;
+}
+
+.week-info::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+}
+
+/* Стили для места */
+.place-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+  z-index: 1;
+}
+
+.gold .place-badge {
+  background: #d4af37;
+  color: #121315;
+}
+
+.silver .place-badge {
+  background: #c0c0c0;
+  color: #121315;
+}
+
+.bronze .place-badge {
+  background: #cd7f32;
+  color: #121315;
+}
+
+.normal .place-badge {
+  background: #3b82f6;
+  color: #f0f0f0;
+}
+
+/* Эффект подложки */
+.admin-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.gold::before { background: linear-gradient(90deg, #d4af37, #f9d423); }
+.silver::before { background: linear-gradient(90deg, #c0c0c0, #e0e0e0); }
+.bronze::before { background: linear-gradient(90deg, #cd7f32, #e9a957); }
+.normal::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -326,12 +527,12 @@ h1 {
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
     
-    <!-- Праздничная плашка ДОЛЖНА БЫТЬ ЗДЕСЬ -->
+    <!-- Праздничная плашка -->
     <div id="anniversary-banner" class="anniversary-banner hidden">
       <p>🎉 Сьогодні ми святкуємо 3 річницю проєкту! Не забудь привітати в групі з річницею! 🎉</p>
     </div>
     
-    <!-- Секция авторизации должна оставаться отдельно -->
+    <!-- Секция авторизации -->
     <div id="login-section">
       <p>Будь ласка, увійдіть через Telegram:</p>
       <div class="telegram-button-wrapper">
@@ -380,6 +581,15 @@ h1 {
     </div>
     
     <div id="dashboard" class="hidden">
+      <!-- Блок администраторов недели -->
+      <div id="top-admins-section" class="top-admins-section hidden">
+        <h2 class="top-admins-title">🏆 Адміністратори тижня</h2>
+        <div class="week-info" id="week-range">Період: 01.05.2023 - 07.05.2023</div>
+        <div class="top-admins-container" id="top-admins-container">
+          <!-- Карточки администраторов будут добавлены сюда -->
+        </div>
+      </div>
+      
       <!-- Блок для администраторов -->
       <div id="admin-notice" class="hidden bg-[#121315] p-6 rounded-xl mb-6 border border-[#1977FD]">
         <h3 class="text-xl font-bold text-[#1977FD] mb-3">👑 Ви - адміністратор системи</h3>
@@ -534,6 +744,184 @@ h1 {
 
     function getDateWithoutTime(date) {
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    // Функция для определения предыдущей недели (с понедельника 00:00 по воскресенье 23:59)
+    function getPreviousWeekRange() {
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday - 7);
+      monday.setHours(0, 0, 0, 0);
+      
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+      
+      return {
+        start: formatDate(monday),
+        end: formatDate(sunday),
+        startDate: monday,
+        endDate: sunday
+      };
+    }
+
+    // Функция для проверки, нужно ли обновить данные администраторов недели
+    function shouldRefreshTopAdmins() {
+      const lastUpdate = localStorage.getItem('topAdminsLastUpdate');
+      if (!lastUpdate) return true;
+      
+      const now = new Date();
+      const lastUpdateDate = new Date(parseInt(lastUpdate));
+      
+      // Проверяем разницу во времени
+      return (now - lastUpdateDate) > 30 * 60 * 1000; // 30 минут
+    }
+
+    // Функция для автоматического обновления данных
+    async function autoRefreshData() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      
+      // Удаляем старые данные
+      localStorage.removeItem(cacheKey);
+      localStorage.removeItem('topAdminsLastUpdate');
+      
+      // Загружаем и отображаем обновленные данные
+      await loadAndRenderTopAdmins();
+    }
+
+    // Функция для получения топ-5 администраторов за неделю
+    async function getTopAdmins(weekRange) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        const ticketsHeaders = ticketsData[0];
+        const timeHeaders = timeData[0];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        const admins = [];
+
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex];
+          const telegram = row[telegramColIndex];
+          
+          if (!name || !telegram) return;
+
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                // Суммируем тикеты
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                // Суммируем время
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += hh * 3600 + mm * 60 + ss;
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
+          });
+        });
+
+        // Сортировка: сначала по тикетам, затем по времени
+        admins.sort((a, b) => {
+          if (b.tickets !== a.tickets) return b.tickets - a.tickets;
+          return b.time - a.time;
+        });
+
+        return admins.slice(0, 5);
+      } catch (error) {
+        console.error('Помилка при завантаженні топу адміністраторів:', error);
+        return [];
+      }
+    }
+
+    // Функция для отображения топ-администраторов
+    function renderTopAdmins(admins, weekRange) {
+      const container = document.getElementById('top-admins-container');
+      container.innerHTML = '';
+      
+      // Обновляем информацию о периоде
+      document.getElementById('week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      admins.forEach((admin, index) => {
+        const card = document.createElement('div');
+        card.className = 'admin-card';
+        
+        let medalClass = 'normal';
+        let medal = '';
+        
+        if (index === 0) {
+          medalClass = 'gold';
+          medal = '🥇';
+        } else if (index === 1) {
+          medalClass = 'silver';
+          medal = '🥈';
+        } else if (index === 2) {
+          medalClass = 'bronze';
+          medal = '🥉';
+        }
+        
+        card.innerHTML = `
+          <div class="${medalClass} medal">${medal}</div>
+          <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+               alt="${admin.name}" 
+               class="admin-avatar ${medalClass}"
+               onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=1977FD&color=fff'">
+          <div class="admin-name">${admin.name}</div>
+          <div class="admin-stats">
+            <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+            <div>Час у грі: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+          </div>
+        `;
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Функция для загрузки и отображения администраторов недели
+    async function loadAndRenderTopAdmins() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cachedData = localStorage.getItem(cacheKey);
+      
+      if (cachedData && !shouldRefreshTopAdmins()) {
+        const { admins } = JSON.parse(cachedData);
+        renderTopAdmins(admins, weekRange);
+        return;
+      }
+      
+      const admins = await getTopAdmins(weekRange);
+      localStorage.setItem(cacheKey, JSON.stringify({ admins }));
+      localStorage.setItem('topAdminsLastUpdate', Date.now());
+      renderTopAdmins(admins, weekRange);
     }
 
     async function fetchUserStatsByTelegram(telegramUsername) {
@@ -835,6 +1223,10 @@ h1 {
         document.getElementById('superScriptMenu').classList.add('hidden');
       }
       
+      // Показываем блок администраторов недели
+      document.getElementById('top-admins-section').classList.remove('hidden');
+      loadAndRenderTopAdmins();
+      
       if (isAdmin) {
         document.getElementById('admin-notice').classList.remove('hidden');
         document.getElementById('stats-section').classList.add('hidden');
@@ -853,6 +1245,7 @@ h1 {
       document.getElementById('menuContainer').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
       document.querySelector('h1').innerText = 'Ласкаво просимо!';
+      document.getElementById('top-admins-section').classList.add('hidden');
     }
 
     function logout() {
@@ -875,6 +1268,16 @@ h1 {
       } else {
         showLoginForm();
       }
+      
+      // Периодическая проверка обновлений (каждые 5 минут)
+      setInterval(() => {
+        if (shouldRefreshTopAdmins()) {
+          autoRefreshData();
+        }
+      }, 5 * 60 * 1000);
+      
+      // Инициализация при первой загрузке
+      autoRefreshData();
     });
   </script>
 </body>
