@@ -746,27 +746,7 @@ h1 {
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
 
-    // Функция для определения текущей недели (с понедельника по воскресенье)
-    function getCurrentWeekRange() {
-      const now = new Date();
-      const dayOfWeek = now.getDay();
-      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      
-      const monday = new Date(now);
-      monday.setDate(now.getDate() + diffToMonday);
-      
-      const sunday = new Date(monday);
-      sunday.setDate(monday.getDate() + 6);
-      
-      return {
-        start: formatDate(monday),
-        end: formatDate(sunday),
-        startDate: monday,
-        endDate: sunday
-      };
-    }
-
-    // Функция для получения предыдущей недели
+    // Функция для определения предыдущей недели (с понедельника 00:00 по воскресенье 23:59)
     function getPreviousWeekRange() {
       const now = new Date();
       const dayOfWeek = now.getDay();
@@ -774,9 +754,11 @@ h1 {
       
       const monday = new Date(now);
       monday.setDate(now.getDate() + diffToMonday - 7);
+      monday.setHours(0, 0, 0, 0);
       
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
       
       return {
         start: formatDate(monday),
@@ -794,12 +776,21 @@ h1 {
       const now = new Date();
       const lastUpdateDate = new Date(parseInt(lastUpdate));
       
-      // Проверяем, было ли последнее обновление до воскресенья 23:59 текущей недели
-      const sunday = new Date();
-      sunday.setDate(sunday.getDate() + (6 - sunday.getDay()));
-      sunday.setHours(23, 59, 0, 0);
+      // Проверяем разницу во времени
+      return (now - lastUpdateDate) > 30 * 60 * 1000; // 30 минут
+    }
+
+    // Функция для автоматического обновления данных
+    async function autoRefreshData() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
       
-      return now > sunday && lastUpdateDate < sunday;
+      // Удаляем старые данные
+      localStorage.removeItem(cacheKey);
+      localStorage.removeItem('topAdminsLastUpdate');
+      
+      // Загружаем и отображаем обновленные данные
+      await loadAndRenderTopAdmins();
     }
 
     // Функция для получения топ-5 администраторов за неделю
@@ -917,10 +908,7 @@ h1 {
 
     // Функция для загрузки и отображения администраторов недели
     async function loadAndRenderTopAdmins() {
-      // Используем предыдущую неделю для отчета
       const weekRange = getPreviousWeekRange();
-      
-      // Проверяем, нужно ли обновить данные
       const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
       const cachedData = localStorage.getItem(cacheKey);
       
@@ -930,13 +918,9 @@ h1 {
         return;
       }
       
-      // Если данных нет или нужно обновить - загружаем
       const admins = await getTopAdmins(weekRange);
-      
-      // Кэшируем данные до следующего воскресенья
       localStorage.setItem(cacheKey, JSON.stringify({ admins }));
       localStorage.setItem('topAdminsLastUpdate', Date.now());
-      
       renderTopAdmins(admins, weekRange);
     }
 
@@ -1284,6 +1268,16 @@ h1 {
       } else {
         showLoginForm();
       }
+      
+      // Периодическая проверка обновлений (каждые 5 минут)
+      setInterval(() => {
+        if (shouldRefreshTopAdmins()) {
+          autoRefreshData();
+        }
+      }, 5 * 60 * 1000);
+      
+      // Инициализация при первой загрузке
+      autoRefreshData();
     });
   </script>
 </body>
