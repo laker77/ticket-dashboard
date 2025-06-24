@@ -905,51 +905,6 @@ h1 {
       } else {
         showLoginForm();
       }
-function checkAnniversary() {
-    const today = new Date();
-    const anniversary = new Date(2025, 5, 24); // 25 июня
-
-    if (
-      today.getDate() === anniversary.getDate() &&
-      today.getMonth() === anniversary.getMonth() &&
-      today.getFullYear() === anniversary.getFullYear()
-    ) {
-      const banner = document.getElementById('anniversary-banner');
-      if (!banner) return;
-
-      banner.classList.remove('hidden');
-      
-      for (let i = 0; i < 30; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.left = `${Math.random() * 100}%`;
-        confetti.style.animationDelay = `${Math.random() * 3}s`;
-        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-        banner.appendChild(confetti);
-      }
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('logout-btn').addEventListener('click', logout);
-    
-    const savedAuth = localStorage.getItem('tg_auth');
-    if (savedAuth) {
-      try {
-        const userData = JSON.parse(savedAuth);
-        showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
-      } catch (e) {
-        localStorage.removeItem('tg_auth');
-        showLoginForm();
-      }
-    } else {
-      showLoginForm();
-    }
-
-    // Вызовы для новостей и годовщины
-    renderNews();
-    checkAnniversary()
-    });
   </script>
 </body>
 </html>
