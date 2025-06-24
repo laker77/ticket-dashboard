@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Оновлення 1.6</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
   body {
     background-color: #121212;
@@ -12,6 +13,8 @@
     padding: 20px;
     max-width: 800px;
     margin: auto;
+    position: relative;
+    min-height: 100vh;
   }
   h1 {
     color: #ff5555;
@@ -24,6 +27,7 @@
     border-radius: 10px;
     padding: 20px;
     text-align: center;
+    margin-top: 20px;
   }
   .content img {
     max-width: 100%;
@@ -35,17 +39,246 @@
     font-size: 0.9rem;
     color: #888;
     text-align: center;
+    position: absolute;
+    bottom: 20px;
+    width: calc(100% - 40px);
+  }
+  
+  /* Стили для авторизации */
+  #login-section {
+    background-color: #1a1a1a;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 100px auto;
+    box-shadow: 0 0 20px rgba(255, 85, 85, 0.5);
+    text-align: center;
+    border: 1px solid #ff5555;
+  }
+  
+  #login-section p {
+    margin-bottom: 20px;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+  }
+  
+  .telegram-button-wrapper {
+    display: inline-block;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 85, 85, 0.7);
+  }
+  
+  #logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #ff4d4d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: background-color 0.3s;
+    border: none;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
+  }
+  
+  #logout-btn:hover {
+    background-color: #e60000;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .access-denied {
+    text-align: center;
+    padding: 50px 20px;
+    color: #ff5555;
+    font-size: 1.2rem;
   }
 </style>
 </head>
 <body>
-  <h1>Оновлення 1.6</h1>
-  <div class="content">
-    <!-- Вставляй свою мем-картинку сюда -->
-    <img src="https://imgur.com/u0BPWyi.jpg" alt="Мем оновлення 1.6" />
+  <!-- Кнопка выхода -->
+  <button id="logout-btn" class="hidden">Вийти</button>
+  
+  <!-- Секция авторизации -->
+  <div id="login-section">
+    <p>Для перегляду цієї сторінки увійдіть через Telegram:</p>
+    <div class="telegram-button-wrapper">
+      <script async src="https://telegram.org/js/telegram-widget.js?7"
+              data-telegram-login="ticket_tracker_UG_bot" 
+              data-size="large"
+              data-userpic="false"
+              data-request-access="write"
+              data-onauth="onTelegramAuth(user)">
+      </script>
+    </div>
   </div>
-  <div class="footer">
-    Будь яке розповсюдження цього скрипта призведе до ЧС проектів Ukraine GTA!
+  
+  <!-- Контент (скрыт до авторизации) -->
+  <div id="protected-content" class="hidden">
+    <h1>Оновлення 1.6</h1>
+    <div class="content">
+      <!-- Вставляй свою мем-картинку сюда -->
+      <img src="https://imgur.com/u0BPWyi.jpg" alt="Мем оновлення 1.6" />
+    </div>
+    <div class="footer">
+      Будь яке розповсюдження цього скрипта призведе до ЧС проектів Ukraine GTA!
+    </div>
   </div>
+  
+  <!-- Сообщение о запрете доступа -->
+  <div id="access-denied" class="access-denied hidden">
+    <h2>Доступ заборонено</h2>
+    <p>Ваш обліковий запис не має доступу до цього контенту.</p>
+  </div>
+
+  <script>
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+    const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
+    const allowedAdmins = [
+      '@laker_77',
+      '@liquid_ug',
+      '@Hermaeus_Mora_1679',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav'
+    ];
+
+    async function getSheetData(sheetName) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      try {
+        const res = await axios.get(url);
+        return res.data.values;
+      } catch (error) {
+        console.error('Помилка отримання даних:', error);
+        throw new Error('Помилка завантаження даних з таблиці');
+      }
+    }
+
+    async function onTelegramAuth(user) {
+      if (!user || !user.username) {
+        alert('Не отримано дані користувача Telegram');
+        return;
+      }
+      
+      const telegramUsername = '@' + user.username.toLowerCase();
+      console.log('Авторизація:', telegramUsername);
+      
+      // Проверка на администратора
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true,
+          timestamp: Date.now()
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        showProtectedContent();
+        return;
+      }
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const ticketsHeaders = ticketsData[0];
+        
+        // Пошук колонки з нормалізацією
+        const telegramColIndex = ticketsHeaders.findIndex(header => 
+          header.trim().toLowerCase() === 'telegram'
+        );
+
+        if (telegramColIndex === -1) {
+          throw new Error('Колонка Telegram не знайдена в таблиці');
+        }
+
+        // Пошук користувача з нормалізацією даних
+        const userFound = ticketsData.slice(1).some(row => {
+          const rowUsername = (row[telegramColIndex] || '').trim().toLowerCase();
+          return rowUsername === telegramUsername;
+        });
+
+        if (userFound) {
+          console.log('Доступ дозволено для:', telegramUsername);
+          localStorage.setItem('tg_auth', JSON.stringify({
+            username: telegramUsername,
+            nickname: user.first_name || user.username,
+            isAdmin: false,
+            timestamp: Date.now()
+          }));
+          showProtectedContent();
+        } else {
+          console.warn('Доступ заборонено:', telegramUsername);
+          localStorage.removeItem('tg_auth');
+          showAccessDenied();
+        }
+      } catch (error) {
+        console.error('Помилка авторизації:', error);
+        alert(`Помилка: ${error.message || 'Перевірте консоль для деталей'}`);
+        showLoginForm();
+      }
+    }
+
+    // Перевірка сесії при завантаженні
+    function initAuthCheck() {
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) logoutBtn.addEventListener('click', logout);
+
+      try {
+        const savedAuth = localStorage.getItem('tg_auth');
+        if (savedAuth) {
+          const authData = JSON.parse(savedAuth);
+          const sessionAge = Date.now() - (authData.timestamp || 0);
+          
+          if (sessionAge < SESSION_TIMEOUT) {
+            showProtectedContent();
+            return;
+          } else {
+            console.log('Сесія закінчилася');
+            localStorage.removeItem('tg_auth');
+          }
+        }
+      } catch (e) {
+        console.error('Помилка перевірки сесії:', e);
+        localStorage.removeItem('tg_auth');
+      }
+      showLoginForm();
+    }
+
+    function showProtectedContent() {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('protected-content').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('access-denied').classList.add('hidden');
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').classList.remove('hidden');
+      document.getElementById('protected-content').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('access-denied').classList.add('hidden');
+    }
+
+    function showAccessDenied() {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('protected-content').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('access-denied').classList.remove('hidden');
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    // Основна ініціалізація
+    document.addEventListener('DOMContentLoaded', function() {
+      initAuthCheck();
+    });
+  </script>
 </body>
 </html>
