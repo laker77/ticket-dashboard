@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Особистий Кабінет Адміністратора</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    @media (max-width: 640px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .table-container {
+        overflow-x: auto;
+      }
+      table {
+        font-size: 0.875rem;
+      }
+      th, td {
+        padding: 0.25rem 0.5rem;
+      }
+    }
+body {
+  background-color: #050608 !important;
+  color: #FFFBEF !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#login-section {
+  background-color: #121824;
+  padding: 40px 30px;
+  border-radius: 20px;
+  max-width: 400px;
+  margin: 60px auto;
+  box-shadow: 0 0 30px #1977FDAA;
+  text-align: center;
+  animation: fadeInUp 1.2s ease forwards;
+  opacity: 0;
+  transform: translateY(30px);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+#login-section p {
+  margin-bottom: 25px;
+  color: #FFFBEF;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.telegram-button-wrapper {
+  display: inline-block;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 0 15px #1977FD;
+  animation: pulse 3s infinite ease-in-out;
+}
+
+.bg-white.p-4.rounded.shadow.mb-6 {
+  background-color: #121315 !important;
+  color: #FFFBEF;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  background-color: #1a1a1a;
+  color: #dcdcdc;
+}
+
+.table-container thead {
+  background-color: #222;
+}
+
+.table-container th {
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 500;
+  color: #b0b0b0;
+}
+
+.table-container td {
+  padding: 10px 12px;
+  border-top: 1px solid #2c2c2c;
+}
+
+.table-container tbody tr:nth-child(even) {
+  background-color: #1e1e1e;
+}
+
+.table-container tbody tr:hover {
+  background-color: #2a2a2a;
+  transition: background-color 0.2s ease;
+}
+
+table {
+  background-color: #121315;
+  color: #FFFBEF;
+  border-color: #2a2d38;
+}
+
+.grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div {
+  background-color: #121315 !important;
+  color: #FFFBEF !important;
+  border-radius: 14px;
+}
+
+.bg-white.p-4.rounded.shadow {
+  background-color: #121315 !important;
+  color: #FFFBEF;
+  box-shadow: none !important;
+  border-radius: 14px;
+}
+
+.grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div h3 {
+  color: #1977FD;
+}
+
+.script-menu {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-button {
+  width: 40px;
+  height: 40px;
+  background-color: #2c2c2c;
+  color: white;
+  font-size: 22px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+  .menu-category {
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding-left: 10px;
+  color: #444;
+}
+
+.menu-button:hover {
+  background-color: #3c3c3c;
+}
+
+.script-list {
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.script-list.hidden {
+  display: none !important;
+}
+
+.script-item {
+  padding: 8px 12px;
+  color: #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  display: block;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.script-item:hover {
+  background-color: #333;
+}
+.hidden {
+  display: none !important;
+}
+
+.script-menu {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1977FD;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
+}
+
+#logout-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1001;
+  transition: background-color 0.3s;
+  border: none;
+  font-weight: bold;
+}
+
+#logout-btn:hover {
+  background-color: #e60000;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 15px #1977FD;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 35px #1977FD;
+    transform: scale(1.1);
+  }
+}
+
+/* Стили для нового меню суперадминов */
+.super-menu-button {
+  width: 40px;
+  height: 40px;
+  background-color: #1a1a1a;
+  color: #357cf0;
+  font-size: 22px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #357cf0;
+}
+
+.super-menu-button:hover {
+  background-color: #333;
+  transform: scale(1.05);
+}
+
+.super-script-list {
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid #357cf0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.super-script-item {
+  padding: 8px 12px;
+  color: #ffd700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  display: block;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.super-script-item:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+
+/* Стили для новостей */
+.news-card {
+  min-width: 300px;
+  background: #1a1c24;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 0 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+}
+
+.news-date {
+  color: #1977FD;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+}
+
+.news-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ffd700;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Стили для карточек администраторов */
+.top-admin-card {
+  background: linear-gradient(145deg, #1e2029, #181a22);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.top-admin-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(25, 119, 253, 0.3);
+}
+
+.admin-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 10px;
+  border: 2px solid #1977FD;
+}
+
+.admin-rank {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  background: #ffd700;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+    
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <button id="logout-btn" class="hidden">Вийти</button>
+
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
+    <div id="login-section">
+      <p>Будь ласка, увійдіть через Telegram:</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+    </div>
+    
+    <!-- Контейнер для обоих меню -->
+    <div class="script-menu hidden" id="menuContainer">
+<!-- Основное меню -->
+<div>
+  <div class="menu-button" onclick="toggleScripts()">≡</div>
+  <div class="script-list hidden" id="scriptList">
+    
+    <div class="menu-category">Скрипти</div>
+    <a href="script1.1.html" class="script-item">Скрипт 1.1</a>
+    <a href="script1.2.html" class="script-item">Скрипт 1.2</a>
+    <a href="script1.3.html" class="script-item">Скрипт 1.3</a>
+    <a href="script1.4.html" class="script-item">Скрипт 1.4</a>
+    <a href="script1.5.html" class="script-item">Скрипт 1.5</a>
+    <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
+
+    <div class="menu-category">Інформація</div>
+    <a href="tickets.html" class="script-item">Регламент Відповіді на Тікети</a>
+    <a href="commands.html" class="script-item">Команди адміністратора</a>
+
+  </div>
+</div>
+
+      
+      <!-- Меню для суперадминов -->
+      <div id="superScriptMenu" class="hidden">
+        <div class="super-menu-button" onclick="toggleSuperScripts()">≡</div>
+        <div class="super-script-list hidden" id="superScriptList">
+          <a href="test.html" class="super-script-item">Статистика Адміністраторів</a>
+          <a href="super-script2.html" class="super-script-item">Калькулятор онлайну</a>
+          <a href="super-script3.html" class="super-script-item">Контроль складу</a>
+        </div>
+      </div>
+    </div>
+    
+    <div id="dashboard" class="hidden">
+      <div id="dashboard" class="hidden">
+  <!-- Праздничная плашка -->
+  <div id="anniversary-banner" class="bg-gradient-to-r from-yellow-500 to-yellow-300 text-black text-center p-3 rounded-lg mb-4 animate-pulse hidden">
+    <strong>🎉 Увага!</strong> Сьогодні ми святкуємо 3 річницю проєкту, не забудь привітати в групі з річницею!
+  </div>
+
+        <!-- Блок новостей -->
+<div id="news-section" class="bg-[#121315] p-4 rounded-xl mb-6 border border-[#1977FD]">
+  <h2 class="text-xl font-bold text-[#1977FD] mb-4">Dev Блог & Оновлення</h2>
+  <div class="news-container relative">
+    <button id="news-prev" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full z-10">←</button>
+    
+    <div class="news-cards flex overflow-x-auto py-2 px-12 scrollbar-hide">
+      <!-- Карточки новостей будут здесь -->
+    </div>
+    
+    <button id="news-next" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full z-10">→</button>
+  </div>
+</div>
+
+        <!-- Топ администраторов недели -->
+<div id="top-admins-section" class="bg-[#121315] p-4 rounded-xl mb-6 border border-[#1977FD]">
+  <h2 class="text-xl font-bold text-[#1977FD] mb-4">⭐ Адміністратори Тижня</h2>
+  <div class="top-admins-container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+    <!-- Карточки администраторов будут здесь -->
+  </div>
+</div>
+  
+  
+  <!-- Остальной код dashboard... -->
+      <!-- Блок для администраторов -->
+      <div id="admin-notice" class="hidden bg-[#121315] p-6 rounded-xl mb-6 border border-[#1977FD]">
+        <h3 class="text-xl font-bold text-[#1977FD] mb-3">👑 Ви - адміністратор системи</h3>
+        <p class="mb-2">Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+        <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
+      </div>
+      
+      <div id="stats-section">
+        <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stats-grid">
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">За вчора</h3>
+            <p>Тікети: <span id="yesterday-tickets">—</span></p>
+            <p>Час у грі: <span id="yesterday-time">—</span></p>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">Тиждень</h3>
+            <p>Тікети: <span id="week-tickets">—</span></p>
+            <p>Час у грі: <span id="week-time">—</span></p>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h3 class="font-bold mb-2">Місяць</h3>
+            <p>Тікети: <span id="month-tickets">—</span></p>
+            <p>Час у грі: <span id="month-time">—</span></p>
+          </div>
+        </div>
+
+        <div id="contest-rank" class="bg-[#121315] text-white p-4 rounded-xl shadow mb-6 border border-[#1977FD] animate-fade-in">
+          <h3 class="text-xl font-bold text-[#1977FD] mb-2">🎉 Конкурс "Кращий адмін"</h3>
+          <p class="mb-2">Ти зараз на <span id="current-rank" class="font-semibold text-yellow-300">…</span> місці серед усієї адміністрації!</p>
+          <p class="text-sm text-gray-300">📅 Конкурс триває до <span class="text-white">30 червня</span>. Більше тікетів і годин — вище шанс на перемогу!</p>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow mb-6">
+          <h3 class="font-bold mb-4">Динаміка тікетів та часу за останній місяць</h3>
+          <canvas id="statsChart" height="150"></canvas>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+          <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
+          <div class="table-container">
+            <table class="min-w-full text-left border-collapse">
+              <thead>
+                <tr>
+                  <th class="border px-2 py-1">Дата</th>
+                  <th class="border px-2 py-1">Тікети</th>
+                  <th class="border px-2 py-1">Час у грі</th>
+                  <th class="border px-2 py-1">Неактив</th>
+                </tr>
+              </thead>
+              <tbody id="daily-stats-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+    
+    // Список администраторов с доступом
+    const allowedAdmins = [
+      '@laker_77',
+      '@liquid_ug',
+      '@Hermaeus_Mora_1679',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav'
+    ];
+
+    // Список суперадминов для дополнительного меню
+    const superAdmins = [
+      '@laker_77',
+      '@liquid_ug',
+      '@Hermaeus_Mora_1679',
+      '@c10mm'
+    ];
+
+    const newsData = [
+  { id: 1, date: '20.06.2025', title: 'Оновлення 1.5.0', content: 'Додано нову систему тікетів, покращено інтерфейс адмін-панелі.' },
+  { id: 2, date: '18.06.2025', title: 'Фікс багів', content: 'Виправлено проблеми з відображенням статистики у деяких адміністраторів.' },
+  { id: 3, date: '15.06.2025', title: 'Нові правила', content: 'Оновлено правила серверу. Просимо всіх адміністраторів ознайомитись.' },
+  { id: 4, date: '12.06.2025', title: 'Система мотивації', content: 'Запроваджено нову систему мотивації для адміністраторів. Деталі в особисті повідомлення.' },
+  { id: 5, date: '10.06.2025', title: 'Технічні роботи', content: '28 червня очікуйте технічні роботи на сервері. Триватимуть 2 години.' }
+];
+
+// Функция для рендеринга новостей
+function renderNews() {
+  const container = document.querySelector('.news-cards');
+  container.innerHTML = '';
+  
+  newsData.forEach(news => {
+    const card = document.createElement('div');
+    card.className = 'news-card flex-shrink-0';
+    card.innerHTML = `
+      <div class="news-date">${news.date}</div>
+      <h3 class="news-title">${news.title}</h3>
+      <p class="text-gray-300">${news.content}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Функция для рендеринга топ-администраторов
+async function renderTopAdmins() {
+  try {
+    const container = document.querySelector('.top-admins-container');
+    container.innerHTML = '<p class="text-center">Завантаження даних...</p>';
+    
+    const ticketsData = await getSheetData('Май_2025_таблица');
+    const timeData = await getSheetData('Время_в_игре');
+    
+    const ticketsHeaders = ticketsData[0];
+    const timeHeaders = timeData[0];
+    
+    const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+    
+    const today = getDateWithoutTime(new Date());
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - 7);
+    
+    const dateCols = ticketsHeaders
+      .map((h, i) => ({ h, i }))
+      .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+    
+    const admins = [];
+    
+    ticketsData.slice(1).forEach(row => {
+      const name = row[nameColIndex];
+      const telegram = row[telegramColIndex];
+      
+      let tickets = 0;
+      let timeSeconds = 0;
+      
+      dateCols.forEach(({ h, i }) => {
+        const dt = parseDate(h);
+        if (dt >= weekStart && dt <= today) {
+          tickets += parseInt(row[i]) || 0;
+          
+          const timeIndex = timeHeaders.indexOf(h);
+          if (timeIndex >= 0) {
+            const timeRow = timeData.find(r => r[0] === name);
+            if (timeRow && timeRow[timeIndex] && timeRow[timeIndex] !== 'Н') {
+              const [hh, mm, ss] = timeRow[timeIndex].split(':').map(Number);
+              timeSeconds += hh * 3600 + mm * 60 + ss;
+            }
+          }
+        }
+      });
+      
+      if (tickets > 0) {
+        admins.push({
+          name,
+          telegram,
+          tickets,
+          time: secondsToHHMM(timeSeconds)
+        });
+      }
+    });
+    
+    admins.sort((a, b) => {
+      if (b.tickets !== a.tickets) return b.tickets - a.tickets;
+      return b.timeSeconds - a.timeSeconds;
+    });
+    
+    const topAdmins = admins.slice(0, 5);
+    container.innerHTML = '';
+    
+    topAdmins.forEach((admin, index) => {
+      const card = document.createElement('div');
+      card.className = 'top-admin-card relative';
+      card.innerHTML = `
+        <div class="admin-rank">${index + 1}</div>
+        <div class="admin-avatar-placeholder bg-gray-700 rounded-full mx-auto mb-3 flex items-center justify-center" style="width: 70px; height: 70px;">
+          <span class="text-xl">${admin.name.charAt(0)}</span>
+        </div>
+        <h3 class="font-bold">${admin.name}</h3>
+        <p class="text-sm text-gray-400">${admin.telegram}</p>
+        <div class="mt-3">
+          <p><span class="text-[#1977FD]">Тікети:</span> ${admin.tickets}</p>
+          <p><span class="text-[#1977FD]">Час:</span> ${admin.time}</p>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+    
+  } catch (error) {
+    console.error('Помилка завантаження топу адміністраторів:', error);
+    document.querySelector('.top-admins-container').innerHTML = 
+      '<p class="text-center text-red-400">Помилка завантаження даних</p>';
+  }
+}
+
+// Функция конвертации секунд в часы
+function secondsToHHMM(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `${h}г ${m}хв`;
+}    
+
+    function toggleScripts() {
+      const menu = document.getElementById('scriptList');
+      const superMenu = document.getElementById('superScriptList');
+      
+      // Закрываем супер-меню при открытии основного
+      if (!superMenu.classList.contains('hidden')) {
+        superMenu.classList.add('hidden');
+      }
+      
+      // Переключаем текущее меню
+      menu.classList.toggle('hidden');
+    }
+    
+    function toggleSuperScripts() {
+      const menu = document.getElementById('superScriptList');
+      const mainMenu = document.getElementById('scriptList');
+      
+      // Закрываем основное меню при открытии супер-меню
+      if (!mainMenu.classList.contains('hidden')) {
+        mainMenu.classList.add('hidden');
+      }
+      
+      // Переключаем текущее меню
+      menu.classList.toggle('hidden');
+    }
+    
+    // Закрытие меню при клике в любом месте страницы
+    document.addEventListener('click', function(event) {
+      const menuContainer = document.getElementById('menuContainer');
+      const scriptList = document.getElementById('scriptList');
+      const superScriptList = document.getElementById('superScriptList');
+      
+      // Если клик был не по элементам меню
+      if (!event.target.closest('.menu-button') && 
+          !event.target.closest('.super-menu-button') &&
+          !event.target.closest('.script-list') &&
+          !event.target.closest('.super-script-list')) {
+        
+        // Закрываем оба меню
+        if (scriptList && !scriptList.classList.contains('hidden')) {
+          scriptList.classList.add('hidden');
+        }
+        if (superScriptList && !superScriptList.classList.contains('hidden')) {
+          superScriptList.classList.add('hidden');
+        }
+      }
+    });
+    
+    async function getSheetData(sheetName) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      const res = await axios.get(url);
+      return res.data.values;
+    }
+
+    function parseDate(str) {
+      const [d, m, y] = str.split('.');
+      return new Date(y, m-1, d);
+    }
+
+    function formatDate(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function secondsToHHMMSS(seconds) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
+    }
+
+    function getDateWithoutTime(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    async function fetchUserStatsByTelegram(telegramUsername) {
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const timeData = await getSheetData('Время_в_игре');
+
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+
+        const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
+        if (!userTicketsRow) {
+          alert('Користувача не знайдено в таблиці тікетів');
+          return;
+        }
+
+        const userName = userTicketsRow[nameColIndex];
+
+        const timeHeaders = timeData[0];
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
+        if (!userTimeRow) {
+          alert('Користувача не знайдено в таблиці часу');
+          return;
+        }
+
+        const today = getDateWithoutTime(new Date());
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({ h, i }))
+          .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+
+        function sumTicketsAndTime(startDate, endDate) {
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          dateCols.forEach(({ h, i }) => {
+            const dt = parseDate(h);
+            if (dt >= startDate && dt <= endDate) {
+              ticketsSum += parseInt(userTicketsRow[i]) || 0;
+              const timeColIndex = timeHeaders.indexOf(h);
+              if (timeColIndex >= 0) {
+                const timeStr = userTimeRow[timeColIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  timeSecondsSum += hh * 3600 + mm * 60 + ss;
+                }
+              }
+            }
+          });
+
+          return { ticketsSum, timeSecondsSum };
+        }
+
+        const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
+        
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        const weekStats = sumTicketsAndTime(weekStart, yesterday);
+        
+        const monthStart = new Date(today);
+        monthStart.setDate(today.getDate() - 30);
+        const monthStats = sumTicketsAndTime(monthStart, yesterday);
+
+        const allUsers = ticketsData.slice(1).map(row => {
+          const name = row[nameColIndex];
+          const userTelegram = row[telegramColIndex];
+
+          let totalTickets = 0;
+          let totalSeconds = 0;
+
+          dateCols.forEach(({ h, i }) => {
+            const dt = parseDate(h);
+            if (dt >= monthStart && dt <= yesterday) {
+              totalTickets += parseInt(row[i]) || 0;
+              const tIndex = timeHeaders.indexOf(h);
+              const timeRow = timeData.find(r => r[timeNameColIndex] === name);
+              if (timeRow && tIndex >= 0) {
+                const timeStr = timeRow[tIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  totalSeconds += hh * 3600 + mm * 60 + ss;
+                }
+              }
+            }
+          });
+
+          return { name, telegram: userTelegram, totalTickets, totalSeconds };
+        });
+
+        allUsers.sort((a, b) => {
+          if (b.totalTickets !== a.totalTickets)
+            return b.totalTickets - a.totalTickets;
+          return b.totalSeconds - a.totalSeconds;
+        });
+
+        const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
+        if (userIndex !== -1) {
+          const place = userIndex + 1;
+          document.getElementById('current-rank').innerText = `${place}`;
+        }
+
+        document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
+        document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
+        document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
+        document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
+        document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
+
+        const tbody = document.getElementById('daily-stats-body');
+        tbody.innerHTML = '';
+        let inactiveCount = 0;
+        const chartLabels = [];
+        const chartTickets = [];
+        const chartTimeHours = [];
+
+        dateCols.forEach(({ h, i }) => {
+          const dt = parseDate(h);
+          if (dt >= monthStart && dt <= yesterday) {
+            const dayTickets = parseInt(userTicketsRow[i]) || 0;
+            const timeColIndex = timeHeaders.indexOf(h);
+            let dayTimeStr = 'Н';
+            let dayTimeSeconds = 0;
+            if (timeColIndex >= 0) {
+              dayTimeStr = userTimeRow[timeColIndex] || 'Н';
+              if (dayTimeStr !== 'Н') {
+                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                dayTimeSeconds = hh * 3600 + mm * 60 + ss;
+              }
+            }
+            if (dayTimeStr === 'Н') inactiveCount++;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td class="border px-2 py-1">${h}</td>
+              <td class="border px-2 py-1">${dayTickets}</td>
+              <td class="border px-2 py-1">${dayTimeStr}</td>
+              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
+            `;
+            tbody.appendChild(tr);
+
+            chartLabels.push(h);
+            chartTickets.push(dayTickets);
+            chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
+          }
+        });
+
+        const trTotal = document.createElement('tr');
+        trTotal.innerHTML = `
+          <td class="border px-2 py-1 font-bold">Усього неактивів</td>
+          <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
+        `;
+        tbody.appendChild(trTotal);
+
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+        window.statsChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartLabels,
+            datasets: [
+              {
+                label: 'Тікети',
+                data: chartTickets,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                yAxisID: 'yTickets',
+                tension: 0.3,
+              },
+              {
+                label: 'Час у грі (години)',
+                data: chartTimeHours,
+                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                yAxisID: 'yTime',
+                tension: 0.3,
+              }
+            ],
+          },
+          options: {
+            responsive: true,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            stacked: false,
+            scales: {
+              yTickets: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Тікети',
+                },
+                beginAtZero: true,
+              },
+              yTime: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Час (години)',
+                },
+                beginAtZero: true,
+                grid: {
+                  drawOnChartArea: false,
+                },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 90,
+                  minRotation: 45,
+                  maxTicksLimit: 15,
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              tooltip: {
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                    ? `${ctx.parsed.y} год`
+                    : ctx.parsed.y,
+                }
+              }
+            }
+          },
+        });
+
+      } catch (error) {
+        console.error(error);
+        alert('Помилка під час завантаження даних з Google Sheets');
+      }
+    }
+
+    async function onTelegramAuth(user) {
+      const telegramUsername = '@' + user.username;
+      
+      // Проверка на администратора
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        showDashboard(userData.nickname, telegramUsername, true);
+        return;
+      }
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0],
+            isAdmin: false
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          showDashboard(userData.nickname, telegramUsername, false);
+        } else {
+          localStorage.removeItem('tg_auth');
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Помилка під час завантаження даних');
+        showLoginForm();
+      }
+    }
+
+    function showDashboard(nickname, telegramUsername, isAdmin) {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('menuContainer').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
+
+        // Показываем праздничную плашку
+  const today = new Date();
+  if (today.getDate() === 24 && today.getMonth() === 5) { // 24 июня (месяц 5 = июнь)
+    document.getElementById('anniversary-banner').classList.remove('hidden');
+  }
+  
+  // Рендерим новости и администраторов
+  renderNews();
+  renderTopAdmins();
+  
+  // Добавляем обработчики для новостей
+  document.getElementById('news-next').addEventListener('click', () => {
+    const container = document.querySelector('.news-cards');
+    container.scrollBy({ left: 320, behavior: 'smooth' });
+  });
+  
+  document.getElementById('news-prev').addEventListener('click', () => {
+    const container = document.querySelector('.news-cards');
+    container.scrollBy({ left: -320, behavior: 'smooth' });
+  });
+
+      
+      // Показываем супер-меню только для суперадминов
+      if (superAdmins.includes(telegramUsername)) {
+        document.getElementById('superScriptMenu').classList.remove('hidden');
+      } else {
+        document.getElementById('superScriptMenu').classList.add('hidden');
+      }
+      
+      if (isAdmin) {
+        document.getElementById('admin-notice').classList.remove('hidden');
+        document.getElementById('stats-section').classList.add('hidden');
+        document.getElementById('contest-rank').classList.add('hidden');
+      } else {
+        document.getElementById('admin-notice').classList.add('hidden');
+        document.getElementById('stats-section').classList.remove('hidden');
+        document.getElementById('contest-rank').classList.remove('hidden');
+        fetchUserStatsByTelegram(telegramUsername);
+      }
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('menuContainer').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.querySelector('h1').innerText = 'Ласкаво просимо!';
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+        } catch (e) {
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        showLoginForm();
+      }
+    });
+  </script>
+</body>
+</html>
