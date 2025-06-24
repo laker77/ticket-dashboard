@@ -1014,8 +1014,21 @@ function secondsToHHMM(seconds) {
       }
     }
 
-    async function onTelegramAuth(user) {
-      const telegramUsername = '@' + user.username;
+     // Объявляем функцию глобально
+  window.onTelegramAuth = function(user) {
+    const telegramUsername = '@' + user.username;
+    
+    // Проверка на администратора
+    if (allowedAdmins.includes(telegramUsername)) {
+      const userData = {
+        username: telegramUsername,
+        nickname: user.first_name || user.username,
+        isAdmin: true
+      };
+      localStorage.setItem('tg_auth', JSON.stringify(userData));
+      showDashboard(userData.nickname, telegramUsername, true);
+      return;
+    }
       
       // Проверка на администратора
       if (allowedAdmins.includes(telegramUsername)) {
@@ -1136,5 +1149,16 @@ function secondsToHHMM(seconds) {
       }
     });
   </script>
+<!-- Перенесите этот блок в конец body -->
+<div class="telegram-button-wrapper">
+  <script async src="https://telegram.org/js/telegram-widget.js?7"
+          data-telegram-login="ticket_tracker_UG_bot" 
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)">
+  </script>
+</div>
+
 </body>
 </html>
