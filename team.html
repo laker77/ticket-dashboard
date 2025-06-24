@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Команда проєкту | Ukraine GTA 5</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+       <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        :root {
+            --bg-dark: #050608;
+            --card-bg: #1a1a1a;
+            --card-border: #2a2a2a;
+            --accent-blue: #3b82f6;
+            --text-light: #ffffff;
+            --text-muted: #a3a3a3;
+            --owner: #FFD700;
+            --tech: #60a5fa;
+            --test: #4ade80;
+            --media: #ec4899;
+            --management: #c084fc;
+            --curators: #fbbf24;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent-blue);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .department {
+            margin: 50px 0 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .department-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .owner .department { border-color: var(--owner); }
+        .tech .department { border-color: var(--tech); }
+        .test .department { border-color: var(--test); }
+        .media .department { border-color: var(--media); }
+        .management .department { border-color: var(--management); }
+        .curators .department { border-color: var(--curators); }
+        
+        .owner .department-icon { background: var(--owner); }
+        .tech .department-icon { background: var(--tech); }
+        .test .department-icon { background: var(--test); }
+        .media .department-icon { background: var(--media); }
+        .management .department-icon { background: var(--management); }
+        .curators .department-icon { background: var(--curators); }
+        
+        .department-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .owner .department-title { color: var(--owner); }
+        .tech .department-title { color: var(--tech); }
+        .test .department-title { color: var(--test); }
+        .media .department-title { color: var(--media); }
+        .management .department-title { color: var(--management); }
+        .curators .department-title { color: var(--curators); }
+        
+        .team-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+            align-items: stretch; /* Добавлено для выравнивания высоты */
+        }
+        
+        .member-card {
+            background: rgba(26, 26, 26, 0.7);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; /* Добавлено */
+            flex-direction: column; /* Добавлено */
+            height: 100%; /* Добавлено */
+        }
+        
+        .member-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card-header {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+        
+        .owner .card-header { background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), transparent); }
+        .tech .card-header { background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), transparent); }
+        .test .card-header { background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), transparent); }
+        .media .card-header { background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), transparent); }
+        .management .card-header { background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), transparent); }
+        .curators .card-header { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), transparent); }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0; /* Запрет уменьшения */
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block; /* Исправление для IE/Edge */
+        }
+        
+        .member-info {
+            flex: 1;
+            min-width: 0; /* Исправление переполнения текста */
+        }
+        
+        .member-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .member-role {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .member-contact {
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            word-break: break-all;
+        }
+        
+        .card-content {
+            padding: 25px;
+            flex-grow: 1; /* Растягиваем контент */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .responsibilities-title {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .responsibilities {
+            margin-bottom: 20px;
+            flex-grow: 1; /* Равномерное распределение */
+        }
+        
+        .responsibilities ul {
+            padding-left: 25px;
+        }
+        
+        .responsibilities li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        
+        .rights {
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(40, 40, 40, 0.5);
+            border-left: 3px solid var(--accent-blue);
+            margin-top: auto; /* Прижимаем к низу */
+        }
+        
+        .rights-title {
+            font-size: 1.1rem;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .note {
+            margin-top: 50px;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        .note-title {
+            font-size: 1.5rem;
+            color: #f87171;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .note-content {
+            color: var(--text-muted);
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .note-content p {
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            color: var(--text-muted);
+            margin-top: 60px;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .footer-logo {
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .team-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card-header {
+                padding: 20px;
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-users"></i>
+                <h1>Команда проєкту Ukraine GTA 5</h1>
+            </div>
+            <p class="subtitle">Знайомтеся з нашою командою, яка знаходиться в офіційному чаті Адміністраторів. Тут ви можете ознайомитися з яким питанням і до кого ви можете звернутися у разі, якщо у вас виникнуть питання.https://imgur.com/undefinedМ</p>
+        </header>
+        
+        <!-- Власник проєкту -->
+        <section class="owner">
+            <div class="department">
+                <div class="department-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h2 class="department-title">Власник проєкту</h2>
+            </div>
+            
+            <div class="team-container">
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                            <img src="https://imgur.com/EONAGzX.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@devgta_ua</div>
+                            <div class="member-role">Власник проєкту</div>
+                            <div class="member-contact">dev</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Особовий статус</span>
+                            </div>
+                            <p>Власник проєкту. Не потрібно тегати або писати в особисті повідомлення.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Технічний відділ -->
+        <section class="tech">
+            <div class="department">
+                <div class="department-icon">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h2 class="department-title">Технічний відділ</h2>
+            </div>
+            
+            <div class="team-container">
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                        <img src="https://imgur.com/HOFIjOF.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@teh_ugta</div>
+                            <div class="member-role">Технічний адміністратор</div>
+                            <div class="member-contact">Максим</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Роботу форуму</li>
+                                <li>Відновлення майна</li>
+                                <li>Розгляд технічних проблем</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                     <img src="https://imgur.com/lkMXTmr.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@Bloomberger_01</div>
+                            <div class="member-role">Керівник технічної підтримки</div>
+                            <div class="member-contact">Мстислав Подільський</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Модерацію Discord сервера</li>
+                                <li>Телеграм-бота підтримки</li>
+                                <li>Команду модераторів та тех.підтримки</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Тестування -->
+        <section class="test">
+            <div class="department">
+                <div class="department-icon">
+                    <i class="fas fa-vial"></i>
+                </div>
+                <h2 class="department-title">Тестування</h2>
+            </div>
+            
+            <div class="team-container">
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                        <img src="https://imgur.com/kjk7lQ9.jpg" alt="@devgta_ua">                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@no1szeeq</div>
+                            <div class="member-role">Головний тестер Ukraine GTA 5</div>
+                            <div class="member-contact">Max</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Перевірку багів на сервері</li>
+                                <li>Куратор команди тестерів</li>
+                            </ul>
+                        </div>
+                        <div class="rights">
+                            <div class="rights-title">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Важливо</span>
+                            </div>
+                            <p>Якщо ви знайшли баг — тегайте в адмін-групі, додавайте відео/скріншоти та повний опис багу.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                    <img src="https://imgur.com/d2muOHx.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@test_uagta</div>
+                            <div class="member-role">Головний тестер по MTA</div>
+                            <div class="member-contact">Міша</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Має право:</span>
+                            </div>
+                            <ul>
+                                <li>Писати в адмін-групу</li>
+                                <li>Уточнювати інформацію щодо багів та дій адміністрації</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Медіа та Реклама -->
+        <section class="media">
+            <div class="department">
+                <div class="department-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h2 class="department-title">Медіа та Реклама</h2>
+            </div>
+            
+            <div class="team-container">
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                            <img src="https://imgur.com/HOFIjOF.jpg" alt="@devgta_ua">
+                       </div>
+                        <div class="member-info">
+                            <div class="member-name">@digital_ug</div>
+                            <div class="member-role">Діджітал Редактор</div>
+                            <div class="member-contact">Саша</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Блогерів та стрімерів</li>
+                                <li>Реєстрацію нових медіа</li>
+                            </ul>
+                        </div>
+                        <div class="rights">
+                            <div class="rights-title">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Важливо</span>
+                            </div>
+                            <p>Гравці, які хочуть стати Медіа, ви повинні взяти їх контактні данні, після чого запросити інформацію, а саме канал, соц.мережі та передати Саші особисто.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Керівництво проєкту -->
+        <section class="management">
+            <div class="department">
+                <div class="department-icon">
+                    <i class="fas fa-chess-king"></i>
+                </div>
+                <h2 class="department-title">Керівництво проєкту</h2>
+            </div>
+            
+            <div class="team-container">
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                   <img src="https://imgur.com/L0Mh1gv.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@noxx_uagtaV</div>
+                            <div class="member-role">Керівник проєкту Ukraine GTA 5</div>
+                            <div class="member-contact">Noxx</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Загальне управління проєктом</li>
+                                <li>Організаційні питання</li>
+                            </ul>
+                              <div class="rights">
+                            <div class="rights-title">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>Важливо</span>
+                            </div>
+                            <p>Ви звертаєтесь до керівника проєкта, виключно коли вашу проблему або запитання не зміг вирішити Заступник Головного Адміністратора.</p>
+                        </div>
+                    </div>
+                </div>
+
+                </div>
+                
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                            <img src="https://imgur.com/cIz5nKH.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@zhdanovrostyslav</div>
+                            <div class="member-role">Заступник Головного Адміністратора</div>
+                            <div class="member-contact">Azzazelo</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Вирішує:</span>
+                            </div>
+                            <ul>
+                                <li>Організаційні питання в команді адміністрації</li>
+                                <li>Складні ситуації, які не можуть вирішити куратори</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Куратори -->
+        <section class="curators">
+            <div class="department">
+                <div class="department-icon">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h2 class="department-title">Куратори</h2>
+            </div>
+            
+            <div class="team-container">
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                       <img src="https://imgur.com/kTr6Fg3.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@laker_77</div>
+                            <div class="member-role">Головний куратор молодшої адміністрації</div>
+                            <div class="member-contact">Gromov</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Склад молодших адмінів</li>
+                                <li>Контроль тікетів</li>
+                                <li>Онлайн адміністрації</li>
+                                <li>Допомога Хелперам</li>
+                            </ul>
+                        </div>
+                        <div class="rights">
+                            <div class="rights-title">
+                                <i class="fas fa-key"></i>
+                                <span>Права:</span>
+                            </div>
+                            <p>Має доступ до логів</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                      <img src="https://imgur.com/ocgJDKg.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@liquid_ug</div>
+                            <div class="member-role">Головний куратор Crime</div>
+                            <div class="member-contact">Liquid</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Кураторів Крайму</li>
+                                <li>Лідерів кримінальних організацій</li>
+                                <li>Особовий склад Крайму</li>
+                            </ul>
+                        </div>
+                        <div class="rights">
+                            <div class="rights-title">
+                                <i class="fas fa-key"></i>
+                                <span>Права:</span>
+                            </div>
+                            <p>Має доступ до логів</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="member-card">
+                    <div class="card-header">
+                        <div class="avatar">
+                                                      <img src="https://imgur.com/syLsW5N.jpg" alt="@devgta_ua">
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">@Hermaeus_Mora_1679</div>
+                            <div class="member-role">Головний куратор State</div>
+                            <div class="member-contact">Mora</div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="responsibilities">
+                            <div class="responsibilities-title">
+                                <i class="fas fa-tasks"></i>
+                                <span>Відповідає за:</span>
+                            </div>
+                            <ul>
+                                <li>Кураторів Державних Структур</li>
+                                <li>Лідерів державних організацій</li>
+                                <li>Особовий склад державних організацій</li>
+                            </ul>
+                        </div>
+                        <div class="rights">
+                            <div class="rights-title">
+                                <i class="fas fa-key"></i>
+                                <span>Права:</span>
+                            </div>
+                            <p>Має доступ до логів</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Примітка -->
+        <div class="note">
+            <div class="note-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Важлива примітка</span>
+            </div>
+            <div class="note-content">
+                <p><strong>Не порушуйте структуру комунікації.</strong> Звертайтесь до відповідних осіб лише через офіційний адмін чат з тегом відповідної людини, не пишіть в особисті повідомлення без потреби.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        </footer>
+    </div>
+
+    <script>
+        // Анімація карток при завантаженні
+        document.addEventListener('DOMContentLoaded', function() {
+            const memberCards = document.querySelectorAll('.member-card');
+            
+            memberCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 150 * index);
+            });
+        });
+    </script>
+</body>
+</html>
