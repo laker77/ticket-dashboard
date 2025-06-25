@@ -519,13 +519,95 @@ h1 {
 .silver::before { background: linear-gradient(90deg, #c0c0c0, #e0e0e0); }
 .bronze::before { background: linear-gradient(90deg, #cd7f32, #e9a957); }
 .normal::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+
+    /* New styles for access denied page */
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      z-index: 2000;
+      text-align: center;
+      padding-top: 20%;
+    }
+    
+    .access-denied-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .access-denied-icon {
+      font-size: 100px;
+      color: #ef4444;
+      margin-bottom: 30px;
+      text-shadow: 0 0 20px rgba(239, 68, 68, 0.7);
+    }
+    
+    .access-denied-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .access-denied-message {
+      font-size: 18px;
+      color: #cbd5e1;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .back-to-login-btn {
+      display: inline-block;
+      background: #ef4444;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+    }
+    
+    .back-to-login-btn:hover {
+      background: #dc2626;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.6);
+    }
+
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
   <button id="logout-btn" class="hidden">Вийти</button>
 
+  <!-- Access Denied Section -->
+  <div id="access-denied-section">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">🚫</div>
+      <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+      <p class="access-denied-message">
+        Ваш обліковий запис не має доступу до цієї системи.<br>
+        Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+      </p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
+
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
+
     
     <!-- Праздничная плашка -->
     <div id="anniversary-banner" class="anniversary-banner hidden">
@@ -650,636 +732,652 @@ h1 {
   </div>
 
   <script>
-    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
-    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+  const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
+const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+
+// Список администраторов с доступом
+const allowedAdmins = [
+  '@laker_77',
+  '@liquid_ug',
+  '@Hermaeus_Mora_1679',
+  '@c10mm',
+  '@noxx_uagtaV',
+  '@zhdanovrostyslav'
+];
+
+// Список суперадминов для дополнительного меню
+const superAdmins = [
+  '@laker_77',
+  '@liquid_ug',
+  '@Hermaeus_Mora_1679',
+  '@c10mm'
+];
+
+// Функции управления меню
+function toggleScripts() {
+  const menu = document.getElementById('scriptList');
+  const superMenu = document.getElementById('superScriptList');
+  
+  if (!superMenu.classList.contains('hidden')) {
+    superMenu.classList.add('hidden');
+  }
+  
+  menu.classList.toggle('hidden');
+}
+
+function toggleSuperScripts() {
+  const menu = document.getElementById('superScriptList');
+  const mainMenu = document.getElementById('scriptList');
+  
+  if (!mainMenu.classList.contains('hidden')) {
+    mainMenu.classList.add('hidden');
+  }
+  
+  menu.classList.toggle('hidden');
+}
+
+// Закрытие меню при клике вне области
+document.addEventListener('click', function(event) {
+  const menuContainer = document.getElementById('menuContainer');
+  const scriptList = document.getElementById('scriptList');
+  const superScriptList = document.getElementById('superScriptList');
+  
+  if (!event.target.closest('.menu-button') && 
+      !event.target.closest('.super-menu-button') &&
+      !event.target.closest('.script-list') &&
+      !event.target.closest('.super-script-list')) {
     
-    // Список администраторов с доступом
-    const allowedAdmins = [
-      '@laker_77',
-      '@liquid_ug',
-      '@Hermaeus_Mora_1679',
-      '@c10mm',
-      '@noxx_uagtaV',
-      '@zhdanovrostyslav'
-    ];
-
-    // Список суперадминов для дополнительного меню
-    const superAdmins = [
-      '@laker_77',
-      '@liquid_ug',
-      '@Hermaeus_Mora_1679',
-      '@c10mm'
-    ];
-
-    function toggleScripts() {
-      const menu = document.getElementById('scriptList');
-      const superMenu = document.getElementById('superScriptList');
-      
-      // Закрываем супер-меню при открытии основного
-      if (!superMenu.classList.contains('hidden')) {
-        superMenu.classList.add('hidden');
-      }
-      
-      // Переключаем текущее меню
-      menu.classList.toggle('hidden');
+    if (scriptList && !scriptList.classList.contains('hidden')) {
+      scriptList.classList.add('hidden');
     }
-    
-    function toggleSuperScripts() {
-      const menu = document.getElementById('superScriptList');
-      const mainMenu = document.getElementById('scriptList');
-      
-      // Закрываем основное меню при открытии супер-меню
-      if (!mainMenu.classList.contains('hidden')) {
-        mainMenu.classList.add('hidden');
-      }
-      
-      // Переключаем текущее меню
-      menu.classList.toggle('hidden');
+    if (superScriptList && !superScriptList.classList.contains('hidden')) {
+      superScriptList.classList.add('hidden');
     }
-    
-    // Закрытие меню при клике в любом месте страницы
-    document.addEventListener('click', function(event) {
-      const menuContainer = document.getElementById('menuContainer');
-      const scriptList = document.getElementById('scriptList');
-      const superScriptList = document.getElementById('superScriptList');
+  }
+});
+
+// Основные функции работы с данными
+async function getSheetData(sheetName) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+  const res = await axios.get(url);
+  return res.data.values;
+}
+
+function parseDate(str) {
+  const [d, m, y] = str.split('.');
+  return new Date(y, m-1, d);
+}
+
+function formatDate(date) {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  return `${dd}.${mm}.${yyyy}`;
+}
+
+function secondsToHHMMSS(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
+}
+
+function getDateWithoutTime(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+// Функции работы с периодами
+function getPreviousWeekRange() {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday - 7);
+  monday.setHours(0, 0, 0, 0);
+  
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+  
+  return {
+    start: formatDate(monday),
+    end: formatDate(sunday),
+    startDate: monday,
+    endDate: sunday
+  };
+}
+
+function shouldRefreshTopAdmins() {
+  const lastUpdate = localStorage.getItem('topAdminsLastUpdate');
+  if (!lastUpdate) return true;
+  
+  const now = new Date();
+  const lastUpdateDate = new Date(parseInt(lastUpdate));
+  return (now - lastUpdateDate) > 30 * 60 * 1000; // 30 минут
+}
+
+async function autoRefreshData() {
+  const weekRange = getPreviousWeekRange();
+  const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
+  
+  localStorage.removeItem(cacheKey);
+  localStorage.removeItem('topAdminsLastUpdate');
+  await loadAndRenderTopAdmins();
+}
+
+// Функции работы с администраторами
+async function getTopAdmins(weekRange) {
+  try {
+    const [ticketsData, timeData] = await Promise.all([
+      getSheetData('Май_2025_таблица'),
+      getSheetData('Время_в_игре')
+    ]);
+
+    const ticketsHeaders = ticketsData[0];
+    const timeHeaders = timeData[0];
+    const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+    const admins = [];
+
+    ticketsData.slice(1).forEach(row => {
+      const name = row[nameColIndex];
+      const telegram = row[telegramColIndex];
       
-      // Если клик был не по элементам меню
-      if (!event.target.closest('.menu-button') && 
-          !event.target.closest('.super-menu-button') &&
-          !event.target.closest('.script-list') &&
-          !event.target.closest('.super-script-list')) {
-        
-        // Закрываем оба меню
-        if (scriptList && !scriptList.classList.contains('hidden')) {
-          scriptList.classList.add('hidden');
-        }
-        if (superScriptList && !superScriptList.classList.contains('hidden')) {
-          superScriptList.classList.add('hidden');
-        }
-      }
-    });
-    
-    async function getSheetData(sheetName) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-      const res = await axios.get(url);
-      return res.data.values;
-    }
+      if (!name || !telegram) return;
 
-    function parseDate(str) {
-      const [d, m, y] = str.split('.');
-      return new Date(y, m-1, d);
-    }
+      let ticketsSum = 0;
+      let timeSecondsSum = 0;
 
-    function formatDate(date) {
-      const dd = String(date.getDate()).padStart(2, '0');
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const yyyy = date.getFullYear();
-      return `${dd}.${mm}.${yyyy}`;
-    }
-
-    function secondsToHHMMSS(seconds) {
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
-    }
-
-    function getDateWithoutTime(date) {
-      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    }
-
-    // Функция для определения предыдущей недели (с понедельника 00:00 по воскресенье 23:59)
-    function getPreviousWeekRange() {
-      const now = new Date();
-      const dayOfWeek = now.getDay();
-      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      
-      const monday = new Date(now);
-      monday.setDate(now.getDate() + diffToMonday - 7);
-      monday.setHours(0, 0, 0, 0);
-      
-      const sunday = new Date(monday);
-      sunday.setDate(monday.getDate() + 6);
-      sunday.setHours(23, 59, 59, 999);
-      
-      return {
-        start: formatDate(monday),
-        end: formatDate(sunday),
-        startDate: monday,
-        endDate: sunday
-      };
-    }
-
-    // Функция для проверки, нужно ли обновить данные администраторов недели
-    function shouldRefreshTopAdmins() {
-      const lastUpdate = localStorage.getItem('topAdminsLastUpdate');
-      if (!lastUpdate) return true;
-      
-      const now = new Date();
-      const lastUpdateDate = new Date(parseInt(lastUpdate));
-      
-      // Проверяем разницу во времени
-      return (now - lastUpdateDate) > 30 * 60 * 1000; // 30 минут
-    }
-
-    // Функция для автоматического обновления данных
-    async function autoRefreshData() {
-      const weekRange = getPreviousWeekRange();
-      const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
-      
-      // Удаляем старые данные
-      localStorage.removeItem(cacheKey);
-      localStorage.removeItem('topAdminsLastUpdate');
-      
-      // Загружаем и отображаем обновленные данные
-      await loadAndRenderTopAdmins();
-    }
-
-    // Функция для получения топ-5 администраторов за неделю
-    async function getTopAdmins(weekRange) {
-      try {
-        const [ticketsData, timeData] = await Promise.all([
-          getSheetData('Май_2025_таблица'),
-          getSheetData('Время_в_игре')
-        ]);
-
-        const ticketsHeaders = ticketsData[0];
-        const timeHeaders = timeData[0];
-        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
-        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-
-        const admins = [];
-
-        ticketsData.slice(1).forEach(row => {
-          const name = row[nameColIndex];
-          const telegram = row[telegramColIndex];
-          
-          if (!name || !telegram) return;
-
-          let ticketsSum = 0;
-          let timeSecondsSum = 0;
-
-          ticketsHeaders.forEach((header, index) => {
-            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
-              const date = parseDate(header);
-              if (date >= weekRange.startDate && date <= weekRange.endDate) {
-                // Суммируем тикеты
-                ticketsSum += parseInt(row[index]) || 0;
-                
-                // Суммируем время
-                const timeRow = timeData.find(r => r[0] === name);
-                if (timeRow) {
-                  const timeColIndex = timeHeaders.indexOf(header);
-                  if (timeColIndex >= 0) {
-                    const timeStr = timeRow[timeColIndex];
-                    if (timeStr && timeStr !== 'Н') {
-                      const [hh, mm, ss] = timeStr.split(':').map(Number);
-                      timeSecondsSum += hh * 3600 + mm * 60 + ss;
-                    }
-                  }
-                }
-              }
-            }
-          });
-
-          admins.push({
-            name,
-            telegram,
-            tickets: ticketsSum,
-            time: timeSecondsSum,
-            timeFormatted: secondsToHHMMSS(timeSecondsSum)
-          });
-        });
-
-        // Сортировка: сначала по тикетам, затем по времени
-        admins.sort((a, b) => {
-          if (b.tickets !== a.tickets) return b.tickets - a.tickets;
-          return b.time - a.time;
-        });
-
-        return admins.slice(0, 5);
-      } catch (error) {
-        console.error('Помилка при завантаженні топу адміністраторів:', error);
-        return [];
-      }
-    }
-
-    // Функция для отображения топ-администраторов
-    function renderTopAdmins(admins, weekRange) {
-      const container = document.getElementById('top-admins-container');
-      container.innerHTML = '';
-      
-      // Обновляем информацию о периоде
-      document.getElementById('week-range').textContent = 
-        `Період: ${weekRange.start} - ${weekRange.end}`;
-      
-      admins.forEach((admin, index) => {
-        const card = document.createElement('div');
-        card.className = 'admin-card';
-        
-        let medalClass = 'normal';
-        let medal = '';
-        
-        if (index === 0) {
-          medalClass = 'gold';
-          medal = '🥇';
-        } else if (index === 1) {
-          medalClass = 'silver';
-          medal = '🥈';
-        } else if (index === 2) {
-          medalClass = 'bronze';
-          medal = '🥉';
-        }
-        
-        card.innerHTML = `
-          <div class="${medalClass} medal">${medal}</div>
-          <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
-               alt="${admin.name}" 
-               class="admin-avatar ${medalClass}"
-               onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=1977FD&color=fff'">
-          <div class="admin-name">${admin.name}</div>
-          <div class="admin-stats">
-            <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
-            <div>Час у грі: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
-          </div>
-        `;
-        
-        container.appendChild(card);
-      });
-    }
-
-    // Функция для загрузки и отображения администраторов недели
-    async function loadAndRenderTopAdmins() {
-      const weekRange = getPreviousWeekRange();
-      const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
-      const cachedData = localStorage.getItem(cacheKey);
-      
-      if (cachedData && !shouldRefreshTopAdmins()) {
-        const { admins } = JSON.parse(cachedData);
-        renderTopAdmins(admins, weekRange);
-        return;
-      }
-      
-      const admins = await getTopAdmins(weekRange);
-      localStorage.setItem(cacheKey, JSON.stringify({ admins }));
-      localStorage.setItem('topAdminsLastUpdate', Date.now());
-      renderTopAdmins(admins, weekRange);
-    }
-
-    async function fetchUserStatsByTelegram(telegramUsername) {
-      try {
-        const ticketsData = await getSheetData('Май_2025_таблица');
-        const timeData = await getSheetData('Время_в_игре');
-
-        const ticketsHeaders = ticketsData[0];
-        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
-
-        const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
-        if (!userTicketsRow) {
-          alert('Користувача не знайдено в таблиці тікетів');
-          return;
-        }
-
-        const userName = userTicketsRow[nameColIndex];
-
-        const timeHeaders = timeData[0];
-        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
-        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
-        if (!userTimeRow) {
-          alert('Користувача не знайдено в таблиці часу');
-          return;
-        }
-
-        const today = getDateWithoutTime(new Date());
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
-
-        const dateCols = ticketsHeaders
-          .map((h, i) => ({ h, i }))
-          .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
-
-        function sumTicketsAndTime(startDate, endDate) {
-          let ticketsSum = 0;
-          let timeSecondsSum = 0;
-
-          dateCols.forEach(({ h, i }) => {
-            const dt = parseDate(h);
-            if (dt >= startDate && dt <= endDate) {
-              ticketsSum += parseInt(userTicketsRow[i]) || 0;
-              const timeColIndex = timeHeaders.indexOf(h);
+      ticketsHeaders.forEach((header, index) => {
+        if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+          const date = parseDate(header);
+          if (date >= weekRange.startDate && date <= weekRange.endDate) {
+            ticketsSum += parseInt(row[index]) || 0;
+            
+            const timeRow = timeData.find(r => r[0] === name);
+            if (timeRow) {
+              const timeColIndex = timeHeaders.indexOf(header);
               if (timeColIndex >= 0) {
-                const timeStr = userTimeRow[timeColIndex];
+                const timeStr = timeRow[timeColIndex];
                 if (timeStr && timeStr !== 'Н') {
                   const [hh, mm, ss] = timeStr.split(':').map(Number);
                   timeSecondsSum += hh * 3600 + mm * 60 + ss;
                 }
               }
             }
-          });
-
-          return { ticketsSum, timeSecondsSum };
-        }
-
-        const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
-        
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - 7);
-        const weekStats = sumTicketsAndTime(weekStart, yesterday);
-        
-        const monthStart = new Date(today);
-        monthStart.setDate(today.getDate() - 30);
-        const monthStats = sumTicketsAndTime(monthStart, yesterday);
-
-        const allUsers = ticketsData.slice(1).map(row => {
-          const name = row[nameColIndex];
-          const userTelegram = row[telegramColIndex];
-
-          let totalTickets = 0;
-          let totalSeconds = 0;
-
-          dateCols.forEach(({ h, i }) => {
-            const dt = parseDate(h);
-            if (dt >= monthStart && dt <= yesterday) {
-              totalTickets += parseInt(row[i]) || 0;
-              const tIndex = timeHeaders.indexOf(h);
-              const timeRow = timeData.find(r => r[timeNameColIndex] === name);
-              if (timeRow && tIndex >= 0) {
-                const timeStr = timeRow[tIndex];
-                if (timeStr && timeStr !== 'Н') {
-                  const [hh, mm, ss] = timeStr.split(':').map(Number);
-                  totalSeconds += hh * 3600 + mm * 60 + ss;
-                }
-              }
-            }
-          });
-
-          return { name, telegram: userTelegram, totalTickets, totalSeconds };
-        });
-
-        allUsers.sort((a, b) => {
-          if (b.totalTickets !== a.totalTickets)
-            return b.totalTickets - a.totalTickets;
-          return b.totalSeconds - a.totalSeconds;
-        });
-
-        const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
-        if (userIndex !== -1) {
-          const place = userIndex + 1;
-          document.getElementById('current-rank').innerText = `${place}`;
-        }
-
-        document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
-        document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
-        document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
-        document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
-        document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
-        document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
-
-        const tbody = document.getElementById('daily-stats-body');
-        tbody.innerHTML = '';
-        let inactiveCount = 0;
-        const chartLabels = [];
-        const chartTickets = [];
-        const chartTimeHours = [];
-
-        dateCols.forEach(({ h, i }) => {
-          const dt = parseDate(h);
-          if (dt >= monthStart && dt <= yesterday) {
-            const dayTickets = parseInt(userTicketsRow[i]) || 0;
-            const timeColIndex = timeHeaders.indexOf(h);
-            let dayTimeStr = 'Н';
-            let dayTimeSeconds = 0;
-            if (timeColIndex >= 0) {
-              dayTimeStr = userTimeRow[timeColIndex] || 'Н';
-              if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
-                dayTimeSeconds = hh * 3600 + mm * 60 + ss;
-              }
-            }
-            if (dayTimeStr === 'Н') inactiveCount++;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td class="border px-2 py-1">${h}</td>
-              <td class="border px-2 py-1">${dayTickets}</td>
-              <td class="border px-2 py-1">${dayTimeStr}</td>
-              <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
-            `;
-            tbody.appendChild(tr);
-
-            chartLabels.push(h);
-            chartTickets.push(dayTickets);
-            chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
           }
-        });
+        }
+      });
 
-        const trTotal = document.createElement('tr');
-        trTotal.innerHTML = `
-          <td class="border px-2 py-1 font-bold">Усього неактивів</td>
-          <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
-        `;
-        tbody.appendChild(trTotal);
+      admins.push({
+        name,
+        telegram,
+        tickets: ticketsSum,
+        time: timeSecondsSum,
+        timeFormatted: secondsToHHMMSS(timeSecondsSum)
+      });
+    });
 
-        const ctx = document.getElementById('statsChart').getContext('2d');
-        if (window.statsChartInstance) window.statsChartInstance.destroy();
+    admins.sort((a, b) => {
+      if (b.tickets !== a.tickets) return b.tickets - a.tickets;
+      return b.time - a.time;
+    });
 
-        window.statsChartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: chartLabels,
-            datasets: [
-              {
-                label: 'Тікети',
-                data: chartTickets,
-                borderColor: 'rgba(59, 130, 246, 1)',
-                backgroundColor: 'rgba(59, 130, 246, 0.3)',
-                yAxisID: 'yTickets',
-                tension: 0.3,
-              },
-              {
-                label: 'Час у грі (години)',
-                data: chartTimeHours,
-                borderColor: 'rgba(16, 185, 129, 1)',
-                backgroundColor: 'rgba(16, 185, 129, 0.3)',
-                yAxisID: 'yTime',
-                tension: 0.3,
-              }
-            ],
-          },
-          options: {
-            responsive: true,
-            interaction: {
-              mode: 'index',
-              intersect: false,
-            },
-            stacked: false,
-            scales: {
-              yTickets: {
-                type: 'linear',
-                display: true,
-                position: 'left',
-                title: {
-                  display: true,
-                  text: 'Тікети',
-                },
-                beginAtZero: true,
-              },
-              yTime: {
-                type: 'linear',
-                display: true,
-                position: 'right',
-                title: {
-                  display: true,
-                  text: 'Час (години)',
-                },
-                beginAtZero: true,
-                grid: {
-                  drawOnChartArea: false,
-                },
-              },
-              x: {
-                ticks: {
-                  maxRotation: 90,
-                  minRotation: 45,
-                  maxTicksLimit: 15,
-                }
-              }
-            },
-            plugins: {
-              legend: {
-                position: 'top',
-              },
-              tooltip: {
-                callbacks: {
-                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
-                    ? `${ctx.parsed.y} год`
-                    : ctx.parsed.y,
-                }
-              }
-            }
-          },
-        });
+    return admins.slice(0, 5);
+  } catch (error) {
+    console.error('Помилка при завантаженні топу адміністраторів:', error);
+    return [];
+  }
+}
 
-      } catch (error) {
-        console.error(error);
-        alert('Помилка під час завантаження даних з Google Sheets');
-      }
+function renderTopAdmins(admins, weekRange) {
+  const container = document.getElementById('top-admins-container');
+  container.innerHTML = '';
+  
+  document.getElementById('week-range').textContent = 
+    `Період: ${weekRange.start} - ${weekRange.end}`;
+  
+  admins.forEach((admin, index) => {
+    const card = document.createElement('div');
+    card.className = 'admin-card';
+    
+    let medalClass = 'normal';
+    let medal = '';
+    
+    if (index === 0) {
+      medalClass = 'gold';
+      medal = '🥇';
+    } else if (index === 1) {
+      medalClass = 'silver';
+      medal = '🥈';
+    } else if (index === 2) {
+      medalClass = 'bronze';
+      medal = '🥉';
+    }
+    
+    card.innerHTML = `
+      <div class="${medalClass} medal">${medal}</div>
+      <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+           alt="${admin.name}" 
+           class="admin-avatar ${medalClass}"
+           onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=1977FD&color=fff'">
+      <div class="admin-name">${admin.name}</div>
+      <div class="admin-stats">
+        <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+        <div>Час у грі: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+      </div>
+    `;
+    
+    container.appendChild(card);
+  });
+}
+
+async function loadAndRenderTopAdmins() {
+  const weekRange = getPreviousWeekRange();
+  const cacheKey = `topAdmins_${weekRange.start}_${weekRange.end}`;
+  const cachedData = localStorage.getItem(cacheKey);
+  
+  if (cachedData && !shouldRefreshTopAdmins()) {
+    const { admins } = JSON.parse(cachedData);
+    renderTopAdmins(admins, weekRange);
+    return;
+  }
+  
+  const admins = await getTopAdmins(weekRange);
+  localStorage.setItem(cacheKey, JSON.stringify({ admins }));
+  localStorage.setItem('topAdminsLastUpdate', Date.now());
+  renderTopAdmins(admins, weekRange);
+}
+
+// Функции работы со статистикой пользователя
+async function fetchUserStatsByTelegram(telegramUsername) {
+  try {
+    const ticketsData = await getSheetData('Май_2025_таблица');
+    const timeData = await getSheetData('Время_в_игре');
+
+    const ticketsHeaders = ticketsData[0];
+    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+    const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+
+    const userTicketsRow = ticketsData.find(row => row[telegramColIndex] === telegramUsername);
+    if (!userTicketsRow) {
+      alert('Користувача не знайдено в таблиці тікетів');
+      return;
     }
 
-    async function onTelegramAuth(user) {
-      const telegramUsername = '@' + user.username;
+    const userName = userTicketsRow[nameColIndex];
+
+    const timeHeaders = timeData[0];
+    const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+    const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
+    if (!userTimeRow) {
+      alert('Користувача не знайдено в таблиці часу');
+      return;
+    }
+
+    const today = getDateWithoutTime(new Date());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const dateCols = ticketsHeaders
+      .map((h, i) => ({ h, i }))
+      .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+
+    function sumTicketsAndTime(startDate, endDate) {
+      let ticketsSum = 0;
+      let timeSecondsSum = 0;
+
+      dateCols.forEach(({ h, i }) => {
+        const dt = parseDate(h);
+        if (dt >= startDate && dt <= endDate) {
+          ticketsSum += parseInt(userTicketsRow[i]) || 0;
+          const timeColIndex = timeHeaders.indexOf(h);
+          if (timeColIndex >= 0) {
+            const timeStr = userTimeRow[timeColIndex];
+            if (timeStr && timeStr !== 'Н') {
+              const [hh, mm, ss] = timeStr.split(':').map(Number);
+              timeSecondsSum += hh * 3600 + mm * 60 + ss;
+            }
+          }
+        }
+      });
+
+      return { ticketsSum, timeSecondsSum };
+    }
+
+    const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
+    
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - 7);
+    const weekStats = sumTicketsAndTime(weekStart, yesterday);
+    
+    const monthStart = new Date(today);
+    monthStart.setDate(today.getDate() - 30);
+    const monthStats = sumTicketsAndTime(monthStart, yesterday);
+
+    const allUsers = ticketsData.slice(1).map(row => {
+      const name = row[nameColIndex];
+      const userTelegram = row[telegramColIndex];
+
+      let totalTickets = 0;
+      let totalSeconds = 0;
+
+      dateCols.forEach(({ h, i }) => {
+        const dt = parseDate(h);
+        if (dt >= monthStart && dt <= yesterday) {
+          totalTickets += parseInt(row[i]) || 0;
+          const tIndex = timeHeaders.indexOf(h);
+          const timeRow = timeData.find(r => r[timeNameColIndex] === name);
+          if (timeRow && tIndex >= 0) {
+            const timeStr = timeRow[tIndex];
+            if (timeStr && timeStr !== 'Н') {
+              const [hh, mm, ss] = timeStr.split(':').map(Number);
+              totalSeconds += hh * 3600 + mm * 60 + ss;
+            }
+          }
+        }
+      });
+
+      return { name, telegram: userTelegram, totalTickets, totalSeconds };
+    });
+
+    allUsers.sort((a, b) => {
+      if (b.totalTickets !== a.totalTickets)
+        return b.totalTickets - a.totalTickets;
+      return b.totalSeconds - a.totalSeconds;
+    });
+
+    const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
+    if (userIndex !== -1) {
+      const place = userIndex + 1;
+      document.getElementById('current-rank').innerText = `${place}`;
+    }
+
+    document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
+    document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
+    document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
+    document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
+    document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
+    document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
+
+    const tbody = document.getElementById('daily-stats-body');
+    tbody.innerHTML = '';
+    let inactiveCount = 0;
+    const chartLabels = [];
+    const chartTickets = [];
+    const chartTimeHours = [];
+
+    dateCols.forEach(({ h, i }) => {
+      const dt = parseDate(h);
+      if (dt >= monthStart && dt <= yesterday) {
+        const dayTickets = parseInt(userTicketsRow[i]) || 0;
+        const timeColIndex = timeHeaders.indexOf(h);
+        let dayTimeStr = 'Н';
+        let dayTimeSeconds = 0;
+        if (timeColIndex >= 0) {
+          dayTimeStr = userTimeRow[timeColIndex] || 'Н';
+          if (dayTimeStr !== 'Н') {
+            const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+            dayTimeSeconds = hh * 3600 + mm * 60 + ss;
+          }
+        }
+        if (dayTimeStr === 'Н') inactiveCount++;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="border px-2 py-1">${h}</td>
+          <td class="border px-2 py-1">${dayTickets}</td>
+          <td class="border px-2 py-1">${dayTimeStr}</td>
+          <td class="border px-2 py-1">${dayTimeStr === 'Н' ? 'Так' : ''}</td>
+        `;
+        tbody.appendChild(tr);
+
+        chartLabels.push(h);
+        chartTickets.push(dayTickets);
+        chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
+      }
+    });
+
+    const trTotal = document.createElement('tr');
+    trTotal.innerHTML = `
+      <td class="border px-2 py-1 font-bold">Усього неактивів</td>
+      <td class="border px-2 py-1 font-bold" colspan="3">${inactiveCount}</td>
+    `;
+    tbody.appendChild(trTotal);
+
+    const ctx = document.getElementById('statsChart').getContext('2d');
+    if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+    window.statsChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: chartLabels,
+        datasets: [
+          {
+            label: 'Тікети',
+            data: chartTickets,
+            borderColor: 'rgba(59, 130, 246, 1)',
+            backgroundColor: 'rgba(59, 130, 246, 0.3)',
+            yAxisID: 'yTickets',
+            tension: 0.3,
+          },
+          {
+            label: 'Час у грі (години)',
+            data: chartTimeHours,
+            borderColor: 'rgba(16, 185, 129, 1)',
+            backgroundColor: 'rgba(16, 185, 129, 0.3)',
+            yAxisID: 'yTime',
+            tension: 0.3,
+          }
+        ],
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        stacked: false,
+        scales: {
+          yTickets: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+            title: {
+              display: true,
+              text: 'Тікети',
+            },
+            beginAtZero: true,
+          },
+          yTime: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            title: {
+              display: true,
+              text: 'Час (години)',
+            },
+            beginAtZero: true,
+            grid: {
+              drawOnChartArea: false,
+            },
+          },
+          x: {
+            ticks: {
+              maxRotation: 90,
+              minRotation: 45,
+              maxTicksLimit: 15,
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                ? `${ctx.parsed.y} год`
+                : ctx.parsed.y,
+            }
+          }
+        }
+      },
+    });
+
+  } catch (error) {
+    console.error(error);
+    alert('Помилка під час завантаження даних з Google Sheets');
+  }
+}
+
+// Функции аутентификации и управления интерфейсом
+function showAccessDenied() {
+  document.getElementById('access-denied-section').classList.remove('hidden');
+  document.getElementById('login-section').classList.add('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('menuContainer').classList.add('hidden');
+  document.getElementById('logout-btn').classList.add('hidden');
+}
+
+async function onTelegramAuth(user) {
+  const telegramUsername = '@' + user.username;
+  
+  if (allowedAdmins.includes(telegramUsername)) {
+    const userData = {
+      username: telegramUsername,
+      nickname: user.first_name || user.username,
+      isAdmin: true
+    };
+    localStorage.setItem('tg_auth', JSON.stringify(userData));
+    await showDashboard(userData.nickname, telegramUsername, true);
+    return;
+  }
+
+  try {
+    const ticketsData = await getSheetData('Май_2025_таблица');
+    const ticketsHeaders = ticketsData[0];
+    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+    
+    const userTicketsRow = ticketsData.find(row => 
+      row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+    );
+    
+    if (userTicketsRow) {
+      const userData = {
+        username: telegramUsername,
+        nickname: userTicketsRow[0],
+        isAdmin: false
+      };
+      localStorage.setItem('tg_auth', JSON.stringify(userData));
+      await showDashboard(userData.nickname, telegramUsername, false);
+    } else {
+      localStorage.removeItem('tg_auth');
+      showAccessDenied();
+    }
+  } catch (error) {
+    console.error(error);
+    showAccessDenied();
+  }
+}
+
+async function showDashboard(nickname, telegramUsername, isAdmin) {
+  // Проверка доступа для неадминистраторов
+  if (!isAdmin) {
+    try {
+      const ticketsData = await getSheetData('Май_2025_таблица');
+      const ticketsHeaders = ticketsData[0];
+      const telegramColIndex = ticketsHeaders.indexOf('Telegram');
       
-      // Проверка на администратора
-      if (allowedAdmins.includes(telegramUsername)) {
-        const userData = {
-          username: telegramUsername,
-          nickname: user.first_name || user.username,
-          isAdmin: true
-        };
-        localStorage.setItem('tg_auth', JSON.stringify(userData));
-        showDashboard(userData.nickname, telegramUsername, true);
+      const userExists = ticketsData.some(row => 
+        row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+      );
+      
+      if (!userExists) {
+        showAccessDenied();
         return;
       }
-
-      try {
-        const ticketsData = await getSheetData('Май_2025_таблица');
-        const ticketsHeaders = ticketsData[0];
-        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-        
-        const userTicketsRow = ticketsData.find(row => 
-          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-        );
-        
-        if (userTicketsRow) {
-          const userData = {
-            username: telegramUsername,
-            nickname: userTicketsRow[0],
-            isAdmin: false
-          };
-          localStorage.setItem('tg_auth', JSON.stringify(userData));
-          showDashboard(userData.nickname, telegramUsername, false);
-        } else {
-          localStorage.removeItem('tg_auth');
-          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-          showLoginForm();
-        }
-      } catch (error) {
-        console.error(error);
-        alert('Помилка під час завантаження даних');
-        showLoginForm();
-      }
+    } catch (error) {
+      console.error('Помилка перевірки доступу:', error);
+      showAccessDenied();
+      return;
     }
+  }
 
-    function showDashboard(nickname, telegramUsername, isAdmin) {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('menuContainer').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.remove('hidden');
-      document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
-      
-      // Показываем супер-меню только для суперадминов
-      if (superAdmins.includes(telegramUsername)) {
-        document.getElementById('superScriptMenu').classList.remove('hidden');
-      } else {
-        document.getElementById('superScriptMenu').classList.add('hidden');
-      }
-      
-      // Показываем блок администраторов недели
-      document.getElementById('top-admins-section').classList.remove('hidden');
-      loadAndRenderTopAdmins();
-      
-      if (isAdmin) {
-        document.getElementById('admin-notice').classList.remove('hidden');
-        document.getElementById('stats-section').classList.add('hidden');
-        document.getElementById('contest-rank').classList.add('hidden');
-      } else {
-        document.getElementById('admin-notice').classList.add('hidden');
-        document.getElementById('stats-section').classList.remove('hidden');
-        document.getElementById('contest-rank').classList.remove('hidden');
-        fetchUserStatsByTelegram(telegramUsername);
-      }
-    }
+  // Обновление интерфейса
+  document.getElementById('login-section').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('menuContainer').classList.remove('hidden');
+  document.getElementById('logout-btn').classList.remove('hidden');
+  document.getElementById('access-denied-section').classList.add('hidden');
+  document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
+  
+  // Управление супер-меню
+  if (superAdmins.includes(telegramUsername)) {
+    document.getElementById('superScriptMenu').classList.remove('hidden');
+  } else {
+    document.getElementById('superScriptMenu').classList.add('hidden');
+  }
+  
+  // Загрузка данных
+  document.getElementById('top-admins-section').classList.remove('hidden');
+  loadAndRenderTopAdmins();
+  
+  if (isAdmin) {
+    document.getElementById('admin-notice').classList.remove('hidden');
+    document.getElementById('stats-section').classList.add('hidden');
+    document.getElementById('contest-rank').classList.add('hidden');
+  } else {
+    document.getElementById('admin-notice').classList.add('hidden');
+    document.getElementById('stats-section').classList.remove('hidden');
+    document.getElementById('contest-rank').classList.remove('hidden');
+    fetchUserStatsByTelegram(telegramUsername);
+  }
+}
 
-    function showLoginForm() {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('menuContainer').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.querySelector('h1').innerText = 'Ласкаво просимо!';
-      document.getElementById('top-admins-section').classList.add('hidden');
-    }
+function showLoginForm() {
+  document.getElementById('login-section').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('menuContainer').classList.add('hidden');
+  document.getElementById('logout-btn').classList.add('hidden');
+  document.getElementById('access-denied-section').classList.add('hidden');
+  document.querySelector('h1').innerText = 'Ласкаво просимо!';
+  document.getElementById('top-admins-section').classList.add('hidden');
+}
 
-    function logout() {
+function logout() {
+  localStorage.removeItem('tg_auth');
+  showLoginForm();
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('logout-btn').addEventListener('click', logout);
+  
+  const savedAuth = localStorage.getItem('tg_auth');
+  if (savedAuth) {
+    try {
+      const userData = JSON.parse(savedAuth);
+      showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+    } catch (e) {
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('logout-btn').addEventListener('click', logout);
-      
-      const savedAuth = localStorage.getItem('tg_auth');
-      if (savedAuth) {
-        try {
-          const userData = JSON.parse(savedAuth);
-          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
-        } catch (e) {
-          localStorage.removeItem('tg_auth');
-          showLoginForm();
-        }
-      } else {
-        showLoginForm();
-      }
-      
-      // Периодическая проверка обновлений (каждые 5 минут)
-      setInterval(() => {
-        if (shouldRefreshTopAdmins()) {
-          autoRefreshData();
-        }
-      }, 5 * 60 * 1000);
-      
-      // Инициализация при первой загрузке
+  } else {
+    showLoginForm();
+  }
+  
+  // Периодическое обновление данных
+  setInterval(() => {
+    if (shouldRefreshTopAdmins()) {
       autoRefreshData();
-    });
+    }
+  }, 5 * 60 * 1000);
+  
+  // Первоначальная загрузка данных
+  autoRefreshData();
+});
   </script>
 </body>
 </html>
