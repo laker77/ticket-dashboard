@@ -59,6 +59,31 @@
         #logout-btn:hover {
             background-color: #e60000;
         }
+
+        /* Кнопка домой */
+        #home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #3b82f6;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s;
+            border: none;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        #home-btn:hover {
+            background-color: #2563eb;
+            transform: scale(1.1);
+        }
         
         @keyframes fadeInUp {
             to {
@@ -208,12 +233,35 @@
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: inline-block;
         }
         
-        .video-container iframe {
+        .video-container img {
             width: 100%;
-            height: 315px;
-            border: none;
+            display: block;
+            border-radius: 16px;
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 70px;
+            color: white;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .video-container:hover .play-button {
+            opacity: 1;
+            color: var(--accent-blue);
+        }
+        
+        .video-link {
+            display: block;
+            position: relative;
         }
         
         .download-btn {
@@ -336,10 +384,6 @@
             .download-section {
                 flex-direction: column;
             }
-            
-            .video-container iframe {
-                height: 250px;
-            }
         }
     </style>
 </head>
@@ -359,6 +403,9 @@
     </div>
     
     <button id="logout-btn" class="hidden">Вийти</button>
+    <a href="/" id="home-btn" class="hidden">
+        <i class="fas fa-home"></i>
+    </a>
     
     <div id="content" class="hidden">
         <div class="container">
@@ -375,7 +422,7 @@
                 <div class="section-icon">
                     <i class="fas fa-download"></i>
                 </div>
-                <h2>📥 Встановлення біндера</h2>
+                <h2>Встановлення біндера</h2>
             </div>
             
             <div class="download-section">
@@ -395,7 +442,12 @@
                 </div>
                 
                 <div class="video-container">
-                    <iframe src="https://youtu.be/Fh0FaawjnHk" title="Інструкція з встановлення біндера" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <a href="https://youtu.be/Fh0FaawjnHk" target="_blank" class="video-link">
+                        <img src="https://img.youtube.com/vi/Fh0FaawjnHk/0.jpg" alt="Інструкція з встановлення біндера">
+                        <div class="play-button">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                    </a>
                 </div>
             </div>
             
@@ -404,7 +456,7 @@
                 <div class="section-icon">
                     <i class="fas fa-keyboard"></i>
                 </div>
-                <h2>⌨️ Стандартні Гарячі Клавіші</h2>
+                <h2>Стандартні Гарячі Клавіші</h2>
             </div>
             
             <div class="card">
@@ -486,9 +538,7 @@
                 </div>
                 <div class="support-content">
                     <p>Якщо у вас виникли питання щодо встановлення чи використання біндера, або ви знайшли технічну проблему:</p>
-                    <p>➤ Звертайтесь до головного адміністратора: <strong>@noxx_uagtaV</strong></p>
-                    <p>➤ Технічна підтримка: <strong>@teh_ugta</strong></p>
-                    <p>➤ Чат підтримки адміністраторів: <a href="#" style="color: var(--accent-blue);">Посилання на чат</a></p>
+                    <p>➤ Звертайтесь до Куратора адміністраторів: <strong>@laker_77</strong></p>
                 </div>
             </div>
             
@@ -513,12 +563,6 @@
             '@c10mm',
             '@noxx_uagtaV',
             '@zhdanovrostyslav',
-            '@devgta_ua', 
-            '@teh_ugta', 
-            '@Bloomberger_01',
-            '@no1szeeq', 
-            '@test_uagta', 
-            '@digital_ug'
         ];
 
         function onTelegramAuth(user) {
@@ -540,12 +584,14 @@
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('content').classList.remove('hidden');
             document.getElementById('logout-btn').classList.remove('hidden');
+            document.getElementById('home-btn').classList.remove('hidden');
         }
 
         function showLoginForm() {
             document.getElementById('login-section').classList.remove('hidden');
             document.getElementById('content').classList.add('hidden');
             document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('home-btn').classList.add('hidden');
         }
 
         function logout() {
