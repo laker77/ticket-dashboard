@@ -415,7 +415,6 @@
     </style>
 </head>
 <body>
-    <!-- Секция авторизации -->
     <div id="login-section">
         <p>Будь ласка, увійдіть через Telegram:</p>
         <div class="telegram-button-wrapper">
@@ -431,6 +430,13 @@
     
     <button id="logout-btn" class="hidden">Вийти</button>
     
+    <!-- Сообщение о запрете доступа -->
+    <div id="access-denied" class="access-denied hidden">
+        <h2>Доступ заборонено</h2>
+        <p>Ваш обліковий запис не має доступу до цього контенту.</p>
+    </div>
+    
+    <!-- Основной контент (изначально скрыт) -->
     <div id="content" class="hidden">
         <div class="container">
             <header>
