@@ -725,207 +725,87 @@
     </div>
     
     <script>
-  const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-  const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-  const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
-  async function getSheetData(sheetName) {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-            const res = await axios.get(url);
-            return res.data.values;
-        }
+  <script>
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
 
-        async function onTelegramAuth(user) {
-            const telegramUsername = '@' + user.username;
-            
-            try {
-                const ticketsData = await getSheetData('Май_2025_таблица');
-                const ticketsHeaders = ticketsData[0];
-                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                
-                const userTicketsRow = ticketsData.find(row => 
-                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-                );
-                
-                if (userTicketsRow) {
-                    // Сохраняем данные пользователя
-                    const userData = {
-                        username: telegramUsername,
-                    };
-                    localStorage.setItem('tg_auth', JSON.stringify(userData));
-                    
-                    // Показываем контент
-                    showContent();
-                } else {
-                    // Если пользователь не найден
-                    localStorage.removeItem('tg_auth');
-                    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-                    showLoginForm();
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Помилка під час завантаження даних');
-                showLoginForm();
-            }
-        }
+    async function getSheetData(sheetName) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      const res = await axios.get(url);
+      return res.data.values;
+    }
 
-        // Функция для показа контента
-        function showContent() {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
-            document.getElementById('logout-btn').classList.remove('hidden');
-        }
-
-        // Функция для показа формы входа
-        function showLoginForm() {
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('content').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-        }
-
-        // Функция выхода
-        function logout() {
-            localStorage.removeItem('tg_auth');
-            showLoginForm();
-        }
-
-        // Генерация FAQ
-        function generateFAQ() {
-            const container = document.getElementById('faq-container');
-            container.innerHTML = '';
-            
-            faqData.forEach(item => {
-                const faqItem = document.createElement('div');
-                faqItem.className = 'faq-item';
-                faqItem.dataset.category = item.category;
-                faqItem.innerHTML = `
-                    <div class="faq-question"><i class="fas fa-question"></i> Питання: ${item.question}</div>
-                    <div class="faq-answer">Відповідь: ${item.answer}</div>
-                `;
-                container.appendChild(faqItem);
-            });
-            
-            updateCategoryCounters();
-        }
+    async function onTelegramAuth(user) {
+      const telegramUsername = '@' + user.username;
+      
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         
-        // Обновление счетчиков категорий
-        function updateCategoryCounters() {
-            const categories = ['all', 'general', 'rules', 'admin', 'fractions', 'supply'];
-            
-            categories.forEach(category => {
-                let count;
-                if (category === 'all') {
-                    count = faqData.length;
-                } else {
-                    count = faqData.filter(item => item.category === category).length;
-                }
-                document.getElementById(`count-${category}`).textContent = count;
-            });
-        }
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
         
-        // Фильтрация по категориям
-        function filterByCategory(category) {
-            const items = document.querySelectorAll('.faq-item');
-            
-            items.forEach(item => {
-                if (category === 'all' || item.dataset.category === category) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+        if (userTicketsRow) {
+          // Сохраняем данные пользователя
+          const userData = {
+            username: telegramUsername,
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          
+          // Показываем контент
+          showContent();
+        } else {
+          // Если пользователь не найден
+          localStorage.removeItem('tg_auth');
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
         }
-        
-        // Поиск по вопросам
-        function searchFAQ(term) {
-            const items = document.querySelectorAll('.faq-item');
-            term = term.toLowerCase().trim();
-            
-            items.forEach(item => {
-                const question = item.querySelector('.faq-question').textContent.toLowerCase();
-                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
-                
-                if (term === '' || question.includes(term) || answer.includes(term)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-        
-        // Проверка сохраненной сессии при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            // Добавляем обработчик для кнопки выхода
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            
-            // Генерация FAQ
-            generateFAQ();
-            
-            // Инициализация вкладок категорий
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Убираем активный класс у всех вкладок
-                    document.querySelectorAll('.category-tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    
-                    // Добавляем активный класс текущей вкладке
-                    this.classList.add('active');
-                    
-                    // Фильтруем по категории
-                    filterByCategory(this.dataset.category);
-                });
-            });
-            
-            // Поиск
-            document.getElementById('search-input').addEventListener('input', function() {
-                searchFAQ(this.value);
-            });
-            
-            // Кнопка "Наверх"
-            const backToTopBtn = document.querySelector('.back-to-top');
-            
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopBtn.classList.add('visible');
-                } else {
-                    backToTopBtn.classList.remove('visible');
-                }
-            });
-            
-            backToTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-            
-            // Проверяем сохраненную сессию
-            const savedAuth = localStorage.getItem('tg_auth');
-            if (savedAuth) {
-                try {
-                    showContent();
-                } catch (e) {
-                    localStorage.removeItem('tg_auth');
-                    showLoginForm();
-                }
-            } else {
-                showLoginForm();
-            }
+      } catch (error) {
+        console.error(error);
+        alert('Помилка під час завантаження даних');
+        showLoginForm();
+      }
+    }
 
-            // Анимация карточек при загрузке
-            const levelCards = document.querySelectorAll('.level-card');
-            
-            levelCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 150 * index);
-            });
-        });
+    // Функция для показа контента
+    function showContent() {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('content').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+    }
+
+    // Функция для показа формы входа
+    function showLoginForm() {
+      document.getElementById('login-section').classList.remove('hidden');
+      document.getElementById('content').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+    }
+
+    // Функция выхода
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    // Проверка сохраненной сессии при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+      // Добавляем обработчик для кнопки выхода
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      // Проверяем сохраненную сессию
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          showContent();
+        } catch (e) {
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      }
+    });
+  </script>
 </script>
 </body>
 </html>
