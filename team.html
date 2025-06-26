@@ -208,7 +208,7 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 30px;
             margin-top: 20px;
-            align-items: stretch; /* Добавлено для выравнивания высоты */
+            align-items: stretch;
         }
         
         .member-card {
@@ -219,9 +219,9 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex; /* Добавлено */
-            flex-direction: column; /* Добавлено */
-            height: 100%; /* Добавлено */
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .member-card:hover {
@@ -255,19 +255,19 @@
             font-size: 2rem;
             overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0; /* Запрет уменьшения */
+            flex-shrink: 0;
         }
         
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block; /* Исправление для IE/Edge */
+            display: block;
         }
         
         .member-info {
             flex: 1;
-            min-width: 0; /* Исправление переполнения текста */
+            min-width: 0;
         }
         
         .member-name {
@@ -295,7 +295,7 @@
         
         .card-content {
             padding: 25px;
-            flex-grow: 1; /* Растягиваем контент */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
@@ -311,7 +311,7 @@
         
         .responsibilities {
             margin-bottom: 20px;
-            flex-grow: 1; /* Равномерное распределение */
+            flex-grow: 1;
         }
         
         .responsibilities ul {
@@ -329,7 +329,7 @@
             border-radius: 12px;
             background: rgba(40, 40, 40, 0.5);
             border-left: 3px solid var(--accent-blue);
-            margin-top: auto; /* Прижимаем к низу */
+            margin-top: auto;
         }
         
         .rights-title {
@@ -393,6 +393,20 @@
             font-size: 0.9rem;
         }
         
+        /* Стили для сообщения о запрете доступа */
+        .access-denied {
+            text-align: center;
+            padding: 50px 20px;
+            color: #ff5555;
+            font-size: 1.2rem;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 100px auto;
+            border: 1px solid #ff5555;
+            box-shadow: 0 0 20px rgba(255, 85, 85, 0.5);
+        }
+        
         @media (max-width: 768px) {
             .team-container {
                 grid-template-columns: 1fr;
@@ -415,6 +429,7 @@
     </style>
 </head>
 <body>
+    <!-- Секция авторизации -->
     <div id="login-section">
         <p>Будь ласка, увійдіть через Telegram:</p>
         <div class="telegram-button-wrapper">
@@ -436,7 +451,7 @@
         <p>Ваш обліковий запис не має доступу до цього контенту.</p>
     </div>
     
-    <!-- Основной контент (изначально скрыт) -->
+    <!-- Основной контент -->
     <div id="content" class="hidden">
         <div class="container">
             <header>
@@ -444,7 +459,7 @@
                     <i class="fas fa-users"></i>
                     <h1>Команда проєкту Ukraine GTA 5</h1>
                 </div>
-                <p class="subtitle">Знайомтеся з нашою командою, яка знаходиться в офіційному чаті Адміністраторів. Тут ви можете ознайомитися з яким питанням і до кого ви можете звернутися у разі, якщо у вас виникнуть питання.https://imgur.com/undefinedМ</p>
+                <p class="subtitle">Знайомтеся з нашою командою, яка знаходиться в офіційному чаті Адміністраторів. Тут ви можете ознайомитися з яким питанням і до кого ви можете звернутися у разі, якщо у вас виникнуть питання.</p>
             </header>
             
             <!-- Власник проєкту -->
@@ -460,7 +475,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://imgur.com/EONAGzX.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/EONAGzX.jpg" alt="@devgta_ua">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@devgta_ua</div>
@@ -514,7 +529,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                                <img src="https://imgur.com/HOFIjOF.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/HOFIjOF.jpg" alt="@teh_ugta">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@teh_ugta</div>
@@ -540,7 +555,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                             <img src="https://imgur.com/lkMXTmr.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/lkMXTmr.jpg" alt="@Bloomberger_01">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@Bloomberger_01</div>
@@ -578,7 +593,8 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                                <img src="https://imgur.com/kjk7lQ9.jpg" alt="@devgta_ua">                        </div>
+                                <img src="https://i.imgur.com/kjk7lQ9.jpg" alt="@no1szeeq">
+                            </div>
                             <div class="member-info">
                                 <div class="member-name">@no1szeeq</div>
                                 <div class="member-role">Головний тестер Ukraine GTA 5</div>
@@ -609,7 +625,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                            <img src="https://imgur.com/d2muOHx.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/d2muOHx.jpg" alt="@test_uagta">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@test_uagta</div>
@@ -646,8 +662,8 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://imgur.com/HOFIjOF.jpg" alt="@devgta_ua">
-                           </div>
+                                <img src="https://i.imgur.com/HOFIjOF.jpg" alt="@digital_ug">
+                            </div>
                             <div class="member-info">
                                 <div class="member-name">@digital_ug</div>
                                 <div class="member-role">Діджітал Редактор</div>
@@ -690,7 +706,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                       <img src="https://imgur.com/L0Mh1gv.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/L0Mh1gv.jpg" alt="@noxx_uagtaV">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@noxx_uagtaV</div>
@@ -723,7 +739,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://imgur.com/cIz5nKH.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/cIz5nKH.jpg" alt="@zhdanovrostyslav">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@zhdanovrostyslav</div>
@@ -760,7 +776,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                               <img src="https://imgur.com/kTr6Fg3.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/kTr6Fg3.jpg" alt="@laker_77">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@laker_77</div>
@@ -794,7 +810,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                              <img src="https://imgur.com/ocgJDKg.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/ocgJDKg.jpg" alt="@liquid_ug">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@liquid_ug</div>
@@ -827,7 +843,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                                              <img src="https://imgur.com/syLsW5N.jpg" alt="@devgta_ua">
+                                <img src="https://i.imgur.com/syLsW5N.jpg" alt="@Hermaeus_Mora_1679">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@Hermaeus_Mora_1679</div>
@@ -875,8 +891,9 @@
             </footer>
         </div>
     </div>
-<script>
-      const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+
+    <script>
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
     const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
     const allowedAdmins = [
