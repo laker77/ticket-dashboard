@@ -8,7 +8,339 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* Стили для окна логина */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    #login-container {
+        background: radial-gradient(circle at center, #050608 0%, #121315 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Orbitron', 'Roboto', sans-serif;
+        overflow: hidden;
+        color: white;
+        position: relative;
+    }
+    
+    /* Футуристичний фон */
+    .futuristic-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        overflow: hidden;
+    }
+    
+    /* Горизонтальні лінії */
+    .grid-line {
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: rgba(59, 130, 246, 0.1);
+        left: 0;
+        animation: lineMove 20s linear infinite;
+    }
+    
+    @keyframes lineMove {
+        0% { transform: translateY(-100px); }
+        100% { transform: translateY(100vh); }
+    }
+    
+    /* Великі геометричні фігури */
+    .geometric-shape {
+        position: absolute;
+        border: 2px solid rgba(59, 130, 246, 0.15);
+        animation: shapeRotate 40s linear infinite;
+    }
+    
+    @keyframes shapeRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Партикли */
+    .particle {
+        position: absolute;
+        background: #3B82F6;
+        border-radius: 50%;
+        opacity: 0.7;
+        animation: particleMove linear infinite;
+    }
+    
+    @keyframes particleMove {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        10% { opacity: 0.7; }
+        90% { opacity: 0.7; }
+        100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+    }
+    
+    /* Неонові промені */
+    .light-beam {
+        position: absolute;
+        height: 100%;
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, #3B82F6, transparent);
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.7);
+        opacity: 0.3;
+        animation: beamScan 8s infinite alternate;
+    }
+    
+    @keyframes beamScan {
+        0% { transform: translateX(-50vw); }
+        100% { transform: translateX(150vw); }
+    }
+    
+    /* Основний контейнер */
+    .auth-container {
+        position: relative;
+        z-index: 20;
+        background: rgba(18, 19, 21, 0.85);
+        backdrop-filter: blur(15px);
+        border-radius: 12px;
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        box-shadow: 0 0 50px rgba(59, 130, 246, 0.5),
+                    0 10px 40px rgba(0, 0, 0, 0.6),
+                    inset 0 0 25px rgba(59, 130, 246, 0.3);
+        width: 420px;
+        padding: 45px 35px;
+        text-align: center;
+        transform: translateY(20px);
+        opacity: 0;
+        animation: fadeIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s;
+    }
+    
+    @keyframes fadeIn {
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Логотип у стилі GTA */
+    .gta-logo {
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 30px;
+        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(59, 130, 246, 0.7);
+        animation: rotate 25s linear infinite;
+    }
+    
+    .gta-logo::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+    }
+    
+    .gta-icon {
+        width: 65%;
+        height: 65%;
+        fill: white;
+        filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Текст і заголовки */
+    .login-title {
+        color: white;
+        margin-bottom: 20px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        font-size: 36px;
+        text-transform: uppercase;
+        text-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+        position: relative;
+        margin-top: 15px;
+        line-height: 1.2;
+    }
+    
+    .login-title::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 140px;
+        height: 4px;
+        background: linear-gradient(90deg, transparent, #3B82F6, transparent);
+        border-radius: 2px;
+    }
+    
+    .subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 45px;
+        font-size: 18px;
+        line-height: 1.6;
+        max-width: 340px;
+        margin: 35px auto 45px;
+        font-weight: 400;
+        letter-spacing: 1px;
+        padding: 0 10px;
+    }
+    
+    /* Кнопка авторизації у стилі GTA */
+    .telegram-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(30, 64, 175, 0.3));
+        border: 2px solid #3B82F6;
+        color: #3B82F6;
+        padding: 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        animation: btnGlow 2s infinite alternate;
+        margin-top: 15px;
+    }
+    
+    .telegram-btn:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.45), rgba(30, 64, 175, 0.45));
+        transform: translateY(-4px);
+        box-shadow: 0 0 35px rgba(59, 130, 246, 0.8);
+        animation: none;
+    }
+    
+    .telegram-btn:active {
+        transform: translateY(1px);
+    }
+    
+    .telegram-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+        transition: 0.5s;
+    }
+    
+    .telegram-btn:hover::before {
+        left: 100%;
+    }
+    
+    @keyframes btnGlow {
+        0% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.5); }
+        100% { box-shadow: 0 0 35px rgba(59, 130, 246, 0.9), 0 0 45px rgba(30, 64, 175, 0.5); }
+    }
+    
+    /* Додаткові елементи */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 35px;
+    }
+    
+    .feature {
+        background: rgba(13, 26, 47, 0.35);
+        border: 1px solid rgba(59, 130, 246, 0.25);
+        border-radius: 10px;
+        padding: 18px 12px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .feature:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        border-color: rgba(59, 130, 246, 0.5);
+    }
+    
+    .feature-icon {
+        font-size: 26px;
+        margin-bottom: 12px;
+        color: #3B82F6;
+        text-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+    }
+    
+    .feature-text {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.4;
+        font-weight: 400;
+    }
+    
+    /* Анімація тексту */
+    .typing-text {
+        overflow: hidden;
+        border-right: 2px solid #3B82F6;
+        white-space: nowrap;
+        margin: 0 auto;
+        letter-spacing: 1px;
+        animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+        max-width: 100%;
+        padding: 0 5px;
+    }
+    
+    @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+    }
+    
+    @keyframes blink {
+        from, to { border-color: transparent; }
+        50% { border-color: #3B82F6; }
+    }
+    
+    /* Адаптивність */
+    @media (max-width: 500px) {
+        .auth-container {
+            width: 90%;
+            padding: 35px 25px;
+        }
+        
+        .gta-logo {
+            width: 110px;
+            height: 110px;
+        }
+        
+        .login-title {
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            margin: 25px auto 35px;
+        }
+        
+        .telegram-btn {
+            font-size: 18px;
+            padding: 16px;
+        }
+    }
+
+    /* Остальные стили панели администратора */
     @media (max-width: 640px) {
       .stats-grid {
         grid-template-columns: 1fr;
@@ -33,39 +365,16 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#login-section {
-  background-color: #121824;
-  padding: 40px 30px;
-  border-radius: 20px;
-  max-width: 400px;
-  margin: 60px auto;
-  box-shadow: 0 0 30px #1977FDAA;
-  text-align: center;
-  animation: fadeInUp 1.2s ease forwards;
-  opacity: 0;
-  transform: translateY(30px);
-  font-weight: 700;
-  font-size: 1.3rem;
+#dashboard {
+  display: none;
 }
 
-#login-section p {
-  margin-bottom: 25px;
-  color: #FFFBEF;
-  font-weight: 600;
-  font-size: 1.1rem;
+#login-container {
+  display: flex;
 }
 
-.telegram-button-wrapper {
-  display: inline-block;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 0 15px #1977FD;
-  animation: pulse 3s infinite ease-in-out;
-}
-
-.bg-white.p-4.rounded.shadow.mb-6 {
-  background-color: #121315 !important;
-  color: #FFFBEF;
+#access-denied-section {
+  display: none;
 }
 
 .table-container table {
@@ -221,6 +530,7 @@ h1 {
   transition: background-color 0.3s;
   border: none;
   font-weight: bold;
+  display: none;
 }
 
 #logout-btn:hover {
@@ -590,7 +900,56 @@ h1 {
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
-  <button id="logout-btn" class="hidden">Вийти</button>
+  <!-- Контейнер для окна логина -->
+  <div id="login-container">
+    <!-- Футуристичний фон -->
+    <div class="futuristic-background" id="futuristic-bg"></div>
+    
+    <!-- Контейнер авторизації -->
+    <div class="auth-container">
+        <!-- Логотип у стилі GTA -->
+        <div class="gta-logo">
+            <svg class="gta-icon" viewBox="0 0 24 24">
+                <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.14.141-.259.259-.374.261l.213-3.053 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.136-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/>
+            </svg>
+        </div>
+        
+        <h1 class="login-title">АДМІНІСТРАТИВНА ПАНЕЛЬ</h1>
+        
+        <p class="subtitle typing-text">Доступ лише через авторизацію Telegram</p>
+        
+        <div class="telegram-button-wrapper">
+          <script async src="https://telegram.org/js/telegram-widget.js?7"
+                  data-telegram-login="ticket_tracker_UG_bot" 
+                  data-size="large"
+                  data-userpic="false"
+                  data-request-access="write"
+                  data-onauth="onTelegramAuth(user)">
+          </script>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="feature-text">Захищений доступ</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"><i class="fas fa-user-secret"></i></div>
+                <div class="feature-text">Конфіденційність</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <div class="feature-text">Миттєвий вхід</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                <div class="feature-text">Безпека</div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <button id="logout-btn">Вийти</button>
 
   <!-- Access Denied Section -->
   <div id="access-denied-section">
@@ -612,20 +971,6 @@ h1 {
     <!-- Праздничная плашка -->
     <div id="anniversary-banner" class="anniversary-banner hidden">
       <p>🎉 Сьогодні ми святкуємо 3 річницю проєкту! Не забудь привітати в групі з річницею! 🎉</p>
-    </div>
-    
-    <!-- Секция авторизации -->
-    <div id="login-section">
-      <p>Будь ласка, увійдіть через Telegram:</p>
-      <div class="telegram-button-wrapper">
-        <script async src="https://telegram.org/js/telegram-widget.js?7"
-                data-telegram-login="ticket_tracker_UG_bot" 
-                data-size="large"
-                data-userpic="false"
-                data-request-access="write"
-                data-onauth="onTelegramAuth(user)">
-        </script>
-      </div>
     </div>
     
     <!-- Контейнер для обоих меню -->
@@ -664,7 +1009,7 @@ h1 {
       </div>
     </div>
     
-    <div id="dashboard" class="hidden">
+    <div id="dashboard">
       <!-- Блок администраторов недели -->
       <div id="top-admins-section" class="top-admins-section hidden">
         <h2 class="top-admins-title">🏆 Адміністратори тижня</h2>
@@ -731,7 +1076,6 @@ h1 {
       </div>
     </div>
   </div>
-
   <script>
   const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
 const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
