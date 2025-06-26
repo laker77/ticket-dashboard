@@ -875,10 +875,8 @@
             </footer>
         </div>
     </div>
-
-    <script>
-       <script>
-    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+<script>
+      const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
     const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
     const allowedAdmins = [
@@ -991,21 +989,34 @@
 
     function showProtectedContent() {
       document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('protected-content').classList.remove('hidden');
+      document.getElementById('content').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
       document.getElementById('access-denied').classList.add('hidden');
+      
+      // Запуск анимации карточек
+      const memberCards = document.querySelectorAll('.member-card');
+      memberCards.forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(30px)';
+          card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+          
+          setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+          }, 150 * index);
+      });
     }
 
     function showLoginForm() {
       document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('protected-content').classList.add('hidden');
+      document.getElementById('content').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
       document.getElementById('access-denied').classList.add('hidden');
     }
 
     function showAccessDenied() {
       document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('protected-content').classList.add('hidden');
+      document.getElementById('content').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
       document.getElementById('access-denied').classList.remove('hidden');
     }
@@ -1018,21 +1029,7 @@
     // Основна ініціалізація
     document.addEventListener('DOMContentLoaded', function() {
       initAuthCheck();
-            
-            // Анимация карточек при загрузке
-            const memberCards = document.querySelectorAll('.member-card');
-            
-            memberCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 150 * index);
-            });
-        });
+    });
     </script>
 </body>
 </html>
