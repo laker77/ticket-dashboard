@@ -895,153 +895,82 @@
    <script>
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-    const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12 часов
-    const allowedAdmins = [
-      '@laker_77',
-      '@liquid_ug',
-      '@Hermaeus_Mora_1679',
-      '@c10mm',
-      '@noxx_uagtaV',
-      '@zhdanovrostyslav',
-      '@devgta_ua', 
-      '@teh_ugta', 
-      '@Bloomberger_01',
-      '@no1szeeq', 
-      '@test_uagta', 
-      '@digital_ug'
-    ];
 
     async function getSheetData(sheetName) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-      try {
-        const res = await axios.get(url);
-        return res.data.values;
-      } catch (error) {
-        console.error('Помилка отримання даних:', error);
-        throw new Error('Помилка завантаження даних з таблиці');
-      }
+      const res = await axios.get(url);
+      return res.data.values;
     }
 
     async function onTelegramAuth(user) {
-      if (!user || !user.username) {
-        alert('Не отримано дані користувача Telegram');
-        return;
-      }
+      const telegramUsername = '@' + user.username;
       
-      const telegramUsername = '@' + user.username.toLowerCase();
-      console.log('Авторизація:', telegramUsername);
-      
-      // Проверка на администратора
-      if (allowedAdmins.includes(telegramUsername)) {
-        const userData = {
-          username: telegramUsername,
-          nickname: user.first_name || user.username,
-          isAdmin: true,
-          timestamp: Date.now()
-        };
-        localStorage.setItem('tg_auth', JSON.stringify(userData));
-        showProtectedContent();
-        return;
-      }
-
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
         const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         
-        // Пошук колонки з нормалізацією
-        const telegramColIndex = ticketsHeaders.findIndex(header => 
-          header.trim().toLowerCase() === 'telegram'
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
         );
-
-        if (telegramColIndex === -1) {
-          throw new Error('Колонка Telegram не знайдена в таблиці');
-        }
-
-        // Пошук користувача з нормалізацією даних
-        const userFound = ticketsData.slice(1).some(row => {
-          const rowUsername = (row[telegramColIndex] || '').trim().toLowerCase();
-          return rowUsername === telegramUsername;
-        });
-
-        if (userFound) {
-          console.log('Доступ дозволено для:', telegramUsername);
-          localStorage.setItem('tg_auth', JSON.stringify({
+        
+        if (userTicketsRow) {
+          // Сохраняем данные пользователя
+          const userData = {
             username: telegramUsername,
-            nickname: user.first_name || user.username,
-            isAdmin: false,
-            timestamp: Date.now()
-          }));
-          showProtectedContent();
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          
+          // Показываем контент
+          showContent();
         } else {
-          console.warn('Доступ заборонено:', telegramUsername);
+          // Если пользователь не найден
           localStorage.removeItem('tg_auth');
-          showAccessDenied();
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
         }
       } catch (error) {
-        console.error('Помилка авторизації:', error);
-        alert(`Помилка: ${error.message || 'Перевірте консоль для деталей'}`);
+        console.error(error);
+        alert('Помилка під час завантаження даних');
         showLoginForm();
       }
     }
 
-    // Перевірка сесії при завантаженні
-    function initAuthCheck() {
-      const logoutBtn = document.getElementById('logout-btn');
-      if (logoutBtn) logoutBtn.addEventListener('click', logout);
-
-      try {
-        const savedAuth = localStorage.getItem('tg_auth');
-        if (savedAuth) {
-          const authData = JSON.parse(savedAuth);
-          const sessionAge = Date.now() - (authData.timestamp || 0);
-          
-          if (sessionAge < SESSION_TIMEOUT) {
-            showProtectedContent();
-            return;
-          } else {
-            console.log('Сесія закінчилася');
-            localStorage.removeItem('tg_auth');
-          }
-        }
-      } catch (e) {
-        console.error('Помилка перевірки сесії:', e);
-        localStorage.removeItem('tg_auth');
-      }
-      showLoginForm();
-    }
-
-    function showProtectedContent() {
+    // Функция для показа контента
+    function showContent() {
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('content').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
-      document.getElementById('home-btn').classList.remove('hidden');
-      document.getElementById('access-denied').classList.add('hidden');
     }
 
+    // Функция для показа формы входа
     function showLoginForm() {
       document.getElementById('login-section').classList.remove('hidden');
       document.getElementById('content').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('home-btn').classList.add('hidden');
-      document.getElementById('access-denied').classList.add('hidden');
     }
 
-    function showAccessDenied() {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('content').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('home-btn').classList.add('hidden');
-      document.getElementById('access-denied').classList.remove('hidden');
-    }
-
+    // Функция выхода
     function logout() {
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
 
-    // Основна ініціалізація
+    // Проверка сохраненной сессии при загрузке
     document.addEventListener('DOMContentLoaded', function() {
-      initAuthCheck();
+      // Добавляем обработчик для кнопки выхода
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      // Проверяем сохраненную сессию
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          showContent();
+        } catch (e) {
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      }
     });
    </script>
 </body>
