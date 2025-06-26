@@ -8,518 +8,743 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <style>
-    @media (max-width: 640px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: radial-gradient(circle at center, #0a0f1d 0%, #060913 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Orbitron', 'Roboto', sans-serif;
+      overflow: hidden;
+      color: white;
+      position: relative;
+      perspective: 1000px;
+    }
+    
+    /* Анімація міського фону */
+    .city-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: linear-gradient(to bottom, #0d1529, #0a0f1d 40%, #060913);
+      overflow: hidden;
+    }
+    
+    .building {
+      position: absolute;
+      bottom: 0;
+      background: linear-gradient(to bottom, #121c33, #0a1121);
+      box-shadow: 0 0 15px rgba(25, 119, 253, 0.1);
+    }
+    
+    .window {
+      position: absolute;
+      background: #2a4b8d;
+      animation: windowLight 4s infinite alternate;
+    }
+    
+    @keyframes windowLight {
+      0% { opacity: 0.1; }
+      100% { opacity: 0.7; }
+    }
+    
+    .street-light {
+      position: absolute;
+      bottom: 0;
+      width: 3px;
+      height: 50px;
+      background: #2AABEE;
+      box-shadow: 0 0 20px rgba(42, 171, 238, 0.7);
+    }
+    
+    .car-light {
+      position: absolute;
+      bottom: 20px;
+      width: 30px;
+      height: 5px;
+      background: linear-gradient(90deg, #ff7700, #ff3300);
+      box-shadow: 0 0 15px rgba(255, 119, 0, 0.8);
+      animation: carMove linear infinite;
+    }
+    
+    @keyframes carMove {
+      0% { left: -50px; }
+      100% { left: 100%; }
+    }
+    
+    /* Основной контейнер */
+    .auth-container {
+      position: relative;
+      z-index: 20;
+      background: rgba(13, 20, 34, 0.85);
+      backdrop-filter: blur(15px);
+      border-radius: 12px;
+      border: 1px solid rgba(42, 171, 238, 0.4);
+      box-shadow: 0 0 50px rgba(25, 119, 253, 0.5),
+                  0 10px 40px rgba(0, 0, 0, 0.6),
+                  inset 0 0 25px rgba(25, 119, 253, 0.3);
+      width: 420px;
+      padding: 45px 35px;
+      text-align: center;
+      transform: translateY(20px) rotateX(5deg);
+      opacity: 0;
+      animation: fadeIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.8s;
+    }
+    
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0) rotateX(0); }
+    }
+    
+    /* Логотип у стилі GTA */
+    .gta-logo {
+      width: 130px;
+      height: 130px;
+      margin: 0 auto 30px;
+      background: linear-gradient(135deg, #2AABEE, #1977FD);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(42, 171, 238, 0.7);
+      animation: rotate 25s linear infinite;
+    }
+    
+    .gta-logo::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+    }
+    
+    .gta-icon {
+      width: 65%;
+      height: 65%;
+      fill: white;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6));
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Текст і заголовки */
+    h1 {
+      color: white;
+      margin-bottom: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 36px;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(42, 171, 238, 0.8);
+      position: relative;
+      margin-top: 15px;
+      line-height: 1.2;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, #2AABEE, transparent);
+      border-radius: 2px;
+    }
+    
+    .subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 45px;
+      font-size: 18px;
+      line-height: 1.6;
+      max-width: 340px;
+      margin: 35px auto 45px;
+      font-weight: 400;
+      letter-spacing: 1px;
+      padding: 0 10px;
+    }
+    
+    /* Кнопка авторизації у стилі GTA */
+    .telegram-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      background: linear-gradient(135deg, rgba(42, 171, 238, 0.3), rgba(25, 119, 253, 0.3));
+      border: 2px solid #2AABEE;
+      color: #2AABEE;
+      padding: 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      box-shadow: 0 0 25px rgba(42, 171, 238, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      animation: btnGlow 2s infinite alternate;
+      margin-top: 15px;
+    }
+    
+    .telegram-btn:hover {
+      background: linear-gradient(135deg, rgba(42, 171, 238, 0.45), rgba(25, 119, 253, 0.45));
+      transform: translateY(-4px);
+      box-shadow: 0 0 35px rgba(42, 171, 238, 0.8);
+      animation: none;
+    }
+    
+    .telegram-btn:active {
+      transform: translateY(1px);
+    }
+    
+    .telegram-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+      transition: 0.5s;
+    }
+    
+    .telegram-btn:hover::before {
+      left: 100%;
+    }
+    
+    @keyframes btnGlow {
+      0% { box-shadow: 0 0 25px rgba(42, 171, 238, 0.5); }
+      100% { box-shadow: 0 0 35px rgba(42, 171, 238, 0.9), 0 0 45px rgba(25, 119, 253, 0.5); }
+    }
+    
+    /* Радар у стилі GTA */
+    .radar {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      bottom: -80px;
+      right: -80px;
+      z-index: -1;
+    }
+    
+    .radar-circle {
+      position: absolute;
+      border: 2px solid rgba(42, 171, 238, 0.35);
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .radar-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #2AABEE, transparent);
+      top: 50%;
+      transform-origin: center;
+      animation: radarScan 4s linear infinite;
+    }
+    
+    @keyframes radarScan {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .radar-dot {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      background: #2AABEE;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(42, 171, 238, 0.9);
+    }
+    
+    /* Додаткові елементи */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 35px;
+    }
+    
+    .feature {
+      background: rgba(13, 26, 47, 0.35);
+      border: 1px solid rgba(42, 171, 238, 0.25);
+      border-radius: 10px;
+      padding: 18px 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .feature:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(42, 171, 238, 0.3);
+      border-color: rgba(42, 171, 238, 0.5);
+    }
+    
+    .feature-icon {
+      font-size: 26px;
+      margin-bottom: 12px;
+      color: #2AABEE;
+      text-shadow: 0 0 12px rgba(42, 171, 238, 0.6);
+    }
+    
+    .feature-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.4;
+      font-weight: 400;
+    }
+    
+    /* Мінімапа у стилі GTA */
+    .minimap {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 140px;
+      height: 140px;
+      background: rgba(13, 20, 34, 0.75);
+      border: 3px solid #2AABEE;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(42, 171, 238, 0.5);
+    }
+    
+    .minimap::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+          linear-gradient(rgba(42, 171, 238, 0.15) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(42, 171, 238, 0.15) 1px, transparent 1px);
+      background-size: 25px 25px;
+    }
+    
+    .minimap-player {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: #2AABEE;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(42, 171, 238, 0.9);
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    
+    .minimap-arrow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 16px solid #2AABEE;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+    
+    .minimap-car {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #ff3300;
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(255, 51, 0, 0.8);
+      animation: minimapCarMove 15s linear infinite;
+    }
+    
+    @keyframes minimapCarMove {
+      0% { transform: translateX(-60px) translateY(-40px); }
+      25% { transform: translateX(40px) translateY(-60px); }
+      50% { transform: translateX(60px) translateY(40px); }
+      75% { transform: translateX(-40px) translateY(60px); }
+      100% { transform: translateX(-60px) translateY(-40px); }
+    }
+    
+    /* Індикатори здоров'я та броні */
+    .status-indicators {
+      position: absolute;
+      bottom: 25px;
+      right: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 180px;
+    }
+    
+    .status-bar {
+      height: 25px;
+      background: rgba(30, 30, 40, 0.7);
+      border: 2px solid rgba(100, 100, 120, 0.5);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .health-bar {
+      height: 100%;
+      width: 85%;
+      background: linear-gradient(90deg, #ff3300, #ff7700);
+      box-shadow: 0 0 10px rgba(255, 119, 0, 0.5);
+    }
+    
+    .armor-bar {
+      height: 100%;
+      width: 70%;
+      background: linear-gradient(90deg, #2AABEE, #1977FD);
+      box-shadow: 0 0 10px rgba(42, 171, 238, 0.5);
+    }
+    
+    .status-label {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+    
+    /* Анімація тексту */
+    .typing-text {
+      overflow: hidden;
+      border-right: 2px solid #2AABEE;
+      white-space: nowrap;
+      margin: 0 auto;
+      letter-spacing: 1px;
+      animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+      max-width: 100%;
+      padding: 0 5px;
+    }
+    
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    
+    @keyframes blink {
+      from, to { border-color: transparent; }
+      50% { border-color: #2AABEE; }
+    }
+    
+    /* Адаптивність */
+    @media (max-width: 500px) {
+      .auth-container {
+        width: 90%;
+        padding: 35px 25px;
       }
-      .table-container {
-        overflow-x: auto;
+      
+      .gta-logo {
+        width: 110px;
+        height: 110px;
       }
-      table {
-        font-size: 0.875rem;
+      
+      h1 {
+        font-size: 28px;
       }
-      th, td {
-        padding: 0.25rem 0.5rem;
+      
+      .subtitle {
+        font-size: 16px;
+        margin: 25px auto 35px;
       }
-      .top-admins-container {
-        flex-direction: column;
-        align-items: center;
+      
+      .minimap {
+        width: 100px;
+        height: 100px;
+        top: 15px;
+        left: 15px;
+      }
+      
+      .status-indicators {
+        width: 150px;
+        bottom: 15px;
+        right: 15px;
+      }
+      
+      .telegram-btn {
+        font-size: 18px;
+        padding: 16px;
       }
     }
-  body {
-  background-color: #050608 !important;
-  color: #FFFBEF !important;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-#login-section {
-  background-color: #121824;
-  padding: 40px 30px;
-  border-radius: 20px;
-  max-width: 400px;
-  margin: 60px auto;
-  box-shadow: 0 0 30px #1977FDAA;
-  text-align: center;
-  animation: fadeInUp 1.2s ease forwards;
-  opacity: 0;
-  transform: translateY(30px);
-  font-weight: 700;
-  font-size: 1.3rem;
-}
-
-#login-section p {
-  margin-bottom: 25px;
-  color: #FFFBEF;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.telegram-button-wrapper {
-  display: inline-block;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 0 15px #1977FD;
-  animation: pulse 3s infinite ease-in-out;
-}
-
-.bg-white.p-4.rounded.shadow.mb-6 {
-  background-color: #121315 !important;
-  color: #FFFBEF;
-}
-
-.table-container table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 0.9rem;
-  background-color: #1a1a1a;
-  color: #dcdcdc;
-}
-
-.table-container thead {
-  background-color: #222;
-}
-
-.table-container th {
-  text-align: left;
-  padding: 10px 12px;
-  font-weight: 500;
-  color: #b0b0b0;
-}
-
-.table-container td {
-  padding: 10px 12px;
-  border-top: 1px solid #2c2c2c;
-}
-
-.table-container tbody tr:nth-child(even) {
-  background-color: #1e1e1e;
-}
-
-.table-container tbody tr:hover {
-  background-color: #2a2a2a;
-  transition: background-color 0.2s ease;
-}
-
-table {
-  background-color: #121315;
-  color: #FFFBEF;
-  border-color: #2a2d38;
-}
-
-.grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div {
-  background-color: #121315 !important;
-  color: #FFFBEF !important;
-  border-radius: 14px;
-}
-
-.bg-white.p-4.rounded.shadow {
-  background-color: #121315 !important;
-  color: #FFFBEF;
-  box-shadow: none !important;
-  border-radius: 14px;
-}
-
-.grid.grid-cols-1.sm\:grid-cols-3.gap-4.mb-6.stats-grid > div h3 {
-  color: #1977FD;
-}
-
-.script-menu {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.menu-button {
-  width: 40px;
-  height: 40px;
-  background-color: #2c2c2c;
-  color: white;
-  font-size: 22px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-  .menu-category {
-  font-weight: bold;
-  margin-top: 10px;
-  margin-bottom: 5px;
-  padding-left: 10px;
-  color: #444;
-}
-
-.menu-button:hover {
-  background-color: #3c3c3c;
-}
-
-.script-list {
-  display: flex;
-  flex-direction: column;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.script-list.hidden {
-  display: none !important;
-}
-
-.script-item {
-  padding: 8px 12px;
-  color: #e0e0e0;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 14px;
-  display: block;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.script-item:hover {
-  background-color: #333;
-}
-.hidden {
-  display: none !important;
-}
-
-.script-menu {
-  animation: fade-in 0.8s ease-out forwards;
-}
-
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  color: #1977FD;
-  text-align: center;
-  text-shadow: 0 0 10px rgba(25, 119, 253, 0.5);
-}
-
-#logout-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #ff4d4d;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  z-index: 1001;
-  transition: background-color 0.3s;
-  border: none;
-  font-weight: bold;
-}
-
-#logout-btn:hover {
-  background-color: #e60000;
-}
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fade-in {
-  animation: fade-in 0.8s ease-out forwards;
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 0 15px #1977FD;
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 35px #1977FD;
-    transform: scale(1.1);
-  }
-}
-
-/* Стили для нового меню суперадминов */
-.super-menu-button {
-  width: 40px;
-  height: 40px;
-  background-color: #1a1a1a;
-  color: #357cf0;
-  font-size: 22px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid #357cf0;
-}
-
-.super-menu-button:hover {
-  background-color: #333;
-  transform: scale(1.05);
-}
-
-.super-script-list {
-  display: flex;
-  flex-direction: column;
-  background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  border: 1px solid #357cf0;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.super-script-item {
-  padding: 8px 12px;
-  color: #ffd700;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 14px;
-  display: block;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.super-script-item:hover {
-  background-color: #333;
-  color: #fff;
-}
-
-    .anniversary-banner {
-    background: linear-gradient(90deg, #2c3e50, #4a6582);
-    color: #ecf0f1;
-    text-align: center;
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #34495e;
-}
-
-.anniversary-banner p {
-    margin: 0;
-    font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: 0.5px;
-}
-   
-/* Обновленные стили для администраторов недели */
-.top-admins-section {
-  background: #121315;
-  border-radius: 16px;
-  padding: 25px;
-  margin-bottom: 30px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  border: 1px solid #2a2a2a;
-}
-
-.top-admins-title {
-  text-align: center;
-  font-size: 1.7rem;
-  margin-bottom: 25px;
-  color: #e0e0e0;
-  font-weight: 600;
-  position: relative;
-  letter-spacing: 0.5px;
-}
-
-.top-admins-title::after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-  border-radius: 3px;
-}
-
-.top-admins-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 20px;
-}
-
-.admin-card {
-  background: linear-gradient(145deg, #1a1a1a, #151515);
-  border-radius: 12px;
-  width: 170px;
-  padding: 20px 15px;
-  text-align: center;
-  position: relative;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  border-top: 1px solid #2a2a2a;
-}
-
-.admin-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
-  border-top: 1px solid #3b82f6;
-}
-
-.admin-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 15px;
-  display: block;
-  position: relative;
-  background: #1f1f1f;
-  padding: 5px;
-}
-
-/* Стили для рамки аватарки в зависимости от места */
-.admin-card.gold .admin-avatar {
-  border: 3px solid #d4af37;
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-}
-
-.admin-card.silver .admin-avatar {
-  border: 3px solid #c0c0c0;
-  box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
-}
-
-.admin-card.bronze .admin-avatar {
-  border: 3px solid #cd7f32;
-  box-shadow: 0 0 15px rgba(205, 127, 50, 0.2);
-}
-
-.admin-card.normal .admin-avatar {
-  border: 3px solid #3b82f6;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-}
-
-.medal {
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  font-size: 2.2rem;
-  z-index: 2;
-  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
-}
-
-.admin-name {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: #f0f0f0;
-  font-size: 1.05rem;
-  letter-spacing: 0.3px;
-}
-
-.admin-stats {
-  font-size: 0.85rem;
-  color: #888;
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.admin-stat-value {
-  color: #e0e0e0;
-  font-weight: 500;
-  font-size: 1.05rem;
-}
-
-.week-info {
-  text-align: center;
-  color: #777;
-  font-size: 0.9rem;
-  margin-top: 20px;
-  font-style: italic;
-  position: relative;
-  padding-top: 15px;
-}
-
-.week-info::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
-}
-
-/* Стили для места */
-.place-badge {
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 0.9rem;
-  z-index: 1;
-}
-
-.gold .place-badge {
-  background: #d4af37;
-  color: #121315;
-}
-
-.silver .place-badge {
-  background: #c0c0c0;
-  color: #121315;
-}
-
-.bronze .place-badge {
-  background: #cd7f32;
-  color: #121315;
-}
-
-.normal .place-badge {
-  background: #3b82f6;
-  color: #f0f0f0;
-}
-
-/* Эффект подложки */
-.admin-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-}
-
-.gold::before { background: linear-gradient(90deg, #d4af37, #f9d423); }
-.silver::before { background: linear-gradient(90deg, #c0c0c0, #e0e0e0); }
-.bronze::before { background: linear-gradient(90deg, #cd7f32, #e9a957); }
-.normal::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
-
+    
+    /* Стили для нового меню суперадминов */
+    .super-menu-button {
+      width: 40px;
+      height: 40px;
+      background-color: #1a1a1a;
+      color: #357cf0;
+      font-size: 22px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid #357cf0;
+    }
+    
+    .super-menu-button:hover {
+      background-color: #333;
+      transform: scale(1.05);
+    }
+    
+    .super-script-list {
+      display: flex;
+      flex-direction: column;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border: 1px solid #357cf0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .super-script-item {
+      padding: 8px 12px;
+      color: #ffd700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+      display: block;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    
+    .super-script-item:hover {
+      background-color: #333;
+      color: #fff;
+    }
+    
+    /* Обновленные стили для администраторов недели */
+    .top-admins-section {
+      background: #121315;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid #2a2a2a;
+    }
+    
+    .top-admins-title {
+      text-align: center;
+      font-size: 1.7rem;
+      margin-bottom: 25px;
+      color: #e0e0e0;
+      font-weight: 600;
+      position: relative;
+      letter-spacing: 0.5px;
+    }
+    
+    .top-admins-title::after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      border-radius: 3px;
+    }
+    
+    .top-admins-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 20px;
+    }
+    
+    .admin-card {
+      background: linear-gradient(145deg, #1a1a1a, #151515);
+      border-radius: 12px;
+      width: 170px;
+      padding: 20px 15px;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-top: 1px solid #2a2a2a;
+    }
+    
+    .admin-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+      border-top: 1px solid #3b82f6;
+    }
+    
+    .admin-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 15px;
+      display: block;
+      position: relative;
+      background: #1f1f1f;
+      padding: 5px;
+    }
+    
+    /* Стили для рамки аватарки в зависимости от места */
+    .admin-card.gold .admin-avatar {
+      border: 3px solid #d4af37;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+    }
+    
+    .admin-card.silver .admin-avatar {
+      border: 3px solid #c0c0c0;
+      box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
+    }
+    
+    .admin-card.bronze .admin-avatar {
+      border: 3px solid #cd7f32;
+      box-shadow: 0 0 15px rgba(205, 127, 50, 0.2);
+    }
+    
+    .admin-card.normal .admin-avatar {
+      border: 3px solid #3b82f6;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    }
+    
+    .medal {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      font-size: 2.2rem;
+      z-index: 2;
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.4));
+    }
+    
+    .admin-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #f0f0f0;
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+    }
+    
+    .admin-stats {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    
+    .admin-stat-value {
+      color: #e0e0e0;
+      font-weight: 500;
+      font-size: 1.05rem;
+    }
+    
+    .week-info {
+      text-align: center;
+      color: #777;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      font-style: italic;
+      position: relative;
+      padding-top: 15px;
+    }
+    
+    .week-info::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+    }
+    
+    /* Стили для места */
+    .place-badge {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      z-index: 1;
+    }
+    
+    .gold .place-badge {
+      background: #d4af37;
+      color: #121315;
+    }
+    
+    .silver .place-badge {
+      background: #c0c0c0;
+      color: #121315;
+    }
+    
+    .bronze .place-badge {
+      background: #cd7f32;
+      color: #121315;
+    }
+    
+    .normal .place-badge {
+      background: #3b82f6;
+      color: #f0f0f0;
+    }
+    
+    /* Эффект подложки */
+    .admin-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+    
+    .gold::before { background: linear-gradient(90deg, #d4af37, #f9d423); }
+    .silver::before { background: linear-gradient(90deg, #c0c0c0, #e0e0e0); }
+    .bronze::before { background: linear-gradient(90deg, #cd7f32, #e9a957); }
+    .normal::before { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+    
     /* New styles for access denied page */
     #access-denied-section {
       display: none;
@@ -586,7 +811,167 @@ h1 {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(239, 68, 68, 0.6);
     }
-
+    
+    /* Стили для меню */
+    .script-menu {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .menu-button {
+      width: 40px;
+      height: 40px;
+      background-color: #2c2c2c;
+      color: white;
+      font-size: 22px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .menu-button:hover {
+      background-color: #3c3c3c;
+    }
+    
+    .script-list {
+      display: flex;
+      flex-direction: column;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .script-item {
+      padding: 8px 12px;
+      color: #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 14px;
+      display: block;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    
+    .script-item:hover {
+      background-color: #333;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    .script-menu {
+      animation: fade-in 0.8s ease-out forwards;
+    }
+    
+    #logout-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #ff4d4d;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+      transition: background-color 0.3s;
+      border: none;
+      font-weight: bold;
+    }
+    
+    #logout-btn:hover {
+      background-color: #e60000;
+    }
+    
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade-in {
+      animation: fade-in 0.8s ease-out forwards;
+    }
+    
+    /* Праздничная плашка */
+    .anniversary-banner {
+      background: linear-gradient(90deg, #2c3e50, #4a6582);
+      color: #ecf0f1;
+      text-align: center;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #34495e;
+    }
+    
+    .anniversary-banner p {
+      margin: 0;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+    
+    /* Стили для статистики */
+    .stats-grid > div {
+      background: rgba(13, 20, 34, 0.8) !important;
+      border: 1px solid rgba(42, 171, 238, 0.3) !important;
+      border-radius: 10px !important;
+      box-shadow: 0 0 15px rgba(25, 119, 253, 0.3) !important;
+      color: #f0f0f0 !important;
+    }
+    
+    .bg-white.p-4.rounded.shadow {
+      background: rgba(13, 20, 34, 0.8) !important;
+      border: 1px solid rgba(42, 171, 238, 0.3) !important;
+      box-shadow: 0 0 15px rgba(25, 119, 253, 0.3) !important;
+      color: #f0f0f0 !important;
+    }
+    
+    .bg-white.p-4.rounded.shadow.mb-6 {
+      background: rgba(13, 20, 34, 0.8) !important;
+      border: 1px solid rgba(42, 171, 238, 0.3) !important;
+      box-shadow: 0 0 15px rgba(25, 119, 253, 0.3) !important;
+      color: #f0f0f0 !important;
+    }
+    
+    .table-container table {
+      background: rgba(13, 20, 34, 0.8) !important;
+      border: 1px solid rgba(42, 171, 238, 0.3) !important;
+      box-shadow: 0 0 15px rgba(25, 119, 253, 0.3) !important;
+      color: #f0f0f0 !important;
+    }
+    
+    .table-container th {
+      background: rgba(42, 171, 238, 0.2) !important;
+      color: #2AABEE !important;
+    }
+    
+    .table-container tr:nth-child(even) {
+      background: rgba(42, 171, 238, 0.1) !important;
+    }
+    
+    .table-container tr:hover {
+      background: rgba(42, 171, 238, 0.2) !important;
+    }
+    
+    #contest-rank {
+      background: rgba(13, 20, 34, 0.8) !important;
+      border: 1px solid rgba(42, 171, 238, 0.3) !important;
+      box-shadow: 0 0 15px rgba(25, 119, 253, 0.3) !important;
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -605,6 +990,30 @@ h1 {
     </div>
   </div>
 
+  <!-- Городской фон -->
+  <div class="city-background" id="city-background"></div>
+  
+  <!-- Миникарта -->
+  <div class="minimap">
+    <div class="minimap-player"></div>
+    <div class="minimap-arrow"></div>
+    <div class="minimap-car"></div>
+    <div class="minimap-car" style="animation-delay: 3s;"></div>
+    <div class="minimap-car" style="animation-delay: 7s;"></div>
+  </div>
+  
+  <!-- Индикаторы здоровья и брони -->
+  <div class="status-indicators">
+    <div class="status-bar">
+      <div class="health-bar"></div>
+      <div class="status-label">ЗДОРОВ'Я</div>
+    </div>
+    <div class="status-bar">
+      <div class="armor-bar"></div>
+      <div class="status-label">БРОНЯ</div>
+    </div>
+  </div>
+
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold mb-4" id="welcome-header">Ласкаво просимо!</h1>
 
@@ -615,8 +1024,29 @@ h1 {
     </div>
     
     <!-- Секция авторизации -->
-    <div id="login-section">
-      <p>Будь ласка, увійдіть через Telegram:</p>
+    <div id="login-section" class="auth-container">
+      <!-- Радар -->
+      <div class="radar">
+        <div class="radar-circle" style="width: 100%; height: 100%;"></div>
+        <div class="radar-circle" style="width: 70%; height: 70%;"></div>
+        <div class="radar-circle" style="width: 40%; height: 40%;"></div>
+        <div class="radar-line"></div>
+        <div class="radar-dot" style="top: 30%; left: 40%;"></div>
+        <div class="radar-dot" style="top: 60%; left: 70%;"></div>
+        <div class="radar-dot" style="top: 45%; left: 20%;"></div>
+      </div>
+      
+      <!-- Логотип в стиле GTA -->
+      <div class="gta-logo">
+        <svg class="gta-icon" viewBox="0 0 24 24">
+          <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.14.141-.259.259-.374.261l.213-3.053 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.136-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/>
+        </svg>
+      </div>
+      
+      <h1>АДМІНІСТРАТИВНА ПАНЕЛЬ</h1>
+      
+      <p class="subtitle typing-text">Доступ лише через авторизацію Telegram</p>
+      
       <div class="telegram-button-wrapper">
         <script async src="https://telegram.org/js/telegram-widget.js?7"
                 data-telegram-login="ticket_tracker_UG_bot" 
@@ -630,28 +1060,27 @@ h1 {
     
     <!-- Контейнер для обоих меню -->
     <div class="script-menu hidden" id="menuContainer">
-<!-- Основное меню -->
-<div>
-  <div class="menu-button" onclick="toggleScripts()">≡</div>
-  <div class="script-list hidden" id="scriptList">
+      <!-- Основное меню -->
+      <div>
+        <div class="menu-button" onclick="toggleScripts()">≡</div>
+        <div class="script-list hidden" id="scriptList">
+          
+          <div class="menu-category">Скрипти</div>
+          <a href="script1.1.html" class="script-item">Скрипт 1.1</a>
+          <a href="script1.2.html" class="script-item">Скрипт 1.2</a>
+          <a href="script1.3.html" class="script-item">Скрипт 1.3</a>
+          <a href="script1.4.html" class="script-item">Скрипт 1.4</a>
+          <a href="script1.5.html" class="script-item">Скрипт 1.5</a>
+          <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
     
-    <div class="menu-category">Скрипти</div>
-    <a href="script1.1.html" class="script-item">Скрипт 1.1</a>
-    <a href="script1.2.html" class="script-item">Скрипт 1.2</a>
-    <a href="script1.3.html" class="script-item">Скрипт 1.3</a>
-    <a href="script1.4.html" class="script-item">Скрипт 1.4</a>
-    <a href="script1.5.html" class="script-item">Скрипт 1.5</a>
-    <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
-
-    <div class="menu-category">Інформація</div>
-    <a href="team.html" class="script-item">Команда проєкту та до кого звертатися</a>
-    <a href="tickets.html" class="script-item">Регламент Відповіді на Тікети</a>
-    <a href="commands.html" class="script-item">Команди адміністратора</a>
-    <a href="faq.html" class="script-item">Питання та відповіді</a>
-
-  </div>
-</div>
-
+          <div class="menu-category">Інформація</div>
+          <a href="team.html" class="script-item">Команда проєкту та до кого звертатися</a>
+          <a href="tickets.html" class="script-item">Регламент Відповіді на Тікети</a>
+          <a href="commands.html" class="script-item">Команди адміністратора</a>
+          <a href="faq.html" class="script-item">Питання та відповіді</a>
+    
+        </div>
+      </div>
       
       <!-- Меню для суперадминов -->
       <div id="superScriptMenu" class="hidden">
@@ -700,18 +1129,18 @@ h1 {
             <p>Час у грі: <span id="month-time">—</span></p>
           </div>
         </div>
-
+    
         <div id="contest-rank" class="bg-[#121315] text-white p-4 rounded-xl shadow mb-6 border border-[#1977FD] animate-fade-in">
           <h3 class="text-xl font-bold text-[#1977FD] mb-2">🎉 Конкурс "Кращий адмін"</h3>
           <p class="mb-2">Ти зараз на <span id="current-rank" class="font-semibold text-yellow-300">…</span> місці серед усієї адміністрації!</p>
           <p class="text-sm text-gray-300">📅 Конкурс триває до <span class="text-white">30 червня</span>. Більше тікетів і годин — вище шанс на перемогу!</p>
         </div>
-
+    
         <div class="bg-white p-4 rounded shadow mb-6">
           <h3 class="font-bold mb-4">Динаміка тікетів та часу за останній місяць</h3>
           <canvas id="statsChart" height="150"></canvas>
         </div>
-
+    
         <div class="bg-white p-4 rounded shadow">
           <h3 class="font-bold mb-2">Детальна статистика по днях:</h3>
           <div class="table-container">
@@ -1378,6 +1807,73 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Первоначальная загрузка данных
   autoRefreshData();
+  
+  // Создание городского фона
+  const cityContainer = document.getElementById('city-background');
+  
+  // Создание зданий
+  for (let i = 0; i < 15; i++) {
+    const building = document.createElement('div');
+    building.classList.add('building');
+    
+    const width = 40 + Math.random() * 80;
+    const height = 160 + Math.random() * 320;
+    const left = Math.random() * 100;
+    
+    building.style.width = `${width}px`;
+    building.style.height = `${height}px`;
+    building.style.left = `${left}%`;
+    
+    cityContainer.appendChild(building);
+    
+    // Добавление окон
+    const windowCount = Math.floor(height / 45);
+    for (let j = 0; j < windowCount; j++) {
+      const window = document.createElement('div');
+      window.classList.add('window');
+      
+      const windowWidth = 6 + Math.random() * 12;
+      const windowHeight = 10 + Math.random() * 15;
+      const windowLeft = 8 + Math.random() * (width - windowWidth - 16);
+      const windowTop = 15 + j * 45;
+      const delay = Math.random() * 4;
+      
+      window.style.width = `${windowWidth}px`;
+      window.style.height = `${windowHeight}px`;
+      window.style.left = `${windowLeft}px`;
+      window.style.top = `${windowTop}px`;
+      window.style.animationDelay = `${delay}s`;
+      
+      building.appendChild(window);
+    }
+  }
+  
+  // Добавление уличных фонарей
+  for (let i = 0; i < 10; i++) {
+    const light = document.createElement('div');
+    light.classList.add('street-light');
+    
+    light.style.left = `${10 + i * 9}%`;
+    light.style.height = `${90 + Math.random() * 120}px`;
+    
+    cityContainer.appendChild(light);
+  }
+  
+  // Добавление машин
+  for (let i = 0; i < 4; i++) {
+    const car = document.createElement('div');
+    car.classList.add('car-light');
+    
+    const speed = 5 + Math.random() * 10;
+    const delay = Math.random() * 10;
+    const bottom = 25 + Math.random() * 60;
+    
+    car.style.bottom = `${bottom}px`;
+    car.style.animationDuration = `${speed}s`;
+    car.style.animationDelay = `${delay}s`;
+    
+    cityContainer.appendChild(car);
+  }
 });
   </script>
 </body>
