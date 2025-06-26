@@ -117,6 +117,7 @@
             --card-border: #2a2a2a;
             --accent-blue: #3b82f6;
             --accent-green: #10b981;
+            --accent-red: #ff0000;
             --text-light: #ffffff;
             --text-muted: #a3a3a3;
             --owner: #FFD700;
@@ -227,47 +228,18 @@
             min-width: 300px;
         }
         
-        .video-container {
-            flex: 1;
-            min-width: 300px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .video-container img {
-            width: 100%;
-            display: block;
-            border-radius: 16px;
-        }
-        
-        .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 70px;
-            color: white;
-            opacity: 0.8;
-            transition: opacity 0.3s;
-        }
-        
-        .video-container:hover .play-button {
-            opacity: 1;
-            color: var(--accent-blue);
-        }
-        
-        .video-link {
-            display: block;
-            position: relative;
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
         }
         
         .download-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 15px 35px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
             background: linear-gradient(to right, var(--accent-green), #059669);
             color: white;
             font-size: 1.2rem;
@@ -278,6 +250,8 @@
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
             position: relative;
             overflow: hidden;
+            flex: 1;
+            min-width: 200px;
         }
         
         .download-btn:hover {
@@ -287,6 +261,34 @@
         
         .download-btn:active {
             transform: translateY(1px);
+        }
+        
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 25px;
+            background: linear-gradient(to right, #ff0000, #cc0000);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .youtube-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);
+            background: linear-gradient(to right, #ff3333, #cc0000);
+        }
+        
+        .youtube-btn i {
+            margin-right: 10px;
+            font-size: 1.3rem;
         }
         
         .download-btn i {
@@ -384,6 +386,10 @@
             .download-section {
                 flex-direction: column;
             }
+            
+            .btn-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -431,23 +437,20 @@
                         <h3>Завантажте біндер для адміністрації</h3>
                         <p>Цей інструмент дозволить швидко виконувати адміністративні дії за допомогою зручних гарячих клавіш. Просто завантажте файл та дотримуйтесь інструкцій з встановлення.</p>
                         
-                        <a href="https://drive.google.com/drive/folders/1gnKvG5_8UUL2l2oEkKuXOMuc2cZprwom?usp=drive_link" target="_blank" class="download-btn">
-                            <i class="fas fa-download"></i>Завантажити біндер
-                        </a>
+                        <div class="btn-group">
+                            <a href="https://drive.google.com/drive/folders/1gnKvG5_8UUL2l2oEkKuXOMuc2cZprwom?usp=drive_link" target="_blank" class="download-btn">
+                                <i class="fas fa-download"></i>Завантажити біндер
+                            </a>
+                            
+                            <a href="https://youtu.be/Fh0FaawjnHk" target="_blank" class="youtube-btn">
+                                <i class="fab fa-youtube"></i>Переглянути інструкцію
+                            </a>
+                        </div>
                         
                         <p style="margin-top: 20px; color: var(--text-muted);">
                             <i class="fas fa-info-circle"></i> Розмір файлу: 75.7 MB | Версія: 0.1
                         </p>
                     </div>
-                </div>
-                
-                <div class="video-container">
-                    <a href="https://youtu.be/Fh0FaawjnHk" target="_blank" class="video-link">
-                        <img src="https://img.youtube.com/vi/Fh0FaawjnHk/0.jpg" alt="Інструкція з встановлення біндера">
-                        <div class="play-button">
-                            <i class="fas fa-play-circle"></i>
-                        </div>
-                    </a>
                 </div>
             </div>
             
@@ -563,6 +566,12 @@
             '@c10mm',
             '@noxx_uagtaV',
             '@zhdanovrostyslav',
+            '@devgta_ua', 
+            '@teh_ugta', 
+            '@Bloomberger_01',
+            '@no1szeeq', 
+            '@test_uagta', 
+            '@digital_ug'
         ];
 
         function onTelegramAuth(user) {
