@@ -6,8 +6,10 @@
     <title>Мануал з роботи з тікетами | Ukraine GTA 5</title>
     <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Додано Axios для роботи з Google Sheets -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-         /* Стили авторизации */
+        /* Стили авторизации */
         #login-section {
             background-color: #121824;
             padding: 40px 30px;
@@ -755,6 +757,7 @@
           
           // Показываем контент
           showContent();
+          animateMessages(); // Запускаем анимацию
         } else {
           // Если пользователь не найден
           localStorage.removeItem('tg_auth');
@@ -788,6 +791,20 @@
       showLoginForm();
     }
 
+    // Анимация сообщений
+    function animateMessages() {
+      const messages = document.querySelectorAll('.message, .system-note');
+      let delay = 0;
+      
+      messages.forEach(message => {
+        setTimeout(() => {
+          message.classList.add('visible');
+        }, delay);
+        
+        delay += 300; // Задержка между сообщениями
+      });
+    }
+
     // Проверка сохраненной сессии при загрузке
     document.addEventListener('DOMContentLoaded', function() {
       // Добавляем обработчик для кнопки выхода
@@ -798,6 +815,8 @@
       if (savedAuth) {
         try {
           showContent();
+          // Запускаем анимацию через небольшой таймаут
+          setTimeout(animateMessages, 300);
         } catch (e) {
           localStorage.removeItem('tg_auth');
           showLoginForm();
