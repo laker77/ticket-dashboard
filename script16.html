@@ -3,9 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Система сімей | Оновлення 1.6 | Ukraine GTA 5</title>
+    <title>Оновлення 1.6 | Система сімей | Ukraine GTA 5</title>
+    <link rel="icon" href="https://example.com/path/to/1-17ffebdc.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
+        /* Стили авторизации */
+        #login-section {
+            background-color: #121824;
+            padding: 40px 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: 60px auto;
+            box-shadow: 0 0 30px #1977FDAA;
+            text-align: center;
+            animation: fadeInUp 1.2s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        #login-section p {
+            margin-bottom: 25px;
+            color: #FFFBEF;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 15px #1977FD;
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        #logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s;
+            border: none;
+            font-weight: bold;
+        }
+        
+        #logout-btn:hover {
+            background-color: #e60000;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 15px #1977FD;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px #1977FD;
+                transform: scale(1.1);
+            }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -14,186 +88,199 @@
         }
         
         :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --card-border: #334155;
-            --accent: #3b82f6;
-            --text-light: #f1f5f9;
-            --text-muted: #94a3b8;
+            --bg-dark: #050608;
+            --card-bg: #1A1A1A;
+            --card-border: #2A2A2A;
+            --accent-blue: #3B82F6;
+            --accent-light: #60A5FA;
+            --text-light: #FFFFFF;
+            --text-muted: #A3A3A3;
+            --player-bg: #1E1E1E;
+            --admin-bg: #1A2A3A;
         }
         
         body {
             background-color: var(--bg-dark);
             color: var(--text-light);
-            line-height: 1.7;
+            line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
         }
         
         header {
             text-align: center;
-            padding: 40px 0;
+            padding: 50px 0;
             margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header-content {
+            background: rgba(26, 26, 26, 0.7);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: var(--text-light);
-            font-weight: 700;
-            position: relative;
-            display: inline-block;
-        }
-        
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--accent);
-            border-radius: 3px;
-        }
-        
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #60A5FA, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
         
         h2 {
-            font-size: 1.8rem;
-            margin: 50px 0 25px;
-            color: var(--text-light);
+            font-size: 2rem;
+            margin: 40px 0 20px;
+            color: var(--accent-light);
             position: relative;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 15px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 4px;
         }
         
         h3 {
-            font-size: 1.4rem;
-            margin: 35px 0 15px;
-            color: var(--text-light);
-        }
-        
-        .content-block {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid var(--card-border);
+            font-size: 1.5rem;
+            margin: 30px 0 20px;
+            color: var(--accent-light);
         }
         
         p {
             margin-bottom: 20px;
+            line-height: 1.7;
             color: var(--text-muted);
         }
         
-        ul, ol {
-            padding-left: 25px;
-            margin-bottom: 20px;
+        .section {
+            background: rgba(26, 26, 26, 0.7);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .step {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(30, 30, 30, 0.5);
+            border-left: 4px solid var(--accent-blue);
+        }
+        
+        .example {
+            margin: 25px 0;
+            padding-left: 20px;
+            border-left: 3px solid var(--accent-blue);
+        }
+        
+        .example-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--accent-light);
+            font-size: 1.1rem;
+        }
+        
+        .system-note {
+            background: rgba(20, 20, 20, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
             color: var(--text-muted);
-        }
-        
-        li {
-            margin-bottom: 10px;
-        }
-        
-        .icon-list li {
-            list-style: none;
-            padding-left: 30px;
+            font-size: 0.95rem;
+            border-left: 3px solid #555;
             position: relative;
         }
         
-        .icon-list li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-            font-size: 1.5rem;
-        }
-        
-        .highlight {
-            background: rgba(59, 130, 246, 0.1);
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 3px solid var(--accent);
-            margin: 20px 0;
+        .system-note::before {
+            content: 'ℹ️';
+            margin-right: 10px;
+            font-size: 1.1rem;
         }
         
         .contract-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 8px;
+            overflow: hidden;
         }
         
         .contract-table th {
-            text-align: left;
+            background-color: rgba(59, 130, 246, 0.2);
             padding: 12px 15px;
-            border-bottom: 1px solid var(--card-border);
-            color: var(--text-light);
-            font-weight: 600;
+            text-align: left;
+            color: var(--accent-light);
         }
         
         .contract-table td {
             padding: 10px 15px;
-            border-bottom: 1px solid var(--card-border);
-            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .contract-table tr:last-child td {
             border-bottom: none;
         }
         
-        .car-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+        .contract-table tr:hover {
+            background-color: rgba(59, 130, 246, 0.05);
         }
         
-        .car-table th {
-            text-align: left;
-            padding: 12px 15px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-        
-        .car-table td {
-            padding: 10px 15px;
-            color: var(--text-muted);
-        }
-        
-        .divider {
-            height: 1px;
-            background: var(--card-border);
-            margin: 30px 0;
-        }
-        
-        .update-badge {
-            display: inline-block;
-            background: var(--accent);
-            color: white;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-        
-        .warning-box {
-            background: rgba(239, 68, 68, 0.1);
-            padding: 20px;
+        .feature-block {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(30, 30, 30, 0.4);
             border-radius: 8px;
-            border-left: 3px solid #ef4444;
-            margin: 20px 0;
+        }
+        
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            color: var(--accent-light);
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .signature {
+            text-align: center;
+            font-style: italic;
+            color: var(--accent-blue);
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+            font-size: 1.2rem;
         }
         
         footer {
@@ -204,294 +291,499 @@
             margin-top: 40px;
         }
         
+        .logo {
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 30px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
         @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.7rem;
             }
             
-            .content-block {
-                padding: 20px;
+            .section {
+                padding: 25px;
+            }
+            
+            .header-content {
+                padding: 25px;
+            }
+            
+            .contract-table {
+                display: block;
+                overflow-x: auto;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Система сімей <span class="update-badge">Оновлення 1.6</span></h1>
-            <p class="subtitle">Повний гайд по новій системі сімейних організацій</p>
-        </header>
-        
-        <div class="content-block">
-            <h2>Створення сімейної організації</h2>
-            
-            <p>Для створення сім'ї потрібно приїхати до мерії та стати на мітку і вибрати "Створення сім'ї".</p>
-            
-            <p>Після цього вас переносить в меню створення сімейної організації. Де гравець має вибрати:</p>
-            
-            <ul class="icon-list">
-                <li>Назву сімейної організації</li>
-                <li>Колір сімейної організації</li>
-                <li>Фон профілю</li>
-                <li>Завантажити фото (з свого ПК)</li>
-            </ul>
-            
-            <p>Потім натискаєте "Наступний етап" і переходите до вибору офісу та оплата в карбованцях або в ігрову валюту.</p>
-            
-            <div class="highlight">
-                <p>Є 3 види офісів, що відрізняються лише розташуванням на мапі.</p>
-            </div>
+    <!-- Кнопка выхода -->
+    <button id="logout-btn" class="hidden">Вийти</button>
+
+    <!-- Секция авторизации -->
+    <div id="login-section">
+        <p>Будь ласка, увійдіть через Telegram:</p>
+        <div class="telegram-button-wrapper">
+            <script async src="https://telegram.org/js/telegram-widget.js?7"
+                    data-telegram-login="ticket_tracker_UG_bot" 
+                    data-size="large"
+                    data-userpic="false"
+                    data-request-access="write"
+                    data-onauth="onTelegramAuth(user)">
+            </script>
         </div>
-        
-        <div class="content-block">
-            <h2>Офіс організації</h2>
-            
-            <p>На мапі офіс позначений синім бліпом. При вході на мітку вас телепортує до вашого офісу.</p>
-            
-            <h3>Інфраструктура офісу</h3>
-            <ul class="icon-list">
-                <li>Шафа (обмежена кількість слотів)</li>
-                <li>Мітка виходу</li>
-                <li>Мітка до гаражу</li>
-            </ul>
-            
-            <div class="highlight">
-                <p>Функціонал офісу буде розширюватись у майбутніх оновленнях.</p>
-            </div>
-            
-            <h3>Гараж сімейної організації</h3>
-            <p>Кожен офіс має 5 гаражних місць.</p>
-            
-            <p><strong>Додавання авто:</strong> Підійдіть до авто → Натисніть G → Оберіть дію</p>
-            <p><strong>Залити авто в гараж:</strong> Підійдіть до мітки гаражу → Натисніть E</p>
-            <p><strong>Забрати авто:</strong> Зайдіть в гараж → Сість в авто → Натисніть E</p>
-        </div>
-        
-        <div class="content-block">
-            <h2>Додавання учасників</h2>
-            
-            <p>Щоб додати/вигнати гравця:</p>
-            <ul class="icon-list">
-                <li>Підійдіть до гравця</li>
-                <li>Натисніть G для відкриття меню</li>
-                <li>Оберіть "Сім'я"</li>
-                <li>Виконайте потрібну дію</li>
-            </ul>
-        </div>
-        
-        <div class="content-block">
-            <h2>Планшет сімейної організації</h2>
-            
-            <p>Після створення в планшеті з'явиться додаток з вашим логотипом та назвою.</p>
-            
-            <h3>Головна сторінка</h3>
-            <p>Містить повну інформацію про сім'ю:</p>
-            <ul class="icon-list">
-                <li>Слоти учасників</li>
-                <li>Автопарк організації</li>
-                <li>Майно та нерухомість</li>
-                <li>Фінансові рахунки</li>
-            </ul>
-            
-            <div class="highlight">
-                <p>Для сплати податків кошти мають бути на балансі організації. Поповнення: ваш банківський рахунок → переказ на рахунок організації.</p>
-            </div>
-            
-            <h3>Опис організації</h3>
-            <p>Лідер може редагувати текст та додавати посилання на Discord.</p>
-            
-            <h3>Члени організації</h3>
-            <p>Інформація про учасників: нікнейм, звання, статус. Керування: підвищення/пониження/вигнання.</p>
-            
-            <h3>Контракти організації</h3>
-            <p>Щодня доступні 4 контракти, що змінюються після рестарту сервера. Активувати можуть лише лідер та заступники.</p>
-            
-            <table class="contract-table">
-                <thead>
-                    <tr>
-                        <th>Контракт</th>
-                        <th>Завдання</th>
-                        <th>Час</th>
-                        <th>КД</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Рибна лихоманка I</td>
-                        <td>Виловити 1.500 риб</td>
-                        <td>5 год</td>
-                        <td>6 год</td>
-                    </tr>
-                    <tr>
-                        <td>Рибна лихоманка II</td>
-                        <td>Виловити 2.500 риб</td>
-                        <td>5 год</td>
-                        <td>6 год</td>
-                    </tr>
-                    <tr>
-                        <td>Балонний транзит I</td>
-                        <td>Здати 7.500 од. газу</td>
-                        <td>5 год</td>
-                        <td>5 год</td>
-                    </tr>
-                    <tr>
-                        <td>Балонний транзит II</td>
-                        <td>Здати 10.000 од. газу</td>
-                        <td>5 год</td>
-                        <td>5 год</td>
-                    </tr>
-                    <tr>
-                        <td>Лінія ремонту</td>
-                        <td>Полагодити 100 авто</td>
-                        <td>7 год</td>
-                        <td>5 год</td>
-                    </tr>
-                    <tr>
-                        <td>Грибний збір I</td>
-                        <td>Зібрати 800 грибів</td>
-                        <td>3 год</td>
-                        <td>4 год</td>
-                    </tr>
-                    <tr>
-                        <td>Грибний збір II</td>
-                        <td>Зібрати 1.200 грибів</td>
-                        <td>7 год</td>
-                        <td>5 год</td>
-                    </tr>
-                    <tr>
-                        <td>Скарби забутих часів</td>
-                        <td>Знайти 200 скарбів</td>
-                        <td>9 год</td>
-                        <td>2 год</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <div class="highlight">
-                <p><strong>Балонний транзит:</strong> Вимагає спеціальні авто для перевезення:</p>
-                <ul class="icon-list">
-                    <li>Emperor IX570 (1,000 од.)</li>
-                    <li>Benefactor W-Series 250t IT (1,500 од.)</li>
-                    <li>Fury Predator H-150 (2,000 од.)</li>
-                    <li>CMG Canon AT4X (2,000 од.)</li>
-                    <li>Benefactor AWG H63 6x6 (2,500 од.)</li>
-                </ul>
-                <p><strong>Виконання:</strong> Взяти авто → завантажити балони → відвезти на точку</p>
-                <p><strong>Винагорода:</strong> 1,000$ за кожен балон</p>
-            </div>
-            
-            <h3>Інші розділи</h3>
-            <ul class="icon-list">
-                <li><strong>Контроль території</strong> - з'явиться в оновленні 1.7</li>
-                <li><strong>Лідерборд</strong> - рейтинг організацій</li>
-                <li><strong>Транзакції</strong> - історія фінансових операцій</li>
-                <li><strong>Покращення</strong> - майбутні оновлення</li>
-                <li><strong>Магазин</strong> - послуги за карбованці</li>
-            </ul>
-            
-            <div class="highlight">
-                <p>Для поповнення балансу карбованцями: переказ з особистого рахунку на рахунок організації.</p>
-            </div>
-            
-            <h3>Панель керування</h3>
-            <p>Лідер може:</p>
-            <ul class="icon-list">
-                <li>Налаштовувати доступ до авто по рангу</li>
-                <li>Створювати нові ранги</li>
-                <li>Вказувати права для кожного рангу</li>
-            </ul>
-            
-            <div class="highlight">
-                <p>Початкові ранги: 10-Лідер та 1-Печенька (не видаляються, але можна редагувати назву).</p>
-            </div>
-        </div>
-        
-        <div class="content-block">
-            <h2>Маєток сімейної організації</h2>
-            
-            <p>Доступні 50 будинків класу "Особняк" з 10 гаражними місцями.</p>
-            
-            <p><strong>Процес передачі:</strong></p>
-            <ol>
-                <li>Лідер купує будинок (10кк)</li>
-                <li>У меню будинку обирає "Передати дім у сім'ю"</li>
-                <li>Сплачує половину вартості будинку (5кк)</li>
-            </ol>
-            
-            <div class="highlight">
-                <p>Маєток додає +10 ГМ (загальна кількість авто: 15). Для повернення будинку лідер повинен продати свій поточний будинок.</p>
-            </div>
-        </div>
-        
-        <div class="content-block">
-            <h2>Склад сімейної організації</h2>
-            
-            <p>Додано 96 складів, що надають додаткові слоти для зберігання.</p>
-            
-            <p><strong>Розташування:</strong> 12 груп по 8 складів у кожній.</p>
-            
-            <div class="highlight">
-                <p>Оплата за склад здійснюється з балансу організації. Після покупки необхідно відвідувати ваш склад за його номером.</p>
-            </div>
-        </div>
-        
-        <div class="content-block">
-            <h2>Додатково</h2>
-            
-            <h3>Нові автомобілі</h3>
-            <table class="car-table">
-                <tbody>
-                    <tr>
-                        <td>Avura MOX S-Type</td>
-                        <td>Контейнери</td>
-                    </tr>
-                    <tr>
-                        <td>Vapid Grand Rider Vrado</td>
-                        <td>Автосалон Люкс</td>
-                    </tr>
-                    <tr>
-                        <td>Pegassi Rewuelto</td>
-                        <td>Автосалон Люкс</td>
-                    </tr>
-                    <tr>
-                        <td>CMG Canon AT4X</td>
-                        <td>Автосалон Люкс</td>
-                    </tr>
-                    <tr>
-                        <td>Annis 180sx</td>
-                        <td>Автосалон Люкс</td>
-                    </tr>
-                    <tr>
-                        <td>Ubermacht W5 E60</td>
-                        <td>Автосалон Люкс</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <h3>Новий одяг</h3>
-            <ul class="icon-list">
-                <li>Магазин економ класу</li>
-                <li>Магазин люкс</li>
-                <li>Донат магазин</li>
-            </ul>
-            
-            <div class="highlight">
-                <p>Акція х2 діє з 29.06 по хх.хх.хххх</p>
-            </div>
-            
-            <div class="warning-box">
-                <p>Будь-яке розповсюдження цього скрипта призведе до ЧСП проектів UG TEAM</p>
-            </div>
-        </div>
-        
-        <footer>
-            <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-            <p style="margin-top: 15px;">Система сімей | Оновлення 1.6</p>
-        </footer>
     </div>
+    
+    <!-- Основной контент -->
+    <div id="content" class="hidden">
+        <div class="container">
+            <header>
+                <div class="header-content">
+                    <h1><i class="fas fa-users"></i> Оновлення 1.6 | Система сімей</h1>
+                    <p>Повний гайд по новій системі сімейних організацій</p>
+                </div>
+            </header>
+            
+            <div class="section">
+                <h2><i class="fas fa-home"></i> Створення сімейної організації</h2>
+                <p>Для створення сім’ї потрібно приїхати до мерії та стати на мітку і вибрати “Створення сім’ї”.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div>
+                        <p>Після цього вас переносить в меню створення сімейної організації. Де гравець має вибрати:</p>
+                        <ul>
+                            <li>Назву сімейної організації</li>
+                            <li>Колір сімейної організації</li>
+                            <li>Фон профілю</li>
+                            <li>Завантажити фото (з свого ПК зможуть завантажити любий логотип)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <p>Потім натискаєте “Наступний етап” і переходите до вибору офісу та оплата в карбованцях або в ігрову валюту.</p>
+                
+                <div class="system-note">
+                    Є 3 види офісів, в них немає нічого різного окрім місця розтошування на самій мапі
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-building"></i> Офіс організації</h2>
+                <p>На мапі вона позначена синім бліпом.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-door-open"></i>
+                    </div>
+                    <div>
+                        <p>Коли ви заходите на мітку вас одразу телепортує в офіс вашої сімейної організації.</p>
+                        <p>В самому офісі є:</p>
+                        <ul>
+                            <li>Шафа (маленька, немає багато слотів)</li>
+                            <li>Мітка виходу</li>
+                            <li>Мітка для спуску в гараж сімейної організації</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="system-note">
+                    В подальшому функціонал в офісі буде додаватись.
+                </div>
+                
+                <h3><i class="fas fa-car"></i> Гараж сімейної організації</h3>
+                <p>Гаражні місця до кожного офісу це 5 ГМ.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div>
+                        <p>Для того щоб додати авто до сімейної організації потрібно:</p>
+                        <ol>
+                            <li>Підійти до автомобіля</li>
+                            <li>Через клавішу “G” вибрати відповідну дію</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <p>Після цього ви можете залишати авто в гараж сімейної організації і відповідно забирати його звідти.</p>
+                
+                <div class="system-note">
+                    Щоб залити авто в гараж: підійти до офісу на мітку гаражу → натиснути "Е"<br>
+                    Щоб забрати авто: зайти в офіс → спуститись в гараж → сісти в авто → натиснути "Е"
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-user-plus"></i> Додавання в сім'ю</h2>
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div>
+                        <p>Щоб додати/вигнати гравця в сімейну організацію потрібно:</p>
+                        <ol>
+                            <li>Підійти до гравця</li>
+                            <li>Через радіальне меню “G” вибрати “Сім’я”</li>
+                            <li>Вибрати відповідну дію</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <h3><i class="fas fa-tablet-alt"></i> Планшет сімейної організації</h3>
+                <p>Після створення в самому планшеті з’явиться новий додаток з назвою сім’ї та логотипом якій ви вибрали.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div>
+                        <h4>Головна</h4>
+                        <p>Вся інформація про сім’ю: слоти учасників, автопарк організації, майно та нерухомість.</p>
+                        <div class="system-note">
+                            Важливо! Кошти мають бути на балансі сімейної організації для сплати податків. 
+                            Поповнення: власний банківський рахунок → переказ на рахунок сімейної організації.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <div>
+                        <h4>Опис організації</h4>
+                        <p>Лідер може змінювати текст та додавати посилання на Discord.</p>
+                        <div class="system-note">
+                            Щоб скопіювати посилання: натиснути на іконку Discord → посилання копіюється в буфер обміну
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h4>Члени організації</h4>
+                        <p>Інформація про учасників: нікнейм, звання, статус (онлайн/офлайн).</p>
+                        <p>Керування: підвищення/пониження/вигнання.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div>
+                        <h4>Контракти</h4>
+                        <p>Контракти сім’ї для виконання. Щодня доступно 4 контракти, які змінюються після рестарту.</p>
+                        <div class="system-note">
+                            Активувати контракт може лише лідер/заступник.<br>
+                            Після активації - обмежений час на виконання.<br>
+                            Після виконання - час оновлення (КД).
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Список контрактів</h3>
+                <table class="contract-table">
+                    <thead>
+                        <tr>
+                            <th>Назва контракту</th>
+                            <th>Завдання</th>
+                            <th>Час виконання</th>
+                            <th>КД після виконання</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Рибна лихоманка I</td>
+                            <td>Виловити 1.500 риб</td>
+                            <td>5 годин</td>
+                            <td>6 годин</td>
+                        </tr>
+                        <tr>
+                            <td>Рибна лихоманка II</td>
+                            <td>Виловити 2.500 риб</td>
+                            <td>5 годин</td>
+                            <td>6 годин</td>
+                        </tr>
+                        <tr>
+                            <td>Балонний транзит I</td>
+                            <td>Здати 7.500 одиниць газу</td>
+                            <td>5 годин</td>
+                            <td>5 годин</td>
+                        </tr>
+                        <tr>
+                            <td>Балонний транзит II</td>
+                            <td>Здати 10.000 одиниць газу</td>
+                            <td>5 годин</td>
+                            <td>5 годин</td>
+                        </tr>
+                        <tr>
+                            <td>Лінія ремонту</td>
+                            <td>Полагодити 100 автівок</td>
+                            <td>7 годин</td>
+                            <td>5 годин</td>
+                        </tr>
+                        <tr>
+                            <td>Грибний збір I</td>
+                            <td>Зібрати 800 грибів</td>
+                            <td>3 години</td>
+                            <td>4 години</td>
+                        </tr>
+                        <tr>
+                            <td>Грибний збір II</td>
+                            <td>Зібрати 1200 грибів</td>
+                            <td>7 годин</td>
+                            <td>5 годин</td>
+                        </tr>
+                        <tr>
+                            <td>Скарби забутих часів</td>
+                            <td>Знайти 200 скарбів</td>
+                            <td>9 годин</td>
+                            <td>2 години</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="system-note">
+                    <strong>Балонний транзит:</strong> Потрібні спеціальні авто:
+                    <ul>
+                        <li>Emperor IX570 (1000 од.)</li>
+                        <li>Benefactor W-Series 250t IT (1500 од.)</li>
+                        <li>Fury Predator H-150 (2000 од.)</li>
+                        <li>CMG Canon AT4X (2000 од.)</li>
+                        <li>Benefactor AWG H63 6x6 (2500 од.)</li>
+                    </ul>
+                    Процес: взяти авто → завантажити балони → закрити багажник → відвезти на точку<br>
+                    Винагорода: 1000$ за балон
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-chess-king"></i>
+                    </div>
+                    <div>
+                        <h4>Панель керування</h4>
+                        <p>Лідер може:</p>
+                        <ul>
+                            <li>Налаштовувати доступ до авто по рангу</li>
+                            <li>Створювати нові ранги</li>
+                            <li>Вказувати права для кожного рангу</li>
+                        </ul>
+                        <div class="system-note">
+                            Початкові ранги: 10-Лідер (не видаляється), 1-Печенька (не видаляється)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-warehouse"></i> Склад сімейної організації</h2>
+                <p>Додано 96 складів для сімейної організації, кожен додає додаткові слоти для зберігання.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <p>Розташування: всі склади знаходяться в одному місці</p>
+                        <p>Організація: 12 міток з номерами → по 8 складів на кожній мітці</p>
+                    </div>
+                </div>
+                
+                <div class="system-note">
+                    Оплата за склад: з балансу сімейної організації<br>
+                    Після покупки: приходити до відповідного номеру складу → зайти в свій куплений склад
+                </div>
+                
+                <p>Функціонал: додаткові слоти для зберігання предметів (розширення функціоналу в майбутніх оновленнях).</p>
+                
+                <h3><i class="fas fa-home"></i> Маєток сімейної організації</h3>
+                <p>Додано 50 будинків класу “Особняк” з 10 ГМ кожен.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div>
+                        <p>Процес передачі будинку в сім'ю:</p>
+                        <ol>
+                            <li>Лідер купує будинок (ціна: 10кк)</li>
+                            <li>В меню будинку вибирає "Список дій" → "Передати дім у сім’ю"</li>
+                            <li>Списується половина вартості будинку</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="system-note">
+                    Важливо! Для повернення будинку: продати поточний будинок гравця → повернути маєток<br>
+                    Маєток додає +10 ГМ (загальна кількість авто: 15)
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-plus-circle"></i> Додатково</h2>
+                
+                <h3><i class="fas fa-car"></i> Нові автомобілі</h3>
+                <table class="contract-table">
+                    <thead>
+                        <tr>
+                            <th>Автомобіль</th>
+                            <th>Місце придбання</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Avura MOX S-Type</td>
+                            <td>Контейнери</td>
+                        </tr>
+                        <tr>
+                            <td>Vapid Grand Rider Vrado</td>
+                            <td>Автосалон Люкс</td>
+                        </tr>
+                        <tr>
+                            <td>Pegassi Rewuelto</td>
+                            <td>Автосалон Люкс</td>
+                        </tr>
+                        <tr>
+                            <td>CMG Canon AT4X</td>
+                            <td>Автосалон Люкс</td>
+                        </tr>
+                        <tr>
+                            <td>Annis 180sx</td>
+                            <td>Автосалон Люкс</td>
+                        </tr>
+                        <tr>
+                            <td>Ubermacht W5 E60</td>
+                            <td>Автосалон Люкс</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3><i class="fas fa-tshirt"></i> Новий одяг</h3>
+                <ul>
+                    <li>Магазин економ класу</li>
+                    <li>Магазин люкс</li>
+                    <li>Донат магазин (нові предмети)</li>
+                </ul>
+                
+                <div class="system-note" style="background-color: rgba(76, 175, 80, 0.2); border-left: 3px solid #4CAF50;">
+                    <i class="fas fa-star"></i> Акція х2 діє з 29.06 по хх.хх.хххх
+                </div>
+                
+                <div class="system-note" style="background-color: rgba(244, 67, 54, 0.2); border-left: 3px solid #F44336;">
+                    <i class="fas fa-exclamation-triangle"></i> Будь-яке розповсюдження цього скрипта призведе до ЧСП проектів UG TEAM
+                </div>
+            </div>
+            
+            <div class="signature">
+                <i class="fas fa-hands-helping"></i> Приємної гри на Ukraine GTA 5 RolePlay!
+            </div>
+            
+            <footer>
+                <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+                <p style="margin-top: 15px; opacity: 0.7;"><i class="fas fa-star"></i> Нова система - нові можливості! <i class="fas fa-star"></i></p>
+            </footer>
+        </div>
+    </div>
+    
+    <script>
+        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+
+        async function getSheetData(sheetName) {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+            const res = await axios.get(url);
+            return res.data.values;
+        }
+
+        async function onTelegramAuth(user) {
+            const telegramUsername = '@' + user.username;
+            
+            try {
+                const ticketsData = await getSheetData('Май_2025_таблица');
+                const ticketsHeaders = ticketsData[0];
+                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+                
+                const userTicketsRow = ticketsData.find(row => 
+                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+                );
+                
+                if (userTicketsRow) {
+                    // Сохраняем данные пользователя
+                    const userData = {
+                        username: telegramUsername,
+                    };
+                    localStorage.setItem('tg_auth', JSON.stringify(userData));
+                    
+                    // Показываем контент
+                    showContent();
+                } else {
+                    // Если пользователь не найден
+                    localStorage.removeItem('tg_auth');
+                    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+                    showLoginForm();
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Помилка під час завантаження даних');
+                showLoginForm();
+            }
+        }
+
+        // Функция для показа контента
+        function showContent() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+        }
+
+        // Функция для показа формы входа
+        function showLoginForm() {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('content').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+        }
+
+        // Функция выхода
+        function logout() {
+            localStorage.removeItem('tg_auth');
+            showLoginForm();
+        }
+
+        // Проверка сохраненной сессии при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем обработчик для кнопки выхода
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            
+            // Проверяем сохраненную сессию
+            const savedAuth = localStorage.getItem('tg_auth');
+            if (savedAuth) {
+                try {
+                    showContent();
+                } catch (e) {
+                    localStorage.removeItem('tg_auth');
+                    showLoginForm();
+                }
+            }
+        });
+    </script>
 </body>
 </html>
