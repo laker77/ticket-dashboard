@@ -1327,7 +1327,7 @@ async function showDashboard(nickname, telegramUsername, isAdmin) {
   } else {
     document.getElementById('admin-notice').classList.add('hidden');
     document.getElementById('stats-section').classList.remove('hidden');
-    document.getElementById('contest-rank').classList.remove('hidden');
+   // document.getElementById('contest-rank').classList.remove('hidden');
     fetchUserStatsByTelegram(telegramUsername);
   }
 }
