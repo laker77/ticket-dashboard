@@ -1021,27 +1021,26 @@ async function fetchUserStatsByTelegram(telegramUsername) {
       .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
 
 function sumTicketsAndTime(startDate, endDate) {
-                let ticketsSum = 0;
-                let timeSecondsSum = 0;
-                var monthStart = new Date(today);
-                monthStart.setDate(1);
-                dateCols.forEach(({ h, i }) => {
-                    const dt = parseDate(h);
-                    if (dt >= monthStart && dt <= endDate) {
-                        ticketsSum += parseInt(userTicketsRow[i]) || 0;
-                        const timeColIndex = timeHeaders.indexOf(h);
-                        if (timeColIndex >= 0) {
-                            const timeStr = userTimeRow[timeColIndex];
-                            if (timeStr && timeStr !== 'Н') {
-                                const [hh, mm, ss] = timeStr.split(':').map(Number);
-                                timeSecondsSum += hh * 3600 + mm * 60 + ss;
-                            }
-                        }
-                    }
-                });
+      let ticketsSum = 0;
+      let timeSecondsSum = 0;
 
-                return { ticketsSum, timeSecondsSum };
+      dateCols.forEach(({ h, i }) => {
+        const dt = parseDate(h);
+        if (dt >= startDate && dt <= endDate) {
+          ticketsSum += parseInt(userTicketsRow[i]) || 0;
+          const timeColIndex = timeHeaders.indexOf(h);
+          if (timeColIndex >= 0) {
+            const timeStr = userTimeRow[timeColIndex];
+            if (timeStr && timeStr !== 'Н') {
+              const [hh, mm, ss] = timeStr.split(':').map(Number);
+              timeSecondsSum += hh * 3600 + mm * 60 + ss;
             }
+          }
+        }
+      });
+
+      return { ticketsSum, timeSecondsSum };
+    }
 
     const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
     
