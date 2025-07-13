@@ -1087,7 +1087,7 @@ async function fetchUserStatsByTelegram(telegramUsername) {
     const userIndex = allUsers.findIndex(u => u.telegram === telegramUsername);
     if (userIndex !== -1) {
       const place = userIndex + 1;
-      document.getElementById('current-rank').innerText = `${place}`;
+      //document.getElementById('current-rank').innerText = `${place}`;
     }
 
     document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
