@@ -3,83 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Оновлення 1.6 | Система сімей | Ukraine GTA 5</title>
+    <title>Оновлення 1.7 | Контроль територій | Ukraine GTA 5</title>
     <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        /* Стили авторизации */
-        #login-section {
-            background-color: #121824;
-            padding: 40px 30px;
-            border-radius: 20px;
-            max-width: 400px;
-            margin: 60px auto;
-            box-shadow: 0 0 30px #1977FDAA;
-            text-align: center;
-            animation: fadeInUp 1.2s ease forwards;
-            opacity: 0;
-            transform: translateY(30px);
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-        
-        #login-section p {
-            margin-bottom: 25px;
-            color: #FFFBEF;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .telegram-button-wrapper {
-            display: inline-block;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 0 15px #1977FD;
-            animation: pulse 3s infinite ease-in-out;
-        }
-        
-        #logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #ff4d4d;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 1001;
-            transition: background-color 0.3s;
-            border: none;
-            font-weight: bold;
-        }
-        
-        #logout-btn:hover {
-            background-color: #e60000;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 15px #1977FD;
-                transform: scale(1);
-            }
-            50% {
-                box-shadow: 0 0 35px #1977FD;
-                transform: scale(1.1);
-            }
-        }
-        
+        /* Общие стили */
         * {
             margin: 0;
             padding: 0;
@@ -97,6 +26,9 @@
             --text-muted: #A3A3A3;
             --player-bg: #1E1E1E;
             --admin-bg: #1A2A3A;
+            --green: #4CAF50;
+            --red: #F44336;
+            --orange: #FF9800;
         }
         
         body {
@@ -315,6 +247,184 @@
             border: 1px solid rgba(59, 130, 246, 0.2);
         }
         
+        /* Стили авторизации */
+        #login-section {
+            background-color: #121824;
+            padding: 40px 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: 60px auto;
+            box-shadow: 0 0 30px #1977FDAA;
+            text-align: center;
+            animation: fadeInUp 1.2s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        #login-section p {
+            margin-bottom: 25px;
+            color: #FFFBEF;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 15px #1977FD;
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        #logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s;
+            border: none;
+            font-weight: bold;
+        }
+        
+        #logout-btn:hover {
+            background-color: #e60000;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 15px #1977FD;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px #1977FD;
+                transform: scale(1.1);
+            }
+        }
+        
+        /* Новые стили для обновления 1.7 */
+        .territory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .territory-card {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--card-border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .territory-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            border-width: 0 30px 30px 0;
+            border-style: solid;
+            border-color: transparent var(--accent-blue) transparent transparent;
+        }
+        
+        .territory-card.control::after {
+            border-color: transparent var(--orange) transparent transparent;
+        }
+        
+        .territory-card.special::after {
+            border-color: transparent var(--green) transparent transparent;
+        }
+        
+        .territory-card h4 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .benefit-list {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        
+        .benefit-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .benefit-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+        }
+        
+        .new-feature-tag {
+            background: var(--orange);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        
+        .new-feature-badge {
+            background: var(--orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            transform: rotate(10deg);
+            z-index: 2;
+        }
+        
+        .hud-changes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .hud-change {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--card-border);
+        }
+        
+        .hud-change h4 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.2rem;
@@ -347,6 +457,10 @@
             .feature-icon {
                 margin-bottom: 10px;
             }
+            
+            .territory-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -373,296 +487,297 @@
         <div class="container">
             <header>
                 <div class="header-content">
-                    <h1><i class="fas fa-users"></i> Оновлення 1.6 | Система сімей</h1>
-                    <p>Повний гайд по новій системі сімейних організацій</p>
+                    <h1><i class="fas fa-map-marked-alt"></i> Оновлення 1.7 | Контроль територій</h1>
+                    <p>Повний гайд по новій системі контролю територій та іншим оновленням</p>
                 </div>
             </header>
             
+            <!-- Раздел Контроль території -->
             <div class="section">
-                <h2><i class="fas fa-home"></i> Створення сімейної організації</h2>
-                <p>Для створення сім’ї потрібно приїхати до мерії та стати на мітку і вибрати “Створення сім’ї”.</p>
+                <h2><i class="fas fa-chess-board"></i> Контроль території</h2>
+                <p>Контроль території - це нова система для сімейних організацій, де вони захоплюють території, які відображаються в планшеті. Битви відбуваються в окремому деменшені, а локації призначаються випадковим чином.</p>
                 
                 <div class="feature-block">
                     <div class="feature-icon">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-flag"></i>
                     </div>
                     <div>
-                        <p>Після цього вас переносить в меню створення сімейної організації. Де гравець має вибрати:</p>
+                        <h3>Основи системи</h3>
                         <ul>
-                            <li>Назву сімейної організації</li>
-                            <li>Колір сімейної організації</li>
-                            <li>Фон профілю</li>
-                            <li>Завантажити фото (з свого ПК зможуть завантажити любий логотип)</li>
+                            <li>Захоплення починається з країв мапи</li>
+                            <li>Можна вибрати будь-який вільний квадрат</li>
+                            <li>Неможливо захоплювати квадрати в центрі без сусідніх територій</li>
+                            <li>Після захоплення можна просуватися лише на сусідні території</li>
                         </ul>
                     </div>
                 </div>
                 
-                <p>Потім натискаєте “Наступний етап” і переходите до вибору офісу та оплата в карбованцях або в ігрову валюту.</p>
-                
-                <div class="system-note">
-                    Є 3 види офісів, в них немає нічого різного окрім місця розтошування на самій мапі
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-building"></i> Офіс організації</h2>
-                <p>На мапі вона позначена синім бліпом.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-door-open"></i>
-                    </div>
-                    <div>
-                        <p>Коли ви заходите на мітку вас одразу телепортує в офіс вашої сімейної організації.</p>
-                        <p>В самому офісі є:</p>
-                        <ul>
-                            <li>Шафа (маленька, немає багато слотів)</li>
-                            <li>Мітка виходу</li>
-                            <li>Мітка для спуску в гараж сімейної організації</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="system-note">
-                    В подальшому функціонал в офісі буде додаватись.
-                </div>
-                
-                <h3><i class="fas fa-car"></i> Гараж сімейної організації</h3>
-                <p>Гаражні місця до кожного офісу це 5 ГМ.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-key"></i>
-                    </div>
-                    <div>
-                        <p>Для того щоб додати авто до сімейної організації потрібно:</p>
-                        <ol>
-                            <li>Підійти до автомобіля</li>
-                            <li>Через клавішу “G” вибрати відповідну дію</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <p>Після цього ви можете залишати авто в гараж сімейної організації і відповідно забирати його звідти.</p>
-                
-                <div class="system-note">
-                    Щоб залити авто в гараж: підійти до офісу на мітку гаражу → натиснути "Е"<br>
-                    Щоб забрати авто: зайти в офіс → спуститись в гараж → сісти в авто → натиснути "Е"
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-user-plus"></i> Додавання в сім'ю</h2>
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-friends"></i>
-                    </div>
-                    <div>
-                        <p>Щоб додати/вигнати гравця в сімейну організацію потрібно:</p>
-                        <ol>
-                            <li>Підійти до гравця</li>
-                            <li>Через радіальне меню “G” вибрати “Сім’я”</li>
-                            <li>Вибрати відповідну дію</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <h3><i class="fas fa-tablet-alt"></i> Планшет сімейної організації</h3>
-                <p>Після створення в самому планшеті з’явиться новий додаток з назвою сім’ї та логотипом якій ви вибрали.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <div>
-                        <h4>Головна</h4>
-                        <p>Вся інформація про сім’ю: слоти учасників, автопарк організації, майно та нерухомість.</p>
-                        <div class="system-note">
-                            Важливо! Кошти мають бути на балансі сімейної організації для сплати податків. 
-                            Поповнення: власний банківський рахунок → переказ на рахунок сімейної організації.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fab fa-discord"></i>
-                    </div>
-                    <div>
-                        <h4>Опис організації</h4>
-                        <p>Лідер може змінювати текст та додавати посилання на Discord.</p>
-                        <div class="system-note">
-                            Щоб скопіювати посилання: натиснути на іконку Discord → посилання копіюється в буфер обміну
-                        </div>
-                    </div>
-                </div>
-                
+                <h3><i class="fas fa-fist-raised"></i> Ініціювання битви</h3>
                 <div class="feature-block">
                     <div class="feature-icon">
                         <i class="fas fa-users"></i>
                     </div>
                     <div>
-                        <h4>Члени організації</h4>
-                        <p>Інформація про учасників: нікнейм, звання, статус (онлайн/офлайн).</p>
-                        <p>Керування: підвищення/пониження/вигнання.</p>
-                    </div>
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <div>
-                        <h4>Контракти</h4>
-                        <p>Контракти сім’ї для виконання. Щодня доступно 4 контракти, які змінюються після рестарту.</p>
-                        <div class="system-note">
-                            Активувати контракт може лише лідер/заступник.<br>
-                            Після активації - обмежений час на виконання.<br>
-                            Після виконання - час оновлення (КД).
-                        </div>
-                    </div>
-                </div>
-                
-                <h3>Список контрактів</h3>
-                <table class="contract-table">
-                    <thead>
-                        <tr>
-                            <th>Назва контракту</th>
-                            <th>Завдання</th>
-                            <th>Час виконання</th>
-                            <th>КД після виконання</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Рибна лихоманка I</td>
-                            <td>Виловити 1.500 риб</td>
-                            <td>5 годин</td>
-                            <td>6 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Рибна лихоманка II</td>
-                            <td>Виловити 2.500 риб</td>
-                            <td>5 годин</td>
-                            <td>6 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Балонний транзит I</td>
-                            <td>Здати 7.500 одиниць газу</td>
-                            <td>5 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Балонний транзит II</td>
-                            <td>Здати 10.000 одиниць газу</td>
-                            <td>5 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Лінія ремонту</td>
-                            <td>Полагодити 100 автівок</td>
-                            <td>7 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Грибний збір I</td>
-                            <td>Зібрати 800 грибів</td>
-                            <td>3 години</td>
-                            <td>4 години</td>
-                        </tr>
-                        <tr>
-                            <td>Грибний збір II</td>
-                            <td>Зібрати 1200 грибів</td>
-                            <td>7 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Скарби забутих часів</td>
-                            <td>Знайти 200 скарбів</td>
-                            <td>9 годин</td>
-                            <td>2 години</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="system-note">
-                    <strong>Балонний транзит:</strong> Потрібні спеціальні авто:
-                    <ul>
-                        <li>Emperor IX570 (1000 од.)</li>
-                        <li>Benefactor W-Series 250t IT (1500 од.)</li>
-                        <li>Fury Predator H-150 (2000 од.)</li>
-                        <li>CMG Canon AT4X (2000 од.)</li>
-                        <li>Benefactor AWG H63 6x6 (2500 од.)</li>
-                    </ul>
-                    Процес: взяти авто → завантажити балони → закрити багажник → відвезти на точку<br>
-                    Винагорода: 1000$ за балон
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-chess-king"></i>
-                    </div>
-                    <div>
-                        <h4>Панель керування</h4>
-                        <p>Лідер може:</p>
-                        <ul>
-                            <li>Налаштовувати доступ до авто по рангу</li>
-                            <li>Створювати нові ранги</li>
-                            <li>Вказувати права для кожного рангу</li>
-                        </ul>
-                        <div class="system-note">
-                            Початкові ранги: 10-Лідер (не видаляється), 1-Печенька (не видаляється)
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-warehouse"></i> Склад сімейної організації</h2>
-                <p>Додано 96 складів для сімейної організації, кожен додає додаткові слоти для зберігання.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div>
-                        <p>Розташування: всі склади знаходяться в одному місці</p>
-                        <p>Організація: 12 міток з номерами → по 8 складів на кожній мітці</p>
-                    </div>
-                </div>
-                
-                <div class="system-note">
-                    Оплата за склад: з балансу сімейної організації<br>
-                    Після покупки: приходити до відповідного номеру складу → зайти в свій куплений склад
-                </div>
-                
-                <p>Функціонал: додаткові слоти для зберігання предметів (розширення функціоналу в майбутніх оновленнях).</p>
-                
-                <h3><i class="fas fa-home"></i> Маєток сімейної організації</h3>
-                <p>Додано 50 будинків класу “Особняк” з 10 ГМ кожен.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div>
-                        <p>Процес передачі будинку в сім'ю:</p>
+                        <p>Для ініціювання битви:</p>
                         <ol>
-                            <li>Лідер купує будинок (ціна: 10кк)</li>
-                            <li>В меню будинку вибирає "Список дій" → "Передати дім у сім’ю"</li>
-                            <li>Списується половина вартості будинку</li>
+                            <li>Вибрати кількість учасників (5-15)</li>
+                            <li>Вказати час битви (30-хвилинні інтервали: 13:00, 13:30 тощо)</li>
+                            <li>Через планшет вибрати учасників зі сім'ї</li>
                         </ol>
                     </div>
                 </div>
                 
                 <div class="system-note">
-                    Важливо! Для повернення будинку: продати поточний будинок гравця → повернути маєток<br>
-                    Маєток додає +10 ГМ (загальна кількість авто: 15)
+                    <i class="fas fa-exclamation-circle"></i> Для участі сімейна організація повинна мати 5000 репутації
+                </div>
+                
+                <h3><i class="fas fa-shield-alt"></i> Процес битви</h3>
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <div>
+                        <p>Правила битви:</p>
+                        <ul>
+                            <li>Атакуюча команда спавниться в центрі території</li>
+                            <li>Команда, що захищається, спавниться за межами території</li>
+                            <li>1 хвилина заморожування перед початком бою</li>
+                            <li>Битва триває 15 хвилин</li>
+                            <li>Виграє команда, яка вбила всіх суперників</li>
+                            <li>Якщо час вийшов - перемагає команда з більшою кількістю гравців</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="system-note">
+                    <strong>Важливо:</strong> Якщо захищаюча команда не зайде на територію протягом 1 хвилини, територія починає віднімати їм HP. Аналогічно, якщо гравець виходить за межі території під час битви.
+                </div>
+                
+                <h3><i class="fas fa-calendar-day"></i> Обмеження</h3>
+                <p>В день дозволено:</p>
+                <ul>
+                    <li>2 атаки на звичайні квадрати</li>
+                    <li>1 атаку на контрольні або особливі квадрати</li>
+                    <li>2 захисти (якщо на вашу територію напали)</li>
+                </ul>
+            </div>
+            
+            <!-- Раздел Типы территорий -->
+            <div class="section">
+                <h2><i class="fas fa-map"></i> Типи територій</h2>
+                <div class="territory-grid">
+                    <div class="territory-card">
+                        <h4><i class="fas fa-border-all"></i> Звичайні квадрати</h4>
+                        <p>Не захоплені території, які не дають переваг. Необхідні для просування по мапі.</p>
+                    </div>
+                    
+                    <div class="territory-card special">
+                        <h4><i class="fas fa-star"></i> Особливі квадрати</h4>
+                        <p>Надають фінансову вигоду:</p>
+                        <ul class="benefit-list">
+                            <li>Гриби: 280$/год</li>
+                            <li>Риба: 360$/год</li>
+                            <li>Маска: 320$/год</li>
+                            <li>24/7: 200$/год</li>
+                        </ul>
+                        <div class="system-note">
+                            Вимагають 2 сусідніх квадрати для захоплення
+                        </div>
+                    </div>
+                    
+                    <div class="territory-card control">
+                        <h4><i class="fas fa-crown"></i> Контрольні квадрати</h4>
+                        <p>Надають потужні бафи:</p>
+                        <ul class="benefit-list">
+                            <li>Риба: +5% до заробітку</li>
+                            <li>Маска: -20 хв до захоплення</li>
+                            <li>Лікарня: -2с до адреналіну</li>
+                            <li>Завод: +15% до заробітку</li>
+                        </ul>
+                        <div class="system-note">
+                            Вимагають 4 сусідніх квадрати для захоплення
+                        </div>
+                    </div>
                 </div>
             </div>
             
+            <!-- Раздел Новый функционал -->
             <div class="section">
-                <h2><i class="fas fa-plus-circle"></i> Додатково</h2>
+                <h2><i class="fas fa-plus-circle"></i> Новий функціонал для сімей</h2>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div>
+                        <h3>Чат сімейної організації</h3>
+                        <p>Додана команда <code>/fc [текст]</code> для спілкування всередині сім'ї.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div>
+                        <h3>Керування коштами</h3>
+                        <p>Лідер може знімати кошти з балансу сім'ї через сейф в офісі.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div>
+                        <h3>Додаткові слоти</h3>
+                        <p>Можна купувати додаткові слоти для сім'ї:</p>
+                        <ul>
+                            <li>Початкова ціна: 150,000$</li>
+                            <li>Кожен наступний слот дорожчий на 50,000$</li>
+                            <li>Максимум слотів: 35</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3><i class="fas fa-file-contract"></i> Нові контракти</h3>
+                <table class="contract-table">
+                    <thead>
+                        <tr>
+                            <th>Назва контракту</th>
+                            <th>Завдання</th>
+                            <th>Нагорода</th>
+                            <th>Час виконання</th>
+                            <th>КД</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Лісовий кодекс I</td>
+                            <td>Добути 600 од. деревини</td>
+                            <td>115,000$ + 110 реп. + 90 досв.</td>
+                            <td>6 год.</td>
+                            <td>5 год.</td>
+                        </tr>
+                        <tr>
+                            <td>Лісовий кодекс II</td>
+                            <td>Добути 1200 од. деревини</td>
+                            <td>165,000$ + 150 реп. + 120 досв.</td>
+                            <td>6 год.</td>
+                            <td>5 год.</td>
+                        </tr>
+                        <tr>
+                            <td>Під корінь I</td>
+                            <td>Скосить 700 лунок трави</td>
+                            <td>135,000$ + 120 реп. + 90 досв.</td>
+                            <td>6 год.</td>
+                            <td>7 год.</td>
+                        </tr>
+                        <tr>
+                            <td>Під корінь II</td>
+                            <td>Скосить 1200 лунок трави</td>
+                            <td>170,000$ + 160 реп. + 130 досв.</td>
+                            <td>6 год.</td>
+                            <td>7 год.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Раздел Доглядач території -->
+            <div class="section">
+                <h2><i class="fas fa-tractor"></i> Доглядач території</h2>
+                <p>Нова робота для гравців, яка також використовується в сімейних контрактах.</p>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-hard-hat"></i>
+                    </div>
+                    <div>
+                        <h3>Початок роботи</h3>
+                        <ol>
+                            <li>Підійти до NPC та влаштуватися на роботу</li>
+                            <li>Орендувати спеціальний транспорт (10,000$)</li>
+                            <li>Почати косити траву на призначених територіях</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="system-note">
+                    <i class="fas fa-exclamation-circle"></i> Якщо ви покинете транспорт, у вас буде 5 хвилин, щоб повернутися, інакше транспорт буде зареспавлено.
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div>
+                        <h3>Заробіток</h3>
+                        <ul>
+                            <li>60$ за кожну скошену лунку</li>
+                            <li>Заробіток нараховується разом з PayDay</li>
+                            <li>Лунки відновлюються через годину</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="system-note" style="background-color: rgba(76, 175, 80, 0.2); border-left: 3px solid #4CAF50;">
+                    <i class="fas fa-video"></i> Відеоінструкція: <a href="https://youtu.be/lXXA0p-YLUg" style="color: #4CAF50;">https://youtu.be/lXXA0p-YLUg</a>
+                </div>
+            </div>
+            
+            <!-- Раздел Изменения в HUD -->
+            <div class="section">
+                <h2><i class="fas fa-tv"></i> Зміни в HUD</h2>
+                
+                <div class="hud-changes">
+                    <div class="hud-change">
+                        <h4><i class="fas fa-bell"></i> Сповіщення</h4>
+                        <p>Оновлений дизайн сповіщень з унікальними звуками для різних подій.</p>
+                    </div>
+                    
+                    <div class="hud-change">
+                        <h4><i class="fas fa-keyboard"></i> Підказки</h4>
+                        <p>Покращена візуалізація підказок щодо клавіш для взаємодії.</p>
+                    </div>
+                    
+                    <div class="hud-change">
+                        <h4><i class="fas fa-box-open"></i> Інвентар</h4>
+                        <p>Інтерфейс інвентаря став більш прозорим та інформативним.</p>
+                    </div>
+                    
+                    <div class="hud-change">
+                        <h4><i class="fas fa-gun"></i> Відображення зброї</h4>
+                        <p>Додано відображення кількості патронів при триманні зброї.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-block">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div>
+                        <h3>Маркування цілей</h3>
+                        <p>Під час прицілювання натисніть колесо миші, щоб поставити мітку на ціль.</p>
+                        <ul>
+                            <li>Можна ставити до 3 міток одночасно</li>
+                            <li>Мітки зникають через 10 секунд</li>
+                            <li>Після використання 3 міток - очікування 5 секунд</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Раздел Дополнительные изменения -->
+            <div class="section">
+                <h2><i class="fas fa-plus"></i> Додаткові зміни</h2>
+                
+                <h3><i class="fas fa-building"></i> Нові локації</h3>
+                <ul>
+                    <li>Новий інтер'єр для фракції Марабунта</li>
+                    <li>Острів Кайо-Періко (доступний на човні)</li>
+                    <li>Нові будинки у Вайнвуді</li>
+                </ul>
                 
                 <h3><i class="fas fa-car"></i> Нові автомобілі</h3>
                 <table class="contract-table">
@@ -674,41 +789,37 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Avura MOX S-Type</td>
-                            <td>Контейнери</td>
-                        </tr>
-                        <tr>
-                            <td>Vapid Grand Rider Vrado</td>
+                            <td>Incoln Navigato</td>
                             <td>Автосалон Люкс</td>
                         </tr>
                         <tr>
-                            <td>Pegassi Rewuelto</td>
+                            <td>Ubermacht A82 W4</td>
                             <td>Автосалон Люкс</td>
                         </tr>
                         <tr>
-                            <td>CMG Canon AT4X</td>
-                            <td>Автосалон Люкс</td>
+                            <td>Buntley Nuliner Vacalar</td>
+                            <td>Кейс "Гострі Гроші"</td>
                         </tr>
                         <tr>
-                            <td>Annis 180sx</td>
-                            <td>Автосалон Люкс</td>
-                        </tr>
-                        <tr>
-                            <td>Ubermacht W5 E60</td>
+                            <td>Nonda NSX</td>
                             <td>Автосалон Люкс</td>
                         </tr>
                     </tbody>
                 </table>
                 
-                <h3><i class="fas fa-tshirt"></i> Новий одяг</h3>
+                <h3><i class="fas fa-id-card"></i> Посвідчення</h3>
+                <p>Додано посвідчення для фракцій:</p>
                 <ul>
-                    <li>Магазин економ класу</li>
-                    <li>Магазин люкс</li>
-                    <li>Донат магазин (нові предмети)</li>
+                    <li>ARMY</li>
+                    <li>EMS</li>
+                    <li>GOV</li>
                 </ul>
                 
+                <h3><i class="fas fa-camera"></i> Боді-камери</h3>
+                <p>Для державних фракцій додано боді-камери (активація клавішею "Б").</p>
+                
                 <div class="system-note" style="background-color: rgba(76, 175, 80, 0.2); border-left: 3px solid #4CAF50;">
-                    <i class="fas fa-star"></i> Акція х2 діє з 29.06 по хх.хх.хххх
+                    <i class="fas fa-star"></i> Акція х2 діє з 12.07 по 13.07
                 </div>
                 
                 <div class="system-note" style="background-color: rgba(244, 67, 54, 0.2); border-left: 3px solid #F44336;">
@@ -722,7 +833,7 @@
             
             <footer>
                 <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-                <p style="margin-top: 15px; opacity: 0.7;"><i class="fas fa-star"></i> Нова система - нові можливості! <i class="fas fa-star"></i></p>
+                <p style="margin-top: 15px; opacity: 0.7;"><i class="fas fa-map-marked-alt"></i> Контролюй території - домінуй у світі! <i class="fas fa-map-marked-alt"></i></p>
             </footer>
         </div>
     </div>
