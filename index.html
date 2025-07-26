@@ -1,4 +1,4 @@
-@<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
@@ -361,7 +361,7 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background-color 0.2s ease;
-      font-size:: 14px;
+      font-size: 14px;
       display: block;
       text-decoration: none;
       white-space: nowrap;
@@ -400,102 +400,6 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      border: 1px solid #2a2a2a;
-    }
-
-    .top-admins-title, .low-admins-title {
-      text-align: center;
-      font-size: 1.7rem;
-      margin-bottom: 25px;
-      color: #e0e0e0;
-      font-weight: 600;
-      position: relative;
-      letter-spacing: 0.5px;
-    }
-
-    .top-admins-title::after, .low-admins-title::after {
-      content: "";
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 3px;
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-      border-radius: 3px;
-    }
-
-    .low-admins-title::after {
-      background: linear-gradient(90deg, #ef4444, #f87171);
-    }
-
-    .top-admins-container, .low-admins-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 25px;
-      margin-top: 20px;
-    }
-
-    .admin-card {
-      background: linear-gradient(145deg, #1a1a1a, #151515);
-      border-radius: 12px;
-      width: 170px;
-      padding: 20px 15px;
-      text-align: center;
-      position: relative;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      border-top: 1px solid #2a2a2a;
-    }
-
-    .admin-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
-      border-top: 1px solid #3b82f6;
-    }
-
-    .admin-card.low {
-      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
-      border-top: 1px solid #ef4444;
-    }
-
-    .admin-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0 auto 15px;
-      display: block;
-      position: relative;
-      background: #1f1f1f;
-      padding: 5px;
-    }
-
-    /* Стили для рамки аватарки в зависимости от места */
-    .admin-card.gold .admin-avatar {
-      border: 3px solid #d4af37;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-    }
-
-    .admin-card.silver .admin-avatar {
-      border: 3px solid #c0c0c0;
-      box-shadow: 0 0 15px rgba(192, 192, 192, 0.2);
-    }
-
-    .admin-card.bronze .admin-avatar {
-      border: 3px solid #cd7f32;
-      box-shadow: 0 0 15px rgba(205, 127, 50,  Yates0.2);
-    }
-
-    .admin-card.normal .admin-avatar {
-      border: 3px solid #3b82f6;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-    }
-
-    .admin-card.low .admin-avatar {
-      border: 3px solid #ef4444;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
       border: 1px solid #2a2a2a;
     }
 
@@ -889,9 +793,9 @@
         <h2 class="text-xl font-semibold mb-2">Ваша статистика:</h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 stats-grid">
           <div class="bg-white p-4 rounded shadow">
-            <h3 class="font-bold mb-2">За вчора</h3>
-            <p>Тікети: <span id="yesterday-tickets">—</span></p>
-            <p>Час у грі: <span id="yesterday-time">—</span></p>
+            <h3 class="font-bold mb-2">Сьогодні</h3>
+            <p>Тікети: <span id="today-tickets">—</span></p>
+            <p>Час у грі: <span id="today-time">—</span></p>
           </div>
           <div class="bg-white p-4 rounded shadow">
             <h3 class="font-bold mb-2">Тиждень</h3>
@@ -1326,8 +1230,7 @@ async function fetchUserStatsByTelegram(telegramUsername) {
     }
 
     const today = getDateWithoutTime(new Date());
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
     const dateCols = ticketsHeaders
       .map((h, i) => ({ h, i }))
@@ -1355,15 +1258,13 @@ async function fetchUserStatsByTelegram(telegramUsername) {
       return { ticketsSum, timeSecondsSum };
     }
 
-    const yesterdayStats = sumTicketsAndTime(yesterday, yesterday);
+    const todayStats = sumTicketsAndTime(today, today);
     
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - 7);
-    const weekStats = sumTicketsAndTime(weekStart, yesterday);
+    const weekStats = sumTicketsAndTime(weekStart, today);
     
-    const monthStart = new Date(today);
-    monthStart.setDate(1);
-    const monthStats = sumTicketsAndTime(monthStart, yesterday);
+    const monthStats = sumTicketsAndTime(monthStart, today);
 
     const allUsers = ticketsData.slice(1).map(row => {
       const name = row[nameColIndex];
@@ -1374,7 +1275,7 @@ async function fetchUserStatsByTelegram(telegramUsername) {
 
       dateCols.forEach(({ h, i }) => {
         const dt = parseDate(h);
-        if (dt >= monthStart && dt <= yesterday) {
+        if (dt >= monthStart && dt <= today) {
           totalTickets += parseInt(row[i]) || 0;
           const tIndex = timeHeaders.indexOf(h);
           const timeRow = timeData.find(r => r[timeNameColIndex] === name);
@@ -1402,8 +1303,8 @@ async function fetchUserStatsByTelegram(telegramUsername) {
       const place = userIndex + 1;
     }
 
-    document.getElementById('yesterday-tickets').innerText = yesterdayStats.ticketsSum;
-    document.getElementById('yesterday-time').innerText = secondsToHHMMSS(yesterdayStats.timeSecondsSum);
+    document.getElementById('today-tickets').innerText = todayStats.ticketsSum;
+    document.getElementById('today-time').innerText = secondsToHHMMSS(todayStats.timeSecondsSum);
     document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
     document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
     document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
@@ -1418,7 +1319,7 @@ async function fetchUserStatsByTelegram(telegramUsername) {
 
     dateCols.forEach(({ h, i }) => {
       const dt = parseDate(h);
-      if (dt >= monthStart && dt <= yesterday) {
+      if (dt >= monthStart && dt <= today) {
         const dayTickets = parseInt(userTicketsRow[i]) || 0;
         const timeColIndex = timeHeaders.indexOf(h);
         let dayTimeStr = 'Н';
