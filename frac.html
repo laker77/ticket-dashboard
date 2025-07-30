@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список Фракцій | Ukraine GTA 5</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Стили авторизации */
+        #login-section {
+            background-color: #121824;
+            padding: 40px 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            margin: 60px auto;
+            box-shadow: 0 0 30px #1977FDAA;
+            text-align: center;
+            animation: fadeInUp 1.2s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+        
+        #login-section p {
+            margin-bottom: 25px;
+            color: #FFFBEF;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 0 15px #1977FD;
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        #logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s;
+            border: none;
+            font-weight: bold;
+        }
+        
+        #logout-btn:hover {
+            background-color: #e60000;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 15px #1977FD;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 35px #1977FD;
+                transform: scale(1.1);
+            }
+        }
+  
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        :root {
+            --bg-dark: #050608;
+            --card-bg: #1a1a1a;
+            --card-border: #2a2a2a;
+            --accent-blue: #3b82f6;
+            --accent-light: #60a5fa;
+            --text-light: #ffffff;
+            --text-muted: #a3a3a3;
+            --level-1: #4ade80;
+            --scrollbar: #3b82f6;
+            --scrollbar-bg: #1a1a1a;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent-blue);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .factions-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            margin-top: 30px;
+        }
+        
+        .factions-table th, .factions-table td {
+            padding: 20px;
+            background: rgba(26, 26, 26, 0.7);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(5px);
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        
+        .factions-table th {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), transparent);
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .factions-table tr {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .factions-table tr:nth-child(1) { animation-delay: 0.1s; }
+        .factions-table tr:nth-child(2) { animation-delay: 0.2s; }
+        .factions-table tr:nth-child(3) { animation-delay: 0.3s; }
+        .factions-table tr:nth-child(4) { animation-delay: 0.4s; }
+        .factions-table tr:nth-child(5) { animation-delay: 0.5s; }
+        .factions-table tr:nth-child(6) { animation-delay: 0.6s; }
+        .factions-table tr:nth-child(7) { animation-delay: 0.7s; }
+        .factions-table tr:nth-child(8) { animation-delay: 0.8s; }
+        .factions-table tr:nth-child(9) { animation-delay: 0.9s; }
+        .factions-table tr:nth-child(10) { animation-delay: 1.0s; }
+        .factions-table tr:nth-child(11) { animation-delay: 1.1s; }
+        .factions-table tr:nth-child(12) { animation-delay: 1.2s; }
+        .factions-table tr:nth-child(13) { animation-delay: 1.3s; }
+        .factions-table tr:nth-child(14) { animation-delay: 1.4s; }
+        
+        .factions-table tr:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .faction-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--accent-light);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            color: var(--text-muted);
+            margin-top: 60px;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .footer-logo {
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .factions-table th, .factions-table td {
+                padding: 15px;
+                font-size: 0.95rem;
+            }
+            
+            .faction-icon {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кнопка выхода -->
+    <button id="logout-btn" class="hidden">Вийти</button>
+
+    <!-- Секция авторизации -->
+    <div id="login-section">
+        <p>Будь ласка, увійдіть через Telegram:</p>
+        <div class="telegram-button-wrapper">
+            <script async src="https://telegram.org/js/telegram-widget.js?7"
+                    data-telegram-login="ticket_tracker_UG_bot" 
+                    data-size="large"
+                    data-userpic="false"
+                    data-request-access="write"
+                    data-onauth="onTelegramAuth(user)">
+            </script>
+        </div>
+    </div>
+
+    <!-- Основной контент (скрыт по умолчанию) -->
+    <div id="content" class="hidden">
+        <div class="container">
+            <header>
+                <div class="logo">
+                    <i class="fas fa-users"></i>
+                    <h1>Список Фракцій</h1>
+                </div>
+                <p class="subtitle">Перелік усіх фракцій сервера Ukraine GTA 5 RolePlay.</p>
+            </header>
+            
+            <table class="factions-table">
+                <thead>
+                    <tr>
+                        <th>Фракція</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-landmark faction-icon"></i>Goverment</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-shield-alt faction-icon"></i>LSPD</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-shield-alt faction-icon"></i>BCSD</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-briefcase faction-icon"></i>FIB</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-ambulance faction-icon"></i>EMS</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-hard-hat faction-icon"></i>U.S Army</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-camera faction-icon"></i>Weazel News</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-user-friends faction-icon"></i>The Families</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-skull faction-icon"></i>The Ballas Gang</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-users faction-icon"></i>Northside Vagos</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-users faction-icon"></i>Marabunta Grande</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-user-secret faction-icon"></i>Київська Мафія</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-user-secret faction-icon"></i>Італійська Мафія</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-user-secret faction-icon"></i>Китайська Мафія</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <footer>
+            <div class="footer-logo">Ukraine GTA 5 RolePlay</div>
+            <div class="copyright">&copy; 2025 Всі права захищено.</div>
+        </footer>
+    </div>
+
+    <script>
+        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+
+        async function getSheetData(sheetName) {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+            const res = await axios.get(url);
+            return res.data.values;
+        }
+
+        async function onTelegramAuth(user) {
+            const telegramUsername = '@' + user.username;
+            
+            try {
+                const ticketsData = await getSheetData('Май_2025_таблица');
+                const ticketsHeaders = ticketsData[0];
+                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+                
+                const userTicketsRow = ticketsData.find(row => 
+                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+                );
+                
+                if (userTicketsRow) {
+                    const userData = {
+                        username: telegramUsername,
+                    };
+                    localStorage.setItem('tg_auth', JSON.stringify(userData));
+                    showContent();
+                } else {
+                    localStorage.removeItem('tg_auth');
+                    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+                    showLoginForm();
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Помилка під час завантаження даних');
+                showLoginForm();
+            }
+        }
+
+        function showContent() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+        }
+
+        function showLoginForm() {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('content').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('tg_auth');
+            showLoginForm();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            
+            const savedAuth = localStorage.getItem('tg_auth');
+            if (savedAuth) {
+                try {
+                    showContent();
+                } catch (e) {
+                    localStorage.removeItem('tg_auth');
+                    showLoginForm();
+                }
+            } else {
+                showLoginForm();
+            }
+        });
+    </script>
+</body>
+</html>
