@@ -307,6 +307,7 @@
       cursor: pointer;
       z-index: 1001;
       transition: all 0.3s ease;
+      display: none;
     }
 
     #logout-btn:hover {
@@ -319,6 +320,7 @@
       max-width: 1200px;
       margin: 0 auto;
       padding: 4rem 1rem;
+      display: none;
     }
 
     header {
@@ -538,10 +540,6 @@
       white-space: nowrap;
     }
 
-    .optional {
-      color: var(--text-secondary);
-    }
-
     footer {
       text-align: center;
       padding: 3rem 0 2rem;
@@ -613,7 +611,7 @@
 </head>
 <body>
   <canvas id="stars-canvas"></canvas>
-  <button id="logout-btn" class="hidden">Вийти</button>
+  <button id="logout-btn">Вийти</button>
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-menu">
@@ -640,7 +638,7 @@
   </div>
   <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
 
-  <div id="access-denied-section">
+  <div id="access-denied-section" style="display: none;">
     <div class="access-denied-content">
       <div class="access-denied-icon">🚫</div>
       <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
@@ -674,7 +672,7 @@
     </div>
   </div>
 
-  <div id="content" class="container hidden">
+  <div id="content" class="container">
     <header>
       <div class="logo">
         <i class="fas fa-terminal"></i>
@@ -1242,10 +1240,11 @@
     }
 
     function showContent(nickname, isAdmin) {
+      console.log('Showing content for:', nickname, 'isAdmin:', isAdmin);
       document.getElementById('login-section').style.display = 'none';
       document.getElementById('content').style.display = 'block';
-      document.getElementById('sidebarToggle').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').style.display = 'block';
+      document.getElementById('logout-btn').style.display = 'block';
       document.getElementById('access-denied-section').style.display = 'none';
 
       if (superAdmins.includes(localStorage.getItem('tg_auth') ? JSON.parse(localStorage.getItem('tg_auth')).username : '')) {
@@ -1255,12 +1254,16 @@
         document.getElementById('superMenuItem3').style.display = 'flex';
       }
 
-      VanillaTilt.init(document.querySelectorAll('.level-card'), {
-        max: 8,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.2
-      });
+      try {
+        VanillaTilt.init(document.querySelectorAll('.level-card'), {
+          max: 8,
+          speed: 400,
+          glare: true,
+          'max-glare': 0.2
+        });
+      } catch (error) {
+        console.error('VanillaTilt initialization failed:', error);
+      }
 
       const searchBox = document.querySelector('.search-box');
       const commands = document.querySelectorAll('.command');
@@ -1271,10 +1274,7 @@
           const commandText = command.textContent.toLowerCase();
           if (commandText.includes(searchTerm)) {
             command.style.display = 'block';
-            command.style.animation = 'highlight 0.5s ease';
-            setTimeout(() => {
-              command.style.animation = '';
-            }, 500);
+            command.style.animation = 'fadeIn 0.5s ease';
           } else {
             command.style.display = 'none';
           }
@@ -1283,20 +1283,22 @@
     }
 
     function showAccessDenied() {
+      console.log('Access denied');
       document.getElementById('access-denied-section').style.display = 'flex';
       document.getElementById('login-section').style.display = 'none';
       document.getElementById('content').style.display = 'none';
       document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarToggle').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebarToggle').style.display = 'none';
+      document.getElementById('logout-btn').style.display = 'none';
     }
 
     function showLoginForm() {
+      console.log('Showing login form');
       document.getElementById('login-section').style.display = 'flex';
       document.getElementById('content').style.display = 'none';
       document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarToggle').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebarToggle').style.display = 'none';
+      document.getElementById('logout-btn').style.display = 'none';
       document.getElementById('access-denied-section').style.display = 'none';
     }
 
@@ -1312,14 +1314,25 @@
       if (savedAuth) {
         try {
           const userData = JSON.parse(savedAuth);
+          console.log('Found saved auth:', userData);
           showContent(userData.nickname, userData.isAdmin || false);
         } catch (e) {
+          console.error('Error parsing saved auth:', e);
           localStorage.removeItem('tg_auth');
           showLoginForm();
         }
       } else {
+        console.log('No saved auth, showing login');
         showLoginForm();
       }
+
+      // Debug: Force show content after 5 seconds if not shown
+      setTimeout(() => {
+        if (document.getElementById('content').style.display !== 'block') {
+          console.warn('Content not shown, forcing display');
+          showContent('Debug User', false);
+        }
+      }, 5000);
     });
   </script>
 </body>
