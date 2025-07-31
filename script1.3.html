@@ -1,411 +1,1026 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>UG Team Marketplace Script 1.3</title>
-<script async src="https://telegram.org/js/telegram-widget.js?7" 
-        data-telegram-login="ticket_tracker_UG_bot" 
-        data-size="large"
-        data-userpic="false"
-        data-request-access="write"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<style>
-  :root {
-    --bg-main: #050608;
-    --bg-sidebar: #121315;
-    --text-color: #FFFBEF;
-    --highlight-color: #D6567A;
-    --login-bg: #121824;
-    --login-border: #1977FD;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UG Team Marketplace Script 1.3 | Ukraine GTA 5</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script async src="https://telegram.org/js/telegram-widget.js?7" 
+          data-telegram-login="ticket_tracker_UG_bot" 
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #D6567A;
+      --secondary-color: #FFFBEF;
+      --accent-color: #F59E0B;
+      --background-dark: #050608;
+      --nav-bg: #121315;
+      --card-bg: rgba(18, 19, 21, 0.9);
+      --glass-bg: rgba(18, 19, 21, 0.7);
+      --glass-blur: blur(5px);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      --text-primary: #FFFBEF;
+      --text-secondary: #D1D5DB;
+      --card-border: rgba(214, 86, 122, 0.2);
+    }
 
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0;
-    background-color: var(--bg-main);
-    color: var(--text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.5;
-    display: flex;
-    min-height: 100vh;
-  }
-  nav {
-    background-color: var(--bg-sidebar);
-    width: 280px;
-    padding: 25px 20px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  nav h2 {
-    margin: 0 0 15px 0;
-    font-size: 1.5rem;
-    color: var(--highlight-color);
-    border-bottom: 2px solid var(--highlight-color);
-    padding-bottom: 6px;
-  }
-  nav a {
-    color: var(--highlight-color);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 6px 8px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
-  }
-  nav a:hover,
-  nav a:focus {
-    background-color: var(--highlight-color);
-    color: var(--bg-sidebar);
-    outline: none;
-  }
-  main {
-    padding: 30px 40px;
-    flex-grow: 1;
-    max-width: 900px;
-    overflow-wrap: break-word;
-  }
-  h1, h2 {
-    color: var(--highlight-color);
-    margin-top: 2em;
-    margin-bottom: 0.6em;
-  }
-  h1 {
-    font-size: 2.2rem;
-  }
-  h2 {
-    font-size: 1.7rem;
-  }
-  p, ul {
-    font-size: 1rem;
-    margin-bottom: 1em;
-    white-space: pre-line;
-  }
-  ul {
-    margin-left: 1.5rem;
-  }
-  .warning {
-    background-color: var(--bg-sidebar);
-    border-left: 5px solid var(--highlight-color);
-    padding: 15px 20px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-top: 3rem;
-  }
-  @media (max-width: 768px) {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
     body {
-      flex-direction: column;
+      background: var(--background-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(214, 86, 122, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(214, 86, 122, 0.05) 0%, transparent 20%);
     }
-    nav {
+
+    canvas#stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      flex-direction: row;
-      flex-wrap: wrap;
-      padding: 15px 20px;
-      gap: 10px;
-      border-bottom: 1px solid var(--highlight-color);
-      overflow-x: auto;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.6;
     }
-    main {
-      padding: 20px;
-      max-width: 100%;
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
+      border-right: 1px solid var(--card-border);
     }
-  }
-  
-  /* Стили для авторизации */
-  #login-section {
-    background-color: var(--login-bg);
-    padding: 40px 30px;
-    border-radius: 20px;
-    max-width: 400px;
-    margin: 60px auto;
-    box-shadow: 0 0 30px rgba(25, 119, 253, 0.67);
-    text-align: center;
-    animation: fadeInUp 1.2s ease forwards;
-    opacity: 0;
-    transform: translateY(30px);
-    font-weight: 700;
-    font-size: 1.3rem;
-  }
-  #login-section p {
-    margin-bottom: 25px;
-    color: var(--text-color);
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-  .telegram-button-wrapper {
-    display: inline-block;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 0 15px var(--login-border);
-    animation: pulse 3s infinite ease-in-out;
-  }
-  #logout-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #ff4d4d;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 1001;
-    transition: background-color 0.3s;
-    border: none;
-    font-weight: bold;
-  }
-  #logout-btn:hover {
-    background-color: #e60000;
-  }
-  .hidden {
-    display: none !important;
-  }
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+
+    .sidebar.open {
+      left: 0;
     }
-  }
-  @keyframes pulse {
-    0%, 100% {
-      box-shadow: 0 0 15px var(--login-border);
-      transform: scale(1);
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--primary-color);
+      font-size: 1.3rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
     }
-    50% {
-      box-shadow: 0 0 35px var(--login-border);
+
+    .sidebar-toggle:hover {
+      background: rgba(214, 86, 122, 0.3);
       transform: scale(1.1);
     }
-  }
-</style>
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .menu-category {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: linear-gradient(90deg, rgba(214, 86, 122, 0.3), transparent);
+      transform: translateX(5px);
+    }
+
+    .menu-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--primary-color);
+    }
+
+    .super-menu-item {
+      color: var(--accent-color);
+    }
+
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background-dark);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .login-container {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(214, 86, 122, 0.2) 8%, transparent 8.01%);
+      background-size: 30px 30px;
+      animation: moveBackground 25s linear infinite;
+      z-index: -1;
+    }
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(214, 86, 122, 0.5);
+      animation: pulse 2.5s infinite ease-in-out;
+    }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(214, 86, 122, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.7);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-color);
+    }
+
+    #logout-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #EF4444;
+      color: var(--text-primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1001;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    #logout-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .header-content {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(214, 86, 122, 0.3);
+    }
+
+    .header-content p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header i {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+    }
+
+    .section-header i.collapsed {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: block;
+    }
+
+    .section-body.hidden {
+      display: none;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 1.5rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .highlight {
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    p, li {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+      list-style-type: disc;
+    }
+
+    .feature-block {
+      display: flex;
+      align-items: flex-start;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(18, 19, 21, 0.5);
+      border-radius: 0.5rem;
+      gap: 1rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      min-width: 30px;
+      text-align: center;
+      padding-top: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .system-note {
+      background: rgba(18, 19, 21, 0.7);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-left: 3px solid var(--primary-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .system-note.warning {
+      border-left-color: #EF4444;
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    .logo {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 1.5rem;
+      background: rgba(214, 86, 122, 0.1);
+      border: 1px solid var(--card-border);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50%, -50%); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 240px;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      p, li {
+        font-size: 0.9rem;
+      }
+
+      .login-container {
+        padding: 2rem 1.25rem;
+      }
+
+      .login-title {
+        font-size: 1.5rem;
+      }
+
+      .login-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .login-logo {
+        width: 70px;
+        height: 70px;
+      }
+
+      .feature-block {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .feature-icon {
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Кнопка выхода (только для авторизованных) -->
+  <canvas id="stars-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
-  <!-- Секция авторизации -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item active"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <div class="menu-category">Інформація</div>
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
+  <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+
   <div id="login-section">
-    <p>Будь ласка, увійдіть через Telegram:</p>
-    <div class="telegram-button-wrapper">
-      <script async src="https://telegram.org/js/telegram-widget.js?7"
-              data-telegram-login="ticket_tracker_UG_bot" 
-              data-size="large"
-              data-userpic="false"
-              data-request-access="write"
-              data-onauth="onTelegramAuth(user)">
-      </script>
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--text-primary);"></i>
+      </div>
+      <h1 class="login-title">Скрипт оновлення 1.3</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до контенту</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
     </div>
   </div>
 
-  <!-- Основной контент (скрыт по умолчанию) -->
   <div id="content" class="hidden">
-    <nav aria-label="Навігація по документу">
-      <h2>Навігація</h2>
-      <a href="#marketplace">Маркетплейс</a>
-      <a href="#darkmarket">Даркмаркет</a>
-      <a href="#treasure_hunter">Шукач скарбів</a>
-      <a href="#ug_motors">Автосалон UG Motors</a>
-      <a href="#vip_chat">VIP Чат</a>
-      <a href="#cars">Автомобілі</a>
-      <a href="#warning">Увага</a>
-    </nav>
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <h1><i class="fas fa-file-code"></i> UG Team Marketplace Script 1.3</h1>
+          <p>Повний гайд по новим функціям та змінам в оновленні 1.3</p>
+        </div>
+      </header>
 
-    <main>
-      <h1 id="marketplace">Скрипт до 1.3<br>Маркетплейс</h1>
-      <p>
-        Для того щоб створити оголошення на маркетплейс потрібно приїхати на склад пошти та натиснути в любому місці на клавішу “І” та перекинути річ в інший інвентар.
-        Після цього Ваша річ буде відображатись в маркетплейсі в розділі “Склад речей” і там ви зможете взяти і поставити річ на продаж.
-      </p>
-      <p>
-        Щоб забрати куплену річ потрібно піти на пошту на склад де падають речі та там зможете їх забрати. Але речі які ви придбали в маркетплейсі будуть мати 7 днів для того щоб забрати. Після того вони пропадать якщо не заберете.
-        Треба вибрати ціну за яку ставиться на продаж та на яку кількість днів. Для того щоб поставити річ додатково знімається сума за оренду в маркетплейсі яка є статична до кожного розділу.
-        В маркетплейсі можна придбати все що потрібно одразу, але для того щоб придбати нерухомість/бізнес/автомобіль потрібно зв’язатись з гравець через дзвінок в телефоні або ж повідомлення.
-        Якщо гравець знаходиться офлайн то з ним не зможете зв’язатись, але якщо в нього підключена 2FA то йому на телеграм прийде сповіщення від нашого бота про те що з ним хочуть зв’язатись в грі щодо певного товару.
-        Орендувати авто в маркетплейсі також доступна, щоб орендувати вам потрібно вибрати транспорт та сплатити оренду, вибрати на скільки годин. Після цього вам видається ключі до транспорту і можете поїхати на парковку та забрати його.
-        Коли будете ставити транспорт на продаж то система автоматично буде підтягувати рекомендовану ціну з врахуванням тюнінгу яке є на авто, ви ж в свою чергу зможете поставити іншу ціну.
-      </p>
-
-      <h2 id="darkmarket">Даркмаркет</h2>
-      <p>
-        Для того щоб відкрити Даркмаркет вам потрібно мат дарк флешдрайв, її можна знайти в сміттєбаку або ж на роботі металошукача.
-        Після цього у вас в інтерфейсі маркетплейсу буде переключатель на даркмаркет. Там продається зброя та нелегальні речі.
-        Щоб купити зброю не потрібно ніякої ліцензії на зброї, вона видається і ви можете використовувати. Всі речі падають на склад пошти
-        Також щоб поставити речі на даркнет потрібно речі покласти на склад пошти.
-        Дарк флешдрайв діє лише тиждень.
-      </p>
-
-      <h2 id="treasure_hunter">Шукач скарбів</h2>
-      <p>
-        Щоб почати працювати на хобі “Шукач скарбів” потрібно купити металошукач та лопату в магазині 24/7
-      </p>
-      <p>
-        Потім прийти на якусь з цих локації і взяти металошукач в руки, якщо нічого не з’являється то ви далеко від скарбу, коли починається круги то значить ви близько до скарбу
-      </p>
-      <p>
-        Коли ви будете біля мітки де треба викопати скарб у вас появиться підказка викопати скарб. 
-        Для того щоб викопати Вам потрібно взяти лопату в руки і натиснути клавішу “Е”
-      </p>
-      <p>В шукача скарбів може випасти:</p>
-      <ul>
-        <li>Несправна батарейка</li>
-        <li>Металева кришка</li>
-        <li>Монета</li>
-        <li>Алюмінієва банка</li>
-        <li>Окуляри “RoyBon”</li>
-        <li>Зламаний телефон</li>
-        <li>Золота прикраса</li>
-      </ul>
-      <p>
-        До 2 рівня 25% - треба 150 скарбів
-        До 3 рівня 50% - треба 300 скарбів
-        До 4 рівня 75% - треба 500 скарбів
-        До 5 рівня 100% - треба 800 скарбів
-      </p>
-      <p>
-        На цьому хобі також є прокачка рівня яка ділиться таким чином:
-        На першому рівні випадає лише:
-      </p>
-      <ul>
-        <li>Несправна батарейка</li>
-        <li>Металева кришка</li>
-        <li>Монета</li>
-      </ul>
-      <p>На другому рівні додається:</p>
-      <ul><li>Алюмінієва банка</li></ul>
-      <p>На третьому рівні додається:</p>
-      <ul><li>Окуляри “RoyBon”</li></ul>
-      <p>На четвертому рівні додається:</p>
-      <ul><li>Зламаний телефон</li></ul>
-      <p>На п’ятому рівні додається:</p>
-      <ul><li>Золота прикраса</li></ul>
-      <p>
-        Речі продаються на ринку в Палетто-Бей там вони оновлюються кожну годину але є обмеження по кількості видачі в такому порядку:
-      </p>
-      <ul>
-        <li>Несправна батарейка: 50шт.</li>
-        <li>Металева кришка: 100шт.</li>
-        <li>Монета: 75шт.</li>
-        <li>Алюмінієва банка: 60шт.</li>
-        <li>Окуляри “RoyBon”: 30шт.</li>
-        <li>Зламаний телефон: 25шт.</li>
-        <li>Золота прикраса: 10шт.</li>
-      </ul>
-
-      <h2 id="ug_motors">Автосалон UG Motors</h2>
-      <p>В цьому автосалоні наші автомобілі та знаходиться біля мерії</p>
-
-      <h2>Новий кейс “Літня краса”</h2>
-      <p>Товар в донат магазині</p>
-
-      <h2 id="vip_chat">VIP Чат для гравців які мають VIP</h2>
-      <p>
-        Для того щоб писати в VIP чат можна вибрати через ТАВ або написав /vip
-        Цей чат доступний лише для гравців які мають любий вид VIP та адміністрації.
-        Адміністрація має моніторити чат а також керуватись правилами використання VIP чатом яке опубліковано на форумі
-      </p>
-
-      <h2>Додаткові зміни</h2>
-      <p>В Палето-Бей відкрите нове відділення банку<br />
-      Оновлена рулетка в особистому кабінеті</p>
-
-      <h2 id="cars">Автомобілі</h2>
-      <ul>
-        <li>34 000 000 — Bugatti Bolide (Донат)</li>
-        <li>23 500 000 — Bugatti W16 Mistral (Автосалон Люкс)</li>
-        <li>4 275 000 — Audi Q8 2019 (Автосалон Люкс)</li>
-        <li>5 600 000 — Audi RS 6 Avant (Кейс)</li>
-        <li>450 000 — Mercedes-Benz W210 (Донат)</li>
-        <li>2 070 000 — Mercedes-AMG A45 S (Автосалон Люкс)</li>
-        <li>10 500 000 — Rolls Royce Cullinan Black Badge (Автосалон Люкс)</li>
-        <li>8 200 000 — Rolls-Royce Phantom 2018 (Автосалон Люкс)</li>
-      </ul>
-
-      <div class="warning" id="warning">
-        ЗА РОЗПОВСЮДЖЕННЯ СКРИПТА БУДЕ БЛОКУВАННЯ ТА ОБНУЛЕННЯ АКАУНТІВ НА ВСІХ ПРОЕКТАХ UG TEAM
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-store"></i> Маркетплейс</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-box"></i></div>
+            <div>
+              <h3>Створення оголошення</h3>
+              <p>Приїдьте на склад пошти, натисніть <span class="highlight">“І”</span> та перекиньте річ в інший інвентар.</p>
+              <p>Річ з’явиться в маркетплейсі у розділі <span class="highlight">“Склад речей”</span>, де можна поставити її на продаж.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
+            <div>
+              <h3>Покупка та оренда</h3>
+              <ul>
+                <li>Куплені речі забираються на складі пошти (термін зберігання — <span class="highlight">7 днів</span>).</li>
+                <li>Для покупки нерухомості, бізнесу чи авто зв’яжіться з продавцем через дзвінок або повідомлення.</li>
+                <li>Якщо продавець офлайн і має <span class="highlight">2FA</span>, йому надійде сповіщення через Telegram-бот.</li>
+                <li>Оренда авто: виберіть транспорт, сплатіть оренду, вкажіть години, отримайте ключі та заберіть авто на парковці.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-coins"></i></div>
+            <div>
+              <h3>Ціноутворення</h3>
+              <p>Встановіть ціну та кількість днів. Додатково знімається статична плата за оренду місця в маркетплейсі.</p>
+              <p>Система пропонує <span class="highlight">рекомендовану ціну</span> з урахуванням тюнінгу авто, але ви можете змінити її.</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </main>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-mask"></i> Даркмаркет</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-usb"></i></div>
+            <div>
+              <h3>Доступ до даркмаркету</h3>
+              <p>Потрібен <span class="highlight">дарк флешдрайв</span> (знаходиться в сміттєбаках або на роботі металошукача). Термін дії — <span class="highlight">тиждень</span>.</p>
+              <p>У маркетплейсі з’явиться перемикач на даркмаркет.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gun"></i></div>
+            <div>
+              <h3>Товари</h3>
+              <p>Продаються зброя та нелегальні речі без ліцензії. Усі покупки доставляються на склад пошти.</p>
+              <p>Для продажу речей покладіть їх на склад пошти.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-treasure-chest"></i> Шукач скарбів</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-tools"></i></div>
+            <div>
+              <h3>Початок роботи</h3>
+              <p>Купіть <span class="highlight">металошукач</span> і <span class="highlight">лопату</span> в магазині 24/7.</p>
+              <p>Прийдіть на локацію, візьміть металошукач у руки. Круги на екрані вказують на близькість скарбу.</p>
+              <p>Біля мітки з’явиться підказка викопати скарб. Візьміть лопату та натисніть <span class="highlight">“Е”</span>.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gem"></i></div>
+            <div>
+              <h3>Можливі знахідки</h3>
+              <ul>
+                <li><span class="highlight">Несправна батарейка</span></li>
+                <li><span class="highlight">Металева кришка</span></li>
+                <li><span class="highlight">Монета</span></li>
+                <li><span class="highlight">Алюмінієва банка</span></li>
+                <li><span class="highlight">Окуляри “RoyBon”</span></li>
+                <li><span class="highlight">Зламаний телефон</span></li>
+                <li><span class="highlight">Золота прикраса</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-level-up-alt"></i></div>
+            <div>
+              <h3>Прокачка рівнів</h3>
+              <ul>
+                <li>Рівень 2 (25%) — <span class="highlight">150 скарбів</span>: додається Алюмінієва банка.</li>
+                <li>Рівень 3 (50%) — <span class="highlight">300 скарбів</span>: додаються Окуляри “RoyBon”.</li>
+                <li>Рівень 4 (75%) — <span class="highlight">500 скарбів</span>: додається Зламаний телефон.</li>
+                <li>Рівень 5 (100%) — <span class="highlight">800 скарбів</span>: додається Золота прикраса.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-market"></i></div>
+            <div>
+              <h3>Продаж знахідок</h3>
+              <p>Продаються на ринку в <span class="highlight">Палетто-Бей</span> (оновлення щогодини) з обмеженнями:</p>
+              <ul>
+                <li>Несправна батарейка: <span class="highlight">50 шт.</span></li>
+                <li>Металева кришка: <span class="highlight">100 шт.</span></li>
+                <li>Монета: <span class="highlight">75 шт.</span></li>
+                <li>Алюмінієва банка: <span class="highlight">60 шт.</span></li>
+                <li>Окуляри “RoyBon”: <span class="highlight">30 шт.</span></li>
+                <li>Зламаний телефон: <span class="highlight">25 шт.</span></li>
+                <li>Золота прикраса: <span class="highlight">10 шт.</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-car"></i> Автосалон UG Motors</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-store-alt"></i></div>
+            <div>
+              <p>Розташований біля мерії. Продаються автомобілі UG Team.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-box-open"></i> Новий кейс “Літня краса”</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gift"></i></div>
+            <div>
+              <p>Доступний у <span class="highlight">донат магазині</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-comments"></i> VIP Чат</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>
+              <p>Доступний для гравців із будь-яким видом <span class="highlight">VIP</span> та адміністрації.</p>
+              <p>Активуйте через <span class="highlight">TAB</span> або команду <span class="highlight">/vip</span>.</p>
+              <p>Адміністрація моніторить чат за правилами, опублікованими на форумі.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-plus-circle"></i> Додаткові зміни</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-bank"></i></div>
+            <div>
+              <p>Відкрито нове відділення банку в <span class="highlight">Палетто-Бей</span>.</p>
+              <p>Оновлена рулетка в особистому кабінеті.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-car"></i> Автомобілі</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-car"></i></div>
+            <div>
+              <ul>
+                <li><span class="highlight">Bugatti Bolide</span> — 34,000,000 (Донат)</li>
+                <li><span class="highlight">Bugatti W16 Mistral</span> — 23,500,000 (Автосалон Люкс)</li>
+                <li><span class="highlight">Audi Q8 2019</span> — 4,275,000 (Автосалон Люкс)</li>
+                <li><span class="highlight">Audi RS 6 Avant</span> — 5,600,000 (Кейс)</li>
+                <li><span class="highlight">Mercedes-Benz W210</span> — 450,000 (Донат)</li>
+                <li><span class="highlight">Mercedes-AMG A45 S</span> — 2,070,000 (Автосалон Люкс)</li>
+                <li><span class="highlight">Rolls Royce Cullinan Black Badge</span> — 10,500,000 (Автосалон Люкс)</li>
+                <li><span class="highlight">Rolls-Royce Phantom 2018</span> — 8,200,000 (Автосалон Люкс)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-exclamation-triangle"></i> Увага</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="system-note warning">
+            <i class="fas fa-exclamation-triangle"></i> Розповсюдження цього скрипта призведе до блокування та обнулення акаунтів на всіх проєктах UG Team!
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        <p class="logo">Ukraine GTA 5 RolePlay</p>
+      </footer>
+    </div>
   </div>
 
   <script>
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const stars = [];
+    const numStars = 30;
+    
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speed = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.2;
+      }
+      
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+    
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
+
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
 
+    const superAdmins = [
+      '@laker_77',
+      '@B_m_b1',
+      '@c10mm'
+    ];
+
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      console.log('Toggling sidebar');
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        console.log('Closing sidebar');
+        sidebar.classList.remove('open');
+      }
+    });
+
     async function getSheetData(sheetName) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-      const res = await axios.get(url);
-      return res.data.values;
+      console.log(`Fetching data for sheet: ${sheetName}`);
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
     }
 
     async function onTelegramAuth(user) {
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        alert('Невалідні дані користувача');
+        showLoginForm();
+        return;
+      }
+
       const telegramUsername = '@' + user.username;
-      
+      console.log('Processing user:', telegramUsername);
+
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          console.error('No tickets data found');
+          alert('Дані не знайдено');
+          showLoginForm();
+          return;
+        }
         const ticketsHeaders = ticketsData[0];
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          alert('Помилка структури даних: відсутній стовпець Telegram');
+          showLoginForm();
+          return;
+        }
+
         const userTicketsRow = ticketsData.find(row => 
           row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
         );
         
         if (userTicketsRow) {
-          // Сохраняем данные пользователя
+          console.log('User found in tickets data:', userTicketsRow);
           const userData = {
             username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: superAdmins.includes(telegramUsername)
           };
           localStorage.setItem('tg_auth', JSON.stringify(userData));
-          
-          // Показываем контент
-          showContent();
+          showContent(userData);
         } else {
-          // Если пользователь не найден
+          console.error('User not found in tickets data:', telegramUsername);
           localStorage.removeItem('tg_auth');
           alert('Користувача не знайдено в таблиці. Доступ заборонено.');
           showLoginForm();
         }
       } catch (error) {
-        console.error(error);
+        console.error('Помилка перевірки авторизації:', error);
         alert('Помилка під час завантаження даних');
         showLoginForm();
       }
     }
 
-    // Функция для показа контента
-    function showContent() {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('content').classList.remove('hidden');
+    function showContent(userData) {
+      console.log('Showing content for user:', userData);
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
       document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+
+      if (userData.isAdmin) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
     }
 
-    // Функция для показа формы входа
     function showLoginForm() {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('content').classList.add('hidden');
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('content').style.display = 'none';
       document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
     }
 
-    // Функция выхода
     function logout() {
+      console.log('Logging out');
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
 
-    // Проверка сохраненной сессии при загрузке
+    function toggleSection(header) {
+      const body = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      body.classList.toggle('hidden');
+      icon.classList.toggle('collapsed');
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-      // Добавляем обработчик для кнопки выхода
+      console.log('DOM loaded');
       document.getElementById('logout-btn').addEventListener('click', logout);
       
-      // Проверяем сохраненную сессию
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
         try {
-          showContent();
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
         } catch (e) {
+          console.error('Error parsing saved auth:', e);
           localStorage.removeItem('tg_auth');
           showLoginForm();
         }
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
       }
     });
   </script>
