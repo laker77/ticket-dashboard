@@ -818,6 +818,11 @@
       '@c10mm'
     ];
 
+    const excludedLowAdmins = [
+      '@vanchff',
+      '@blisssbabe'
+    ];
+
     document.getElementById('sidebarToggle').addEventListener('click', () => {
       document.getElementById('sidebar').classList.toggle('open');
     });
@@ -997,7 +1002,7 @@
           const name = row[nameColIndex] || '';
           const telegram = row[telegramColIndex] || '';
           
-          if (!name || !telegram) return;
+          if (!name || !telegram || excludedLowAdmins.includes(telegram)) return;
 
           let ticketsSum = 0;
           let timeSecondsSum = 0;
