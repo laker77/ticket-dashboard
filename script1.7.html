@@ -75,6 +75,7 @@
       z-index: 1000;
       padding: 1.5rem;
       border-right: 1px solid var(--card-border);
+      overflow-y: auto;
     }
 
     .sidebar.open {
@@ -277,6 +278,7 @@
       max-width: 1100px;
       margin: 2rem auto;
       padding: 1.5rem;
+      overflow: hidden;
     }
 
     header {
@@ -292,6 +294,7 @@
       border-radius: 1rem;
       border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
     h1 {
@@ -322,6 +325,7 @@
       border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
     }
 
     .section:hover {
@@ -360,10 +364,15 @@
 
     .section-body {
       display: block;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      max-height: 1000px;
+      opacity: 1;
+      overflow: hidden;
     }
 
     .section-body.hidden {
-      display: none;
+      max-height: 0;
+      opacity: 0;
     }
 
     h3 {
@@ -404,6 +413,7 @@
       border-radius: 0.5rem;
       gap: 1rem;
       border-left: 4px solid var(--primary-color);
+      overflow: hidden;
     }
 
     .feature-icon {
@@ -426,6 +436,7 @@
       display: flex;
       align-items: flex-start;
       gap: 0.5rem;
+      overflow: hidden;
     }
 
     .system-note.green {
@@ -452,6 +463,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 15px;
       margin: 20px 0;
+      overflow: hidden;
     }
 
     .territory-card {
@@ -461,6 +473,7 @@
       border: 1px solid var(--card-border);
       position: relative;
       overflow: hidden;
+      max-width: 100%;
     }
 
     .territory-card::after {
@@ -545,15 +558,18 @@
       flex-wrap: wrap;
       gap: 1rem;
       margin-top: 1rem;
+      overflow: hidden;
     }
 
     .hud-change {
       flex: 1;
       min-width: 300px;
+      max-width: 100%;
       background: rgba(18, 19, 21, 0.5);
       border-radius: 0.5rem;
       padding: 1rem;
       border: 1px solid var(--card-border);
+      overflow: hidden;
     }
 
     .hud-change h4 {
@@ -700,6 +716,11 @@
       .contract-table {
         display: block;
         overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .contract-table th, .contract-table td {
+        min-width: 120px;
       }
 
       .hud-changes {
@@ -714,6 +735,10 @@
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-menu">
+      <div class="menu-category">Інформація</div>
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда</a>
+      <a href="support.html" class="menu-item"><i class="fas fa-headset"></i> Підтримка</a>
       <div class="menu-category">Скрипти</div>
       <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
       <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
@@ -723,9 +748,9 @@
       <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
       <a href="script1.7.html" class="menu-item active"><i class="fas fa-code"></i> Скрипт 1.7</a>
       <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
-      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
-      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
-      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+      <a href="stats.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="online-calculator.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="warehouse.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
     </div>
   </div>
   <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
