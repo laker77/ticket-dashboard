@@ -365,14 +365,15 @@
     .section-body {
       display: block;
       transition: max-height 0.3s ease, opacity 0.3s ease;
-      max-height: 1000px;
+      max-height: 2000px; /* Increased max-height to accommodate more content */
       opacity: 1;
-      overflow: hidden;
+      overflow: visible; /* Changed to visible to ensure content isn't clipped */
     }
 
     .section-body.hidden {
       max-height: 0;
       opacity: 0;
+      overflow: hidden;
     }
 
     h3 {
@@ -407,13 +408,13 @@
     .feature-block {
       display: flex;
       align-items: flex-start;
-      margin: 1rem 0;
+      margin: 1.5rem 0; /* Increased margin for better spacing */
       padding: 1rem;
       background: rgba(18, 19, 21, 0.5);
       border-radius: 0.5rem;
       gap: 1rem;
       border-left: 4px solid var(--primary-color);
-      overflow: hidden;
+      overflow: visible; /* Ensure content isn't clipped */
     }
 
     .feature-icon {
@@ -429,14 +430,14 @@
       background: rgba(18, 19, 21, 0.7);
       padding: 1rem;
       border-radius: 0.5rem;
-      margin: 1rem 0;
+      margin: 1.5rem 0; /* Increased margin for better spacing */
       color: var(--text-secondary);
       font-size: 0.9rem;
       border-left: 3px solid var(--primary-color);
       display: flex;
       align-items: flex-start;
       gap: 0.5rem;
-      overflow: hidden;
+      overflow: visible; /* Ensure content isn't clipped */
     }
 
     .system-note.green {
@@ -1125,10 +1126,10 @@
               <p>Для державних фракцій додано боді-камери (активація клавішею <span class="highlight">"Б"</span>).</p>
             </div>
           </div>
-          <div class="system-note green" style="margin-bottom: 1.5rem;">
+          <div class="system-note green" style="margin-bottom: 2rem;">
             <i class="fas fa-star"></i> Акція <span class="highlight">x2</span> діє з <span class="highlight">12.07.2025</span> по <span class="highlight">13.07.2025</span>.
           </div>
-          <div class="system-note warning">
+          <div class="system-note warning" style="margin-bottom: 2rem;">
             <i class="fas fa-exclamation-triangle"></i> Будь-яке розповсюдження цього скрипта призведе до <span class="highlight">ЧСП</span> проектів UG Team!
           </div>
         </div>
