@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Оновлення 1.1</title>
+  <title>Оновлення 1.1 | Ukraine GTA 5</title>
   <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
   <script async src="https://telegram.org/js/telegram-widget.js?7" 
           data-telegram-login="ticket_tracker_UG_bot" 
@@ -22,25 +22,29 @@
       --background-dark: #0A0C1A;
       --card-bg: rgba(20, 22, 35, 0.9);
       --glass-bg: rgba(20, 22, 35, 0.7);
-      --glass-blur: blur(12px);
+      --glass-blur: blur(5px);
       --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
       --text-primary: #F3F4F6;
       --text-secondary: #D1D5DB;
+      --card-border: rgba(59, 130, 246, 0.2);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
 
     body {
-      background: linear-gradient(135deg, var(--background-dark), #1E293B);
+      background: var(--background-dark);
       color: var(--text-primary);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
     }
 
     canvas#stars-canvas {
@@ -66,7 +70,7 @@
       transition: left 0.3s ease;
       z-index: 1000;
       padding: 1.5rem;
-      border-right: 1px solid rgba(59, 130, 246, 0.2);
+      border-right: 1px solid var(--card-border);
     }
 
     .sidebar.open {
@@ -155,7 +159,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0A0C1A, #1E293B);
+      background: var(--background-dark);
       z-index: 1000;
       overflow: hidden;
     }
@@ -164,10 +168,10 @@
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       padding: 2.5rem;
-      border-radius: 1.25rem;
-      max-width: 450px;
+      border-radius: 1rem;
+      max-width: 400px;
       width: 90%;
-      box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -188,22 +192,24 @@
     }
 
     .login-logo {
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
       margin: 0 auto 1.5rem;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
       animation: pulse 2.5s infinite ease-in-out;
     }
 
     .login-title {
       font-size: 1.75rem;
       font-weight: 700;
-      color: var(--text-primary);
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
     }
 
@@ -217,13 +223,13 @@
       display: inline-block;
       border-radius: 0.75rem;
       overflow: hidden;
-      box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .telegram-button-wrapper:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 35px rgba(59, 130, 246, 0.7);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
     }
 
     .login-footer {
@@ -257,87 +263,113 @@
       border: none;
     }
 
-    #logout-btn:hover {
+    .logout-btn:hover {
       background: #DC2626;
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 2rem auto;
       padding: 1.5rem;
     }
 
-    .content {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
     }
 
-    .content-card {
+    .header-content {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .header-content p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .section {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       border-radius: 1rem;
-      padding: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      animation: slideIn 0.5s ease-out;
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .content-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
     }
 
-    .content-card-header {
+    .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       cursor: pointer;
       padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 1rem;
     }
 
-    .content-card-header h2 {
-      font-size: 1.5rem;
+    .section-header h2 {
+      font-size: 1.75rem;
       font-weight: 600;
       color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .content-card-header i {
+    .section-header i {
       font-size: 1.2rem;
       color: var(--text-secondary);
       transition: transform 0.3s ease;
     }
 
-    .content-card-header i.collapsed {
+    .section-header i.collapsed {
       transform: rotate(180deg);
     }
 
-    .content-card-body {
+    .section-body {
       display: block;
-      margin-top: 1rem;
     }
 
-    .content-card-body.hidden {
+    .section-body.hidden {
       display: none;
-    }
-
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary-color);
-      text-align: center;
-      margin-bottom: 1.5rem;
     }
 
     h3 {
       font-size: 1.25rem;
       font-weight: 600;
       color: var(--primary-color);
-      margin: 1rem 0 0.5rem;
+      margin: 1.5rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .highlight {
@@ -350,6 +382,7 @@
       line-height: 1.7;
       color: var(--text-secondary);
       font-size: 0.95rem;
+      margin-bottom: 0.75rem;
     }
 
     ul {
@@ -358,14 +391,67 @@
       list-style-type: disc;
     }
 
+    .feature-block {
+      display: flex;
+      align-items: flex-start;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(20, 22, 35, 0.5);
+      border-radius: 0.5rem;
+      gap: 1rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      min-width: 30px;
+      text-align: center;
+      padding-top: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .system-note {
+      background: rgba(20, 22, 35, 0.7);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-left: 3px solid var(--primary-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .system-note.warning {
+      border-left-color: #EF4444;
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    .logo {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 1.5rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid var(--card-border);
+    }
+
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
     }
 
     @keyframes pulse {
@@ -387,16 +473,18 @@
         padding: 1rem;
       }
 
-      .content-card {
-        padding: 1rem;
+      .section {
+        padding: 1.5rem;
       }
 
-      .content-card-header h2 {
-        font-size: 1.25rem;
+      .section-header h2 {
+        font-size: 1.5rem;
       }
 
       h1 {
-        font-size: 1.5rem;
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
       }
 
       h3 {
@@ -422,6 +510,15 @@
       .login-logo {
         width: 70px;
         height: 70px;
+      }
+
+      .feature-block {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .feature-icon {
+        margin-bottom: 0.5rem;
       }
     }
   </style>
@@ -459,7 +556,7 @@
   <div id="login-section">
     <div class="login-container">
       <div class="login-logo">
-        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--text-primary);"></i>
+        <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--text-primary);"></i>
       </div>
       <h1 class="login-title">Оновлення 1.1</h1>
       <p class="login-subtitle">Увійдіть через Telegram для доступу до контенту</p>
@@ -480,139 +577,195 @@
 
   <div id="content" class="hidden">
     <div class="container">
-      <h1>Скріпт до оновлення 1.1</h1>
-      <div class="content">
-        <div class="content-card">
-          <div class="content-card-header" onclick="toggleCard(this)">
-            <h2>Робота “Інкасатор”</h2>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="content-card-body">
-            <p>Щоб влаштуватись на роботу Вам потрібно мати:</p>
-            <ul>
-              <li>Ліцензію на зброю та легковий автомобіль</li>
-              <li>8 рівень гравця</li>
-              <li>Не перебувати в кримінальних організаціях</li>
-            </ul>
-            <p>Після підійти до мітки яка є на карті, зайти в будівлю та влаштуватись на роботу та почати зміну (скрін нижче).</p>
-            <p class="highlight">Важливо:</p>
-            <p>Щоб запросити друзів на роботу він має лиш влаштуватись, а не почати зміну, але ви маєте ОБОВ’ЯЗКОВО почати зміну. Початок зміни — це створення своєї групи!</p>
-            <p>Запросити друга до групи можна через “G” - Запросити до групи. Після чого Вам дається одяг та зброя і ви маєте підійти до авто яке позначено міткою на вулиці. Та поїхати до мітки завантаження коштів (буде побудований маршрут).</p>
-            <p>Після того як приїхали на мітку, Вам потрібно буде завантажити кошти підійшовши до грошей та натиснувши клавішу “Е”, забравши кошти маєте завантажити в авто через бокові двері (також клавіша “Е”).</p>
-            <p>Після завантаження коштів буде побудований маршрут до банкоматів де маєте завантажити їх і таким чином заробляти кошти.</p>
-            <p>Завантаження коштів в банкомат треба пройшовши Міні-гру перетаскаючи відповідну купюру до відповідної ячейки.</p>
-            <p>Завантаживши всі банкомати ви зможете приїхати назад до місце роботи та знову почати зміну.</p>
-            <p>Кримінальні угрупування можуть грабувати інкасаторів через функціонал моду, а саме підійти до багажника через “ТАВ - Пограбувати інкасаторів” і очкувати поки грабується авто. Час очікування 30 секунд. Якщо гравець з LSPD або FIB вбивають людину яка пограбувала інкасаторів, то отримає 10.000 ігрової валюти.</p>
-            <p class="highlight">ВАЖЛИВО!</p>
-            <p>Щоб грабіжники дотримувались “Правил пограбування інкасаторів”.</p>
-          </div>
+      <header>
+        <div class="header-content">
+          <h1><i class="fas fa-file-code"></i> Скрипт до оновлення 1.1</h1>
+          <p>Повний гайд по новим функціям та змінам в оновленні 1.1</p>
         </div>
+      </header>
 
-        <div class="content-card">
-          <div class="content-card-header" onclick="toggleCard(this)">
-            <h2>Арена</h2>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="content-card-body">
-            <p>Місцезнаходження арени позначено на карті кубком.</p>
-            <p>Щоб створити лобі потрібно підійти до NPC всередині арени та натиснути клавішу “Е” і в самому меню ви зможете вибрати формат гри.</p>
-            <h3>Командний бій:</h3>
-            <ul>
-              <li>Кількість гравців та раундів</li>
-              <li>Зброю</li>
-              <li>Мапу</li>
-              <li>Суму яку будуть платити за вхід в лобі</li>
-              <li>Статус кімнати: зачинений\відчинений (можна ввести пароль)</li>
-            </ul>
-            <h3>Сам за себе:</h3>
-            <ul>
-              <li>Кількість гравців</li>
-              <li>Час гри</li>
-              <li>Озброєння</li>
-              <li>Гонка озброєння — зміна зброї після кожного вбивства</li>
-              <li>Обране — фіксована зброя на заданий час</li>
-              <li>Мапа</li>
-              <li>Сума за вхід</li>
-              <li>Статус кімнати: зачинений\відчинений</li>
-            </ul>
-            <p>Вся сума дістається тому, хто виграв битву.</p>
-          </div>
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-truck"></i> Робота “Інкасатор”</h2>
+          <i class="fas fa-chevron-down"></i>
         </div>
-
-        <div class="content-card">
-          <div class="content-card-header" onclick="toggleCard(this)">
-            <h2>Система обміну</h2>
-            <i class="fas fa-chevron-down"></i>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-list"></i></div>
+            <div>
+              <h3>Вимоги для влаштування</h3>
+              <ul>
+                <li>Ліцензію на зброю та легковий автомобіль</li>
+                <li>8 рівень гравця</li>
+                <li>Не перебувати в кримінальних організаціях</li>
+              </ul>
+            </div>
           </div>
-          <div class="content-card-body">
-            <p>Щоб обмінятись з гравцем Вам потрібно підійти до нього, натиснути “G - Обмін”, після чого відкриється меню обміну.</p>
-            <ul>
-              <li>Максимальна сума: 1.000.000</li>
-              <li>КД між обміном: немає</li>
-            </ul>
-            <p>Підтвердження: “Підтвердити обмін” → очікування → “Здійснити обмін”</p>
+          <p>Після виконання вимог підійдіть до мітки на карті, зайдіть в будівлю, влаштуйтесь на роботу та почніть зміну.</p>
+          <div class="system-note">
+            <i class="fas fa-exclamation-circle"></i> Щоб запросити друзів на роботу, вони мають лише влаштуватись, а ви — почати зміну. Початок зміни створює групу!
           </div>
-        </div>
-
-        <div class="content-card">
-          <div class="content-card-header" onclick="toggleCard(this)">
-            <h2>Нові авто</h2>
-            <i class="fas fa-chevron-down"></i>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-user-plus"></i></div>
+            <div>
+              <h3>Запрошення до групи</h3>
+              <p>Запросіть друга через “G” → “Запросити до групи”. Після цього видається одяг та зброя. Підійдіть до позначеного авто та їдьте до мітки завантаження коштів.</p>
+            </div>
           </div>
-          <div class="content-card-body">
-            <ul>
-              <li>Lamborghini Urus - Автосалон</li>
-              <li>Tesla Model 3 - Автосалон</li>
-              <li>Ford F-150 Raptor - Автосалон</li>
-              <li>BMW M3 E36 - Автосалон</li>
-              <li>Mercedes-Benz CLS 63 AMG - Автосалон</li>
-              <li>Mercedes-Benz CLS 6.3 AMG 2015 - Кейс “Легенда епохи”</li>
-              <li>Dodge Challenger SRT Demon - Автосалон</li>
-              <li>Freightliner Cascadia 126 BBC - Автосалон далекобійників</li>
-              <li>Marcopolo Paradiso - Робота автобусника</li>
-              <li>Marcopolo Torino (G7) 2007 - Робота автобусника</li>
-              <li>Touareg 2019 - Автосалон</li>
-              <li>Ford GT Police - LSPD</li>
-              <li>Mercedes AMG GT Police - LSPD</li>
-              <li>Mercedes-Benz S600 (W140) - Автосалон</li>
-              <li>Mitsubishi Lancer Evolution - Автосалон</li>
-              <li>Lamborghini Huracan Performante - Донат</li>
-              <li>Toyota Land Cruiser 200 2016 - Автосалон</li>
-              <li>Volkswagen Transporter - Робота інкасаторів</li>
-              <li>Rolls-Royce Wraith 2015 - Автосалон</li>
-              <li>Audi Q5 Sportback - Автосалон</li>
-              <li>BMW 750Li 2016 - Автосалон</li>
-            </ul>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-money-bill"></i></div>
+            <div>
+              <h3>Процес роботи</h3>
+              <p>На мітці завантажте кошти, натиснувши “E”. Потім завантажте їх в авто через бокові двері (також “E”). Далі їдьте до банкоматів за маршрутом, завантажуйте кошти через міні-гру, перетягуючи купюри до відповідних комірок.</p>
+              <p>Після завантаження всіх банкоматів повертайтесь до місця роботи та починайте нову зміну.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="content-card">
-          <div class="content-card-header" onclick="toggleCard(this)">
-            <h2>Що ще додали</h2>
-            <i class="fas fa-chevron-down"></i>
-          </div>
-          <div class="content-card-body">
-            <ul>
-              <li>2 нових маршрута автобусника: “Окружний” та “Міжміський”</li>
-              <li>Кейс “Легенда епохи”</li>
-              <li>Послуга зміни статті та зовнішності</li>
-              <li>Новий одяг та аксесуари</li>
-              <li>Оренда човнів</li>
-              <li>Спавн італійської мафії — нова локація</li>
-              <li>Новий інтер’єр пошти</li>
-              <li>Квартири (інфо на вікі)</li>
-              <li>Інтер’єр риболовного магазину</li>
-              <li>Повернення авто через планшет фракції</li>
-              <li>Менші мітки на мапі</li>
-              <li>2FA через Telegram</li>
-              <li>Сумка дає вагу: 10кг (магазин), 20кг (кейс)</li>
-              <li>Свап зброї через гарячі клавіші</li>
-              <li>Система урону — індивідуально для кожної зброї</li>
-            </ul>
-            <p class="highlight">ЗА РОЗПОВСЮДЖЕННЯ СКРІПТА — МОМЕНТАЛЬНЕ ЗНЯТТЯ ДА ЧСП ПРОЕКТІВ!</p>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-skull-crossbones"></i></div>
+            <div>
+              <h3>Пограбування інкасаторів</h3>
+              <p>Кримінальні угрупування можуть пограбувати інкасаторів через “ТАВ - Пограбувати інкасаторів” (30 секунд). Якщо LSPD або FIB вбивають грабіжника, вони отримують 10,000$ ігрової валюти.</p>
+              <div class="system-note warning">
+                <i class="fas fa-exclamation-triangle"></i> Грабіжники повинні дотримуватись “Правил пограбування інкасаторів”.
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-bullseye"></i> Арена</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <p>Місцезнаходження арени позначено кубком на карті.</p>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-users"></i></div>
+            <div>
+              <h3>Створення лобі</h3>
+              <p>Підійдіть до NPC в арені, натисніть “E” та виберіть формат гри в меню.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <div>
+              <h3>Командний бій</h3>
+              <ul>
+                <li>Кількість гравців та раундів</li>
+                <li>Зброю</li>
+                <li>Мапу</li>
+                <li>Суму за вхід в лобі</li>
+                <li>Статус кімнати: зачинений/відчинений (можна ввести пароль)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-user"></i></div>
+            <div>
+              <h3>Сам за себе</h3>
+              <ul>
+                <li>Кількість гравців</li>
+                <li>Час гри</li>
+                <li>Озброєння</li>
+                <li>Гонка озброєння — зміна зброї після кожного вбивства</li>
+                <li>Обране — фіксована зброя на заданий час</li>
+                <li>Мапа</li>
+                <li>Сума за вхід</li>
+                <li>Статус кімнати: зачинений/відчинений</li>
+              </ul>
+              <p>Вся сума дістається переможцю.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-exchange-alt"></i> Система обміну</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <p>Щоб обмінятись з гравцем, підійдіть до нього, натисніть “G - Обмін”, відкриється меню обміну.</p>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-info-circle"></i></div>
+            <div>
+              <h3>Параметри обміну</h3>
+              <ul>
+                <li>Максимальна сума: 1,000,000</li>
+                <li>КД між обміном: немає</li>
+              </ul>
+              <p>Підтвердження: “Підтвердити обмін” → очікування → “Здійснити обмін”</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-car"></i> Нові авто</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <ul>
+            <li>Lamborghini Urus - Автосалон</li>
+            <li>Tesla Model 3 - Автосалон</li>
+            <li>Ford F-150 Raptor - Автосалон</li>
+            <li>BMW M3 E36 - Автосалон</li>
+            <li>Mercedes-Benz CLS 63 AMG - Автосалон</li>
+            <li>Mercedes-Benz CLS 6.3 AMG 2015 - Кейс “Легенда епохи”</li>
+            <li>Dodge Challenger SRT Demon - Автосалон</li>
+            <li>Freightliner Cascadia 126 BBC - Автосалон далекобійників</li>
+            <li>Marcopolo Paradiso - Робота автобусника</li>
+            <li>Marcopolo Torino (G7) 2007 - Робота автобусника</li>
+            <li>Touareg 2019 - Автосалон</li>
+            <li>Ford GT Police - LSPD</li>
+            <li>Mercedes AMG GT Police - LSPD</li>
+            <li>Mercedes-Benz S600 (W140) - Автосалон</li>
+            <li>Mitsubishi Lancer Evolution - Автосалон</li>
+            <li>Lamborghini Huracan Performante - Донат</li>
+            <li>Toyota Land Cruiser 200 2016 - Автосалон</li>
+            <li>Volkswagen Transporter - Робота інкасаторів</li>
+            <li>Rolls-Royce Wraith 2015 - Автосалон</li>
+            <li>Audi Q5 Sportback - Автосалон</li>
+            <li>BMW 750Li 2016 - Автосалон</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-plus-circle"></i> Що ще додали</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <ul>
+            <li>2 нових маршрута автобусника: “Окружний” та “Міжміський”</li>
+            <li>Кейс “Легенда епохи”</li>
+            <li>Послуга зміни статті та зовнішності</li>
+            <li>Новий одяг та аксесуари</li>
+            <li>Оренда човнів</li>
+            <li>Спавн італійської мафії — нова локація</li>
+            <li>Новий інтер’єр пошти</li>
+            <li>Квартири (інфо на вікі)</li>
+            <li>Інтер’єр риболовного магазину</li>
+            <li>Повернення авто через планшет фракції</li>
+            <li>Менші мітки на мапі</li>
+            <li>2FA через Telegram</li>
+            <li>Сумка дає вагу: 10кг (магазин), 20кг (кейс)</li>
+            <li>Свап зброї через гарячі клавіші</li>
+            <li>Система урону — індивідуально для кожної зброї</li>
+          </ul>
+          <div class="system-note warning">
+            <i class="fas fa-exclamation-triangle"></i> ЗА РОЗПОВСЮДЖЕННЯ СКРІПТА — МОМЕНТАЛЬНЕ ЗНЯТТЯ ДА ЧСП ПРОЕКТІВ!
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        <p class="logo">Ukraine GTA 5 RolePlay</p>
+      </footer>
     </div>
   </div>
 
@@ -630,7 +783,7 @@
     window.addEventListener('resize', resizeCanvas);
     
     const stars = [];
-    const numStars = 30; // Уменьшено для меньшей интенсивности
+    const numStars = 30;
     
     class Star {
       constructor() {
@@ -798,7 +951,7 @@
       showLoginForm();
     }
 
-    function toggleCard(header) {
+    function toggleSection(header) {
       const body = header.nextElementSibling;
       const icon = header.querySelector('i');
       body.classList.toggle('hidden');
