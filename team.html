@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Команда проєкту | Ukraine GTA 5</title>
+    <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script async src="https://telegram.org/js/telegram-widget.js?7" 
             data-telegram-login="ticket_tracker_UG_bot" 
@@ -11,94 +12,20 @@
             data-userpic="false" 
             data-request-access="write"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
     <style>
-        /* Стили для авторизации */
-        #login-section {
-            background-color: #121824;
-            padding: 40px 30px;
-            border-radius: 20px;
-            max-width: 400px;
-            margin: 60px auto;
-            box-shadow: 0 0 30px #1977FDAA;
-            text-align: center;
-            animation: fadeInUp 1.2s ease forwards;
-            opacity: 0;
-            transform: translateY(30px);
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-        
-        #login-section p {
-            margin-bottom: 25px;
-            color: #FFFBEF;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .telegram-button-wrapper {
-            display: inline-block;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 0 15px #1977FD;
-            animation: pulse 3s infinite ease-in-out;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        #logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #ff4d4d;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 1001;
-            transition: background-color 0.3s;
-            border: none;
-            font-weight: bold;
-        }
-        
-        #logout-btn:hover {
-            background-color: #e60000;
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 15px #1977FD;
-                transform: scale(1);
-            }
-            50% {
-                box-shadow: 0 0 35px #1977FD;
-                transform: scale(1.1);
-            }
-        }
-
-        /* Остальные стили */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        
+        /* Переменные для цветовой гаммы */
         :root {
-            --bg-dark: #050608;
-            --card-bg: #1a1a1a;
-            --card-border: #2a2a2a;
-            --accent-blue: #3b82f6;
-            --text-light: #ffffff;
-            --text-muted: #a3a3a3;
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #F59E0B;
+            --background-dark: #0A0C1A;
+            --card-bg: rgba(20, 22, 35, 0.9);
+            --glass-bg: rgba(20, 22, 35, 0.7);
+            --glass-blur: blur(15px);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --text-primary: #F3F4F6;
+            --text-secondary: #D1D5DB;
             --owner: #FFD700;
             --tech: #60a5fa;
             --test: #4ade80;
@@ -106,29 +33,307 @@
             --management: #c084fc;
             --curators: #fbbf24;
         }
-        
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-        
+
+        body {
+            background: linear-gradient(135deg, var(--background-dark), #1E293B);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Анимация падающих звезд */
+        canvas#stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* Боковое меню */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .menu-category {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+        }
+
+        .menu-item, .super-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .menu-item:hover, .super-menu-item:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateX(5px);
+        }
+
+        .super-menu-item {
+            color: var(--accent-color);
+        }
+
+        /* Секция авторизации */
+        #login-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--background-dark), #1E293B);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .login-container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
+            background-size: 40px 40px;
+            animation: moveBackground 30s linear infinite;
+            z-index: -1;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 0 20px var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .telegram-button-wrapper:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Кнопка выхода */
+        #logout-btn {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: #EF4444;
+            color: var(--text-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        #logout-btn:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Секция отказа в доступе */
+        #access-denied-section {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1E293B, #334155);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .access-denied-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .access-denied-icon {
+            font-size: 4rem;
+            color: #EF4444;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .access-denied-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .access-denied-message {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .back-to-login-btn {
+            background: #EF4444;
+            color: var(--text-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-login-btn:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Контейнер контента */
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
-        
+
         header {
             text-align: center;
             padding: 40px 0;
             margin-bottom: 30px;
+            animation: fadeIn 1.5s ease;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
@@ -136,28 +341,31 @@
             gap: 15px;
             margin-bottom: 20px;
         }
-        
+
         .logo i {
             font-size: 2.5rem;
-            color: var(--accent-blue);
+            color: var(--primary-color);
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            animation: pulse 2s infinite ease-in-out;
         }
-        
+
         h1 {
             font-size: 2.8rem;
-            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
-        
+
         .subtitle {
             font-size: 1.2rem;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.7;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
         }
-        
+
         .department {
             margin: 50px 0 30px;
             padding-bottom: 15px;
@@ -165,8 +373,21 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .department::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            animation: slideBorder 3s infinite;
+        }
+
         .department-icon {
             width: 50px;
             height: 50px;
@@ -175,34 +396,41 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
         }
-        
+
+        .department-icon:hover {
+            transform: rotate(360deg);
+        }
+
         .owner .department { border-color: var(--owner); }
         .tech .department { border-color: var(--tech); }
         .test .department { border-color: var(--test); }
         .media .department { border-color: var(--media); }
         .management .department { border-color: var(--management); }
         .curators .department { border-color: var(--curators); }
-        
+
         .owner .department-icon { background: var(--owner); }
         .tech .department-icon { background: var(--tech); }
         .test .department-icon { background: var(--test); }
         .media .department-icon { background: var(--media); }
         .management .department-icon { background: var(--management); }
         .curators .department-icon { background: var(--curators); }
-        
+
         .department-title {
             font-size: 1.8rem;
             font-weight: 600;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
-        
+
         .owner .department-title { color: var(--owner); }
         .tech .department-title { color: var(--tech); }
         .test .department-title { color: var(--test); }
         .media .department-title { color: var(--media); }
         .management .department-title { color: var(--management); }
         .curators .department-title { color: var(--curators); }
-        
+
         .team-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -210,25 +438,26 @@
             margin-top: 20px;
             align-items: stretch;
         }
-        
+
         .member-card {
-            background: rgba(26, 26, 26, 0.7);
+            background: var(--card-bg);
             border-radius: 16px;
             overflow: hidden;
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             height: 100%;
+            position: relative;
         }
-        
+
         .member-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
         }
-        
+
         .card-header {
             padding: 25px;
             display: flex;
@@ -236,14 +465,14 @@
             gap: 20px;
             position: relative;
         }
-        
+
         .owner .card-header { background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), transparent); }
         .tech .card-header { background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), transparent); }
         .test .card-header { background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), transparent); }
         .media .card-header { background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), transparent); }
         .management .card-header { background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), transparent); }
         .curators .card-header { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), transparent); }
-        
+
         .avatar {
             width: 80px;
             height: 80px;
@@ -256,102 +485,136 @@
             overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
+            transition: transform 0.3s ease;
         }
-        
+
+        .avatar:hover {
+            transform: scale(1.1);
+        }
+
         .avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
-        
+
         .member-info {
             flex: 1;
             min-width: 0;
         }
-        
+
         .member-name {
             font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 5px;
-            color: var(--text-light);
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
         }
-        
+
         .member-role {
             font-size: 1rem;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-bottom: 10px;
             font-weight: 500;
         }
-        
+
         .member-contact {
             font-size: 0.9rem;
-            color: var(--accent-blue);
+            color: var(--primary-color);
             word-break: break-all;
+            transition: color 0.3s ease;
         }
-        
+
+        .member-contact:hover {
+            color: var(--secondary-color);
+        }
+
         .card-content {
             padding: 25px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
-        
+
         .responsibilities-title {
             font-size: 1.1rem;
-            color: var(--text-light);
+            color: var(--text-primary);
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .responsibilities {
             margin-bottom: 20px;
             flex-grow: 1;
         }
-        
+
         .responsibilities ul {
             padding-left: 25px;
         }
-        
+
         .responsibilities li {
             margin-bottom: 10px;
             line-height: 1.6;
-            color: var(--text-muted);
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
         }
-        
+
+        .responsibilities li:hover {
+            color: var(--text-primary);
+        }
+
         .rights {
             padding: 15px;
             border-radius: 12px;
             background: rgba(40, 40, 40, 0.5);
-            border-left: 3px solid var(--accent-blue);
+            border-left: 3px solid var(--primary-color);
             margin-top: auto;
+            transition: background 0.3s ease;
         }
-        
+
+        .rights:hover {
+            background: rgba(40, 40, 40, 0.7);
+        }
+
         .rights-title {
             font-size: 1.1rem;
-            color: var(--accent-blue);
+            color: var(--primary-color);
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .note {
             margin-top: 50px;
             padding: 25px;
             border-radius: 16px;
-            background: rgba(26, 26, 26, 0.7);
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .note::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            animation: shine 5s infinite;
+        }
+
         .note-title {
             font-size: 1.5rem;
             color: #f87171;
@@ -360,97 +623,184 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            text-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
         }
-        
+
         .note-content {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             line-height: 1.8;
             max-width: 800px;
             margin: 0 auto;
         }
-        
+
         .note-content p {
             margin-bottom: 15px;
         }
-        
+
         footer {
             text-align: center;
             padding: 50px 0 30px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-top: 60px;
-            border-top: 1px solid var(--card-border);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
         }
-        
+
         .footer-logo {
-            color: var(--accent-blue);
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.3rem;
             margin-bottom: 15px;
             display: inline-block;
+            transition: color 0.3s ease;
         }
-        
+
+        .footer-logo:hover {
+            color: var(--secondary-color);
+        }
+
         .copyright {
             font-size: 0.9rem;
         }
-        
-        /* Стили для сообщения о запрете доступа */
-        .access-denied {
-            text-align: center;
-            padding: 50px 20px;
-            color: #ff5555;
-            font-size: 1.2rem;
-            background-color: #1a1a1a;
-            border-radius: 10px;
-            max-width: 600px;
-            margin: 100px auto;
-            border: 1px solid #ff5555;
-            box-shadow: 0 0 20px rgba(255, 85, 85, 0.5);
+
+        /* Анимации */
+        @keyframes slideBorder {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
         }
-        
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+
         @media (max-width: 768px) {
             .team-container {
                 grid-template-columns: 1fr;
             }
-            
+
             h1 {
                 font-size: 2.2rem;
             }
-            
+
             .card-header {
                 padding: 20px;
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .avatar {
                 margin-bottom: 15px;
+            }
+
+            .sidebar {
+                width: 250px;
+            }
+
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .login-subtitle {
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Секция авторизации -->
-    <div id="login-section">
-        <p>Будь ласка, увійдіть через Telegram:</p>
-        <div class="telegram-button-wrapper">
-            <script async src="https://telegram.org/js/telegram-widget.js?7"
-                    data-telegram-login="ticket_tracker_UG_bot" 
-                    data-size="large"
-                    data-userpic="false"
-                    data-request-access="write"
-                    data-onauth="onTelegramAuth(user)">
-            </script>
+    <canvas id="stars-canvas"></canvas>
+
+    <!-- Боковое меню -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-category">Скрипти</div>
+            <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+            <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+            <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+            <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+            <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+            <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+            <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+            <div class="menu-category">Інформація</div>
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+            <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+            <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+            <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+            <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+            <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+            <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+            <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+            <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+            <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+            <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
         </div>
     </div>
-    
-    <button id="logout-btn" class="hidden">Вийти</button>
-    
-    <!-- Сообщение о запрете доступа -->
-    <div id="access-denied" class="access-denied hidden">
-        <h2>Доступ заборонено</h2>
-        <p>Ваш обліковий запис не має доступу до цього контенту.</p>
+    <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+
+    <!-- Секция авторизации -->
+    <div id="login-section">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--text-primary);"></i>
+            </div>
+            <h1 class="login-title">Команда проєкту</h1>
+            <p class="login-subtitle">Увійдіть через Telegram для доступу до інформації</p>
+            <div class="telegram-button-wrapper">
+                <script async src="https://telegram.org/js/telegram-widget.js?7"
+                        data-telegram-login="ticket_tracker_UG_bot" 
+                        data-size="large"
+                        data-userpic="false"
+                        data-request-access="write"
+                        data-onauth="onTelegramAuth(user)">
+                </script>
+            </div>
+            <div class="login-footer">
+                Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+            </div>
+        </div>
     </div>
-    
+
+    <button id="logout-btn" class="hidden">Вийти</button>
+
+    <!-- Секция отказа в доступе -->
+    <div id="access-denied-section">
+        <div class="access-denied-content">
+            <div class="access-denied-icon">🚫</div>
+            <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+            <p class="access-denied-message">
+                Ваш обліковий запис не має доступу до цього контенту.<br>
+                Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+            </p>
+            <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+        </div>
+    </div>
+
     <!-- Основной контент -->
     <div id="content" class="hidden">
         <div class="container">
@@ -724,7 +1074,8 @@
                                     <li>Загальне управління проєктом</li>
                                     <li>Організаційні питання</li>
                                 </ul>
-                                  <div class="rights">
+                            </div>
+                            <div class="rights">
                                 <div class="rights-title">
                                     <i class="fas fa-exclamation-circle"></i>
                                     <span>Важливо</span>
@@ -732,8 +1083,6 @@
                                 <p>Ви звертаєтесь до керівника проєкта, виключно коли вашу проблему або запитання не зміг вирішити Заступник Головного Адміністратора.</p>
                             </div>
                         </div>
-                    </div>
-
                     </div>
                     
                     <div class="member-card">
@@ -810,7 +1159,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://imgur.com/F44KqKF.jpg" alt="@liquid_ug">
+                                <img src="https://imgur.com/F44KqKF.jpg" alt="@vanchff">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@vanchff</div>
@@ -843,7 +1192,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://imgur.com/ZVs3DvC.jpg" alt="@Hermaeus_Mora_1679">
+                                <img src="https://imgur.com/ZVs3DvC.jpg" alt="@blisssbabe">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@blisssbabe</div>
@@ -872,13 +1221,14 @@
                             </div>
                         </div>
                     </div>
-                               <div class="member-card">
+                    
+                    <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://imgur.com/h65uRie.jpg" alt="@Hermaeus_Mora_1679">
+                                <img src="https://imgur.com/h65uRie.jpg" alt="@kkwaksa">
                             </div>
                             <div class="member-info">
-                                <div class="member-name">@@kkwaksa</div>
+                                <div class="member-name">@kkwaksa</div>
                                 <div class="member-role">Головний куратор Family</div>
                                 <div class="member-contact">Clark</div>
                             </div>
@@ -922,86 +1272,228 @@
         </div>
     </div>
 
-   <script>
-    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-
-    async function getSheetData(sheetName) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-      const res = await axios.get(url);
-      return res.data.values;
-    }
-
-    async function onTelegramAuth(user) {
-      const telegramUsername = '@' + user.username;
-      
-      try {
-        const ticketsData = await getSheetData('Май_2025_таблица');
-        const ticketsHeaders = ticketsData[0];
-        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+    <script>
+        // Анимация падающих звезд
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
         
-        const userTicketsRow = ticketsData.find(row => 
-          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-        );
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
         
-        if (userTicketsRow) {
-          // Сохраняем данные пользователя
-          const userData = {
-            username: telegramUsername,
-          };
-          localStorage.setItem('tg_auth', JSON.stringify(userData));
-          
-          // Показываем контент
-          showContent();
-        } else {
-          // Если пользователь не найден
-          localStorage.removeItem('tg_auth');
-          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-          showLoginForm();
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        const stars = [];
+        const numStars = 50;
+        
+        class Star {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speed = Math.random() * 3 + 1;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+            
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
         }
-      } catch (error) {
-        console.error(error);
-        alert('Помилка під час завантаження даних');
-        showLoginForm();
-      }
-    }
-
-    // Функция для показа контента
-    function showContent() {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('content').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.remove('hidden');
-    }
-
-    // Функция для показа формы входа
-    function showLoginForm() {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('content').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-    }
-
-    // Функция выхода
-    function logout() {
-      localStorage.removeItem('tg_auth');
-      showLoginForm();
-    }
-
-    // Проверка сохраненной сессии при загрузке
-    document.addEventListener('DOMContentLoaded', function() {
-      // Добавляем обработчик для кнопки выхода
-      document.getElementById('logout-btn').addEventListener('click', logout);
-      
-      // Проверяем сохраненную сессию
-      const savedAuth = localStorage.getItem('tg_auth');
-      if (savedAuth) {
-        try {
-          showContent();
-        } catch (e) {
-          localStorage.removeItem('tg_auth');
-          showLoginForm();
+        
+        for (let i = 0; i < numStars; i++) {
+            stars.push(new Star());
         }
-      }
-    });
-   </script>
+        
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            requestAnimationFrame(animateStars);
+        }
+        
+        animateStars();
+
+        // Конфигурация Google Sheets
+        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+
+        // Список суперадминов
+        const superAdmins = [
+            '@laker_77',
+            '@B_m_b1',
+            '@c10mm'
+        ];
+
+        // Обработчик бокового меню
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        document.addEventListener('click', (event) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Получение данных из Google Sheets
+        async function getSheetData(sheetName) {
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+                const res = await axios.get(url, { timeout: 10000 });
+                return res.data.values || [];
+            } catch (error) {
+                console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+                return [];
+            }
+        }
+
+        // Обработчик авторизации через Telegram
+        async function onTelegramAuth(user) {
+            console.log('Telegram auth triggered:', user);
+            if (!user || !user.username) {
+                console.error('Invalid user data:', user);
+                showAccessDenied();
+                return;
+            }
+
+            const telegramUsername = '@' + user.username;
+            console.log('Processing user:', telegramUsername);
+
+            try {
+                const ticketsData = await getSheetData('Май_2025_таблица');
+                if (!ticketsData.length) {
+                    console.error('No tickets data found');
+                    showAccessDenied();
+                    return;
+                }
+                const ticketsHeaders = ticketsData[0];
+                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+                
+                if (telegramColIndex === -1) {
+                    console.error('Telegram column not found in tickets data');
+                    showAccessDenied();
+                    return;
+                }
+
+                const userTicketsRow = ticketsData.find(row => 
+                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+                );
+                
+                if (userTicketsRow) {
+                    console.log('User found in tickets data:', userTicketsRow);
+                    const userData = {
+                        username: telegramUsername,
+                        nickname: userTicketsRow[0] || user.first_name || user.username,
+                    };
+                    localStorage.setItem('tg_auth', JSON.stringify(userData));
+                    showContent(telegramUsername);
+                } else {
+                    console.error('User not found in tickets data:', telegramUsername);
+                    localStorage.removeItem('tg_auth');
+                    showAccessDenied();
+                }
+            } catch (error) {
+                console.error('Помилка перевірки авторизації:', error);
+                showAccessDenied();
+            }
+        }
+
+        // Показ контента
+        function showContent(telegramUsername) {
+            console.log('Showing content for:', telegramUsername);
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('sidebarToggle').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+            document.getElementById('access-denied-section').style.display = 'none';
+
+            if (superAdmins.includes(telegramUsername)) {
+                console.log('User is superAdmin, showing super menu');
+                document.getElementById('superMenuCategory').style.display = 'block';
+                document.getElementById('superMenuItem1').style.display = 'flex';
+                document.getElementById('superMenuItem2').style.display = 'flex';
+                document.getElementById('superMenuItem3').style.display = 'flex';
+            }
+
+            // Инициализация эффекта наклона для карточек
+            VanillaTilt.init(document.querySelectorAll('.member-card'), {
+                max: 8,
+                speed: 400,
+                glare: true,
+                'max-glare': 0.2
+            });
+        }
+
+        // Показ формы входа
+        function showLoginForm() {
+            console.log('Showing login form');
+            document.getElementById('login-section').style.display = 'flex';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarToggle').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('access-denied-section').style.display = 'none';
+        }
+
+        // Показ сообщения об отказе в доступе
+        function showAccessDenied() {
+            console.log('Showing access denied section');
+            document.getElementById('access-denied-section').style.display = 'flex';
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarToggle').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+        }
+
+        // Функция выхода
+        function logout() {
+            console.log('Logging out');
+            localStorage.removeItem('tg_auth');
+            showLoginForm();
+        }
+
+        // Проверка сохраненной сессии при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            
+            const savedAuth = localStorage.getItem('tg_auth');
+            if (savedAuth) {
+                try {
+                    console.log('Found saved auth:', savedAuth);
+                    const userData = JSON.parse(savedAuth);
+                    showContent(userData.username);
+                } catch (e) {
+                    console.error('Error parsing saved auth:', e);
+                    localStorage.removeItem('tg_auth');
+                    showLoginForm();
+                }
+            } else {
+                console.log('No saved auth, showing login form');
+                showLoginForm();
+            }
+        });
+    </script>
 </body>
 </html>
