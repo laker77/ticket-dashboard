@@ -16,33 +16,12 @@
       --secondary-color: #10B981;
       --accent-color: #F59E0B;
       --background-dark: #0A0C1A;
-      --card-bg-dark: rgba(20, 22, 35, 0.9);
-      --glass-bg-dark: rgba(20, 22, 35, 0.7);
-      --background-light: #F5F7FA;
-      --card-bg-light: rgba(255, 255, 255, 0.95);
-      --glass-bg-light: rgba(255, 255, 255, 0.7);
+      --card-bg: rgba(20, 22, 35, 0.9);
+      --glass-bg: rgba(20, 22, 35, 0.7);
       --glass-blur: blur(15px);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-      --text-primary-dark: #F3F4F6;
-      --text-secondary-dark: #D1D5DB;
-      --text-primary-light: #1F2937;
-      --text-secondary-light: #4B5563;
-    }
-
-    [data-theme="dark"] {
-      --background: var(--background-dark);
-      --card-bg: var(--card-bg-dark);
-      --glass-bg: var(--glass-bg-dark);
-      --text-primary: var(--text-primary-dark);
-      --text-secondary: var(--text-secondary-dark);
-    }
-
-    [data-theme="light"] {
-      --background: var(--background-light);
-      --card-bg: var(--card-bg-light);
-      --glass-bg: var(--glass-bg-light);
-      --text-primary: var(--text-primary-light);
-      --text-secondary: var(--text-secondary-light);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --text-primary: #F3F4F6;
+      --text-secondary: #D1D5DB;
     }
 
     * {
@@ -52,11 +31,10 @@
     }
 
     body {
-      background: linear-gradient(135deg, var(--background), #1E293B);
+      background: linear-gradient(135deg, var(--background-dark), #1E293B);
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
-      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .sidebar {
@@ -137,30 +115,6 @@
       color: var(--accent-color);
     }
 
-    .theme-toggle {
-      position: fixed;
-      top: 1.5rem;
-      right: 6rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      color: var(--primary-color);
-      font-size: 1.5rem;
-      border-radius: 0.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 1001;
-    }
-
-    .theme-toggle:hover {
-      transform: scale(1.1);
-      background: rgba(59, 130, 246, 0.2);
-    }
-
     #login-section {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -209,13 +163,14 @@
     }
 
     .admins-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      display: flex;
+      justify-content: center;
       gap: 1.5rem;
       margin-bottom: 2rem;
       max-width: 1400px;
       margin-left: auto;
       margin-right: auto;
+      flex-wrap: wrap;
     }
 
     .admin-card {
@@ -231,6 +186,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      flex: 1 1 400px;
     }
 
     .admin-card.low {
@@ -560,7 +516,8 @@
         width: 250px;
       }
       .admins-row {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: center;
       }
       .admin-card {
         max-width: 100%;
@@ -574,15 +531,11 @@
       .table-container th, .table-container td {
         padding: 0.5rem;
       }
-      .theme-toggle {
-        right: 4.5rem;
-      }
     }
   </style>
 </head>
-<body data-theme="dark">
+<body>
   <button id="logout-btn" class="hidden">Вийти</button>
-  <div class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></div>
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-menu">
@@ -731,15 +684,6 @@
       }
     });
 
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const body = document.body;
-      const currentTheme = body.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      body.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      document.getElementById('themeToggle').innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-    });
-
     async function getSheetData(sheetName) {
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
@@ -754,7 +698,7 @@
     function parseDate(str) {
       if (!str || typeof str !== 'string') return new Date();
       const [d, m, y] = str.split('.');
-      return new Date(y, m-1, d);
+      return new Date(y, m - 1, d);
     }
 
     function formatDate(date) {
@@ -765,7 +709,7 @@
     }
 
     function secondsToHHMMSS(seconds) {
-      if (!seconds) return '0хв';
+      if (!seconds || isNaN(seconds)) return '0хв';
       const h = Math.floor(seconds / 3600);
       const m = Math.floor((seconds % 3600) / 60);
       return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
@@ -829,6 +773,8 @@
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
 
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
         const admins = [];
 
         ticketsData.slice(1).forEach(row => {
@@ -853,7 +799,7 @@
                     const timeStr = timeRow[timeColIndex];
                     if (timeStr && timeStr !== 'Н') {
                       const [hh, mm, ss] = timeStr.split(':').map(Number);
-                      timeSecondsSum += hh * 3600 + mm * 60 + (ss || 0);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
                     }
                   }
                 }
@@ -896,6 +842,8 @@
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
 
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
         const admins = [];
 
         ticketsData.slice(1).forEach(row => {
@@ -920,7 +868,7 @@
                     const timeStr = timeRow[timeColIndex];
                     if (timeStr && timeStr !== 'Н') {
                       const [hh, mm, ss] = timeStr.split(':').map(Number);
-                      timeSecondsSum += hh * 3600 + mm * 60 + (ss || 0);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
                     }
                   }
                 }
@@ -1092,6 +1040,11 @@
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
 
+        if (telegramColIndex === -1 || nameColIndex === -1) {
+          alert('Помилка структури даних: відсутні необхідні стовпці');
+          return;
+        }
+
         const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
         if (!userTicketsRow) {
           alert('Користувача не знайдено в таблиці тікетів');
@@ -1112,23 +1065,23 @@
         const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
         const dateCols = ticketsHeaders
-          .map((h, i) => ({ h, i }))
-          .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+          .map((h, i) => ({ header: h, index: i }))
+          .filter(({ header }) => /^\d{2}\.\d{2}\.\d{4}$/.test(header));
 
         function sumTicketsAndTime(startDate, endDate) {
           let ticketsSum = 0;
           let timeSecondsSum = 0;
 
-          dateCols.forEach(({ h, i }) => {
-            const dt = parseDate(h);
+          dateCols.forEach(({ header, index }) => {
+            const dt = parseDate(header);
             if (dt >= startDate && dt <= endDate) {
-              ticketsSum += parseInt(userTicketsRow[i]) || 0;
-              const timeColIndex = timeHeaders.indexOf(h);
-              if (timeColIndex >= 0) {
+              ticketsSum += parseInt(userTicketsRow[index]) || 0;
+              const timeColIndex = timeHeaders.indexOf(header);
+              if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
                 const timeStr = userTimeRow[timeColIndex];
                 if (timeStr && timeStr !== 'Н') {
                   const [hh, mm, ss] = timeStr.split(':').map(Number);
-                  timeSecondsSum += hh * 3600 + mm * 60 + (ss || 0);
+                  timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
                 }
               }
             }
@@ -1143,12 +1096,12 @@
         const weekStats = sumTicketsAndTime(weekStart, today);
         const monthStats = sumTicketsAndTime(monthStart, today);
 
-        document.getElementById('today-tickets').innerText = todayStats.ticketsSum;
-        document.getElementById('today-time').innerText = secondsToHHMMSS(todayStats.timeSecondsSum);
-        document.getElementById('week-tickets').innerText = weekStats.ticketsSum;
-        document.getElementById('week-time').innerText = secondsToHHMMSS(weekStats.timeSecondsSum);
-        document.getElementById('month-tickets').innerText = monthStats.ticketsSum;
-        document.getElementById('month-time').innerText = secondsToHHMMSS(monthStats.timeSecondsSum);
+        document.getElementById('today-tickets').textContent = todayStats.ticketsSum || 0;
+        document.getElementById('today-time').textContent = secondsToHHMMSS(todayStats.timeSecondsSum);
+        document.getElementById('week-tickets').textContent = weekStats.ticketsSum || 0;
+        document.getElementById('week-time').textContent = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
+        document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
 
         const tbody = document.getElementById('daily-stats-body');
         tbody.innerHTML = '';
@@ -1157,32 +1110,32 @@
         const chartTickets = [];
         const chartTimeHours = [];
 
-        dateCols.forEach(({ h, i }) => {
-          const dt = parseDate(h);
+        dateCols.forEach(({ header, index }) => {
+          const dt = parseDate(header);
           if (dt >= monthStart && dt <= today) {
-            const dayTickets = parseInt(userTicketsRow[i]) || 0;
-            const timeColIndex = timeHeaders.indexOf(h);
+            const dayTickets = parseInt(userTicketsRow[index]) || 0;
+            const timeColIndex = timeHeaders.indexOf(header);
             let dayTimeStr = 'Н';
             let dayTimeSeconds = 0;
-            if (timeColIndex >= 0) {
-              dayTimeStr = userTimeRow[timeColIndex] || 'Н';
+            if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+              dayTimeStr = userTimeRow[timeColIndex];
               if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = timeStr.split(':').map(Number);
-                dayTimeSeconds = hh * 3600 + mm * 60 + (ss || 0);
+                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
               }
             }
             if (dayTimeStr === 'Н') inactiveCount++;
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-              <td>${h}</td>
+              <td>${header}</td>
               <td>${dayTickets}</td>
               <td>${dayTimeStr}</td>
               <td>${dayTimeStr === 'Н' ? 'Так' : ''}</td>
             `;
             tbody.appendChild(tr);
 
-            chartLabels.push(h);
+            chartLabels.push(header);
             chartTickets.push(dayTickets);
             chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
           }
@@ -1325,7 +1278,7 @@
           },
         });
       } catch (error) {
-        console.error(error);
+        console.error('Помилка під час завантаження даних:', error);
         alert('Помилка під час завантаження даних');
       }
     }
@@ -1378,7 +1331,7 @@
           showAccessDenied();
         }
       } catch (error) {
-        console.error(error);
+        console.error('Помилка перевірки авторизації:', error);
         showAccessDenied();
       }
     }
@@ -1425,7 +1378,7 @@
       
       document.getElementById('top-admins-section').classList.remove('hidden');
       document.getElementById('low-admins-section').classList.remove('hidden');
-      loadAndRenderAdmins();
+      await loadAndRenderAdmins();
       
       if (isAdmin) {
         document.getElementById('admin-notice').classList.remove('hidden');
@@ -1433,7 +1386,7 @@
       } else {
         document.getElementById('admin-notice').classList.add('hidden');
         document.getElementById('stats-section').classList.remove('hidden');
-        fetchUserStatsByTelegram(telegramUsername);
+        await fetchUserStatsByTelegram(telegramUsername);
       }
     }
 
@@ -1456,10 +1409,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('logout-btn').addEventListener('click', logout);
-      
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      document.body.setAttribute('data-theme', savedTheme);
-      document.getElementById('themeToggle').innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
       
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
