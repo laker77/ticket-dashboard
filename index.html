@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://telegram.org https://cdnjs.cloudflare.com; style-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' https://t.me https://ui-avatars.com data:;">
   <title>Особистий Кабінет Адміністратора</title>
   <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -14,14 +13,11 @@
   <style>
     :root {
       --primary-color: #1977FD;
-      --secondary-color: #16b982;
       --background-dark: #050608;
       --card-bg: rgba(18, 19, 21, 0.9);
       --glass-bg: rgba(18, 19, 21, 0.7);
       --glass-blur: blur(12px);
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      --error-color: #ef4444;
-      --gold-color: #ffd700;
     }
 
     * {
@@ -114,7 +110,7 @@
     }
 
     .super-menu-item {
-      color: var(--gold-color);
+      color: #ffd700;
     }
 
     /* Login Section */
@@ -168,7 +164,7 @@
     /* Admins Section */
     .admins-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
@@ -185,7 +181,7 @@
     }
 
     .admin-card.low {
-      border-color: var(--error-color);
+      border-color: rgba(239, 68, 68, 0.2);
     }
 
     .admin-card:hover {
@@ -206,16 +202,16 @@
     }
 
     .admin-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
     }
 
     .admin-item {
       display: flex;
       align-items: center;
       gap: 1rem;
-      padding: 0.5rem;
+      padding: 0.75rem;
       border-radius: 0.5rem;
       transition: all 0.3s ease;
     }
@@ -229,36 +225,31 @@
     }
 
     .admin-avatar {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid transparent;
     }
 
     .admin-item.gold .admin-avatar {
-      border-color: var(--gold-color);
-      box-shadow: 0 0 10px var(--gold-color);
+      border-color: #d4af37;
     }
 
     .admin-item.silver .admin-avatar {
       border-color: #c0c0c0;
-      box-shadow: 0 0 10px #c0c0c0;
     }
 
     .admin-item.bronze .admin-avatar {
       border-color: #cd7f32;
-      box-shadow: 0 0 10px #cd7f32;
     }
 
     .admin-item.normal .admin-avatar {
       border-color: var(--primary-color);
-      box-shadow: 0 0 10px var(--primary-color);
     }
 
     .admin-item.low .admin-avatar {
-      border-color: var(--error-color);
-      box-shadow: 0 0 10px var(--error-color);
+      border-color: #ef4444;
     }
 
     .admin-info {
@@ -282,7 +273,7 @@
     }
 
     .admin-item.low .admin-stat-value {
-      color: var(--error-color);
+      color: #ef4444;
     }
 
     .medal, .low-medal {
@@ -302,7 +293,6 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2rem;
     }
 
     .stats-grid > div {
@@ -324,39 +314,6 @@
       font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 0.75rem;
-    }
-
-    /* Chart Section */
-    .chart-container {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chart-container::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(25, 119, 253, 0.1) 10%, transparent 10.01%);
-      background-size: 50px 50px;
-      animation: moveBackground 20s linear infinite;
-      z-index: -1;
-    }
-
-    .chart-container h3 {
-      color: var(--primary-color);
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      text-align: center;
     }
 
     /* Table Styles */
@@ -422,7 +379,7 @@
 
     .access-denied-icon {
       font-size: 5rem;
-      color: var(--error-color);
+      color: #ef4444;
       margin-bottom: 1.5rem;
       animation: pulse 2s infinite;
     }
@@ -441,7 +398,7 @@
     }
 
     .back-to-login-btn {
-      background: var(--error-color);
+      background: #ef4444;
       color: #FFFBEF;
       padding: 0.75rem 2rem;
       border-radius: 0.75rem;
@@ -461,7 +418,7 @@
       position: fixed;
       top: 1.5rem;
       right: 1.5rem;
-      background: var(--error-color);
+      background: #ef4444;
       color: #FFFBEF;
       padding: 0.5rem 1.5rem;
       border-radius: 0.75rem;
@@ -610,32 +567,32 @@
           </div>
         </div>
 
-        <div class="chart-container">
-          <h3>Динаміка тікетів та часу</h3>
-          <canvas id="statsChart" height="100"></canvas>
+        <div class="mt-6">
+          <h3 class="text-lg font-bold mb-4">Динаміка тікетів та часу за останній місяць</h3>
+          <canvas id="statsChart" height="150"></canvas>
         </div>
 
-        <div class="table-container">
+        <div class="mt-6">
           <h3 class="text-lg font-bold mb-4">Детальна статистика по днях:</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Дата</th>
-                <th>Тікети</th>
-                <th>Час у грі</th>
-                <th>Неактив</th>
-              </tr>
-            </thead>
-            <tbody id="daily-stats-body"></tbody>
-          </table>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Тікети</th>
+                  <th>Час у грі</th>
+                  <th>Неактив</th>
+                </tr>
+              </thead>
+              <tbody id="daily-stats-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ЗАЩИТА: API_KEY и SHEET_ID должны быть перемещены на сервер (например, Node.js) для безопасности.
-    // Клиентский код не должен содержать чувствительных данных. Используйте серверный API для запросов к Google Sheets.
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
 
@@ -652,17 +609,6 @@
       '@c10mm'
     ];
 
-    // Экранирование пользовательских данных для защиты от XSS
-    function escapeHTML(str) {
-      return str.replace(/[&<>"']/g, (match) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[match]));
-    }
-
     // Sidebar Toggle
     document.getElementById('sidebarToggle').addEventListener('click', () => {
       document.getElementById('sidebar').classList.toggle('open');
@@ -677,15 +623,9 @@
     });
 
     async function getSheetData(sheetName) {
-      try {
-        // РЕКОМЕНДАЦИЯ: Перенесите этот запрос на сервер для защиты API_KEY
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-        const res = await axios.get(url);
-        return res.data.values;
-      } catch (error) {
-        console.error('Помилка при завантаженні даних:', error);
-        throw error;
-      }
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      const res = await axios.get(url);
+      return res.data.values;
     }
 
     function parseDate(str) {
@@ -795,8 +735,8 @@
           });
 
           admins.push({
-            name: escapeHTML(name),
-            telegram: escapeHTML(telegram),
+            name,
+            telegram,
             tickets: ticketsSum,
             time: timeSecondsSum,
             timeFormatted: secondsToHHMMSS(timeSecondsSum)
@@ -860,8 +800,8 @@
           });
 
           admins.push({
-            name: escapeHTML(name),
-            telegram: escapeHTML(telegram),
+            name,
+            telegram,
             tickets: ticketsSum,
             time: timeSecondsSum,
             timeFormatted: secondsToHHMMSS(timeSecondsSum)
@@ -1018,7 +958,7 @@
           return;
         }
 
-        const userName = escapeHTML(userTicketsRow[nameColIndex]);
+        const userName = userTicketsRow[nameColIndex];
 
         const timeHeaders = timeData[0];
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
@@ -1087,7 +1027,7 @@
             if (timeColIndex >= 0) {
               dayTimeStr = userTimeRow[timeColIndex] || 'Н';
               if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                const [hh, mm, ss] = timeStr.split(':').map(Number);
                 dayTimeSeconds = hh * 3600 + mm * 60 + ss;
               }
             }
@@ -1126,26 +1066,18 @@
               {
                 label: 'Тікети',
                 data: chartTickets,
-                borderColor: 'rgba(25, 119, 253, 1)',
-                backgroundColor: 'rgba(25, 119, 253, 0.3)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.3)',
                 yAxisID: 'yTickets',
                 tension: 0.3,
-                pointBackgroundColor: '#FFFBEF',
-                pointBorderColor: 'rgba(25, 119, 253, 1)',
-                pointHoverRadius: 8,
-                pointHoverBackgroundColor: 'rgba(25, 119, 253, 0.8)',
               },
               {
                 label: 'Час у грі (години)',
                 data: chartTimeHours,
-                borderColor: 'rgba(22, 185, 130, 1)',
-                backgroundColor: 'rgba(22, 185, 130, 0.3)',
+                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.3)',
                 yAxisID: 'yTime',
                 tension: 0.3,
-                pointBackgroundColor: '#FFFBEF',
-                pointBorderColor: 'rgba(22, 185, 130, 1)',
-                pointHoverRadius: 8,
-                pointHoverBackgroundColor: 'rgba(22, 185, 130, 0.8)',
               }
             ],
           },
@@ -1163,15 +1095,8 @@
                 title: {
                   display: true,
                   text: 'Тікети',
-                  color: '#FFFBEF',
                 },
                 beginAtZero: true,
-                grid: {
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
-                },
-                ticks: {
-                  color: '#FFFBEF',
-                }
               },
               yTime: {
                 type: 'linear',
@@ -1180,52 +1105,31 @@
                 title: {
                   display: true,
                   text: 'Час (години)',
-                  color: '#FFFBEF',
                 },
                 beginAtZero: true,
                 grid: {
                   drawOnChartArea: false,
                 },
-                ticks: {
-                  color: '#FFFBEF',
-                }
               },
               x: {
                 ticks: {
-                  color: '#FFFBEF',
-                  maxRotation: 45,
+                  maxRotation: 90,
                   minRotation: 45,
-                  maxTicksLimit: 10,
-                },
-                grid: {
-                  borderColor: 'rgba(255, 255, 255, 0.1)',
+                  maxTicksLimit: 15,
                 }
               }
             },
             plugins: {
               legend: {
                 position: 'top',
-                labels: {
-                  color: '#FFFBEF',
-                  font: {
-                    size: 12,
-                  }
-                }
               },
               tooltip: {
-                backgroundColor: 'rgba(18, 19, 21, 0.9)',
-                titleColor: '#FFFBEF',
-                bodyColor: '#FFFBEF',
                 callbacks: {
                   label: ctx => ctx.dataset.label === 'Час у грі (години)'
                     ? `${ctx.parsed.y} год`
                     : ctx.parsed.y,
                 }
               }
-            },
-            animation: {
-              duration: 1500,
-              easing: 'easeOutCubic'
             }
           },
         });
@@ -1246,15 +1150,10 @@
     async function onTelegramAuth(user) {
       const telegramUsername = '@' + user.username;
       
-      if (!user.username) {
-        showAccessDenied();
-        return;
-      }
-
       if (allowedAdmins.includes(telegramUsername)) {
         const userData = {
           username: telegramUsername,
-          nickname: escapeHTML(user.first_name || user.username),
+          nickname: user.first_name || user.username,
           isAdmin: true
         };
         localStorage.setItem('tg_auth', JSON.stringify(userData));
@@ -1274,7 +1173,7 @@
         if (userTicketsRow) {
           const userData = {
             username: telegramUsername,
-            nickname: escapeHTML(userTicketsRow[0]),
+            nickname: userTicketsRow[0],
             isAdmin: false
           };
           localStorage.setItem('tg_auth', JSON.stringify(userData));
@@ -1362,14 +1261,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Проверка авторизации перед загрузкой дашборда
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
         try {
           const userData = JSON.parse(savedAuth);
-          if (!userData.username || !userData.nickname) {
-            throw new Error('Недопустимые данные авторизации');
-          }
           showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
         } catch (e) {
           localStorage.removeItem('tg_auth');
@@ -1378,8 +1275,6 @@
       } else {
         showLoginForm();
       }
-
-      document.getElementById('logout-btn').addEventListener('click', logout);
       
       setInterval(() => {
         if (shouldRefreshTopAdmins()) {
