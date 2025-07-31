@@ -2,150 +2,426 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Оновлення 1.1</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
   <script async src="https://telegram.org/js/telegram-widget.js?7" 
           data-telegram-login="ticket_tracker_UG_bot" 
           data-size="large"
           data-userpic="false"
-          data-request-access="write"></script>
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    body {
+    :root {
+      --primary-color: #3B82F6;
+      --secondary-color: #10B981;
+      --accent-color: #F59E0B;
+      --background-dark: #0A0C1A;
+      --card-bg: rgba(20, 22, 35, 0.9);
+      --glass-bg: rgba(20, 22, 35, 0.7);
+      --glass-blur: blur(15px);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --text-primary: #F3F4F6;
+      --text-secondary: #D1D5DB;
+    }
+
+    * {
       margin: 0;
-      background-color: #050608;
-      font-family: Arial, sans-serif;
-      color: #FFFBEF;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .container {
-      display: flex;
+
+    body {
+      background: linear-gradient(135deg, var(--background-dark), #1E293B);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
-    .sidebar {
-      background-color: #121315;
-      width: 250px;
-      padding: 20px;
-      height: 100vh;
-      position: sticky;
+
+    canvas#stars-canvas {
+      position: fixed;
       top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.8;
     }
-    .content {
-      padding: 40px;
-      max-width: 900px;
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
     }
-    h1, h2, h3 {
-      color: #D6567A;
+
+    .sidebar.open {
+      left: 0;
     }
-    .highlight {
-      color: #D6567A;
-      font-weight: bold;
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
     }
-    p, li {
-      line-height: 1.6;
+
+    .sidebar-toggle:hover {
+      transform: scale(1.1);
+      background: rgba(59, 130, 246, 0.2);
     }
-    ul {
-      padding-left: 20px;
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 3rem;
     }
-    
-    /* Стили для авторизации */
-    #login-section {
-      background-color: #121824;
-      padding: 40px 30px;
-      border-radius: 20px;
-      max-width: 400px;
-      margin: 60px auto;
-      box-shadow: 0 0 30px #1977FDAA;
-      text-align: center;
-      animation: fadeInUp 1.2s ease forwards;
-      opacity: 0;
-      transform: translateY(30px);
-      font-weight: 700;
-      font-size: 1.3rem;
-    }
-    #login-section p {
-      margin-bottom: 25px;
-      color: #FFFBEF;
+
+    .menu-category {
+      font-size: 0.9rem;
       font-weight: 600;
-      font-size: 1.1rem;
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
     }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: rgba(59, 130, 246, 0.3);
+      transform: translateX(5px);
+    }
+
+    .super-menu-item {
+      color: var(--accent-color);
+    }
+
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0A0C1A, #1E293B);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .login-container {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 3rem 2rem;
+      border-radius: 1.5rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
+      background-size: 40px 40px;
+      animation: moveBackground 30s linear infinite;
+      z-index: -1;
+    }
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      animation: pulse 2s infinite;
+    }
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
     .telegram-button-wrapper {
       display: inline-block;
-      border-radius: 14px;
+      border-radius: 0.75rem;
       overflow: hidden;
-      box-shadow: 0 0 15px #1977FD;
-      animation: pulse 3s infinite ease-in-out;
+      box-shadow: 0 0 20px var(--primary-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .telegram-button-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--primary-color);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: var(--secondary-color);
+    }
+
     #logout-btn {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #ff4d4d;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #EF4444;
+      color: var(--text-primary);
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
       cursor: pointer;
       z-index: 1001;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
       border: none;
+    }
+
+    #logout-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .content {
+      padding: 2rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      flex: 1;
+      margin-left: 1rem;
+    }
+
+    h1, h2, h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .highlight {
+      color: var(--accent-color);
       font-weight: bold;
     }
-    #logout-btn:hover {
-      background-color: #e60000;
+
+    p, li {
+      line-height: 1.6;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
     }
-    .hidden {
-      display: none !important;
+
+    ul {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
     }
+
     @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
     }
+
     @keyframes pulse {
-      0%, 100% {
-        box-shadow: 0 0 15px #1977FD;
-        transform: scale(1);
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50%, -50%); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 250px;
       }
-      50% {
-        box-shadow: 0 0 35px #1977FD;
-        transform: scale(1.1);
+
+      .container {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .content {
+        margin-left: 0;
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      p, li {
+        font-size: 0.85rem;
+      }
+
+      .login-container {
+        padding: 2rem 1.5rem;
+      }
+
+      .login-title {
+        font-size: 1.5rem;
+      }
+
+      .login-subtitle {
+        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Кнопка выхода (только для авторизованных) -->
+  <canvas id="stars-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
-  <!-- Секция авторизации -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <div class="menu-category">Інформація</div>
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
+  <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+
   <div id="login-section">
-    <p>Будь ласка, увійдіть через Telegram:</p>
-    <div class="telegram-button-wrapper">
-      <script async src="https://telegram.org/js/telegram-widget.js?7"
-              data-telegram-login="ticket_tracker_UG_bot" 
-              data-size="large"
-              data-userpic="false"
-              data-request-access="write"
-              data-onauth="onTelegramAuth(user)">
-      </script>
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--text-primary);"></i>
+      </div>
+      <h1 class="login-title">Оновлення 1.1</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до контенту</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
     </div>
   </div>
 
-  <!-- Основной контент (скрыт по умолчанию) -->
   <div id="content" class="hidden">
     <div class="container">
-      <div class="sidebar">
-        <h2>Оновлення 1.1</h2>
-        <ul>
-          <li>Інкасатор</li>
-          <li>Арена</li>
-          <li>Система обміну</li>
-          <li>Нові авто</li>
-          <li>Інше</li>
-        </ul>
-      </div>
       <div class="content">
         <h1>Скріпт до оновлення 1.1</h1>
         
-        <!-- Остальной контент без изменений -->
         <h2>Робота “Інкасатор”</h2>
         <p>Щоб влаштуватись на роботу Вам потрібно мати:</p>
         <ul>
@@ -252,83 +528,212 @@
   </div>
 
   <script>
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const stars = [];
+    const numStars = 50;
+    
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
+      }
+      
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+    
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
+
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
 
+    const superAdmins = [
+      '@laker_77',
+      '@B_m_b1',
+      '@c10mm'
+    ];
+
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      console.log('Toggling sidebar');
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        console.log('Closing sidebar');
+        sidebar.classList.remove('open');
+      }
+    });
+
     async function getSheetData(sheetName) {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-      const res = await axios.get(url);
-      return res.data.values;
+      console.log(`Fetching data for sheet: ${sheetName}`);
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
     }
 
     async function onTelegramAuth(user) {
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        alert('Невалідні дані користувача');
+        showLoginForm();
+        return;
+      }
+
       const telegramUsername = '@' + user.username;
-      
+      console.log('Processing user:', telegramUsername);
+
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          console.error('No tickets data found');
+          alert('Дані не знайдено');
+          showLoginForm();
+          return;
+        }
         const ticketsHeaders = ticketsData[0];
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          alert('Помилка структури даних: відсутній стовпець Telegram');
+          showLoginForm();
+          return;
+        }
+
         const userTicketsRow = ticketsData.find(row => 
           row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
         );
         
         if (userTicketsRow) {
-          // Сохраняем данные пользователя
+          console.log('User found in tickets data:', userTicketsRow);
           const userData = {
             username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: superAdmins.includes(telegramUsername)
           };
           localStorage.setItem('tg_auth', JSON.stringify(userData));
-          
-          // Показываем контент
-          showContent();
+          showContent(userData);
         } else {
-          // Если пользователь не найден
+          console.error('User not found in tickets data:', telegramUsername);
           localStorage.removeItem('tg_auth');
           alert('Користувача не знайдено в таблиці. Доступ заборонено.');
           showLoginForm();
         }
       } catch (error) {
-        console.error(error);
+        console.error('Помилка перевірки авторизації:', error);
         alert('Помилка під час завантаження даних');
         showLoginForm();
       }
     }
 
-    // Функция для показа контента
-    function showContent() {
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('content').classList.remove('hidden');
+    function showContent(userData) {
+      console.log('Showing content for user:', userData);
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
       document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+
+      if (userData.isAdmin) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+
+      VanillaTilt.init(document.querySelectorAll('.content'), {
+        max: 8,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.2
+      });
     }
 
-    // Функция для показа формы входа
     function showLoginForm() {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('content').classList.add('hidden');
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('content').style.display = 'none';
       document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
     }
 
-    // Функция выхода
     function logout() {
+      console.log('Logging out');
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
 
-    // Проверка сохраненной сессии при загрузке
     document.addEventListener('DOMContentLoaded', function() {
-      // Добавляем обработчик для кнопки выхода
+      console.log('DOM loaded');
       document.getElementById('logout-btn').addEventListener('click', logout);
       
-      // Проверяем сохраненную сессию
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
         try {
-          showContent();
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
         } catch (e) {
+          console.error('Error parsing saved auth:', e);
           localStorage.removeItem('tg_auth');
           showLoginForm();
         }
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
       }
     });
   </script>
