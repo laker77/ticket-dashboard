@@ -1,812 +1,1048 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Оновлення 1.6 | Система сімей | Ukraine GTA 5</title>
-    <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        /* Стили авторизации */
-        #login-section {
-            background-color: #121824;
-            padding: 40px 30px;
-            border-radius: 20px;
-            max-width: 400px;
-            margin: 60px auto;
-            box-shadow: 0 0 30px #1977FDAA;
-            text-align: center;
-            animation: fadeInUp 1.2s ease forwards;
-            opacity: 0;
-            transform: translateY(30px);
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-        
-        #login-section p {
-            margin-bottom: 25px;
-            color: #FFFBEF;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .telegram-button-wrapper {
-            display: inline-block;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 0 15px #1977FD;
-            animation: pulse 3s infinite ease-in-out;
-        }
-        
-        #logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #ff4d4d;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 1001;
-            transition: background-color 0.3s;
-            border: none;
-            font-weight: bold;
-        }
-        
-        #logout-btn:hover {
-            background-color: #e60000;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 15px #1977FD;
-                transform: scale(1);
-            }
-            50% {
-                box-shadow: 0 0 35px #1977FD;
-                transform: scale(1.1);
-            }
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        
-        :root {
-            --bg-dark: #050608;
-            --card-bg: #1A1A1A;
-            --card-border: #2A2A2A;
-            --accent-blue: #3B82F6;
-            --accent-light: #60A5FA;
-            --text-light: #FFFFFF;
-            --text-muted: #A3A3A3;
-            --player-bg: #1E1E1E;
-            --admin-bg: #1A2A3A;
-        }
-        
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            padding: 20px;
-            min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
-        }
-        
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            padding: 50px 0;
-            margin-bottom: 40px;
-            position: relative;
-        }
-        
-        .header-content {
-            background: rgba(26, 26, 26, 0.7);
-            padding: 40px;
-            border-radius: 16px;
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #60A5FA, #3B82F6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        h2 {
-            font-size: 2rem;
-            margin: 40px 0 20px;
-            color: var(--accent-light);
-            position: relative;
-            padding-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100px;
-            height: 4px;
-            background: var(--accent-blue);
-            border-radius: 4px;
-        }
-        
-        h3 {
-            font-size: 1.5rem;
-            margin: 30px 0 20px;
-            color: var(--accent-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        p {
-            margin-bottom: 20px;
-            line-height: 1.7;
-            color: var(--text-muted);
-        }
-        
-        .section {
-            background: rgba(26, 26, 26, 0.7);
-            border-radius: 16px;
-            padding: 40px;
-            margin-bottom: 40px;
-            border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-        
-        .step {
-            margin-bottom: 40px;
-            padding: 20px;
-            border-radius: 12px;
-            background: rgba(30, 30, 30, 0.5);
-            border-left: 4px solid var(--accent-blue);
-        }
-        
-        .example {
-            margin: 25px 0;
-            padding-left: 20px;
-            border-left: 3px solid var(--accent-blue);
-        }
-        
-        .example-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            color: var(--accent-light);
-            font-size: 1.1rem;
-        }
-        
-        .system-note {
-            background: rgba(20, 20, 20, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            border-left: 3px solid #555;
-            position: relative;
-        }
-        
-        .system-note::before {
-            content: 'ℹ️';
-            margin-right: 10px;
-            font-size: 1.1rem;
-        }
-        
-        .contract-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: rgba(30, 30, 30, 0.5);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        
-        .contract-table th {
-            background-color: rgba(59, 130, 246, 0.2);
-            padding: 12px 15px;
-            text-align: left;
-            color: var(--accent-light);
-        }
-        
-        .contract-table td {
-            padding: 10px 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .contract-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .contract-table tr:hover {
-            background-color: rgba(59, 130, 246, 0.05);
-        }
-        
-        .feature-block {
-            display: flex;
-            align-items: flex-start;
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(30, 30, 30, 0.4);
-            border-radius: 8px;
-            gap: 15px;
-        }
-        
-        .feature-icon {
-            font-size: 1.8rem;
-            color: var(--accent-light);
-            min-width: 40px;
-            text-align: center;
-            padding-top: 4px;
-            flex-shrink: 0;
-        }
-        
-        .signature {
-            text-align: center;
-            font-style: italic;
-            color: var(--accent-blue);
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--card-border);
-            font-size: 1.2rem;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-top: 40px;
-        }
-        
-        .logo {
-            color: var(--accent-blue);
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-top: 15px;
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 30px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            h2 {
-                font-size: 1.7rem;
-            }
-            
-            .section {
-                padding: 25px;
-            }
-            
-            .header-content {
-                padding: 25px;
-            }
-            
-            .contract-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .feature-block {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .feature-icon {
-                margin-bottom: 10px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Скрипт оновлення 1.5 | Ukraine GTA 5</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script async src="https://telegram.org/js/telegram-widget.js?7" 
+          data-telegram-login="ticket_tracker_UG_bot" 
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #D6567A;
+      --secondary-color: #FFFBEF;
+      --accent-color: #F59E0B;
+      --background-dark: #050608;
+      --nav-bg: #121315;
+      --card-bg: rgba(18, 19, 21, 0.9);
+      --glass-bg: rgba(18, 19, 21, 0.7);
+      --glass-blur: blur(5px);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      --text-primary: #FFFBEF;
+      --text-secondary: #D1D5DB;
+      --card-border: rgba(214, 86, 122, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--background-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(214, 86, 122, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(214, 86, 122, 0.05) 0%, transparent 20%);
+    }
+
+    canvas#stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
+      border-right: 1px solid var(--card-border);
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--primary-color);
+      font-size: 1.3rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(214, 86, 122, 0.3);
+      transform: scale(1.1);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .menu-category {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: linear-gradient(90deg, rgba(214, 86, 122, 0.3), transparent);
+      transform: translateX(5px);
+    }
+
+    .menu-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--primary-color);
+    }
+
+    .super-menu-item {
+      color: var(--accent-color);
+    }
+
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background-dark);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .login-container {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(214, 86, 122, 0.2) 8%, transparent 8.01%);
+      background-size: 30px 30px;
+      animation: moveBackground 25s linear infinite;
+      z-index: -1;
+    }
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(214, 86, 122, 0.5);
+      animation: pulse 2.5s infinite ease-in-out;
+    }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(214, 86, 122, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.7);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-color);
+    }
+
+    #logout-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #EF4444;
+      color: var(--text-primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1001;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    #logout-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .header-content {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(214, 86, 122, 0.3);
+    }
+
+    .header-content p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header i {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+    }
+
+    .section-header i.collapsed {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: block;
+    }
+
+    .section-body.hidden {
+      display: none;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 1.5rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .highlight {
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    p, li {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+      list-style-type: disc;
+    }
+
+    .feature-block {
+      display: flex;
+      align-items: flex-start;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(18, 19, 21, 0.5);
+      border-radius: 0.5rem;
+      gap: 1rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      min-width: 30px;
+      text-align: center;
+      padding-top: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .system-note {
+      background: rgba(18, 19, 21, 0.7);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-left: 3px solid var(--primary-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .system-note.warning {
+      border-left-color: #EF4444;
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .content-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    .logo {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 1.5rem;
+      background: rgba(214, 86, 122, 0.1);
+      border: 1px solid var(--card-border);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50%, -50%); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 240px;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      p, li {
+        font-size: 0.9rem;
+      }
+
+      .login-container {
+        padding: 2rem 1.25rem;
+      }
+
+      .login-title {
+        font-size: 1.5rem;
+      }
+
+      .login-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .login-logo {
+        width: 70px;
+        height: 70px;
+      }
+
+      .feature-block {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .feature-icon {
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Кнопка выхода -->
-    <button id="logout-btn" class="hidden">Вийти</button>
+  <canvas id="stars-canvas"></canvas>
+  <button id="logout-btn" class="hidden">Вийти</button>
 
-    <!-- Секция авторизации -->
-    <div id="login-section">
-        <p>Будь ласка, увійдіть через Telegram:</p>
-        <div class="telegram-button-wrapper">
-            <script async src="https://telegram.org/js/telegram-widget.js?7"
-                    data-telegram-login="ticket_tracker_UG_bot" 
-                    data-size="large"
-                    data-userpic="false"
-                    data-request-access="write"
-                    data-onauth="onTelegramAuth(user)">
-            </script>
-        </div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item active"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <div class="menu-category">Інформація</div>
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
     </div>
-    
-    <!-- Основной контент -->
-    <div id="content" class="hidden">
-        <div class="container">
-            <header>
-                <div class="header-content">
-                    <h1><i class="fas fa-users"></i> Оновлення 1.6 | Система сімей</h1>
-                    <p>Повний гайд по новій системі сімейних організацій</p>
-                </div>
-            </header>
-            
-            <div class="section">
-                <h2><i class="fas fa-home"></i> Створення сімейної організації</h2>
-                <p>Для створення сім’ї потрібно приїхати до мерії та стати на мітку і вибрати “Створення сім’ї”.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-edit"></i>
-                    </div>
-                    <div>
-                        <p>Після цього вас переносить в меню створення сімейної організації. Де гравець має вибрати:</p>
-                        <ul>
-                            <li>Назву сімейної організації</li>
-                            <li>Колір сімейної організації</li>
-                            <li>Фон профілю</li>
-                            <li>Завантажити фото (з свого ПК зможуть завантажити любий логотип)</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <p>Потім натискаєте “Наступний етап” і переходите до вибору офісу та оплата в карбованцях або в ігрову валюту.</p>
-                
-                <div class="system-note">
-                    Є 3 види офісів, в них немає нічого різного окрім місця розтошування на самій мапі
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-building"></i> Офіс організації</h2>
-                <p>На мапі вона позначена синім бліпом.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-door-open"></i>
-                    </div>
-                    <div>
-                        <p>Коли ви заходите на мітку вас одразу телепортує в офіс вашої сімейної організації.</p>
-                        <p>В самому офісі є:</p>
-                        <ul>
-                            <li>Шафа (маленька, немає багато слотів)</li>
-                            <li>Мітка виходу</li>
-                            <li>Мітка для спуску в гараж сімейної організації</li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="system-note">
-                    В подальшому функціонал в офісі буде додаватись.
-                </div>
-                
-                <h3><i class="fas fa-car"></i> Гараж сімейної організації</h3>
-                <p>Гаражні місця до кожного офісу це 5 ГМ.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-key"></i>
-                    </div>
-                    <div>
-                        <p>Для того щоб додати авто до сімейної організації потрібно:</p>
-                        <ol>
-                            <li>Підійти до автомобіля</li>
-                            <li>Через клавішу “G” вибрати відповідну дію</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <p>Після цього ви можете залишати авто в гараж сімейної організації і відповідно забирати його звідти.</p>
-                
-                <div class="system-note">
-                    Щоб залити авто в гараж: підійти до офісу на мітку гаражу → натиснути "Е"<br>
-                    Щоб забрати авто: зайти в офіс → спуститись в гараж → сісти в авто → натиснути "Е"
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-user-plus"></i> Додавання в сім'ю</h2>
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-friends"></i>
-                    </div>
-                    <div>
-                        <p>Щоб додати/вигнати гравця в сімейну організацію потрібно:</p>
-                        <ol>
-                            <li>Підійти до гравця</li>
-                            <li>Через радіальне меню “G” вибрати “Сім’я”</li>
-                            <li>Вибрати відповідну дію</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <h3><i class="fas fa-tablet-alt"></i> Планшет сімейної організації</h3>
-                <p>Після створення в самому планшеті з’явиться новий додаток з назвою сім’ї та логотипом якій ви вибрали.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-home"></i>
-                    </div>
-                    <div>
-                        <h4>Головна</h4>
-                        <p>Вся інформація про сім’ю: слоти учасників, автопарк організації, майно та нерухомість.</p>
-                        <div class="system-note">
-                            Важливо! Кошти мають бути на балансі сімейної організації для сплати податків. 
-                            Поповнення: власний банківський рахунок → переказ на рахунок сімейної організації.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fab fa-discord"></i>
-                    </div>
-                    <div>
-                        <h4>Опис організації</h4>
-                        <p>Лідер може змінювати текст та додавати посилання на Discord.</p>
-                        <div class="system-note">
-                            Щоб скопіювати посилання: натиснути на іконку Discord → посилання копіюється в буфер обміну
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <h4>Члени організації</h4>
-                        <p>Інформація про учасників: нікнейм, звання, статус (онлайн/офлайн).</p>
-                        <p>Керування: підвищення/пониження/вигнання.</p>
-                    </div>
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <div>
-                        <h4>Контракти</h4>
-                        <p>Контракти сім’ї для виконання. Щодня доступно 4 контракти, які змінюються після рестарту.</p>
-                        <div class="system-note">
-                            Активувати контракт може лише лідер/заступник.<br>
-                            Після активації - обмежений час на виконання.<br>
-                            Після виконання - час оновлення (КД).
-                        </div>
-                    </div>
-                </div>
-                
-                <h3>Список контрактів</h3>
-                <table class="contract-table">
-                    <thead>
-                        <tr>
-                            <th>Назва контракту</th>
-                            <th>Завдання</th>
-                            <th>Час виконання</th>
-                            <th>КД після виконання</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Рибна лихоманка I</td>
-                            <td>Виловити 1.500 риб</td>
-                            <td>5 годин</td>
-                            <td>6 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Рибна лихоманка II</td>
-                            <td>Виловити 2.500 риб</td>
-                            <td>5 годин</td>
-                            <td>6 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Балонний транзит I</td>
-                            <td>Здати 7.500 одиниць газу</td>
-                            <td>5 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Балонний транзит II</td>
-                            <td>Здати 10.000 одиниць газу</td>
-                            <td>5 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Лінія ремонту</td>
-                            <td>Полагодити 100 автівок</td>
-                            <td>7 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Грибний збір I</td>
-                            <td>Зібрати 800 грибів</td>
-                            <td>3 години</td>
-                            <td>4 години</td>
-                        </tr>
-                        <tr>
-                            <td>Грибний збір II</td>
-                            <td>Зібрати 1200 грибів</td>
-                            <td>7 годин</td>
-                            <td>5 годин</td>
-                        </tr>
-                        <tr>
-                            <td>Скарби забутих часів</td>
-                            <td>Знайти 200 скарбів</td>
-                            <td>9 годин</td>
-                            <td>2 години</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="system-note">
-                    <strong>Балонний транзит:</strong> Потрібні спеціальні авто:
-                    <ul>
-                        <li>Emperor IX570 (1000 од.)</li>
-                        <li>Benefactor W-Series 250t IT (1500 од.)</li>
-                        <li>Fury Predator H-150 (2000 од.)</li>
-                        <li>CMG Canon AT4X (2000 од.)</li>
-                        <li>Benefactor AWG H63 6x6 (2500 од.)</li>
-                    </ul>
-                    Процес: взяти авто → завантажити балони → закрити багажник → відвезти на точку<br>
-                    Винагорода: 1000$ за балон
-                </div>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-chess-king"></i>
-                    </div>
-                    <div>
-                        <h4>Панель керування</h4>
-                        <p>Лідер може:</p>
-                        <ul>
-                            <li>Налаштовувати доступ до авто по рангу</li>
-                            <li>Створювати нові ранги</li>
-                            <li>Вказувати права для кожного рангу</li>
-                        </ul>
-                        <div class="system-note">
-                            Початкові ранги: 10-Лідер (не видаляється), 1-Печенька (не видаляється)
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-warehouse"></i> Склад сімейної організації</h2>
-                <p>Додано 96 складів для сімейної організації, кожен додає додаткові слоти для зберігання.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div>
-                        <p>Розташування: всі склади знаходяться в одному місці</p>
-                        <p>Організація: 12 міток з номерами → по 8 складів на кожній мітці</p>
-                    </div>
-                </div>
-                
-                <div class="system-note">
-                    Оплата за склад: з балансу сімейної організації<br>
-                    Після покупки: приходити до відповідного номеру складу → зайти в свій куплений склад
-                </div>
-                
-                <p>Функціонал: додаткові слоти для зберігання предметів (розширення функціоналу в майбутніх оновленнях).</p>
-                
-                <h3><i class="fas fa-home"></i> Маєток сімейної організації</h3>
-                <p>Додано 50 будинків класу “Особняк” з 10 ГМ кожен.</p>
-                
-                <div class="feature-block">
-                    <div class="feature-icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div>
-                        <p>Процес передачі будинку в сім'ю:</p>
-                        <ol>
-                            <li>Лідер купує будинок (ціна: 10кк)</li>
-                            <li>В меню будинку вибирає "Список дій" → "Передати дім у сім’ю"</li>
-                            <li>Списується половина вартості будинку</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <div class="system-note">
-                    Важливо! Для повернення будинку: продати поточний будинок гравця → повернути маєток<br>
-                    Маєток додає +10 ГМ (загальна кількість авто: 15)
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2><i class="fas fa-plus-circle"></i> Додатково</h2>
-                
-                <h3><i class="fas fa-car"></i> Нові автомобілі</h3>
-                <table class="contract-table">
-                    <thead>
-                        <tr>
-                            <th>Автомобіль</th>
-                            <th>Місце придбання</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Avura MOX S-Type</td>
-                            <td>Контейнери</td>
-                        </tr>
-                        <tr>
-                            <td>Vapid Grand Rider Vrado</td>
-                            <td>Автосалон Люкс</td>
-                        </tr>
-                        <tr>
-                            <td>Pegassi Rewuelto</td>
-                            <td>Автосалон Люкс</td>
-                        </tr>
-                        <tr>
-                            <td>CMG Canon AT4X</td>
-                            <td>Автосалон Люкс</td>
-                        </tr>
-                        <tr>
-                            <td>Annis 180sx</td>
-                            <td>Автосалон Люкс</td>
-                        </tr>
-                        <tr>
-                            <td>Ubermacht W5 E60</td>
-                            <td>Автосалон Люкс</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <h3><i class="fas fa-tshirt"></i> Новий одяг</h3>
-                <ul>
-                    <li>Магазин економ класу</li>
-                    <li>Магазин люкс</li>
-                    <li>Донат магазин (нові предмети)</li>
-                </ul>
-                
-                <div class="system-note" style="background-color: rgba(76, 175, 80, 0.2); border-left: 3px solid #4CAF50;">
-                    <i class="fas fa-star"></i> Акція х2 діє з 29.06 по хх.хх.хххх
-                </div>
-                
-                <div class="system-note" style="background-color: rgba(244, 67, 54, 0.2); border-left: 3px solid #F44336;">
-                    <i class="fas fa-exclamation-triangle"></i> Будь-яке розповсюдження цього скрипта призведе до ЧСП проектів UG TEAM
-                </div>
-            </div>
-            
-            <div class="signature">
-                <i class="fas fa-hands-helping"></i> Приємної гри на Ukraine GTA 5 RolePlay!
-            </div>
-            
-            <footer>
-                <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-                <p style="margin-top: 15px; opacity: 0.7;"><i class="fas fa-star"></i> Нова система - нові можливості! <i class="fas fa-star"></i></p>
-            </footer>
-        </div>
+  </div>
+  <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--text-primary);"></i>
+      </div>
+      <h1 class="login-title">Скрипт оновлення 1.5</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до контенту</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
     </div>
+  </div>
+
+  <div id="content" class="hidden">
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <h1><i class="fas fa-file-code"></i> Скрипт оновлення 1.5</h1>
+          <p>Повний гайд по новим функціям та змінам в оновленні 1.5</p>
+        </div>
+      </header>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-box"></i> Система контейнерів</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-clock"></i></div>
+            <div>
+              <h3>Спавн контейнерів</h3>
+              <p>Контейнери з’являються щодня о <span class="highlight">12:00, 16:00, 20:00</span>. Всього <span class="highlight">8 контейнерів</span> (по 2 на кожен тип).</p>
+              <p>За <span class="highlight">15 хвилин</span> до появи в чаті з’являється повідомлення від <span class="highlight">UG Containers</span>.</p>
+              <p>Після появи дається <span class="highlight">15 хвилин</span> для ставок, які можна перебивати.</p>
+              <p>За <span class="highlight">1 хвилину</span> до відкриття кожна нова ставка додає <span class="highlight">+1 хвилину</span>.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-coins"></i></div>
+            <div>
+              <h3>Ставки та комісії</h3>
+              <p>Кожен контейнер має <span class="highlight">мінімальну ставку</span>. Крок ставки — <span class="highlight">1000</span> ігрової валюти.</p>
+              <p>З кожної ставки знімається <span class="highlight">5% комісії</span> (наприклад, ставка 100к = 105к).</p>
+              <p>Якщо ставку перебили, кошти повертаються без комісії (100к).</p>
+              <img src="https://imgur.com/g2VhJ0R.jpg" alt="Система контейнерів" class="content-image">
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gift"></i></div>
+            <div>
+              <h3>Отримання призів</h3>
+              <p>Після відкриття контейнера є <span class="highlight">2 хвилини</span>, щоб забрати приз або продати.</p>
+              <p>При продажу знімається <span class="highlight">20% комісії</span> (100к = 80к).</p>
+              <p>Речі автоматично додаються в інвентар, авто — ключі в інвентар, після чого потрібно виїхати з контейнера.</p>
+              <p>У разі крашу під час вибору приз видається автоматично.</p>
+              <img src="https://imgur.com/vuneMTW.jpg" alt="Отримання призів" class="content-image">
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <div>
+              <h3>Правила</h3>
+              <p>На території контейнерів діє <span class="highlight">зелена зона</span> та обмеження швидкості авто.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-dollar-sign"></i></div>
+            <div>
+              <h3>Ціни на контейнери</h3>
+              <ul>
+                <li><span class="highlight">Дубай</span> — 500,000 / крок 1000</li>
+                <li><span class="highlight">Американський</span> — 400,000 / крок 1000</li>
+                <li><span class="highlight">Український</span> — 200,000 / крок 1000</li>
+                <li><span class="highlight">GoPostal</span> — 100,000 / крок 1000</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-dice"></i> Рулетка</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-play"></i></div>
+            <div>
+              <h3>Як відкрити</h3>
+              <p>Натисніть <span class="highlight">“O”</span>, щоб відкрити рулетку.</p>
+              <p>Крутіть за <span class="highlight">донат валюту</span> або <span class="highlight">ігрову валюту</span>.</p>
+              <img src="https://imgur.com/J6KhHCF.jpg" alt="Рулетка" class="content-image">
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gift"></i></div>
+            <div>
+              <h3>Призи</h3>
+              <ul>
+                <li><span class="highlight">Dodge Charger Daytona Scat Pack</span></li>
+                <li><span class="highlight">Рюкзак "Лабубу"</span></li>
+                <li><span class="highlight">Кепка "Ріжки"</span></li>
+                <li><span class="highlight">Тату на лівій руці "Flower Wave"</span></li>
+                <li><span class="highlight">Кейс "Космос"</span></li>
+                <li><span class="highlight">5,000 досвіду</span></li>
+                <li><span class="highlight">25 карбованців</span></li>
+                <li><span class="highlight">150,000 ігрової валюти</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-rocket"></i> Лаунчер</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-download"></i></div>
+            <div>
+              <h3>Встановлення</h3>
+              <p>Зайдіть на сайт, натисніть <span class="highlight">“РОЗПОЧАТИ ГРУ”</span> → <span class="highlight">“Завантажити лаунчер”</span>.</p>
+              <p>Встановіть лаунчер, відкрийте та натисніть <span class="highlight">“Грати”</span>.</p>
+              <img src="https://imgur.com/h2UQpFC.jpg" alt="Завантаження лаунчера" class="content-image">
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-cog"></i></div>
+            <div>
+              <h3>Налаштування</h3>
+              <p>Якщо RageMP є, натисніть <span class="highlight">“Грати”</span>.</p>
+              <p>Якщо немає RageMP, лаунчер запропонує його завантажити.</p>
+              <p>Якщо немає GTA 5, завантажте окремо. Якщо лаунчер не бачить GTA 5, вкажіть шлях у налаштуваннях.</p>
+              <img src="https://imgur.com/pXWOHdp.jpg" alt="Налаштування лаунчера" class="content-image">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-ticket-alt"></i> Розіграш на півроку</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-check"></i></div>
+            <div>
+              <h3>Умови участі</h3>
+              <ul>
+                <li>Створіть акаунт у грі.</li>
+                <li>Підключіть <span class="highlight">2FA-Telegram</span>.</li>
+                <li>Підпишіться на всі соцмережі проєкту.</li>
+                <li>У <span class="highlight">M-Меню</span> відкрийте вкладку <span class="highlight">“Розіграш”</span>, натисніть <span class="highlight">“Прийняти участь”</span>.</li>
+                <li>Відскануйте QR-код, який перенаправить до бота техпідтримки або сайту.</li>
+                <img src="https://imgur.com/auuJ9aY.jpg" alt="Участь у розіграші" class="content-image">
+              </ul>
+              <p>Після виконання умов натисніть <span class="highlight">“Перевірити підписки”</span> для участі.</p>
+              <img src="https://imgur.com/Yq6vK1f.jpg" alt="Перевірка підписок" class="content-image">
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-ticket"></i></div>
+            <div>
+              <h3>Золоті квитки</h3>
+              <p>Отримуйте <span class="highlight">Золотий квиток</span> щопейдею (1 шт.). Без пейдею квиток не видається.</p>
+              <p>Переглядайте в <span class="highlight">M-Меню</span>: кількість квитків, шанс на перемогу, номери квитків, лідерборд, список нагород.</p>
+              <img src="https://imgur.com/d969y3T.jpg" alt="M-Меню розіграшу" class="content-image">
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-link"></i></div>
+            <div>
+              <h3>Перевірка шансів</h3>
+              <p>На сайті <a href="https://ukraine-gta5.com.ua/giveaway/" class="highlight" target="_blank" rel="noopener noreferrer">ukraine-gta5.com.ua/giveaway/</a> введіть <span class="highlight">статичний ID</span> або <span class="highlight">нікнейм</span> для перевірки шансів.</p>
+              <p>Більше квитків — вищий шанс на перемогу.</p>
+            </div>
+          </div>
+          <div class="system-note warning">
+            <i class="fas fa-exclamation-triangle"></i> Відключення <span class="highlight">2FA-Telegram</span> анулює всі квитки. Повторне підключення повертає шанси.
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-plus-circle"></i> Додатково</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-tshirt"></i></div>
+            <div>
+              <h3>Нові предмети</h3>
+              <ul>
+                <li>Нові речі в магазині одягу <span class="highlight">“Люкс”</span>.</li>
+                <li>Нова маска з варіаціями в магазині масок.</li>
+                <li>Нові татуювання в тату-салоні.</li>
+                <li>У донат-магазині: <span class="highlight">Рюкзак “Лабубу”</span>, <span class="highlight">Рюкзак “Стіч”</span>, нова маска, кросівки, одяг.</li>
+                <li>Новий кейс <span class="highlight">“Лабубу”</span>.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-car"></i></div>
+            <div>
+              <h3>Нові авто</h3>
+              <ul>
+                <li><span class="highlight">Canis KA CT-Line Turbo</span> — Автосалон UG Motors.</li>
+                <li><span class="highlight">Dagger Carger Donton Scat Pack</span> — Рулетка.</li>
+                <li><span class="highlight">Benefactor AWG CT63</span> — Автосалон UG Motors.</li>
+                <li>Спавн авто в автосалоні: <span class="highlight">16:00, 20:00, 22:00</span> по 10 шт.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-home"></i></div>
+            <div>
+              <h3>Нові будинки</h3>
+              <p>Додано <span class="highlight">20 будинків</span> на Вайнвуді. Дати зльоту:</p>
+              <ul>
+                <li><span class="highlight">14.06, 21:00</span> — 383, 384, 385, 386, 388</li>
+                <li><span class="highlight">15.06, 21:00</span> — 389, 393, 392, 391, 390</li>
+                <li><span class="highlight">16.06, 21:00</span> — 394, 395, 396, 397, 398</li>
+                <li><span class="highlight">17.06, 21:00</span> — 399, 400, 401, 402, 403</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-money-bill"></i></div>
+            <div>
+              <h3>Крайм та акції</h3>
+              <p>У краймі підвищено <span class="highlight">ЗП</span> за роботи (угонка, закладки тощо). Грабіж приносить більше.</p>
+              <p>Акція <span class="highlight">x2</span> діє з <span class="highlight">14.06.2025</span> по <span class="highlight">15.06.2025</span>.</p>
+              <p>Рулетка діє з <span class="highlight">14.06.2025</span> по <span class="highlight">16.06.2025</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-exclamation-triangle"></i> Увага</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="system-note warning">
+            <i class="fas fa-exclamation-triangle"></i> Будь-яке розповсюдження цього скрипта призведе до <span class="highlight">ЧС</span> на всіх проєктах Ukraine GTA!
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        <p class="logo">Ukraine GTA 5 RolePlay</p>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
     
-    <script>
-        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const stars = [];
+    const numStars = 30;
+    
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speed = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.2;
+      }
+      
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+    
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
 
-        async function getSheetData(sheetName) {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-            const res = await axios.get(url);
-            return res.data.values;
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+
+    const superAdmins = [
+      '@laker_77',
+      '@B_m_b1',
+      '@c10mm'
+    ];
+
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      console.log('Toggling sidebar');
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        console.log('Closing sidebar');
+        sidebar.classList.remove('open');
+      }
+    });
+
+    async function getSheetData(sheetName) {
+      console.log(`Fetching data for sheet: ${sheetName}`);
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
+    }
+
+    async function onTelegramAuth(user) {
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        alert('Невалідні дані користувача');
+        showLoginForm();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+      console.log('Processing user:', telegramUsername);
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          console.error('No tickets data found');
+          alert('Дані не знайдено');
+          showLoginForm();
+          return;
+        }
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          alert('Помилка структури даних: відсутній стовпець Telegram');
+          showLoginForm();
+          return;
         }
 
-        async function onTelegramAuth(user) {
-            const telegramUsername = '@' + user.username;
-            
-            try {
-                const ticketsData = await getSheetData('Май_2025_таблица');
-                const ticketsHeaders = ticketsData[0];
-                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                
-                const userTicketsRow = ticketsData.find(row => 
-                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-                );
-                
-                if (userTicketsRow) {
-                    // Сохраняем данные пользователя
-                    const userData = {
-                        username: telegramUsername,
-                    };
-                    localStorage.setItem('tg_auth', JSON.stringify(userData));
-                    
-                    // Показываем контент
-                    showContent();
-                } else {
-                    // Если пользователь не найден
-                    localStorage.removeItem('tg_auth');
-                    alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-                    showLoginForm();
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Помилка під час завантаження даних');
-                showLoginForm();
-            }
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          console.log('User found in tickets data:', userTicketsRow);
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: superAdmins.includes(telegramUsername)
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          showContent(userData);
+        } else {
+          console.error('User not found in tickets data:', telegramUsername);
+          localStorage.removeItem('tg_auth');
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
         }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        alert('Помилка під час завантаження даних');
+        showLoginForm();
+      }
+    }
 
-        // Функция для показа контента
-        function showContent() {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
-            document.getElementById('logout-btn').classList.remove('hidden');
+    function showContent(userData) {
+      console.log('Showing content for user:', userData);
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+
+      if (userData.isAdmin) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+    }
+
+    function showLoginForm() {
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+    }
+
+    function logout() {
+      console.log('Logging out');
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    function toggleSection(header) {
+      const body = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      body.classList.toggle('hidden');
+      icon.classList.toggle('collapsed');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
         }
-
-        // Функция для показа формы входа
-        function showLoginForm() {
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('content').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-        }
-
-        // Функция выхода
-        function logout() {
-            localStorage.removeItem('tg_auth');
-            showLoginForm();
-        }
-
-        // Проверка сохраненной сессии при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            // Добавляем обработчик для кнопки выхода
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            
-            // Проверяем сохраненную сессию
-            const savedAuth = localStorage.getItem('tg_auth');
-            if (savedAuth) {
-                try {
-                    showContent();
-                } catch (e) {
-                    localStorage.removeItem('tg_auth');
-                    showLoginForm();
-                }
-            }
-        });
-    </script>
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
+      }
+    });
+  </script>
 </body>
 </html>
