@@ -28,6 +28,7 @@
             --glass-bg: rgba(26, 26, 26, 0.7);
             --glass-blur: blur(10px);
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 12px 48px rgba(59, 130, 246, 0.4);
             --priority-bg: rgba(239, 68, 68, 0.15);
             --priority-color: #EF4444;
         }
@@ -40,14 +41,14 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-dark), #1E293B);
+            background: var(--bg-dark);
             color: var(--text-light);
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 20%);
         }
 
         /* Анимация падающих звезд */
@@ -59,7 +60,7 @@
             height: 100%;
             z-index: -1;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.9;
         }
 
         /* Боковое меню */
@@ -96,13 +97,13 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
             z-index: 1001;
         }
 
         .sidebar-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-hover);
         }
 
         .sidebar-menu {
@@ -128,13 +129,13 @@
             color: var(--text-light);
             text-decoration: none;
             border-radius: 0.5rem;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
             font-size: 0.9rem;
         }
 
         .menu-item:hover, .super-menu-item:hover {
             background: rgba(59, 130, 246, 0.3);
-            transform: translateX(5px);
+            box-shadow: var(--shadow-hover);
         }
 
         .super-menu-item {
@@ -151,7 +152,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--bg-dark), #1E293B);
+            background: var(--bg-dark);
             z-index: 1000;
             overflow: hidden;
         }
@@ -163,7 +164,7 @@
             border-radius: 1.5rem;
             max-width: 500px;
             width: 90%;
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow);
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -214,11 +215,10 @@
             border-radius: 0.75rem;
             overflow: hidden;
             box-shadow: 0 0 20px var(--accent-blue);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease;
         }
 
         .telegram-button-wrapper:hover {
-            transform: scale(1.05);
             box-shadow: 0 0 30px var(--accent-blue);
         }
 
@@ -250,14 +250,13 @@
             font-weight: 600;
             cursor: pointer;
             z-index: 1001;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
             border: none;
         }
 
         #logout-btn:hover {
             background: #DC2626;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            box-shadow: var(--shadow-hover);
         }
 
         /* Секция отказа в доступе */
@@ -268,7 +267,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--bg-dark), #1E293B);
+            background: var(--bg-dark);
             z-index: 2000;
             display: flex;
             align-items: center;
@@ -312,13 +311,12 @@
             border-radius: 0.5rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .back-to-login-btn:hover {
             background: #DC2626;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+            box-shadow: var(--shadow-hover);
         }
 
         /* Контейнер контента */
@@ -333,7 +331,7 @@
             padding: 50px 0;
             margin-bottom: 40px;
             position: relative;
-            animation: fadeIn 1.5s ease;
+            animation: fadeInUp 1.5s ease;
         }
 
         .header-content {
@@ -354,33 +352,36 @@
             text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
 
-        h2 {
+        h2, h3 {
             font-size: 2rem;
             margin: 40px 0 20px;
             color: var(--accent-light);
             position: relative;
             padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        h2::after {
+        h2::after, h3::after {
             content: '';
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 100px;
+            width: 0;
             height: 4px;
             background: var(--accent-blue);
             border-radius: 4px;
-            animation: slideBorder 3s infinite;
+            transition: width 0.5s ease;
+        }
+
+        h2:hover::after, h3:hover::after {
+            width: 100px;
         }
 
         h3 {
             font-size: 1.5rem;
             margin: 30px 0 20px;
-            color: var(--accent-light);
-            display: flex;
-            align-items: center;
-            gap: 12px;
         }
 
         p {
@@ -397,12 +398,15 @@
             border: 1px solid var(--card-border);
             backdrop-filter: var(--glass-blur);
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease, background 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: var(--animation-delay);
         }
 
         .section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-hover);
+            background: rgba(26, 26, 26, 0.85);
         }
 
         .step {
@@ -411,11 +415,12 @@
             border-radius: 12px;
             background: rgba(30, 30, 30, 0.5);
             border-left: 4px solid var(--accent-blue);
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .step:hover {
             background: rgba(30, 30, 30, 0.7);
+            box-shadow: var(--shadow-hover);
         }
 
         .example {
@@ -524,12 +529,15 @@
             margin-bottom: 40px;
             border: 1px solid var(--card-border);
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease, background 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+            animation-delay: var(--animation-delay);
         }
 
         .ticket-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-hover);
+            background: rgba(26, 26, 26, 0.85);
         }
 
         .ticket-header {
@@ -594,24 +602,18 @@
             border-radius: 30px;
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
-            transition: color 0.3s ease, background 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .logo:hover {
-            color: var(--accent-light);
             background: rgba(59, 130, 246, 0.2);
+            box-shadow: var(--shadow-hover);
         }
 
         /* Анимации */
-        @keyframes slideBorder {
-            0% { left: -100%; }
-            50% { left: 100%; }
-            100% { left: 100%; }
-        }
-
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         @keyframes moveBackground {
@@ -624,11 +626,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.2rem;
@@ -636,6 +633,10 @@
 
             h2 {
                 font-size: 1.7rem;
+            }
+
+            h3 {
+                font-size: 1.3rem;
             }
 
             .section {
@@ -666,6 +667,14 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* Задержка анимации для секций и карточек */
+        .section:nth-child(1) { --animation-delay: 0.2s; }
+        .section:nth-child(2) { --animation-delay: 0.4s; }
+        .section:nth-child(3) { --animation-delay: 0.6s; }
+        .ticket-card:nth-child(1) { --animation-delay: 0.8s; }
+        .ticket-card:nth-child(2) { --animation-delay: 1.0s; }
+        .ticket-card:nth-child(3) { --animation-delay: 1.2s; }
     </style>
 </head>
 <body>
@@ -1035,7 +1044,7 @@
         window.addEventListener('resize', resizeCanvas);
 
         const stars = [];
-        const numStars = 50;
+        const numStars = 100; // Увеличено количество звезд
 
         class Star {
             constructor() {
@@ -1045,9 +1054,9 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speed = Math.random() * 3 + 1;
-                this.opacity = Math.random() * 0.5 + 0.3;
+                this.size = Math.random() * 2.5 + 1;
+                this.speed = Math.random() * 4 + 1;
+                this.opacity = Math.random() * 0.6 + 0.4;
             }
 
             update() {
@@ -1184,14 +1193,6 @@
                 document.getElementById('superMenuItem2').style.display = 'flex';
                 document.getElementById('superMenuItem3').style.display = 'flex';
             }
-
-            // Инициализация эффекта наклона для карточек
-            VanillaTilt.init(document.querySelectorAll('.ticket-card, .section'), {
-                max: 8,
-                speed: 400,
-                glare: true,
-                'max-glare': 0.2
-            });
         }
 
         // Показ формы входа
