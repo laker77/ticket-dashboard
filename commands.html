@@ -9,23 +9,25 @@
     <style>
         /* Стили авторизации */
         #login-section {
-            background-color: #121824;
+            background: rgba(26, 26, 26, 0.7);
             padding: 40px 30px;
             border-radius: 20px;
             max-width: 400px;
             margin: 60px auto;
-            box-shadow: 0 0 30px #1977FDAA;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
             text-align: center;
             animation: fadeInUp 1.2s ease forwards;
             opacity: 0;
             transform: translateY(30px);
             font-weight: 700;
             font-size: 1.3rem;
+            border: 1px solid var(--card-border);
         }
         
         #login-section p {
             margin-bottom: 25px;
-            color: #FFFBEF;
+            color: var(--text-light);
             font-weight: 600;
             font-size: 1.1rem;
         }
@@ -34,27 +36,33 @@
             display: inline-block;
             border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 0 15px #1977FD;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
             animation: pulse 3s infinite ease-in-out;
+            transition: transform 0.3s ease;
+        }
+        
+        .telegram-button-wrapper:hover {
+            transform: scale(1.05);
         }
         
         #logout-btn {
             position: fixed;
             top: 20px;
             right: 20px;
-            background-color: #ff4d4d;
+            background: linear-gradient(135deg, #ff4d4d, #e60000);
             color: white;
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             z-index: 1001;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
             border: none;
             font-weight: bold;
         }
         
         #logout-btn:hover {
-            background-color: #e60000;
+            background: linear-gradient(135deg, #e60000, #cc0000);
+            transform: scale(1.05);
         }
         
         .hidden {
@@ -70,12 +78,12 @@
         
         @keyframes pulse {
             0%, 100% {
-                box-shadow: 0 0 15px #1977FD;
+                box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
                 transform: scale(1);
             }
             50% {
-                box-shadow: 0 0 35px #1977FD;
-                transform: scale(1.1);
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.7);
+                transform: scale(1.05);
             }
         }
         
@@ -512,7 +520,7 @@
         }
         
         .back-to-login-btn {
-            background: #EF4444;
+            background: linear-gradient(135deg, #EF4444, #DC2626);
             color: var(--text-light);
             padding: 0.5rem 1.5rem;
             border-radius: 0.5rem;
@@ -523,7 +531,7 @@
         }
         
         .back-to-login-btn:hover {
-            background: #DC2626;
+            background: linear-gradient(135deg, #DC2626, #B91C1C);
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
         }
@@ -552,6 +560,10 @@
             .card-content {
                 max-height: none;
             }
+            #login-section {
+                margin: 20px;
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
@@ -561,6 +573,8 @@
     
     <div class="sidebar" id="sidebar">
         <div class="sidebar-menu">
+            <div class="menu-category">Головна</div>
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
             <div class="menu-category">Скрипти</div>
             <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
             <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
