@@ -35,18 +35,6 @@
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    canvas#starsCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      pointer-events: none;
     }
 
     .sidebar {
@@ -130,16 +118,15 @@
     #login-section {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
-      padding: 3rem;
+      padding: 2.5rem;
       border-radius: 1.5rem;
-      max-width: 500px;
-      margin: 6rem auto;
+      max-width: 450px;
+      margin: 4rem auto;
       box-shadow: var(--shadow);
       text-align: center;
+      animation: slideIn 0.8s ease-out forwards;
       position: relative;
       overflow: hidden;
-      animation: fadeInScale 1s ease-out forwards;
-      border: 1px solid rgba(59, 130, 246, 0.3);
     }
 
     #login-section::before {
@@ -149,26 +136,17 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 10%, transparent 10.01%);
-      background-size: 60px 60px;
-      animation: moveBackground 15s linear infinite;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 10%, transparent 10.01%);
+      background-size: 50px 50px;
+      animation: moveBackground 20s linear infinite;
       z-index: -1;
     }
 
-    #login-section h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 1rem;
-      animation: slideIn 0.8s ease-out;
-    }
-
     #login-section p {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-      animation: slideIn 0.8s ease-out 0.2s;
-      animation-fill-mode: both;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
     }
 
     .telegram-button-wrapper {
@@ -177,29 +155,11 @@
       overflow: hidden;
       box-shadow: 0 0 20px var(--primary-color);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      position: relative;
-      animation: pulseGlow 2s ease-in-out infinite;
     }
 
     .telegram-button-wrapper:hover {
       transform: scale(1.05);
       box-shadow: 0 0 30px var(--primary-color);
-    }
-
-    .telegram-button-wrapper::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-
-    .telegram-button-wrapper:hover::after {
-      opacity: 1;
     }
 
     .admins-row {
@@ -449,7 +409,6 @@
       box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
       text-align: center;
       max-width: 500px;
-      animation: fadeInScale 0.8s ease-out;
     }
 
     .access-denied-icon {
@@ -508,11 +467,6 @@
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
     }
 
-    @keyframes fadeInScale {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -521,11 +475,6 @@
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 20px var(--primary-color); }
-      50% { box-shadow: 0 0 30px var(--primary-color); }
     }
 
     @keyframes moveBackground {
@@ -582,15 +531,10 @@
       .table-container th, .table-container td {
         padding: 0.5rem;
       }
-      #login-section {
-        margin: 2rem 1rem;
-        padding: 2rem;
-      }
     }
   </style>
 </head>
 <body>
-  <canvas id="starsCanvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
   <div class="sidebar" id="sidebar">
@@ -634,8 +578,7 @@
     <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center" id="welcome-header">Ласкаво просимо!</h1>
 
     <div id="login-section">
-      <h2>Вхід у систему</h2>
-      <p>Авторизуйтесь через Telegram для доступу до вашого кабінету адміністратора</p>
+      <p>Будь ласка, увійдіть через Telegram:</p>
       <div class="telegram-button-wrapper">
         <script async src="https://telegram.org/js/telegram-widget.js?7"
                 data-telegram-login="ticket_tracker_UG_bot" 
@@ -713,65 +656,6 @@
   </div>
 
   <script>
-    // Falling Stars Animation
-    const canvas = document.getElementById('starsCanvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedY = Math.random() * 2 + 0.5;
-        this.opacity = Math.random() * 0.5 + 0.5;
-      }
-
-      update() {
-        this.y += this.speedY;
-        if (this.y > canvas.height) {
-          this.y = -this.size;
-          this.x = Math.random() * canvas.width;
-        }
-      }
-
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.fill();
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      const particleCount = Math.floor(canvas.width / 20);
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-      }
-    }
-
-    function animateParticles() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(particle => {
-        particle.update();
-        particle.draw();
-      });
-      requestAnimationFrame(animateParticles);
-    }
-
-    initParticles();
-    animateParticles();
-
-    // Existing Dashboard Logic
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
 
@@ -1501,7 +1385,7 @@
         document.getElementById('stats-section').classList.add('hidden');
       } else {
         document.getElementById('admin-notice').classList.add('hidden');
-        document.getElementById('stats-section').161classList.remove('hidden');
+        document.getElementById('stats-section').classList.remove('hidden');
         await fetchUserStatsByTelegram(telegramUsername);
       }
     }
