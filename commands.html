@@ -1266,19 +1266,35 @@
       }
 
       const searchBox = document.querySelector('.search-box');
+      const levelCards = document.querySelectorAll('.level-card');
       const commands = document.querySelectorAll('.command');
       
       searchBox.addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
-        commands.forEach(command => {
-          const commandText = command.textContent.toLowerCase();
-          if (commandText.includes(searchTerm)) {
-            command.style.display = 'block';
-            command.style.animation = 'fadeIn 0.5s ease';
-          } else {
-            command.style.display = 'none';
-          }
+        let hasVisibleCommands = false;
+
+        levelCards.forEach(card => {
+          const cardCommands = card.querySelectorAll('.command');
+          let cardHasVisibleCommands = false;
+
+          cardCommands.forEach(command => {
+            const commandText = command.textContent.toLowerCase();
+            if (commandText.includes(searchTerm)) {
+              command.style.display = 'block';
+              command.style.animation = 'fadeIn 0.5s ease';
+              cardHasVisibleCommands = true;
+              hasVisibleCommands = true;
+            } else {
+              command.style.display = 'none';
+            }
+          });
+
+          // Show or hide the entire card based on whether it has visible commands
+          card.style.display = cardHasVisibleCommands ? 'block' : 'none';
         });
+
+        // Ensure the commands container is visible if there are matching commands
+        document.querySelector('.commands-container').style.display = hasVisibleCommands ? 'grid' : 'none';
       });
     }
 
