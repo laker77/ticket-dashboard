@@ -129,7 +129,7 @@
       color: var(--accent-color);
     }
 
-    /* New Login Section Styles */
+    /* Login Section Styles */
     #login-section {
       position: fixed;
       top: 0;
@@ -834,6 +834,7 @@
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
         const res = await axios.get(url, { timeout: 10000 });
+        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
         return res.data.values || [];
       } catch (error) {
         console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
@@ -1178,6 +1179,7 @@
         ]);
 
         if (!ticketsData.length || !timeData.length) {
+          console.error('Дані не знайдено');
           alert('Дані не знайдено');
           return;
         }
@@ -1187,12 +1189,14 @@
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
 
         if (telegramColIndex === -1 || nameColIndex === -1) {
+          console.error('Помилка структури даних: відсутні необхідні стовпці');
           alert('Помилка структури даних: відсутні необхідні стовпці');
           return;
         }
 
         const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
         if (!userTicketsRow) {
+          console.error('Користувача не знайдено в таблиці тікетів:', telegramUsername);
           alert('Користувача не знайдено в таблиці тікетів');
           return;
         }
@@ -1203,6 +1207,7 @@
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
         const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
         if (!userTimeRow) {
+          console.error('Користувача не знайдено в таблиці часу:', userName);
           alert('Користувача не знайдено в таблиці часу');
           return;
         }
@@ -1430,49 +1435,72 @@
     }
 
     function showAccessDenied() {
+      console.log('Showing access denied section');
       document.getElementById('access-denied-section').style.display = 'flex';
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
       document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
     }
 
     async function onTelegramAuth(user) {
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        showAccessDenied();
+        return;
+      }
+
       const telegramUsername = '@' + user.username;
-      
+      console.log('Processing user:', telegramUsername);
+
       if (allowedAdmins.includes(telegramUsername)) {
+        console.log('User is in allowedAdmins');
         const userData = {
           username: telegramUsername,
           nickname: user.first_name || user.username,
           isAdmin: true
         };
         localStorage.setItem('tg_auth', JSON.stringify(userData));
+        console.log('Calling showDashboard for admin');
         await showDashboard(userData.nickname, telegramUsername, true);
         return;
       }
 
       try {
+        console.log('Fetching tickets data for non-admin user');
         const ticketsData = await getSheetData('Май_2025_таблица');
         if (!ticketsData.length) {
+          console.error('No tickets data found');
           showAccessDenied();
           return;
         }
         const ticketsHeaders = ticketsData[0];
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          showAccessDenied();
+          return;
+        }
+
         const userTicketsRow = ticketsData.find(row => 
           row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
         );
         
         if (userTicketsRow) {
+          console.log('User found in tickets data:', userTicketsRow);
           const userData = {
             username: telegramUsername,
-            nickname: userTicketsRow[0] || user.first_name,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
             isAdmin: false
           };
           localStorage.setItem('tg_auth', JSON.stringify(userData));
+          console.log('Calling showDashboard for non-admin');
           await showDashboard(userData.nickname, telegramUsername, false);
         } else {
+          console.error('User not found in tickets data:', telegramUsername);
           localStorage.removeItem('tg_auth');
           showAccessDenied();
         }
@@ -1483,10 +1511,14 @@
     }
 
     async function showDashboard(nickname, telegramUsername, isAdmin) {
+      console.log('showDashboard called:', { nickname, telegramUsername, isAdmin });
+
       if (!isAdmin) {
         try {
+          console.log('Verifying non-admin user access');
           const ticketsData = await getSheetData('Май_2025_таблица');
           if (!ticketsData.length) {
+            console.error('No tickets data for verification');
             showAccessDenied();
             return;
           }
@@ -1498,6 +1530,7 @@
           );
           
           if (!userExists) {
+            console.error('User not found during verification:', telegramUsername);
             showAccessDenied();
             return;
           }
@@ -1508,14 +1541,16 @@
         }
       }
 
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
+      console.log('Showing dashboard');
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
       document.getElementById('sidebarToggle').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
       document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
       
       if (superAdmins.includes(telegramUsername)) {
+        console.log('User is superAdmin, showing super menu');
         document.getElementById('superMenuCategory').style.display = 'block';
         document.getElementById('superMenuItem1').style.display = 'flex';
         document.getElementById('superMenuItem2').style.display = 'flex';
@@ -1524,12 +1559,15 @@
       
       document.getElementById('top-admins-section').classList.remove('hidden');
       document.getElementById('low-admins-section').classList.remove('hidden');
+      console.log('Loading admins data');
       await loadAndRenderAdmins();
       
       if (isAdmin) {
+        console.log('User is admin, showing admin notice');
         document.getElementById('admin-notice').classList.remove('hidden');
         document.getElementById('stats-section').classList.add('hidden');
       } else {
+        console.log('User is not admin, fetching stats');
         document.getElementById('admin-notice').classList.add('hidden');
         document.getElementById('stats-section').classList.remove('hidden');
         await fetchUserStatsByTelegram(telegramUsername);
@@ -1537,8 +1575,9 @@
     }
 
     function showLoginForm() {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('dashboard').classList.add('hidden');
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('sidebarToggle').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
@@ -1549,32 +1588,39 @@
     }
 
     function logout() {
+      console.log('Logging out');
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
       document.getElementById('logout-btn').addEventListener('click', logout);
       
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
         try {
+          console.log('Found saved auth:', savedAuth);
           const userData = JSON.parse(savedAuth);
           showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
         } catch (e) {
+          console.error('Error parsing saved auth:', e);
           localStorage.removeItem('tg_auth');
           showLoginForm();
         }
       } else {
+        console.log('No saved auth, showing login form');
         showLoginForm();
       }
       
       setInterval(() => {
         if (shouldRefreshTopAdmins()) {
+          console.log('Auto-refreshing admins data');
           autoRefreshData();
         }
       }, 5 * 60 * 1000);
       
+      console.log('Initial admins data load');
       autoRefreshData();
     });
   </script>
