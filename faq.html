@@ -5,96 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Адміністративний посібник | Ukraine GTA 5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script async src="https://telegram.org/js/telegram-widget.js?7"
+            data-telegram-login="ticket_tracker_UG_bot"
+            data-size="large"
+            data-userpic="false"
+            data-request-access="write"
+            data-onauth="onTelegramAuth(user)"></script>
     <style>
-        /* Стили авторизации */
-        #login-section {
-            background-color: #121824;
-            padding: 40px 30px;
-            border-radius: 20px;
-            max-width: 400px;
-            margin: 60px auto;
-            box-shadow: 0 0 30px #1977FDAA;
-            text-align: center;
-            animation: fadeInUp 1.2s ease forwards;
-            opacity: 0;
-            transform: translateY(30px);
-            font-weight: 700;
-            font-size: 1.3rem;
-        }
-        
-        #login-section p {
-            margin-bottom: 25px;
-            color: #FFFBEF;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-        
-        .telegram-button-wrapper {
-            display: inline-block;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 0 15px #1977FD;
-            animation: pulse 3s infinite ease-in-out;
-        }
-        
-        #logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #ff4d4d;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 1001;
-            transition: background-color 0.3s;
-            border: none;
-            font-weight: bold;
-        }
-        
-        #logout-btn:hover {
-            background-color: #e60000;
-        }
-        
-        .hidden {
-            display: none !important;
-        }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 15px #1977FD;
-                transform: scale(1);
-            }
-            50% {
-                box-shadow: 0 0 35px #1977FD;
-                transform: scale(1.1);
-            }
-        }
-  
-     
-     * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
-        
         :root {
-            --bg-dark: #050608;
-            --card-bg: #1a1a1a;
-            --card-border: #2a2a2a;
-            --accent-blue: #3b82f6;
-            --accent-light: #60a5fa;
-            --text-light: #ffffff;
-            --text-muted: #a3a3a3;
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #F59E0B;
+            --background-dark: #0A0C1A;
+            --card-bg: rgba(20, 22, 35, 0.9);
+            --glass-bg: rgba(20, 22, 35, 0.7);
+            --glass-blur: blur(5px);
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            --text-primary: #F3F4F6;
+            --text-secondary: #D1D5DB;
+            --card-border: rgba(59, 130, 246, 0.2);
             --level-1: #4ade80;
             --level-2: #60a5fa;
             --level-3: #f87171;
@@ -110,118 +41,358 @@
             --category-fractions: #2196f3;
             --category-supply: #e91e63;
         }
-        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            padding: 20px;
+            background: var(--background-dark);
+            color: var(--text-primary);
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
         }
-        
+
+        canvas#stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 1.5rem;
+            border-right: 1px solid var(--card-border);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            width: 2.2rem;
+            height: 2.2rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: scale(1.1);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .menu-category {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .menu-item, .super-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item:hover, .super-menu-item:hover {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent);
+            transform: translateX(5px);
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-color);
+        }
+
+        .super-menu-item {
+            color: var(--accent-color);
+        }
+
+        #login-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--background-dark);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .login-container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 8%, transparent 8.01%);
+            background-size: 30px 30px;
+            animation: moveBackground 25s linear infinite;
+            z-index: -1;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .telegram-button-wrapper:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7);
+        }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: var(--secondary-color);
+        }
+
+        #logout-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: #EF4444;
+            color: var(--text-primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        #logout-btn:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 2rem auto;
+            padding: 1.5rem;
         }
-        
+
         header {
             text-align: center;
-            padding: 40px 0;
-            margin-bottom: 30px;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
         }
-        
+
+        .header-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+        }
+
         .logo {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
-        
+
         .logo i {
             font-size: 2.5rem;
-            color: var(--accent-blue);
+            color: var(--primary-color);
         }
-        
+
         h1 {
             font-size: 2.8rem;
-            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
-        
+
         .subtitle {
             font-size: 1.2rem;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             max-width: 800px;
             margin: 0 auto;
             line-height: 1.7;
         }
-        
+
         .search-container {
             max-width: 700px;
             margin: 40px auto;
             position: relative;
         }
-        
+
         .search-box {
             width: 100%;
             padding: 18px 25px;
             padding-left: 60px;
             border-radius: 50px;
-            background: rgba(30, 30, 30, 0.7);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
             border: 1px solid var(--card-border);
-            color: var(--text-light);
+            color: var(--text-primary);
             font-size: 1.1rem;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
             transition: all 0.3s ease;
         }
-        
+
         .search-box:focus {
             outline: none;
-            border-color: var(--accent-blue);
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
-        
+
         .search-icon {
             position: absolute;
             left: 25px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--accent-blue);
+            color: var(--primary-color);
             font-size: 1.5rem;
         }
-        
+
         .commands-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 25px;
             margin-top: 30px;
         }
-        
+
         .level-card {
-            background: rgba(26, 26, 26, 0.7);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
             border-radius: 16px;
             overflow: hidden;
             border: 1px solid var(--card-border);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
-            padding-bottom: 15px; /* Добавляем место внизу карточки */
+            padding-bottom: 15px;
         }
-        
+
         .level-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
-        
+
         .card-header {
             padding: 25px;
             display: flex;
@@ -231,15 +402,11 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-        
-        .level-1 .card-header { background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), transparent); }
-        .level-2 .card-header { background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), transparent); }
-        .level-3 .card-header { background: linear-gradient(135deg, rgba(248, 113, 113, 0.15), transparent); }
-        .level-4 .card-header { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), transparent); }
-        .level-5 .card-header { background: linear-gradient(135deg, rgba(192, 132, 252, 0.15), transparent); }
-        .level-6 .card-header { background: linear-gradient(135deg, rgba(244, 114, 182, 0.15), transparent); }
-        .level-faq .card-header { background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), transparent); }
-        
+
+        .level-faq .card-header {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), transparent);
+        }
+
         .card-icon {
             width: 60px;
             height: 60px;
@@ -250,15 +417,11 @@
             font-size: 1.8rem;
             flex-shrink: 0;
         }
-        
-        .level-1 .card-icon { background: var(--level-1); }
-        .level-2 .card-icon { background: var(--level-2); }
-        .level-3 .card-icon { background: var(--level-3); }
-        .level-4 .card-icon { background: var(--level-4); }
-        .level-5 .card-icon { background: var(--level-5); }
-        .level-6 .card-icon { background: var(--level-6); }
-        .level-faq .card-icon { background: var(--level-faq); }
-        
+
+        .level-faq .card-icon {
+            background: var(--level-faq);
+        }
+
         .card-title {
             font-size: 1.5rem;
             font-weight: 600;
@@ -266,41 +429,36 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
-        .level-1 .card-title { color: var(--level-1); }
-        .level-2 .card-title { color: var(--level-2); }
-        .level-3 .card-title { color: var(--level-3); }
-        .level-4 .card-title { color: var(--level-4); }
-        .level-5 .card-title { color: var(--level-5); }
-        .level-6 .card-title { color: var(--level-6); }
-        .level-faq .card-title { color: var(--level-faq); }
-        
+
+        .level-faq .card-title {
+            color: var(--level-faq);
+        }
+
         .card-content {
             padding: 0 25px 25px;
             overflow-y: auto;
             max-height: 750px;
             flex-grow: 1;
         }
-        
-        /* Кастомный скроллбар */
+
         .card-content::-webkit-scrollbar {
             width: 8px;
         }
-        
+
         .card-content::-webkit-scrollbar-track {
             background: var(--scrollbar-bg);
             border-radius: 4px;
         }
-        
+
         .card-content::-webkit-scrollbar-thumb {
             background: var(--scrollbar);
             border-radius: 4px;
         }
-        
+
         .card-content::-webkit-scrollbar-thumb:hover {
             background: var(--accent-light);
         }
-        
+
         .command, .faq-item {
             margin-bottom: 25px;
             padding: 18px;
@@ -311,16 +469,16 @@
             overflow: hidden;
             position: relative;
         }
-        
+
         .command:hover, .faq-item:hover {
             background: rgba(50, 50, 50, 0.7);
-            border-left-color: var(--accent-blue);
+            border-left-color: var(--primary-color);
             transform: translateX(5px);
         }
-        
+
         .command-name {
             font-family: 'Courier New', monospace;
-            color: var(--accent-blue);
+            color: var(--primary-color);
             font-size: 1.1rem;
             margin-bottom: 8px;
             display: flex;
@@ -329,143 +487,123 @@
             flex-wrap: wrap;
             word-break: break-word;
         }
-        
+
         .command-name i {
-            color: var(--accent-light);
+            color: var(--secondary-color);
             flex-shrink: 0;
         }
-        
+
         .command-desc, .faq-answer {
-            color: var(--text-muted);
+            color: var(--text-secondary);
             font-size: 0.95rem;
             line-height: 1.6;
             word-break: break-word;
         }
-        
+
         .param {
             color: #f0abfc;
             font-style: italic;
             white-space: nowrap;
         }
-        
+
         .optional {
-            color: #a3a3a3;
+            color: var(--text-secondary);
         }
-        
+
         .faq-question {
-            color: var(--accent-blue);
+            color: var(--primary-color);
             font-weight: 600;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .faq-question i {
             color: var(--level-faq);
             flex-shrink: 0;
         }
-        
+
         footer {
             text-align: center;
             padding: 50px 0 30px;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             margin-top: 60px;
             border-top: 1px solid var(--card-border);
         }
-        
+
         .footer-logo {
-            color: var(--accent-blue);
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.3rem;
             margin-bottom: 15px;
             display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--card-border);
         }
-        
+
         .copyright {
             font-size: 0.9rem;
         }
-        
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .level-card {
-            animation: fadeIn 0.5s ease-out forwards;
-            opacity: 0;
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
         }
-        
-        .level-card:nth-child(1) { animation-delay: 0.1s; }
-        .level-card:nth-child(2) { animation-delay: 0.2s; }
-        .level-card:nth-child(3) { animation-delay: 0.3s; }
-        .level-card:nth-child(4) { animation-delay: 0.4s; }
-        .level-card:nth-child(5) { animation-delay: 0.5s; }
-        .level-card:nth-child(6) { animation-delay: 0.6s; }
-        .level-card:nth-child(7) { animation-delay: 0.7s; }
-        
-        /* Широкая карточка для вопросов */
-        .faq-wide {
-            grid-column: 1 / -1;
-            max-height: none;
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50%, -50%); }
         }
-        
-        .faq-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        
-        /* Категории и вкладки */
+
         .categories-tabs {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 30px; /* отступ сверху */
-            margin-bottom: 30px;
+            margin: 30px 0;
             justify-content: center;
         }
-        
+
         .category-tab {
             padding: 10px 20px;
             border-radius: 30px;
-            background: rgba(50, 50, 50, 0.5);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
             cursor: pointer;
-            margin-bottom: 30px;
-            margin-top: 30px; /* отступ сверху */
             transition: all 0.3s ease;
             font-weight: 600;
             border: 2px solid transparent;
         }
-        
+
         .category-tab:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        
+
         .category-tab.active {
             border-color: currentColor;
             box-shadow: 0 0 15px currentColor;
         }
-        
+
         .category-general { color: var(--category-general); }
         .category-rules { color: var(--category-rules); }
         .category-admin { color: var(--category-admin); }
         .category-fractions { color: var(--category-fractions); }
         .category-supply { color: var(--category-supply); }
-        
+
         .faq-item[data-category="general"] .faq-question i { color: var(--category-general); }
         .faq-item[data-category="rules"] .faq-question i { color: var(--category-rules); }
         .faq-item[data-category="admin"] .faq-question i { color: var(--category-admin); }
         .faq-item[data-category="fractions"] .faq-question i { color: var(--category-fractions); }
         .faq-item[data-category="supply"] .faq-question i { color: var(--category-supply); }
-        
-        .faq-item {
-            position: relative;
-            overflow: hidden;
-        }
-        
+
         .faq-item::before {
             content: '';
             position: absolute;
@@ -475,13 +613,13 @@
             height: 100%;
             transition: background-color 0.3s;
         }
-        
+
         .faq-item[data-category="general"]::before { background-color: var(--category-general); }
         .faq-item[data-category="rules"]::before { background-color: var(--category-rules); }
         .faq-item[data-category="admin"]::before { background-color: var(--category-admin); }
         .faq-item[data-category="fractions"]::before { background-color: var(--category-fractions); }
         .faq-item[data-category="supply"]::before { background-color: var(--category-supply); }
-        
+
         .category-counter {
             display: inline-block;
             background: rgba(255, 255, 255, 0.1);
@@ -490,13 +628,13 @@
             font-size: 0.8rem;
             margin-left: 8px;
         }
-        
+
         .back-to-top {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: var(--accent-blue);
-            color: white;
+            background: var(--primary-color);
+            color: var(--text-primary);
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -508,104 +646,170 @@
             transform: translateY(20px);
             transition: all 0.3s ease;
             z-index: 100;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow);
         }
-        
+
         .back-to-top.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        
+
+        .faq-wide {
+            grid-column: 1 / -1;
+            max-height: none;
+        }
+
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
         @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
             .commands-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .faq-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             h1 {
                 font-size: 2.2rem;
             }
-            
+
             .search-box {
                 padding: 15px 20px;
                 padding-left: 50px;
                 font-size: 1rem;
             }
-            
+
             .search-icon {
                 left: 20px;
-                top: 54% !important; /* Опускаем иконку */
+                top: 50%;
             }
-            
+
             .card-header {
                 padding: 20px;
             }
-            
+
             .card-content {
                 max-height: none;
             }
-            
+
             .categories-tabs {
                 flex-direction: column;
                 align-items: center;
-                margin-top: 20px; /* Добавляем отступ сверху */
-                margin-bottom: 25px; /* Увеличиваем отступ снизу */
+                margin: 20px 0;
             }
-            
+
             .category-tab {
                 width: 100%;
                 text-align: center;
-                padding: 12px 24px; /* Было 10px 20px */
-              font-size: 1.05rem; /* Чуть крупнее текст */
+                padding: 12px 24px;
+                font-size: 1.05rem;
+            }
 
+            .login-container {
+                padding: 2rem 1.25rem;
+            }
+
+            .login-title {
+                font-size: 1.5rem;
+            }
+
+            .login-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .login-logo {
+                width: 70px;
+                height: 70px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Кнопка выхода -->
+    <canvas id="stars-canvas"></canvas>
     <button id="logout-btn" class="hidden">Вийти</button>
 
-    <!-- Кнопка "Наверх" -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-category">Скрипти</div>
+            <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+            <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+            <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+            <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+            <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+            <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+            <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+            <div class="menu-category">Інформація</div>
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+            <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+            <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+            <a href="commands.html" class="menu-item active"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+            <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+            <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+            <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+            <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+            <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+            <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+            <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+        </div>
+    </div>
+    <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+
     <div class="back-to-top">
         <i class="fas fa-arrow-up"></i>
     </div>
 
-    <!-- Секция авторизации -->
     <div id="login-section">
-        <p>Будь ласка, увійдіть через Telegram:</p>
-        <div class="telegram-button-wrapper">
-            <script async src="https://telegram.org/js/telegram-widget.js?7"
-                    data-telegram-login="ticket_tracker_UG_bot" 
-                    data-size="large"
-                    data-userpic="false"
-                    data-request-access="write"
-                    data-onauth="onTelegramAuth(user)">
-            </script>
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-book" style="font-size: 2rem; color: var(--text-primary);"></i>
+            </div>
+            <h1 class="login-title">Адміністративний посібник</h1>
+            <p class="login-subtitle">Увійдіть через Telegram для доступу до контенту</p>
+            <div class="telegram-button-wrapper">
+                <script async src="https://telegram.org/js/telegram-widget.js?7"
+                        data-telegram-login="ticket_tracker_UG_bot"
+                        data-size="large"
+                        data-userpic="false"
+                        data-request-access="write"
+                        data-onauth="onTelegramAuth(user)">
+                </script>
+            </div>
+            <div class="login-footer">
+                Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+            </div>
         </div>
     </div>
 
-    <!-- Основной контент (скрыт по умолчанию) -->
     <div id="content" class="hidden">
         <div class="container">
             <header>
-                <div class="logo">
-                    <i class="fas fa-book"></i>
-                    <h1>Адміністративний посібник</h1>
-                </div>
-                <p class="subtitle">Перелік правил та відповідей на питання для адміністрації сервера Ukraine GTA 5 RolePlay.</p>
-                
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-box" id="search-input" placeholder="Пошук питання або відповіді...">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-book"></i>
+                        <h1>Адміністративний посібник</h1>
+                    </div>
+                    <p class="subtitle">Перелік правил та відповідей на питання для адміністрації сервера Ukraine GTA 5 RolePlay.</p>
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-box" id="search-input" placeholder="Пошук питання або відповіді...">
+                    </div>
                 </div>
             </header>
-        
+
             <div class="commands-container">
-                <!-- Питання та Відповіді - ШИРОКАЯ КАРТОЧКА -->
                 <div class="level-card level-faq faq-wide">
                     <div class="card-header">
                         <div class="card-icon">
@@ -614,7 +818,6 @@
                         <h2 class="card-title">Питання та Відповіді</h2>
                     </div>
                     <div class="card-content">
-                        <!-- Вкладки категорий -->
                         <div class="categories-tabs">
                             <div class="category-tab category-general active" data-category="all">
                                 Усі питання <span class="category-counter" id="count-all">0</span>
@@ -635,301 +838,215 @@
                                 Постачання <span class="category-counter" id="count-supply">0</span>
                             </div>
                         </div>
-                        
-                        <div class="faq-grid" id="faq-container">
-                            <!-- FAQ items will be generated dynamically -->
-                        </div>
+                        <div class="faq-grid" id="faq-container"></div>
                     </div>
                 </div>
             </div>
+
+            <footer>
+                <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
+                <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+            </footer>
         </div>
     </div>
 
     <script>
+        // Falling Stars Animation
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const stars = [];
+        const numStars = 30;
+
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speed = Math.random() * 2 + 0.5;
+                this.opacity = Math.random() * 0.4 + 0.2;
+            }
+
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push(new Star());
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            requestAnimationFrame(animateStars);
+        }
+
+        animateStars();
+
         const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
         const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
 
-        // Вопросы и ответы (полный список)
-        const faqData = [
-            { category: "admin", question: "Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?", answer: "Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом." },
-            { category: "admin", question: "Скільки днів адміністратор зобов’язаний зберігати докази після видачі покарання?", answer: "7 днів." },
-            { category: "admin", question: "Що буде, якщо адміністратор використає F2 без інвізу?", answer: "Попередження або догана." },
-            { category: "admin", question: "Чи може адміністратор змінити або скасувати покарання, видане іншим адміном?", answer: "Ні, це заборонено." },
-            { category: "admin", question: "Скільки усних попереджень прирівнюється до одного письмового?", answer: "Два." },
-            { category: "admin", question: "Коли адміністратор може вийти у відпустку і на який термін?", answer: "За погодженням ГА/ЗГА, максимум на 5 днів." },
-            { category: "admin", question: "Чи може адміністратор перебувати в фракції, за якою він не стежить?", answer: "Ні." },
-            { category: "admin", question: "Що потрібно адміну, щоб отримати підвищення?", answer: "Не мати активних попереджень і бути активним на поточному рівні." },
-            { category: "admin", question: "Чи дозволено адміністратору використовувати адмін-команди для розваг?", answer: "Ні, тільки за узгодженням з ГА." },
-            { category: "admin", question: "Який формат ніку повинен мати адміністратор у Discord?", answer: "Посада | Ім’я Прізвище (наприклад: Cur.LSPD | Sergo Buffalo)." },
-            { category: "admin", question: "Що буде за обман адміністрації або надання підроблених доказів?", answer: "Бан 15–30 днів." },
-            { category: "admin", question: "Що робити, якщо адміністратор бачить порушення, граючи на RP-персонажі?", answer: "Оформити запит на покарання в Discord адміністрації." },
-            { category: "admin", question: "Чи має адміністрація право ігнорувати репорт?", answer: "Ні, за це видається дисциплінарне покарання." },
-            { category: "admin", question: "Чи можна адміністратору використовувати адмінку під час гри за RP-персонажа?", answer: "Ні, якщо це не виконання обов’язків." },
-            { category: "admin", question: "Чи дозволено адміністратору мати майно?", answer: "Ні, заборонено мати будинки та бізнеси, автомобілі дозволено." },
-            { category: "admin", question: "Що буде, якщо адміністратор ображає гравців?", answer: "Зняття з посади та блокування." },
-            { category: "admin", question: "Що має зробити адміністратор після виявлення грубого порушення гравцем?", answer: "Видати покарання згідно правил проєкту." },
-            { category: "admin", question: "Чи можна адміністратору перебувати на керуючих посадах на інших проєктах?", answer: "Ні, це заборонено.(Зняття + ЧСА )" },
-            { category: "admin", question: "Чи можна адміністратору видати покарання без доказів?", answer: "Ні, він забов’язаний мати відеодоказ та зберігати його протягом 7 днів." },
-            { category: "admin", question: "Чи може адміністратор відмовитись відповідати на тікет без поважної причини?", answer: "Ні." },
-            { category: "admin", question: "Чи можна адміністратору грати на твинку, маючи адмін-акаунт?", answer: "Тільки якщо твинк не має відношення до адміністрації та адміністративна норма виконана." },
-            { category: "admin", question: "Що робити, якщо адміністратор хоче змінити нікнейм?", answer: "Погодити з головною адміністрацією та подати запит на форму у відповідний розділ." },
-            { category: "admin", question: "Чи може адміністратор бути підписаний в Discord як “JustAdmin”?", answer: "Ні, лише згідно з форматом." },
-            { category: "admin", question: "Чи зобов’язаний адміністратор пояснити причину покарання гравцю?", answer: "Так, якщо це не порушує політику безпеки." },
-            { category: "admin", question: "Чи має право адміністратор зберігати особисту інформацію гравців?", answer: "Ні." },
-            { category: "admin", question: "Що буде, якщо адміністратор змінить покарання іншого адміна без погодження?", answer: "Дисциплінарне стягнення." },
-            { category: "admin", question: "Що буде за використання адмін-команд не за призначенням?", answer: "Попередження або догана." },
-            { category: "admin", question: "Чи може адміністратор створити скаргу з доказами від іншого гравця?", answer: "Ні, він забов’язаний передати форму у адмін чаті." },
-            { category: "admin", question: "Яке покарання за блат?", answer: "Зняття з посади + бан на 30 днів + ЧС адміністрації." },
-            { category: "admin", question: "Чи зобов’язаний адміністратор відповідати культурно в Discord-обговореннях?", answer: "Так." },
-            { category: "admin", question: "Чи має право адміністратор розповідати про результати та розголошувати відповіді з співбесіди?", answer: "Ні." },
-            { category: "admin", question: "Що буде за грубість у сторону головної адміністрації?", answer: "Попередження або зняття з посади." },
-            { category: "admin", question: "Чи дозволено критикувати рішення адміністрації публічно?", answer: "Ні." },
-            { category: "admin", question: "Чи дозволено адміністратору мати фракційне майно?", answer: "Ні." },
-            { category: "admin", question: "Чи зобов’язаний адміністратор попереджати про свою неактивність?", answer: "Так." },
-            { category: "admin", question: "Чи дозволено адміністратору передавати адмін-права іншій особі?", answer: "Ні." },
-            { category: "admin", question: "Чи має право адміністратор виконувати дії в RP-чаті від імені RP-персонажа?", answer: "Так, лише якщо він не використовує при цьому адмін-команди." },
-            { category: "admin", question: "Що буде за ігнорування скарги на форумі протягом більше 48 годин?", answer: "Догана або попередження." },
-            { category: "admin", question: "Який статус має адміністратор у грі?", answer: "NonRP персонаж." },
-            { category: "admin", question: "Яке покарання за дискредитацію адміністрації на форумі чи в грі?", answer: "Mute / Ban / зняття з посади (залежно від ситуації)." },
-            { category: "rules", question: "Скільки скарга має бути актуальною, щоб її розглянули?", answer: "Не більше 7 днів з моменту запису відео/скріншота." },
-            { category: "rules", question: "Чи можна подавати скаргу, використовуючи відео від третьої особи?", answer: "Так, лише якщо там зафіксовані критичні порушення." },
-            { category: "rules", question: "Яка максимальна тривалість відео в скарзі без тайм-кодів?", answer: "2 хвилини." },
-            { category: "rules", question: "Чи дозволено гравцям відповідати порушенням на порушення?", answer: "Ні." },
-            { category: "rules", question: "Яке покарання за рекламу сторонніх проєктів у чаті?", answer: "Ban 1–30 днів або Permban." },
-            { category: "rules", question: "Що таке NonRP Drive?", answer: "Нереалістичне водіння (наприклад, по горах на спорткарі)." },
-            { category: "general", question: "Якою мовою дозволено спілкуватися у IC чаті?", answer: "Українською або суржиком." },
-            { category: "general", question: "Чи можна створити персонажа іншої статі?", answer: "Ні, Demorgan до зміни статі." },
-            { category: "rules", question: "Чи дозволено використовувати Redux, що вирізає текстури?", answer: "Ні, Ban 1–30 днів, при повторі — Permban." },
-            { category: "rules", question: "Що таке MG (Metagaming)?", answer: "Використання OOC-інформації у IC-ситуації." },
-            { category: "rules", question: "Скільки часу має пройти, щоб повернутись після смерті на місце?", answer: "15 хвилин (правило RK)." },
-            { category: "rules", question: "Що таке Powergaming (PG)?", answer: "Нереалістична поведінка, неможлива в реальному житті." },
-            { category: "rules", question: "Що означає SK?", answer: "SpawnKill — вбивство на місці спавну." },
-            { category: "rules", question: "Яке покарання за стрільбу з водійського місця?", answer: "Demorgan 30–60 хв / WARN / Ban 3–5 днів." },
-            { category: "rules", question: "Чи можна використовувати SoundPad без відігравання?", answer: "Ні, можна використовувати лише в автомобілі з відіграванням рп." },
-            { category: "rules", question: "Яке покарання за погрози в реальному житті?", answer: "Ban 5–15 днів." },
-            { category: "rules", question: "Що таке DriveBy (DB)?", answer: "Наїзд транспортом на гравця без IC-причини." },
-            { category: "rules", question: "Чи можна під час бою використовувати аптечки?", answer: "Ні, тільки під прикриттям або після перестрілки." },
-            { category: "rules", question: "Що буде, якщо захопити заручника і вимагати більше ніж дозволено?", answer: "Demorgan / відмова в перемовинах." },
-            { category: "rules", question: "Яке покарання за втечу з гри для уникнення покарання?", answer: "x2 покарання." },
-            { category: "rules", question: "Яка поведінка вважається NonRP при пограбуванні інкасаторів?", answer: "Відсутність маски, зброї або плану дій." },
-            { category: "rules", question: "Скільки учасників мінімум потрібно для грабунку інкасаторів?", answer: "Щонайменше 3 особи." },
-            { category: "rules", question: "Яке покарання за стрілянину в гравців у ноці?", answer: "Mute 15–30 хвилин." },
-            { category: "rules", question: "Що буде за приховування багів?", answer: "HardBan 7–30 днів або Permban." },
-            { category: "rules", question: "Що буде за провокації на релігійній основі?", answer: "Mute 60–120 хв / Ban 5–30 днів." },
-            { category: "rules", question: "Що буде за образу проєкту?", answer: "PermBan." },
-            { category: "fractions", question: "Чи можна зайти на сервер і одразу бути у фракції?", answer: "Ні, потрібно пройти співбесіду, або подати електронну заявку." },
-            { category: "rules", question: "Яке покарання за спам символами в VIP-чаті?", answer: "Mute 30–60 хвилин." },
-            { category: "rules", question: "Що таке \"Втеча від RP\"?", answer: "Вихід з гри/у воду/інтер’єр/Green Zone під час RP." },
-            { category: "rules", question: "Яке покарання за передачу грошей між основним і твинк-акаунтом?", answer: "Ban 14 днів + конфіскація майна." },
-            { category: "rules", question: "Що буде, якщо змінити RP-нік на nonRP без біографії?", answer: "Demorgan до зміни ніка." },
-            { category: "rules", question: "Чи можна рекламувати промокоди в VIP-чаті?", answer: "Ні, Mute 15–30 хвилин." },
-            { category: "rules", question: "Чи дозволено шантажувати за ігрову або реальну валюту?", answer: "Ні, Ban 10–30 днів." },
-            { category: "fractions", question: "Скільки бізнесів можна мати на одному акаунті?", answer: "Один." },
-            { category: "rules", question: "Чи дозволено використовувати Discord-переписку як доказ?", answer: "Так, але лише в особливих випадках." },
-            { category: "rules", question: "Чи дозволено вносити фальшиві докази до скарг?", answer: "Ні, Ban 15–30 днів." },
-            { category: "supply", question: "Яке покарання за перехоплення матеріалів із постачання поза правилами?", answer: "- Бали лідеру / Demorgan." },
-            { category: "rules", question: "Яке покарання за стрілянину з Green Zone у гравця за її межами?", answer: "Demorgan 30–90 хвилин." },
-            { category: "fractions", question: "Що таке \"капт\"?", answer: "RP-бій за територію." },
-            { category: "admin", question: "Чи має право адміністрація видати покарання без звернення гравця?", answer: "Так, якщо бачить порушення самостійно." },
-            { category: "rules", question: "Що буде за видавання себе за адміністратора в Discord?", answer: "Ban 3–15 днів." },
-            { category: "supply", question: "Чи дозволено брати участь у постачанні без бодікамери?", answer: "Ні, відео обов’язкове" },
-            { category: "rules", question: "Що буде за рекламу промокоду у робочому чаті?", answer: "Mute 30–60 хвилин" },
-            { category: "rules", question: "Що буде за відмову пройти перевірку на софт?", answer: "Permban без права на оскарження" },
-            { category: "admin", question: "Чи дозволено використовувати політ (F2) без інвізу?", answer: "Ні" },
-            { category: "rules", question: "Що буде за спам у радіо /r?", answer: "Mute 15–30 хвилин" },
-            { category: "supply", question: "Як довго зберігається відео з ловлі майна?", answer: "3 доби" },
-            { category: "rules", question: "Чи дозволено застосовувати силу до заручника без IC-причини?", answer: "Ні" },
-            { category: "fractions", question: "Чи можна здавати EMS в заручники під час терористичного акту?", answer: "Ні" },
-            { category: "supply", question: "Скільки учасників потрібно для рейду на мафію?", answer: "25 осіб (мінімум 5 з FIB)" },
-            { category: "fractions", question: "Що буде, якщо мафія тричі отримає успішний рейд?", answer: "Автоматичне зняття лідера" },
-            { category: "fractions", question: "Чи можна продавати інвентар держструктури?", answer: "Ні, Ban 3–30 днів" },
-            { category: "fractions", question: "Хто має право на допит із застосуванням поліграфу?", answer: "FIB, ранг 6+" },
-            { category: "rules", question: "Яке мінімальне покарання за SK?", answer: "Demorgan 60 хвилин" },
-            { category: "rules", question: "Яке покарання за байт у гетто?", answer: "Demorgan 30–90 хвилин" },
-            { category: "fractions", question: "Що буде, якщо не оформити CASE-файл після замовного вбивства?", answer: "Покарання за NonRP" },
-            { category: "supply", question: "Чи дозволено брати участь у теракті без погодження з куратором?", answer: "Ні" },
-            { category: "supply", question: "Скільки матеріалів мінімум має бути в постачанні?", answer: "30 000" },
-            { category: "rules", question: "Що буде за обман гравця на суму понад 1.000.000?", answer: "Обнулення + Ban 14–30 днів" },
-            { category: "rules", question: "Яке максимальне покарання за DM у GZ?", answer: "Demorgan 120 хв / WARN" },
-            { category: "fractions", question: "Що таке \"титул\" мафії або банди?", answer: "Їхня основна територія або місце спавну" },
-            { category: "fractions", question: "Чи можна проводити набір у мафію без RP-відігравання?", answer: "Ні" },
-            { category: "fractions", question: "Що буде за бездіяльність на ФЗ?", answer: "Demorgan 60–120 хвилин" },
-            { category: "fractions", question: "Що таке RP-стрілка?", answer: "Перемовини між фракціями перед оголошенням війни" },
-            { category: "fractions", question: "Чи дозволено стріляти з титулу у ворожого гравця?", answer: "Ні" },
-            { category: "fractions", question: "Що буде за перешкоджання медіа-зйомці?", answer: "Demorgan 30–60 хв / WARN" },
-            { category: "supply", question: "Скільки коштує матовозка у нелегальному продажі?", answer: "Не більше 65 000$" },
-            { category: "rules", question: "Яке мінімальне покарання за NonRP?", answer: "Demorgan 15 хвилин" },
-            { category: "supply", question: "Що буде за викрадення EMS під час постачання?", answer: "WARN / Ban 3 дні" },
-            { category: "fractions", question: "Скільки часу діє імунітет після рейду?", answer: "5 днів" },
-            { category: "supply", question: "Скільки гравців можуть представляти одну банду на постачанні?", answer: "Максимум 30" },
-            { category: "fractions", question: "Хто затверджує союз між мафією і бандою?", answer: "Куратор" },
-            { category: "supply", question: "Чи можна використовувати спостерігачів на гвинтокрилі під час постачань?", answer: "Так" },
-            { category: "supply", question: "Чи дозволено завантажувати матовозку під час перестрілки?", answer: "Ні" },
-            { category: "rules", question: "Чи можна вести RP із гравцем в AFK?", answer: "Ні, Demorgan 30–60 хвилин" },
-            { category: "fractions", question: "Чи дозволено займати дах на ФЗ, куди можна потрапити тільки гелікоптером?", answer: "Ні" },
-            { category: "supply", question: "Чи дозволено перехоплювати матовозки інших фракцій після ФЗ?", answer: "Ні" },
-            { category: "supply", question: "Скільки разів можна напасти на ФЗ однією мафією на день?", answer: "3 рази" },
-            { category: "supply", question: "Що буде, якщо не зберігати запис постачання?", answer: "- бали лідеру" },
-            { category: "supply", question: "Яке покарання за використання Heavy Sniper на рейді?", answer: "Demorgan 30–60 хвилин" },
-            { category: "admin", question: "Скільки часу має адміністратор на закриття скарги у форумі?", answer: "До 2 днів" },
-            { category: "fractions", question: "Чи дозволено лідеру Government мати більше одного заступника?", answer: "Ні" },
-            { category: "fractions", question: "Скільки балів стартує лідер при призначенні?", answer: "10 балів" },
-            { category: "fractions", question: "Що буде, якщо лідер держструктури не проведе Глобальний захід?", answer: "Зняття балів" },
-            { category: "fractions", question: "Який максимальний термін лідерства у Government?", answer: "45 днів" },
-            { category: "fractions", question: "Що буде, якщо лідер фракції знімається до завершення терміну, пробувши менше 15 днів?", answer: "Ban 3 дні + WARN" },
-            { category: "fractions", question: "Яке мінімальне щоденне онлайнове навантаження для лідера?", answer: "3 години" },
-            { category: "fractions", question: "Який ранг максимально дозволено призначити в день блату?", answer: "Максимум 3" },
-            { category: "fractions", question: "Скільки лідерських термінів поспіль дозволено?", answer: "3 терміна лідера" },
-            { category: "fractions", question: "Чи можна мати в складі мафії nonRP нікнейми?", answer: "Ні" },
-            { category: "fractions", question: "Чи зобов’язаний куратор перевіряти звіти щотижня?", answer: "Так" },
-            { category: "supply", question: "Яка максимальна кількість учасників від державних структур у ВЗХ?", answer: "60 (по 20 з фракції)" },
-            { category: "supply", question: "Чи можна брати участь у ВЗХ без фракційної форми?", answer: "Ні" },
-            { category: "rules", question: "Чи дозволено обговорювати адмінів у VIP-чаті?", answer: "Ні, Mute 30–60 хвилин" },
-            { category: "rules", question: "Яка мінімальна якість відео для скарги?", answer: "480p (у деяких випадках 720p для постачання/рейду)" },
-            { category: "admin", question: "Чи має право гравець вимагати докази свого покарання?", answer: "Ні, лише голова адміністрації має доступ" },
-            { category: "admin", question: "Чи має право адміністратор самостійно проводити обшуки RP-шляхом?", answer: "Ні, тільки через фракційний функціонал" },
-            { category: "supply", question: "Що буде за стрілянину в хамер на ВЗХ?", answer: "Demorgan 15–30 хвилин" },
-            { category: "fractions", question: "Чи може гравець одночасно бути у двох фракціях?", answer: "Ні, навіть твинком" },
-            { category: "supply", question: "Чи дозволено викликати EMS на територію ВЗХ?", answer: "Ні" },
-            { category: "admin", question: "Що буде, якщо адмін не зберіг докази покарання гравця?", answer: "Покарання за порушення правил адміністрації" },
-            { category: "admin", question: "Що робити адміну, якщо не впевнений у відповіді в /report?", answer: "Перевірити інформацію ще раз, уточнити у коллег в чаті." },
-            { category: "rules", question: "Що буде за використання Caps Lock у VIP чаті?", answer: "Mute 15–30 хвилин" },
-            { category: "fractions", question: "Чи можна використовувати бронежилети іншої фракції?", answer: "Ні" },
-            { category: "fractions", question: "Скільки дозволено використовувати союзників у теракті?", answer: "Одна союзна фракція" },
-            { category: "rules", question: "Чи дозволено рекламувати Twitch-канал в OOC чаті?", answer: "Ні, це реклама стороннього ресурсу" },
-            { category: "rules", question: "Що буде, якщо гравець під час судної ночі атакує працівника EMS?", answer: "Demorgan 60–120 хвилин" },
-            { category: "supply", question: "Чи можна ловити майно без відео?", answer: "Ні, майно буде конфісковано" },
-            { category: "supply", question: "Яке покарання за вихід з гри під час пограбування інкасаторів?", answer: "WARN" },
-            { category: "admin", question: "Чи має право адміністратор допомагати фракції, якій він симпатизує?", answer: "Ні, це блат" },
-            { category: "rules", question: "Що буде за програш у RP, де гравець відмовився визнавати поразку?", answer: "Порушення RP, можливе покарання" },
-            { category: "rules", question: "Що буде за використання неприйнятної музики через Soundpad?", answer: "Mute 15–30 хвилин" },
-            { category: "fractions", question: "Чи має право FIB допитувати без процесуального обґрунтування?", answer: "Ні" },
-            { category: "admin", question: "Хто ухвалює рішення про визнання доказів \"підробленими\"?", answer: "Головна адміністрація" },
-            { category: "rules", question: "Чи можна провокувати стрілянину в Green Zone?", answer: "Ні" },
-            { category: "fractions", question: "Який максимальний розмір хабаря для групи держслужбовців?", answer: "100 окладів" },
-            { category: "rules", question: "Чи дозволено ображати медіа-партнерів?", answer: "Ні, Mute 30–60 хвилин або Ban" },
-            { category: "admin", question: "Чи дозволено тестувати адмін-команди без узгодження?", answer: "Ні" },
-            { category: "supply", question: "Що буде, якщо гравець без маски викрадає інкасацію?", answer: "Demorgan 30–60 хвилин" },
-            { category: "supply", question: "Скільки можна зберігати записів постачань?", answer: "72 години" },
-            { category: "admin", question: "Який мінімальний вік для адміністратора?", answer: "Встановлюється Головним Адміністратором, на данний момент з 17 років." },
-            { category: "fractions", question: "Що таке \"злив складу\" в мафії?", answer: "Передача фракційних ресурсів або інформації третім особам." },
-            { category: "supply", question: "Чи дозволено використовувати особистий транспорт для перекриття при постачанні?", answer: "Ні, лише фракційний або перефарбований у колір фракції." },
-            { category: "rules", question: "Що таке \"деморган\"?", answer: "Ігрове місце утримання як покарання за порушення правил." },
-            { category: "supply", question: "Чи може EMS використовувати бронежилет на постачанні?", answer: "Так." },
-            { category: "fractions", question: "Чи дозволено брати участь у каптах без фракційного одягу?", answer: "Ні." },
-            { category: "admin", question: "Що вважається зловживанням адміністративним ресурсом?", answer: "Перевага для друзів, RP-персонажа, вплив на івенти тощо." },
-            { category: "fractions", question: "Чи може гравець з 1 рангом брати участь у кримінальних заходах мафії?", answer: "Ні." },
-            { category: "fractions", question: "Хто відповідальний за ведення форумного розділу фракції?", answer: "Лідер фракції." },
-            { category: "fractions", question: "Чи дозволено державним структурам продавати зброю мафіям?", answer: "Ні, це вважається порушенням правил Держ. 1.32" },
-            { category: "supply", question: "Що буде за перешкоджання руху хамера після ВЗХ?", answer: "Demorgan 30–60 хвилин." },
-            { category: "admin", question: "Яке покарання за невиконання наказів під час заходів адміністрації (наприклад, MP)?", answer: "Kick / вбивство гравця." },
-            { category: "fractions", question: "Скільки організацій може бути задіяно у теракті?", answer: "Максимум 2." },
-            { category: "general", question: "Чи можна використовувати nonRP ім’я, якщо є RP-біографія?", answer: "Так, за умови затвердження біографії." },
-            { category: "fractions", question: "Чи можна займати підвищення в іншій фракції одразу після звільнення з держструктури?", answer: "Потрібно чекати 3–5 днів." },
-            { category: "rules", question: "Що заборонено робити в ноці (стан очікування лікаря)?", answer: "Розмовляти." },
-            { category: "rules", question: "Що таке MDM?", answer: "Mass DM — масове вбивство без причини (3+ осіб)." },
-            { category: "rules", question: "Чи дозволено затримувати гравців у лікарні?", answer: "Ні, це Green Zone." },
-            { category: "rules", question: "Що буде за захоплення інкасаторів у Green Zone?", answer: "Demorgan 30–90 хвилин." },
-            { category: "supply", question: "Чи дозволено переслідувати матовозки під час ФЗ, якщо не були на заході?", answer: "Ні." },
-            { category: "fractions", question: "Що буде за провокації між фракціями без RP підґрунтя?", answer: "Demorgan / WARN." },
-            { category: "supply", question: "Чи дозволено зупиняти колону без відігравання RP?", answer: "Ні." },
-            { category: "supply", question: "Скільки таймер триває після успішного пограбування інкасації?", answer: "15 хвилин." },
-            { category: "supply", question: "Яке покарання за стрілянину по інкасації без переслідування?", answer: "WARN." },
-            { category: "supply", question: "Що буде, якщо гравець не має грошей, але займає мітку при ловлі?", answer: "Kick." },
-            { category: "rules", question: "Чи дозволено писати в чат \"ууу хто продає авто\" у VIP з 11:00 до 23:59?", answer: "Ні, реклама заборонена в цей час." },
-            { category: "admin", question: "Хто вирішує, чи порушення вважається \"грубим\"?", answer: "Адміністрація." },
-            { category: "rules", question: "Яке покарання за образу батьків у VIP-чаті?", answer: "Ban 14-60 днів." },
-            { category: "fractions", question: "Яке покарання за порушення дипломатії між мафіями без обґрунтування?", answer: "Догана лідеру." },
-            { category: "fractions", question: "Яке покарання за перехід на титул мафії без дозволу?", answer: "Demorgan 15–30 хвилин." },
-            { category: "fractions", question: "Що таке \"трансфер складу\"?", answer: "Обмін гравців між фракціями з порушенням правил." },
-            { category: "fractions", question: "Що буде, якщо вбити заручника під час теракту без попередження?", answer: "Demorgan 30–60 хвилин." },
-            { category: "rules", question: "Яке покарання за видачу себе за адміністратора?", answer: "Permban." },
-            { category: "supply", question: "Яка мінімальна кількість матеріалів має бути в постачанні для армії?", answer: "30 000 матів." },
-            { category: "fractions", question: "Чи дозволено нападати на працівника Government?", answer: "Так, але тільки за вагомої RP-причини." },
-            { category: "fractions", question: "Чи може EMS відмовити у наданні допомоги пораненому злочинцю?", answer: "Ні." },
-            { category: "fractions", question: "Що таке \"чистий капт\"?", answer: "Захоплення території без домовленостей чи івенту." },
-            { category: "supply", question: "Чи може лідер бути на постачанні без бодікамери?", answer: "Ні." },
-            { category: "supply", question: "Що буде за використання Heavy Sniper під час капту?", answer: "Demorgan 30–60 хвилин." },
-            { category: "rules", question: "Чи дозволено добивати гравців у ноці?", answer: "Ні." },
-            { category: "supply", question: "Чи можна грабувати інкасаторів без маски?", answer: "Ні." },
-            { category: "supply", question: "Скільки матеріалів втрачає фракція після успішного рейду?", answer: "30%." },
-            { category: "rules", question: "Чи можна використовувати авто, яке вибухає, як зброю?", answer: "Ні, це Abusing." },
-            { category: "fractions", question: "Що буде за спробу змінити статтю під час RP-затримання без аргументів?", answer: "Demorgan 30–60 хвилин." },
-            { category: "supply", question: "Чи дозволено EMS заходити на постачання?", answer: "Ні, тільки після завершення боїв." },
-            { category: "supply", question: "Чи можна взяти гравця в заручники під час ФЗ?", answer: "Ні." },
-            { category: "general", question: "Чи можна використовувати особисті теги в імені Discord?", answer: "Ні, формат має бути офіційний." },
-            { category: "rules", question: "Чи дозволено використовувати баги інтер’єрів для укриття?", answer: "Ні." },
-            { category: "rules", question: "Що буде за спробу вбити гравця, який здобуває рибу?", answer: "Demorgan за DM" },
-            { category: "rules", question: "Чи дозволено прикриватися правилами під час RP (наприклад, \"це не по правилах\" в IC)?", answer: "Ні, це MG." },
-            { category: "rules", question: "Скільки секунд мінімум має тривати відео для скарги?", answer: "10–15 секунд до і після порушення." },
-            { category: "general", question: "Чи дозволено гравцям вести себе як \"божевільні\" без легенди?", answer: "Ні, потрібна попередня реєстрація/біографія." },
-        ];
+        const superAdmins = ['@laker_77', '@B_m_b1', '@c10mm'];
+
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        document.addEventListener('click', (event) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
 
         async function getSheetData(sheetName) {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-            const res = await axios.get(url);
-            return res.data.values;
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+                const res = await axios.get(url, { timeout: 10000 });
+                return res.data.values || [];
+            } catch (error) {
+                console.error(`Error fetching data from ${sheetName}:`, error);
+                return [];
+            }
         }
 
         async function onTelegramAuth(user) {
+            if (!user || !user.username) {
+                alert('Невалідні дані користувача');
+                showLoginForm();
+                return;
+            }
+
             const telegramUsername = '@' + user.username;
-            
+
             try {
                 const ticketsData = await getSheetData('Май_2025_таблица');
+                if (!ticketsData.length) {
+                    alert('Дані не знайдено');
+                    showLoginForm();
+                    return;
+                }
                 const ticketsHeaders = ticketsData[0];
                 const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                
+
+                if (telegramColIndex === -1) {
+                    alert('Помилка структури даних: відсутній стовпець Telegram');
+                    showLoginForm();
+                    return;
+                }
+
                 const userTicketsRow = ticketsData.find(row => 
                     row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
                 );
-                
+
                 if (userTicketsRow) {
-                    // Сохраняем данные пользователя
                     const userData = {
                         username: telegramUsername,
+                        nickname: userTicketsRow[0] || user.first_name || user.username,
+                        isAdmin: superAdmins.includes(telegramUsername)
                     };
                     localStorage.setItem('tg_auth', JSON.stringify(userData));
-                    
-                    // Показываем контент
-                    showContent();
+                    showContent(userData);
                 } else {
-                    // Если пользователь не найден
                     localStorage.removeItem('tg_auth');
                     alert('Користувача не знайдено в таблиці. Доступ заборонено.');
                     showLoginForm();
                 }
             } catch (error) {
-                console.error(error);
+                console.error('Authentication error:', error);
                 alert('Помилка під час завантаження даних');
                 showLoginForm();
             }
         }
 
-        // Функция для показа контента
-        function showContent() {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
+        function showContent(userData) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
             document.getElementById('logout-btn').classList.remove('hidden');
+            document.getElementById('sidebarToggle').classList.remove('hidden');
+
+            if (userData.isAdmin) {
+                document.getElementById('superMenuCategory').style.display = 'block';
+                document.getElementById('superMenuItem1').style.display = 'flex';
+                document.getElementById('superMenuItem2').style.display = 'flex';
+                document.getElementById('superMenuItem3').style.display = 'flex';
+            }
         }
 
-        // Функция для показа формы входа
         function showLoginForm() {
-            document.getElementById('login-section').classList.remove('hidden');
-            document.getElementById('content').classList.add('hidden');
+            document.getElementById('login-section').style.display = 'flex';
+            document.getElementById('content').style.display = 'none';
             document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarToggle').classList.add('hidden');
         }
 
-        // Функция выхода
         function logout() {
             localStorage.removeItem('tg_auth');
             showLoginForm();
         }
 
-        // Генерация FAQ
+        const faqData = [
+            { category: "admin", question: "Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?", answer: "Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом." },
+            { category: "admin", question: "Скільки днів адміністратор зобов’язаний зберігати докази після видачі покарання?", answer: "7 днів." },
+            { category: "admin", question: "Що буде, якщо адміністратор використає F2 без інвізу?", answer: "Попередження або догана." },
+            { category: "admin", question: "Чи може адміністратор 2 рівня ігнорувати тікети?", answer: "Ні, адміністратор 2 рівня зобов’язаний обробляти тікети." },
+            { category: "admin", question: "Чи може адміністратор брати тікети іншого адміністратора без його згоди?", answer: "Ні, потрібна згода іншого адміністратора." },
+            { category: "admin", question: "Чи може адміністратор використовувати /kick для розваги?", answer: "Ні, це порушення правил." },
+            { category: "admin", question: "Чи можна адміністратору видавати покарання без доказів?", answer: "Ні, покарання без доказів заборонено." },
+            { category: "admin", question: "Чи може адміністратор видавати бан за підозрою у чітерстві без перевірки?", answer: "Ні, потрібна перевірка через спеціальні інструменти." },
+            { category: "admin", question: "Чи має право адміністратор брати тікет, якщо гравець у тікеті просить іншого адміністратора?", answer: "Ні, потрібно поважати вибір гравця." },
+            { category: "admin", question: "Чи може адміністратор 3 рівня видавати бан більше ніж на 3 дні?", answer: "Так, але за умови узгодження з вищим адміністратором." },
+            { category: "general", question: "Чи дозволено гравцям вести себе як \"божевільні\" без легенди?", answer: "Ні, потрібна попередня реєстрація/біографія." },
+            { category: "general", question: "Чи можна використовувати модифікації гри?", answer: "Тільки дозволені моди, затверджені адміністрацією." },
+            { category: "general", question: "Чи можна передавати акаунт іншому гравцеві?", answer: "Ні, передача акаунту заборонена." },
+            { category: "general", question: "Чи дозволено використовувати баги гри для власної вигоди?", answer: "Ні, це карається баном." },
+            { category: "general", question: "Чи можна продавати внутрішньоігрові предмети за реальні гроші?", answer: "Ні, це порушення правил сервера." },
+            { category: "rules", question: "Що таке DM (DeathMatch)?", answer: "DM — це вбивство гравців без РП причини." },
+            { category: "rules", question: "Чи дозволено ображати інших гравців у чаті?", answer: "Ні, образи заборонені та караються." },
+            { category: "rules", question: "Що таке MG (MetaGaming)?", answer: "MG — використання інформації поза РП для впливу на гру." },
+            { category: "rules", question: "Чи можна використовувати макроси для автоматизації дій?", answer: "Ні, використання макросів заборонено." },
+            { category: "rules", question: "Що таке PowerGaming?", answer: "PowerGaming — нереалістичні дії, які порушують РП." },
+            { category: "fractions", question: "Чи може гравець бути у двох фракціях одночасно?", answer: "Ні, гравець може бути лише в одній фракції." },
+            { category: "fractions", question: "Як вступити до фракції?", answer: "Потрібно подати заявку через сайт або в грі." },
+            { category: "fractions", question: "Чи може лідер фракції видавати накази поза РП?", answer: "Ні, усі накази мають відповідати РП." },
+            { category: "fractions", question: "Чи можна атакувати базу іншої фракції без РП причини?", answer: "Ні, потрібна РП причина." },
+            { category: "supply", question: "Як отримати ресурси для постачання?", answer: "Через спеціальні квести або торгівлю." },
+            { category: "supply", question: "Чи можна красти ресурси у інших гравців?", answer: "Так, але тільки в рамках РП." },
+            { category: "supply", question: "Чи є ліміт на зберігання ресурсів?", answer: "Так, ліміт залежить від рівня складу." }
+        ];
+
         function generateFAQ() {
             const container = document.getElementById('faq-container');
             container.innerHTML = '';
-            
+
             faqData.forEach(item => {
                 const faqItem = document.createElement('div');
                 faqItem.className = 'faq-item';
@@ -940,14 +1057,13 @@
                 `;
                 container.appendChild(faqItem);
             });
-            
+
             updateCategoryCounters();
         }
-        
-        // Обновление счетчиков категорий
+
         function updateCategoryCounters() {
             const categories = ['all', 'general', 'rules', 'admin', 'fractions', 'supply'];
-            
+
             categories.forEach(category => {
                 let count;
                 if (category === 'all') {
@@ -958,11 +1074,10 @@
                 document.getElementById(`count-${category}`).textContent = count;
             });
         }
-        
-        // Фильтрация по категориям
+
         function filterByCategory(category) {
             const items = document.querySelectorAll('.faq-item');
-            
+
             items.forEach(item => {
                 if (category === 'all' || item.dataset.category === category) {
                     item.style.display = 'block';
@@ -971,16 +1086,15 @@
                 }
             });
         }
-        
-        // Поиск по вопросам
+
         function searchFAQ(term) {
             const items = document.querySelectorAll('.faq-item');
             term = term.toLowerCase().trim();
-            
+
             items.forEach(item => {
                 const question = item.querySelector('.faq-question').textContent.toLowerCase();
                 const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
-                
+
                 if (term === '' || question.includes(term) || answer.includes(term)) {
                     item.style.display = 'block';
                 } else {
@@ -988,39 +1102,29 @@
                 }
             });
         }
-        
-        // Проверка сохраненной сессии при загрузке
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Добавляем обработчик для кнопки выхода
             document.getElementById('logout-btn').addEventListener('click', logout);
-            
-            // Генерация FAQ
+
             generateFAQ();
-            
-            // Инициализация вкладок категорий
+
             document.querySelectorAll('.category-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
-                    // Убираем активный класс у всех вкладок
                     document.querySelectorAll('.category-tab').forEach(t => {
                         t.classList.remove('active');
                     });
-                    
-                    // Добавляем активный класс текущей вкладке
+
                     this.classList.add('active');
-                    
-                    // Фильтруем по категории
                     filterByCategory(this.dataset.category);
                 });
             });
-            
-            // Поиск
+
             document.getElementById('search-input').addEventListener('input', function() {
                 searchFAQ(this.value);
             });
-            
-            // Кнопка "Наверх"
+
             const backToTopBtn = document.querySelector('.back-to-top');
-            
+
             window.addEventListener('scroll', function() {
                 if (window.pageYOffset > 300) {
                     backToTopBtn.classList.add('visible');
@@ -1028,19 +1132,19 @@
                     backToTopBtn.classList.remove('visible');
                 }
             });
-            
+
             backToTopBtn.addEventListener('click', function() {
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
             });
-            
-            // Проверяем сохраненную сессию
+
             const savedAuth = localStorage.getItem('tg_auth');
             if (savedAuth) {
                 try {
-                    showContent();
+                    const userData = JSON.parse(savedAuth);
+                    showContent(userData);
                 } catch (e) {
                     localStorage.removeItem('tg_auth');
                     showLoginForm();
@@ -1049,14 +1153,13 @@
                 showLoginForm();
             }
 
-            // Анимация карточек при загрузке
             const levelCards = document.querySelectorAll('.level-card');
-            
+
             levelCards.forEach((card, index) => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(30px)';
                 card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                
+
                 setTimeout(() => {
                     card.style.opacity = '1';
                     card.style.transform = 'translateY(0)';
