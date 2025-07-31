@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
       --primary-color: #1977FD;
@@ -33,7 +34,86 @@
       min-height: 100vh;
     }
 
-    /* Enhanced Login Section */
+    /* Sidebar Menu */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar-toggle:hover {
+      transform: scale(1.1);
+      background: rgba(25, 119, 253, 0.2);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 3rem;
+    }
+
+    .menu-category {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #FFFBEF;
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: #FFFBEF;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: rgba(25, 119, 253, 0.3);
+      transform: translateX(5px);
+    }
+
+    .super-menu-item {
+      color: #ffd700;
+    }
+
+    /* Login Section */
     #login-section {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -81,92 +161,12 @@
       box-shadow: 0 0 30px var(--primary-color);
     }
 
-    /* Menu Styles */
-    .script-menu {
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .menu-button, .super-menu-button {
-      width: 3rem;
-      height: 3rem;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      color: var(--primary-color);
-      font-size: 1.5rem;
-      border-radius: 0.75rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(25, 119, 253, 0.3);
-    }
-
-    .menu-button:hover, .super-menu-button:hover {
-      transform: scale(1.1);
-      background: rgba(25, 119, 253, 0.2);
-    }
-
-    .script-list, .super-script-list {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 0.75rem;
-      padding: 0.75rem;
-      box-shadow: var(--shadow);
-      max-height: 400px;
-      overflow-y: auto;
-      animation: slideIn 0.5s ease-out;
-    }
-
-    .script-item, .super-script-item {
-      padding: 0.5rem 1rem;
-      color: #FFFBEF;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
-      text-decoration: none;
-    }
-
-    .script-item:hover, .super-script-item:hover {
-      background: rgba(25, 119, 253, 0.3);
-      transform: translateX(5px);
-    }
-
-    .super-script-item {
-      color: #ffd700;
-    }
-
-    .menu-category {
-      font-weight: 600;
-      color: #FFFBEF;
-      padding: 0.5rem 1rem;
-      font-size: 0.95rem;
-    }
-
-    /* Dashboard Sections */
-    .top-admins-section, .low-admins-section, #admin-notice, #stats-section {
-      background: var(--card-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 1rem;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--shadow);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .top-admins-container, .low-admins-container {
+    /* Admins Section */
+    .admins-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
-      justify-content: center;
+      margin-bottom: 2rem;
     }
 
     .admin-card {
@@ -174,77 +174,96 @@
       backdrop-filter: var(--glass-blur);
       border-radius: 1rem;
       padding: 1.5rem;
-      text-align: center;
+      box-shadow: var(--shadow);
       transition: all 0.3s ease;
       position: relative;
       border: 1px solid rgba(25, 119, 253, 0.2);
-    }
-
-    .admin-card:hover {
-      transform: translateY(-5px) scale(1.02);
-      box-shadow: 0 0 20px rgba(25, 119, 253, 0.4);
     }
 
     .admin-card.low {
       border-color: rgba(239, 68, 68, 0.2);
     }
 
+    .admin-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 20px rgba(25, 119, 253, 0.4);
+    }
+
     .admin-card.low:hover {
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
     }
 
-    .admin-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 0 auto 1rem;
-      border: 3px solid transparent;
+    .admin-card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #FFFBEF;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .admin-list {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .admin-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
       transition: all 0.3s ease;
     }
 
-    .admin-card.gold .admin-avatar {
+    .admin-item:hover {
+      background: rgba(25, 119, 253, 0.2);
+    }
+
+    .admin-item.low:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .admin-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid transparent;
+    }
+
+    .admin-item.gold .admin-avatar {
       border-color: #d4af37;
-      box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
     }
 
-    .admin-card.silver .admin-avatar {
+    .admin-item.silver .admin-avatar {
       border-color: #c0c0c0;
-      box-shadow: 0 0 15px rgba(192, 192, 192, 0.5);
     }
 
-    .admin-card.bronze .admin-avatar {
+    .admin-item.bronze .admin-avatar {
       border-color: #cd7f32;
-      box-shadow: 0 0 15px rgba(205, 127, 50, 0.5);
     }
 
-    .admin-card.normal .admin-avatar {
+    .admin-item.normal .admin-avatar {
       border-color: var(--primary-color);
-      box-shadow: 0 0 15px rgba(25, 119, 253, 0.5);
     }
 
-    .admin-card.low .admin-avatar {
+    .admin-item.low .admin-avatar {
       border-color: #ef4444;
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
     }
 
-    .medal, .low-medal {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      font-size: 2rem;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    .admin-info {
+      flex: 1;
     }
 
     .admin-name {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: #FFFBEF;
-      margin-bottom: 0.5rem;
     }
 
     .admin-stats {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       color: #d1d5db;
     }
 
@@ -253,14 +272,19 @@
       font-weight: 600;
     }
 
-    .admin-card.low .admin-stat-value {
+    .admin-item.low .admin-stat-value {
       color: #ef4444;
+    }
+
+    .medal, .low-medal {
+      font-size: 1.5rem;
+      margin-left: auto;
     }
 
     .week-info {
       text-align: center;
       color: #9ca3af;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin-top: 1rem;
     }
 
@@ -427,27 +451,50 @@
     }
 
     /* Responsive Design */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 250px;
+      }
+      .admins-row {
+        grid-template-columns: 1fr;
+      }
       .stats-grid {
         grid-template-columns: 1fr;
       }
-      .table-container {
-        overflow-x: auto;
-      }
       .table-container table {
         font-size: 0.8rem;
-      }
-      .top-admins-container, .low-admins-container {
-        grid-template-columns: 1fr;
-      }
-      .admin-card {
-        width: 100%;
       }
     }
   </style>
 </head>
 <body>
   <button id="logout-btn" class="hidden">Вийти</button>
+
+  <!-- Sidebar Menu -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <div class="menu-category">Інформація</div>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
+  <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
 
   <!-- Access Denied Section -->
   <div id="access-denied-section">
@@ -479,50 +526,19 @@
       </div>
     </div>
 
-    <!-- Menu Container -->
-    <div class="script-menu hidden" id="menuContainer">
-      <div>
-        <div class="menu-button" onclick="toggleScripts()">≡</div>
-        <div class="script-list hidden" id="scriptList">
-          <div class="menu-category">Скрипти</div>
-          <a href="script1.1.html" class="script-item">Скрипт 1.1</a>
-          <a href="script1.2.html" class="script-item">Скрипт 1.2</a>
-          <a href="script1.3.html" class="script-item">Скрипт 1.3</a>
-          <a href="script1.4.html" class="script-item">Скрипт 1.4</a>
-          <a href="script1.5.html" class="script-item">Скрипт 1.5</a>
-          <a href="script1.6.html" class="script-item">Скрипт 1.6</a>
-          <a href="script1.7.html" class="script-item">Скрипт 1.7</a>
-          <div class="menu-category">Інформація</div>
-          <a href="team.html" class="script-item">Команда проєкту та до кого звертатися</a>
-          <a href="tickets.html" class="script-item">Регламент Відповіді на Тікети</a>
-          <a href="commands.html" class="script-item">Команди адміністратора</a>
-          <a href="faq.html" class="script-item">Питання та відповіді</a>
-          <a href="frac.html" class="script-item">Фракції</a>
-          <a href="binder.html" class="script-item">BinderBot</a>
-        </div>
-      </div>
-      <div id="superScriptMenu" class="hidden">
-        <div class="super-menu-button" onclick="toggleSuperScripts()">★</div>
-        <div class="super-script-list hidden" id="superScriptList">
-          <a href="test.html" class="super-script-item">Статистика Адміністраторів</a>
-          <a href="super-script2.html" class="super-script-item">Калькулятор онлайну</a>
-          <a href="super-script3.html" class="super-script-item">Контроль складу</a>
-        </div>
-      </div>
-    </div>
-
     <!-- Dashboard -->
     <div id="dashboard" class="hidden">
-      <div id="top-admins-section" class="top-admins-section hidden">
-        <h2 class="text-2xl font-bold text-center mb-4">🏆 Адміністратори тижня</h2>
-        <div class="week-info" id="week-range">Період: 01.05.2023 - 07.05.2023</div>
-        <div class="top-admins-container" id="top-admins-container"></div>
-      </div>
-
-      <div id="low-admins-section" class="low-admins-section hidden">
-        <h2 class="text-2xl font-bold text-center mb-4">⚠️ Адміністратори з низькою активністю</h2>
-        <div class="week-info" id="low-week-range">Період: 01.05.2023 - 07.05.2023</div>
-        <div class="low-admins-container" id="low-admins-container"></div>
+      <div class="admins-row">
+        <div class="admin-card" id="top-admins-section">
+          <h2>🏆 Адміни тижня</h2>
+          <div class="week-info" id="week-range">Період: 01.05.2023 - 07.05.2023</div>
+          <div class="admin-list" id="top-admins-container"></div>
+        </div>
+        <div class="admin-card low" id="low-admins-section">
+          <h2>⚠️ Низька активність</h2>
+          <div class="week-info" id="low-week-range">Період: 01.05.2023 - 07.05.2023</div>
+          <div class="admin-list" id="low-admins-container"></div>
+        </div>
       </div>
 
       <div id="admin-notice" class="hidden">
@@ -593,31 +609,16 @@
       '@c10mm'
     ];
 
-    function toggleScripts() {
-      const menu = document.getElementById('scriptList');
-      const superMenu = document.getElementById('superScriptList');
-      superMenu.classList.add('hidden');
-      menu.classList.toggle('hidden');
-    }
+    // Sidebar Toggle
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
 
-    function toggleSuperScripts() {
-      const menu = document.getElementById('superScriptList');
-      const mainMenu = document.getElementById('scriptList');
-      mainMenu.classList.add('hidden');
-      menu.classList.toggle('hidden');
-    }
-
-    document.addEventListener('click', function(event) {
-      const menuContainer = document.getElementById('menuContainer');
-      const scriptList = document.getElementById('scriptList');
-      const superScriptList = document.getElementById('superScriptList');
-      
-      if (!event.target.closest('.menu-button') && 
-          !event.target.closest('.super-menu-button') &&
-          !event.target.closest('.script-list') &&
-          !event.target.closest('.super-script-list')) {
-        scriptList.classList.add('hidden');
-        superScriptList.classList.add('hidden');
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
       }
     });
 
@@ -827,9 +828,8 @@
         `Період: ${weekRange.start} - ${weekRange.end}`;
       
       admins.forEach((admin, index) => {
-        const card = document.createElement('div');
-        card.className = 'admin-card';
-        card.setAttribute('data-tilt', '');
+        const item = document.createElement('div');
+        item.className = 'admin-item';
         
         let medalClass = 'normal';
         let medal = '';
@@ -845,27 +845,29 @@
           medal = '🥉';
         }
         
-        card.innerHTML = `
-          <div class="${medalClass} medal">${medal}</div>
+        item.innerHTML = `
           <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
                alt="${admin.name}" 
                class="admin-avatar ${medalClass}"
                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=1977FD&color=fff'">
-          <div class="admin-name">${admin.name}</div>
-          <div class="admin-stats">
-            <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
-            <div>Час у грі: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+          <div class="admin-info">
+            <div class="admin-name">${admin.name}</div>
+            <div class="admin-stats">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
           </div>
+          <div class="${medalClass} medal">${medal}</div>
         `;
         
-        container.appendChild(card);
+        container.appendChild(item);
       });
 
-      VanillaTilt.init(document.querySelectorAll('.admin-card'), {
-        max: 15,
+      VanillaTilt.init(document.querySelectorAll('#top-admins-section'), {
+        max: 10,
         speed: 400,
         glare: true,
-        'max-glare': 0.3
+        'max-glare': 0.2
       });
     }
 
@@ -877,31 +879,32 @@
         `Період: ${weekRange.start} - ${weekRange.end}`;
       
       admins.forEach((admin, index) => {
-        const card = document.createElement('div');
-        card.className = 'admin-card low';
-        card.setAttribute('data-tilt', '');
+        const item = document.createElement('div');
+        item.className = 'admin-item low';
         
-        card.innerHTML = `
-          <div class="low-medal">⚠️</div>
+        item.innerHTML = `
           <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
                alt="${admin.name}" 
                class="admin-avatar low"
                onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}&background=ef4444&color=fff'">
-          <div class="admin-name">${admin.name}</div>
-          <div class="admin-stats">
-            <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
-            <div>Час у грі: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+          <div class="admin-info">
+            <div class="admin-name">${admin.name}</div>
+            <div class="admin-stats">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
           </div>
+          <div class="low-medal">⚠️</div>
         `;
         
-        container.appendChild(card);
+        container.appendChild(item);
       });
 
-      VanillaTilt.init(document.querySelectorAll('.admin-card.low'), {
-        max: 15,
+      VanillaTilt.init(document.querySelectorAll('#low-admins-section'), {
+        max: 10,
         speed: 400,
         glare: true,
-        'max-glare': 0.3
+        'max-glare': 0.2
       });
     }
 
@@ -1024,7 +1027,7 @@
             if (timeColIndex >= 0) {
               dayTimeStr = userTimeRow[timeColIndex] || 'Н';
               if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                const [hh, mm, ss] = timeStr.split(':').map(Number);
                 dayTimeSeconds = hh * 3600 + mm * 60 + ss;
               }
             }
@@ -1140,7 +1143,7 @@
       document.getElementById('access-denied-section').style.display = 'flex';
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('menuContainer').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
       document.getElementById('logout-btn').classList.add('hidden');
     }
 
@@ -1209,15 +1212,21 @@
 
       document.getElementById('login-section').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('menuContainer').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
       document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
       
       if (superAdmins.includes(telegramUsername)) {
-        document.getElementById('superScriptMenu').classList.remove('hidden');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
       } else {
-        document.getElementById('superScriptMenu').classList.add('hidden');
+        document.getElementById('superMenuCategory').style.display = 'none';
+        document.getElementById('superMenuItem1').style.display = 'none';
+        document.getElementById('superMenuItem2').style.display = 'none';
+        document.getElementById('superMenuItem3').style.display = 'none';
       }
       
       document.getElementById('top-admins-section').classList.remove('hidden');
@@ -1237,7 +1246,8 @@
     function showLoginForm() {
       document.getElementById('login-section').classList.remove('hidden');
       document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('menuContainer').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
       document.getElementById('logout-btn').classList.add('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
       document.querySelector('h1').innerText = 'Ласкаво просимо!';
