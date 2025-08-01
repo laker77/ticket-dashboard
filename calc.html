@@ -746,111 +746,112 @@
             showLoginForm();
         }
 
-        // Session Tracker Logic
-        document.getElementById("processButton").addEventListener("click", processLog);
+// Session Tracker Logic
+document.getElementById("processButton").addEventListener("click", processLog);
 
-        function processLog() {
-            const logText = document.getElementById('logInput').value.trim();
-            if (!logText) {
-                alert('Будь ласка, вставте лог');
-                return;
-            }
+function processLog() {
+    const logText = document.getElementById('logInput').value.trim();
+    if (!logText) {
+        alert('Будь ласка, вставте лог');
+        return;
+    }
 
-            let logs = logText.split('\n').filter(line => line.trim() !== '').reverse();
-            const sessions = {};
-            let totalTime = 0;
-            const activeSessions = {};
+    let logs = logText.split('\n').filter(line => line.trim() !== '').reverse();
+    const sessions = {};
+    let totalTime = 0;
+    const activeSessions = {};
 
-            logs.forEach(log => {
-                const connectMatch = log.match(/\[([0-9]{2}\.[0-9]{2}\.[0-9]{4}), ([0-9]{2}:[0-9]{2}:[0-9]{2})\] Static ID: (\d+) \| \[characterInit\]: Авторизував персонажа/);
-                const disconnectMatch = log.match(/\[([0-9]{2}\.[0-9]{2}\.[0-9]{4}), ([0-9]{2}:[0-9]{2}:[0-9]{2})\] Static ID: (\d+) \| \[characterInit\]: Деавторизував персонажа/);
+    logs.forEach(log => {
+        const connectMatch = log.match(/\[([0-9]{2}\.[0-9]{2}\.[0-9]{4}), ([0-9]{2}:[0-9]{2}:[0-9]{2})\] Static ID: (\d+) \| \[characterInit\]: Авторизував персонажа/);
+        const disconnectMatch = log.match(/\[([0-9]{2}\.[0-9]{2}\.[0-9]{4}), ([0-9]{2}:[0-9]{2}:[0-9]{2})\] Static ID: (\d+) \| \[characterInit\]: Деавторизував персонажа/);
 
-                if (connectMatch) {
-                    const [ , date, time, playerId] = connectMatch;
-                    activeSessions[playerId] = new Date(`${date.split('.').reverse().join('-')}T${time}`);
-                } else if (disconnectMatch) {
-                    const [ , date, time, playerId] = disconnectMatch;
-                    if (activeSessions[playerId]) {
-                        let startTimestamp = activeSessions[playerId];
-                        let endTimestamp = new Date(`${date.split('.').reverse().join('-')}T${time}`);
-                        delete activeSessions[playerId];
+        if (connectMatch) {
+            const [ , date, time, playerId] = connectMatch;
+            activeSessions[playerId] = new Date(`${date.split('.').reverse().join('-')}T${time}`);
+        } else if (disconnectMatch) {
+            const [ , date, time, playerId] = disconnectMatch;
+            if (activeSessions[playerId]) {
+                let startTimestamp = activeSessions[playerId];
+                let endTimestamp = new Date(`${date.split('.').reverse().join('-')}T${time}`);
+                delete activeSessions[playerId];
 
-                        let sessionDuration = (endTimestamp - startTimestamp) / 1000;
-                        totalTime += sessionDuration;
+                let sessionDuration = (endTimestamp - startTimestamp) / 1000;
+                totalTime += sessionDuration;
 
-                        if (!sessions[playerId]) sessions[playerId] = [];
-                        splitSessionByDays(playerId, startTimestamp, endTimestamp, sessions);
-                    }
-                }
-            });
-
-            let resultTable = document.getElementById('resultTable');
-            resultTable.innerHTML = '<tr><th>Дата підключення</th><th>Static ID</th><th>Час онлайн</th><th>Дата відключення</th></tr>';
-
-            const mergedSessions = {};
-            for (const playerId in sessions) {
-                mergedSessions[playerId] = [];
-                sessions[playerId].forEach(session => {
-                    const existingSession = mergedSessions[playerId].find(s => 
-                        s.start === session.start && s.end === session.end
-                    );
-                    if (existingSession) {
-                        existingSession.duration += session.duration;
-                    } else {
-                        mergedSessions[playerId].push({ ...session });
-                    }
-                });
-            }
-
-            for (const playerId in mergedSessions) {
-                mergedSessions[playerId].forEach(session => {
-                    let row = resultTable.insertRow();
-                    row.insertCell().textContent = session.start;
-                    row.insertCell().textContent = playerId;
-                    row.insertCell().textContent = formatTime(session.duration);
-                    row.insertCell().textContent = session.end;
-                });
-            }
-
-            document.getElementById('totalTime').innerText = `Загальний час онлайн: ${formatTime(totalTime)}`;
-        }
-
-        function splitSessionByDays(playerId, startTimestamp, endTimestamp, sessions) {
-            let currentStart = startTimestamp;
-            while (currentStart < endTimestamp) {
-                let endOfDay = new Date(currentStart);
-                endOfDay.setHours(23, 59, 59, 999);
-
-                if (endOfDay >= endTimestamp) {
-                    endOfDay = endTimestamp;
-                }
-
-                let duration = (endOfDay - currentStart) / 1000;
-                sessions[playerId].push({
-                    start: formatDateWithoutTime(currentStart),
-                    end: formatDateWithoutTime(endOfDay),
-                    duration: duration
-                });
-
-                currentStart = new Date(endOfDay);
-                currentStart.setSeconds(currentStart.getSeconds() + 1);
+                if (!sessions[playerId]) sessions[playerId] = [];
+                splitSessionByDays(playerId, startTimestamp, endTimestamp, sessions);
             }
         }
+    });
 
-        function formatDateWithoutTime(date) {
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day = date.getDay().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
+    let resultTable = document.getElementById('resultTable');
+    resultTable.innerHTML = '<tr><th>Дата підключення</th><th>Static ID</th><th>Час онлайн</th><th>Дата відключення</th></tr>';
+
+    // Об'єднання сесій з однаковими датами входу та виходу
+    const mergedSessions = {};
+    for (const playerId in sessions) {
+        mergedSessions[playerId] = [];
+        sessions[playerId].forEach(session => {
+            const existingSession = mergedSessions[playerId].find(s => 
+                s.start === session.start && s.end === session.end
+            );
+            if (existingSession) {
+                existingSession.duration += session.duration;
+            } else {
+                mergedSessions[playerId].push({ ...session });
+            }
+        });
+    }
+
+    // Виведення результатів
+    for (const playerId in mergedSessions) {
+        mergedSessions[playerId].forEach(session => {
+            let row = resultTable.insertRow();
+            row.insertCell().textContent = session.start;
+            row.insertCell().textContent = playerId;
+            row.insertCell().textContent = formatTime(session.duration);
+            row.insertCell().textContent = session.end;
+        });
+    }
+
+    document.getElementById('totalTime').innerText = `Загальний час онлайн: ${formatTime(totalTime)}`;
+}
+
+function splitSessionByDays(playerId, startTimestamp, endTimestamp, sessions) {
+    let currentStart = startTimestamp;
+    while (currentStart < endTimestamp) {
+        let endOfDay = new Date(currentStart);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        if (endOfDay >= endTimestamp) {
+            endOfDay = endTimestamp;
         }
 
-        function formatTime(seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
+        let duration = (endOfDay - currentStart) / 1000;
+        sessions[playerId].push({
+            start: formatDateWithoutTime(currentStart),
+            end: formatDateWithoutTime(endOfDay),
+            duration: duration
+        });
 
+        currentStart = new Date(endOfDay);
+        currentStart.setSeconds(currentStart.getSeconds() + 1);
+    }
+}
+
+function formatDateWithoutTime(date) {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0'); // Fixed: Changed getDay() to getDate()
+    return `${year}-${month}-${day}`;
+}
+
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('logout-btn').addEventListener('click', logout);
