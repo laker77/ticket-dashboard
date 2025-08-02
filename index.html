@@ -22,8 +22,6 @@
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       --text-primary: #F3F4F6;
       --text-secondary: #D1D5DB;
-      --scrollbar: #3b82f6;
-      --scrollbar-bg: #1a1a1a;
     }
 
     * {
@@ -41,8 +39,8 @@
       overflow-x: hidden;
     }
 
-    /* Falling Logos Animation */
-    canvas#logos-canvas {
+    /* Falling Stars Animation */
+    canvas#stars-canvas {
       position: fixed;
       top: 0;
       left: 0;
@@ -65,25 +63,6 @@
       transition: left 0.3s ease;
       z-index: 1000;
       padding: 1.5rem;
-      overflow-y: auto;
-    }
-
-    .sidebar::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .sidebar::-webkit-scrollbar-track {
-      background: var(--scrollbar-bg);
-      border-radius: 4px;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-      background: var(--scrollbar);
-      border-radius: 4px;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb:hover {
-      background: var(--primary-color);
     }
 
     .sidebar.open {
@@ -634,7 +613,7 @@
   </style>
 </head>
 <body>
-  <canvas id="logos-canvas"></canvas>
+  <canvas id="stars-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
   <div class="sidebar" id="sidebar">
@@ -765,8 +744,8 @@
   </div>
 
   <script>
-    // Falling Logos Animation
-    const canvas = document.getElementById('logos-canvas');
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
     const ctx = canvas.getContext('2d');
     
     function resizeCanvas() {
@@ -777,12 +756,10 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    const logos = [];
-    const numLogos = 50;
-    const logoImg = new Image();
-    logoImg.src = '1-17ffebdc.ico';
+    const stars = [];
+    const numStars = 50;
     
-    class Logo {
+    class Star {
       constructor() {
         this.reset();
       }
@@ -790,7 +767,7 @@
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 15 + 10;
+        this.size = Math.random() * 2 + 1;
         this.speed = Math.random() * 3 + 1;
         this.opacity = Math.random() * 0.5 + 0.3;
       }
@@ -803,27 +780,27 @@
       }
       
       draw() {
-        ctx.globalAlpha = this.opacity;
-        ctx.drawImage(logoImg, this.x, this.y, this.size, this.size);
-        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
       }
     }
     
-    logoImg.onload = () => {
-      for (let i = 0; i < numLogos; i++) {
-        logos.push(new Logo());
-      }
-      animateLogos();
-    };
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
     
-    function animateLogos() {
+    function animateStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      logos.forEach(logo => {
-        logo.update();
-        logo.draw();
+      stars.forEach(star => {
+        star.update();
+        star.draw();
       });
-      requestAnimationFrame(animateLogos);
+      requestAnimationFrame(animateStars);
     }
+    
+    animateStars();
 
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
@@ -1244,10 +1221,46 @@
         }
 
         const today = getDateWithoutTime(new Date());
-        const monthStart = new Date(todayсию
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
-        const statsGrid = document.querySelector('.stats-grid');
-        statsGrid.classList.add('animate__animated', 'animate__fadeInUp');
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({ header: h, index: i }))
+          .filter(({ header }) => /^\d{2}\.\d{2}\.\d{4}$/.test(header));
+
+        function sumTicketsAndTime(startDate, endDate) {
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          dateCols.forEach(({ header, index }) => {
+            const dt = parseDate(header);
+            if (dt >= startDate && dt <= endDate) {
+              ticketsSum += parseInt(userTicketsRow[index]) || 0;
+              const timeColIndex = timeHeaders.indexOf(header);
+              if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+                const timeStr = userTimeRow[timeColIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                }
+              }
+            }
+          });
+
+          return { ticketsSum, timeSecondsSum };
+        }
+
+        const todayStats = sumTicketsAndTime(today, today);
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        const weekStats = sumTicketsAndTime(weekStart, today);
+        const monthStats = sumTicketsAndTime(monthStart, today);
+
+        document.getElementById('today-tickets').textContent = todayStats.ticketsSum || 0;
+        document.getElementById('today-time').textContent = secondsToHHMMSS(todayStats.timeSecondsSum);
+        document.getElementById('week-tickets').textContent = weekStats.ticketsSum || 0;
+        document.getElementById('week-time').textContent = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
+        document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
 
         const tbody = document.getElementById('daily-stats-body');
         tbody.innerHTML = '';
