@@ -64,6 +64,21 @@
             transition: left 0.3s ease;
             z-index: 1000;
             padding: 1.5rem;
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--scrollbar-bg);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
         }
         .sidebar.open {
             left: 0;
@@ -642,8 +657,8 @@
             <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
             <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
             <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
-            <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
-            <a href="faq.html" class="menu-item active"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+            <a href="commands.html" class="menu-item active"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+            <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
             <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
             <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
             <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
@@ -741,7 +756,7 @@
         <i class="fas fa-arrow-up"></i>
     </div>
     <script>
-        // Falling Stars Animation
+        // Falling Logos Animation
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         function resizeCanvas() {
@@ -750,46 +765,56 @@
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        const stars = [];
-        const numStars = 50;
-        class Star {
+        const logos = [];
+        const numLogos = 30;
+        const logoImage = new Image();
+        logoImage.src = '1-17ffebdc.ico';
+        class Logo {
             constructor() {
                 this.reset();
             }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 2 + 1;
+                this.size = Math.random() * 20 + 15;
                 this.speed = Math.random() * 3 + 1;
-                this.opacity = Math.random() * 0.5 + 0.3;
+                this.opacity = Math.random() * 0.3 + 0.2;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+                this.wind = Math.random() * 0.5 - 0.25;
             }
             update() {
                 this.y += this.speed;
-                if (this.y > canvas.height) {
+                this.x += this.wind;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height || this.x < 0 || this.x > canvas.width) {
                     this.reset();
                 }
             }
             draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.drawImage(logoImage, -this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
             }
         }
-        for (let i = 0; i < numStars; i++) {
-            stars.push(new Star());
-        }
-        function animateStars() {
+        logoImage.onload = function() {
+            for (let i = 0; i < numLogos; i++) {
+                logos.push(new Logo());
+            }
+            animateLogos();
+        };
+        function animateLogos() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.update();
-                star.draw();
+            logos.forEach(logo => {
+                logo.update();
+                logo.draw();
             });
-            requestAnimationFrame(animateStars);
+            requestAnimationFrame(animateLogos);
         }
-        animateStars();
-        // FAQ Data (5 items per category)
-       // Вопросы и ответы (полный список)
+        // FAQ Data
         const faqData = [
             { category: "admin", question: "Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?", answer: "Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом." },
             { category: "admin", question: "Скільки днів адміністратор зобов’язаний зберігати докази після видачі покарання?", answer: "7 днів." },
@@ -964,39 +989,6 @@
             { category: "supply", question: "Що буде за перешкоджання руху хамера після ВЗХ?", answer: "Demorgan 30–60 хвилин." },
             { category: "admin", question: "Яке покарання за невиконання наказів під час заходів адміністрації (наприклад, MP)?", answer: "Kick / вбивство гравця." },
             { category: "fractions", question: "Скільки організацій може бути задіяно у теракті?", answer: "Максимум 2." },
-            { category: "general", question: "Чи можна використовувати nonRP ім’я, якщо є RP-біографія?", answer: "Так, за умови затвердження біографії." },
-            { category: "fractions", question: "Чи можна займати підвищення в іншій фракції одразу після звільнення з держструктури?", answer: "Потрібно чекати 3–5 днів." },
-            { category: "rules", question: "Що заборонено робити в ноці (стан очікування лікаря)?", answer: "Розмовляти." },
-            { category: "rules", question: "Що таке MDM?", answer: "Mass DM — масове вбивство без причини (3+ осіб)." },
-            { category: "rules", question: "Чи дозволено затримувати гравців у лікарні?", answer: "Ні, це Green Zone." },
-            { category: "rules", question: "Що буде за захоплення інкасаторів у Green Zone?", answer: "Demorgan 30–90 хвилин." },
-            { category: "supply", question: "Чи дозволено переслідувати матовозки під час ФЗ, якщо не були на заході?", answer: "Ні." },
-            { category: "fractions", question: "Що буде за провокації між фракціями без RP підґрунтя?", answer: "Demorgan / WARN." },
-            { category: "supply", question: "Чи дозволено зупиняти колону без відігравання RP?", answer: "Ні." },
-            { category: "supply", question: "Скільки таймер триває після успішного пограбування інкасації?", answer: "15 хвилин." },
-            { category: "supply", question: "Яке покарання за стрілянину по інкасації без переслідування?", answer: "WARN." },
-            { category: "supply", question: "Що буде, якщо гравець не має грошей, але займає мітку при ловлі?", answer: "Kick." },
-            { category: "rules", question: "Чи дозволено писати в чат \"ууу хто продає авто\" у VIP з 11:00 до 23:59?", answer: "Ні, реклама заборонена в цей час." },
-            { category: "admin", question: "Хто вирішує, чи порушення вважається \"грубим\"?", answer: "Адміністрація." },
-            { category: "rules", question: "Яке покарання за образу батьків у VIP-чаті?", answer: "Ban 14-60 днів." },
-            { category: "fractions", question: "Яке покарання за порушення дипломатії між мафіями без обґрунтування?", answer: "Догана лідеру." },
-            { category: "fractions", question: "Яке покарання за перехід на титул мафії без дозволу?", answer: "Demorgan 15–30 хвилин." },
-            { category: "fractions", question: "Що таке \"трансфер складу\"?", answer: "Обмін гравців між фракціями з порушенням правил." },
-            { category: "fractions", question: "Що буде, якщо вбити заручника під час теракту без попередження?", answer: "Demorgan 30–60 хвилин." },
-            { category: "rules", question: "Яке покарання за видачу себе за адміністратора?", answer: "Permban." },
-            { category: "supply", question: "Яка мінімальна кількість матеріалів має бути в постачанні для армії?", answer: "30 000 матів." },
-            { category: "fractions", question: "Чи дозволено нападати на працівника Government?", answer: "Так, але тільки за вагомої RP-причини." },
-            { category: "fractions", question: "Чи може EMS відмовити у наданні допомоги пораненому злочинцю?", answer: "Ні." },
-            { category: "fractions", question: "Що таке \"чистий капт\"?", answer: "Захоплення території без домовленостей чи івенту." },
-            { category: "supply", question: "Чи може лідер бути на постачанні без бодікамери?", answer: "Ні." },
-            { category: "supply", question: "Що буде за використання Heavy Sniper під час капту?", answer: "Demorgan 30–60 хвилин." },
-            { category: "rules", question: "Чи дозволено добивати гравців у ноці?", answer: "Ні." },
-            { category: "supply", question: "Чи можна грабувати інкасаторів без маски?", answer: "Ні." },
-            { category: "supply", question: "Скільки матеріалів втрачає фракція після успішного рейду?", answer: "30%." },
-            { category: "rules", question: "Чи можна використовувати авто, яке вибухає, як зброю?", answer: "Ні, це Abusing." },
-            { category: "fractions", question: "Що буде за спробу змінити статтю під час RP-затримання без аргументів?", answer: "Demorgan 30–60 хвилин." },
-            { category: "supply", question: "Чи дозволено EMS заходити на постачання?", answer: "Ні, тільки після завершення боїв." },
-            { category: "supply", question: "Чи можна взяти гравця в заручники під час ФЗ?", answer: "Ні." },
             { category: "general", question: "Чи можна використовувати особисті теги в імені Discord?", answer: "Ні, формат має бути офіційний." },
             { category: "rules", question: "Чи дозволено використовувати баги інтер’єрів для укриття?", answer: "Ні." },
             { category: "rules", question: "Що буде за спробу вбити гравця, який здобуває рибу?", answer: "Demorgan за DM" },
