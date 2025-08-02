@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Порівняння логів | Ukraine GTA 5</title>
+    <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #F59E0B;
+            --background-dark: #0A0C1A;
+            --card-bg: rgba(20, 22, 35, 0.9);
+            --glass-bg: rgba(20, 22, 35, 0.7);
+            --glass-blur: blur(15px);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --text-primary: #F3F4F6;
+            --text-secondary: #D1D5DB;
+            --card-border: rgba(59, 130, 246, 0.2);
+            --scrollbar: #3b82f6;
+            --scrollbar-bg: #1a1a1a;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, var(--background-dark), #1E293B);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        canvas#logos-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--scrollbar-bg);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-toggle {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(59, 130, 246, 0.2);
+        }
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+        .menu-category {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            text-transform: uppercase;
+        }
+        .menu-item, .super-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .menu-item:hover, .super-menu-item:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateX(5px);
+        }
+        .menu-item.active {
+            background: rgba(59, 130, 246, 0.3);
+        }
+        .super-menu-item {
+            color: var(--accent-color);
+        }
+        #login-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0A0C1A, #1E293B);
+            z-index: 1000;
+            overflow: hidden;
+        }
+        .login-container {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 3rem 2rem;
+            border-radius: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out;
+        }
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
+            background-size: 40px 40px;
+            animation: moveBackground 30s linear infinite;
+            z-index: -1;
+        }
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            animation: pulse 2s infinite;
+        }
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .login-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .telegram-button-wrapper {
+            display: inline-block;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 0 20px var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .telegram-button-wrapper:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+        .login-footer {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .login-footer a:hover {
+            color: var(--secondary-color);
+        }
+        #access-denied-section {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1E293B, #334155);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .access-denied-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
+            text-align: center;
+            max-width: 500px;
+        }
+        .access-denied-icon {
+            font-size: 4rem;
+            color: #EF4444;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        .access-denied-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        .access-denied-message {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .back-to-login-btn {
+            background: #EF4444;
+            color: var(--text-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .back-to-login-btn:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+        #logout-btn {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: #EF4444;
+            color: var(--text-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+        #logout-btn:hover {
+            background: #DC2626;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+        }
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        .header-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        .card {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 25px;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        .input-area {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .input-box {
+            flex: 1;
+            min-width: 300px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(40, 40, 40, 0.5);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        button {
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #2563EB;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .loading {
+            display: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .result {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .result-column {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(40, 40, 40, 0.5);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+        .result-column h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        footer {
+            text-align: center;
+            padding: 50px 0 30px;
+            color: var(--text-secondary);
+            margin-top: 60px;
+            border-top: 1px solid var(--card-border);
+        }
+        .footer-logo {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--card-border);
+        }
+        .copyright {
+            font-size: 0.9rem;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50%, -50%); }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+            }
+            .container {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            .input-box {
+                min-width: 100%;
+            }
+            .result-column {
+                min-width: 100%;
+            }
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            .login-title {
+                font-size: 1.5rem;
+            }
+            .login-subtitle {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="logos-canvas"></canvas>
+    <button id="logout-btn" class="hidden">Вийти</button>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <div class="menu-category">Скрипти</div>
+            <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+            <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+            <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+            <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+            <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+            <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+            <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+            <div class="menu-category">Інформація</div>
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+            <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+            <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+            <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+            <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+            <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+            <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+            <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+            <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+            <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+            <a href="super-script3.html" class="super-menu-item active" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Порівняння логів</a>
+        </div>
+    </div>
+    <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+    <div id="access-denied-section">
+        <div class="access-denied-content">
+            <div class="access-denied-icon">🚫</div>
+            <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+            <p class="access-denied-message">
+                Ця сторінка доступна лише для суперадміністраторів.<br>
+                Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+            </p>
+            <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+        </div>
+    </div>
+    <div id="login-section">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-file-alt" style="font-size: 2.5rem; color: var(--text-primary);"></i>
+            </div>
+            <h1 class="login-title">Порівняння логів</h1>
+            <p class="login-subtitle">Увійдіть через Telegram для доступу до системи (лише для суперадмінів)</p>
+            <div class="telegram-button-wrapper">
+                <script async src="https://telegram.org/js/telegram-widget.js?7"
+                        data-telegram-login="ticket_tracker_UG_bot"
+                        data-size="large"
+                        data-userpic="false"
+                        data-request-access="write"
+                        data-onauth="onTelegramAuth(user)">
+                </script>
+            </div>
+            <div class="login-footer">
+                Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+            </div>
+        </div>
+    </div>
+    <div id="content" class="container hidden">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-alt"></i>
+                    <h1>Порівняння логів Ukraine GTA 5</h1>
+                </div>
+                <p class="subtitle">Порівнюйте системні логи та логи Discord для аналізу даних на сервері Ukraine GTA 5 RolePlay.</p>
+            </div>
+        </header>
+        <div class="card">
+            <div class="input-area">
+                <div class="input-box">
+                    <h3 style="color: var(--primary-color); margin-bottom: 10px;">System log</h3>
+                    <textarea id="logs1" placeholder="Введіть перші логи..."></textarea>
+                </div>
+                <div class="input-box">
+                    <h3 style="color: var(--primary-color); margin-bottom: 10px;">Discord log</h3>
+                    <textarea id="logs2" placeholder="Введіть другі логи..."></textarea>
+                </div>
+            </div>
+            <button onclick="compareLogs()">Перевірити</button>
+            <div class="loading" id="loading">Перевіряємо...</div>
+            <div class="result" id="result"></div>
+        </div>
+        <footer>
+            <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
+            <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        </footer>
+    </div>
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+    <script>
+        // Falling Logos Animation
+        const canvas = document.getElementById('logos-canvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        const logos = [];
+        const numLogos = 50;
+        const logoImg = new Image();
+        logoImg.src = '1-17ffebdc.ico';
+        class Logo {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 15 + 10;
+                this.speed = Math.random() * 3 + 1;
+                this.opacity = Math.random() * 0.5 + 0.3;
+            }
+            update() {
+                this.y += this.speed;
+                if (this.y > canvas.height) {
+                    this.reset();
+                }
+            }
+            draw() {
+                ctx.globalAlpha = this.opacity;
+                ctx.drawImage(logoImg, this.x, this.y, this.size, this.size);
+                ctx.globalAlpha = 1;
+            }
+        }
+        logoImg.onload = () => {
+            for (let i = 0; i < numLogos; i++) {
+                logos.push(new Logo());
+            }
+            animateLogos();
+        };
+        function animateLogos() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            logos.forEach(logo => {
+                logo.update();
+                logo.draw();
+            });
+            requestAnimationFrame(animateLogos);
+        }
+
+        // Telegram Authentication
+        const superAdmins = ['@laker_77', '@blisssbabe', '@c10mm'];
+
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        document.addEventListener('click', (event) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        function showAccessDenied() {
+            document.getElementById('access-denied-section').style.display = 'flex';
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarToggle').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+        }
+
+        function onTelegramAuth(user) {
+            if (!user || !user.username) {
+                showAccessDenied();
+                return;
+            }
+            const telegramUsername = '@' + user.username;
+            if (superAdmins.includes(telegramUsername)) {
+                const userData = {
+                    username: telegramUsername,
+                    nickname: user.first_name || user.username,
+                    isSuperAdmin: true
+                };
+                localStorage.setItem('tg_auth', JSON.stringify(userData));
+                showContent(userData);
+            } else {
+                localStorage.removeItem('tg_auth');
+                showAccessDenied();
+            }
+        }
+
+        function showContent(userData) {
+            if (!userData.isSuperAdmin) {
+                showAccessDenied();
+                return;
+            }
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('sidebarToggle').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+            document.getElementById('access-denied-section').style.display = 'none';
+            document.getElementById('superMenuCategory').style.display = 'block';
+            document.getElementById('superMenuItem1').style.display = 'flex';
+            document.getElementById('superMenuItem2').style.display = 'flex';
+            document.getElementById('superMenuItem3').style.display = 'flex';
+        }
+
+        function showLoginForm() {
+            document.getElementById('login-section').style.display = 'flex';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarToggle').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('access-denied-section').style.display = 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('tg_auth');
+            showLoginForm();
+        }
+
+        // Log Comparison Logic (Unchanged)
+        function compareLogs() {
+            const logs1 = document.getElementById('logs1').value; 
+            const logs2 = document.getElementById('logs2').value; 
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+
+            resultDiv.innerHTML = '';
+            loadingDiv.style.display = 'block';
+
+            setTimeout(() => {
+                const ids1 = logs1.split('\n')
+                    .map(line => {
+                        const match = line.match(/\[(\d{2}\.\d{2}\.\d{4}), \d{2}:\d{2}:\d{2}\]\s+Static ID: #?(\d+)/);
+                        return match ? { date: match[1], id: match[2] } : null;
+                    })
+                    .filter(item => item !== null);
+
+                const ids2 = logs2.split('\n')
+                    .map(line => {
+                        const match = line.match(/(\d{2}\.\d{2}\.\d{4})\s+\d{1,2}:\d{2}:\d{2}\s+#?(\d+)/);
+                        return match ? { date: match[1], id: match[2] } : null;
+                    })
+                    .filter(item => item !== null);
+
+                let matchesHTML = '';
+                let nonMatchesHTML = '';
+                let matchesFound = false;
+
+                ids1.forEach(item1 => {
+                    const match = ids2.find(item2 => {
+                        const idMatch = item1.id === item2.id;
+                        const dateMatch = item1.date === item2.date;
+                        return idMatch && dateMatch;
+                    });
+
+                    if (match) {
+                        matchesHTML += `<p>${item1.date} <span class="highlight">#${item1.id}</span></p>`;
+                        matchesFound = true;
+                    } else {
+                        nonMatchesHTML += `<p>${item1.date} #${item1.id}</p>`;
+                    }
+                });
+
+                let resultHTML = `
+                    <div class="result-column">
+                        <h4>Збіги</h4>
+                        ${matchesHTML || '<p>Жодних збігів не знайдено</p>'}
+                    </div>
+                    <div class="result-column">
+                        <h4>Незбіги</h4>
+                        ${nonMatchesHTML || '<p>Жодних незбігів не знайдено</p>'}
+                    </div>
+                `;
+
+                loadingDiv.style.display = 'none';
+                resultDiv.innerHTML = resultHTML;
+            }, 1000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            const backToTopBtn = document.querySelector('.back-to-top');
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+            backToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+            const savedAuth = localStorage.getItem('tg_auth');
+            if (savedAuth) {
+                try {
+                    const userData = JSON.parse(savedAuth);
+                    showContent(userData);
+                } catch (e) {
+                    localStorage.removeItem('tg_auth');
+                    showLoginForm();
+                }
+            } else {
+                showLoginForm();
+            }
+        });
+    </script>
+</body>
+</html>
