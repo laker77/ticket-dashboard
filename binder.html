@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
     <style>
         :root {
             --primary-color: #3B82F6;
@@ -28,6 +27,8 @@
             --media: #ec4899;
             --management: #c084fc;
             --curators: #fbbf24;
+            --scrollbar: #3b82f6;
+            --scrollbar-bg: #1a1a1a;
         }
         * {
             margin: 0;
@@ -64,6 +65,21 @@
             transition: left 0.3s ease;
             z-index: 1000;
             padding: 1.5rem;
+            overflow-y: auto; /* Enable vertical scrolling */
+        }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--scrollbar-bg);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--scrollbar);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
         }
         .sidebar.open {
             left: 0;
@@ -346,7 +362,6 @@
             border: 1px solid var(--card-border);
             backdrop-filter: var(--glass-blur);
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             padding: 30px;
             margin-bottom: 30px;
         }
@@ -547,7 +562,7 @@
             <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
             <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
             <div class="menu-category">Інформація</div>
-             <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
             <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
             <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
             <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
@@ -723,7 +738,7 @@
         </footer>
     </div>
     <script>
-        // Falling Stars Animation
+        // Falling Logos Animation
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         function resizeCanvas() {
@@ -732,59 +747,70 @@
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-        const stars = [];
-        const numStars = 50;
-        class Star {
+        const logos = [];
+        const numLogos = 50;
+        const logoImage = new Image();
+        logoImage.src = '1-17ffebdc.ico';
+        class Logo {
             constructor() {
                 this.reset();
             }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 2 + 1;
+                this.size = Math.random() * 20 + 15;
                 this.speed = Math.random() * 3 + 1;
                 this.opacity = Math.random() * 0.5 + 0.3;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+                this.wind = Math.random() * 0.5 - 0.25;
             }
             update() {
                 this.y += this.speed;
-                if (this.y > canvas.height) {
+                this.x += this.wind;
+                this.rotation += this.rotationSpeed;
+                if (this.y > canvas.height || this.x < 0 || this.x > canvas.width) {
                     this.reset();
                 }
             }
             draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.drawImage(logoImage, -this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
             }
         }
-        for (let i = 0; i < numStars; i++) {
-            stars.push(new Star());
-        }
-        function animateStars() {
+        logoImage.onload = function() {
+            for (let i = 0; i < numLogos; i++) {
+                logos.push(new Logo());
+            }
+            animateLogos();
+        };
+        function animateLogos() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.update();
-                star.draw();
+            logos.forEach(logo => {
+                logo.update();
+                logo.draw();
             });
-            requestAnimationFrame(animateStars);
+            requestAnimationFrame(animateLogos);
         }
-        animateStars();
         const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
         const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
         const allowedAdmins = [
-      '@laker_77',
-      '@c10mm',
-      '@noxx_uagtaV',
-      '@zhdanovrostyslav',
-      '@blisssbabe'
+            '@laker_77',
+            '@c10mm',
+            '@noxx_uagtaV',
+            '@zhdanovrostyslav',
+            '@blisssbabe'
         ];
         const superAdmins = [
-      '@laker_77',
-      '@c10mm',
-      '@noxx_uagtaV',
-      '@zhdanovrostyslav',
-      '@blisssbabe'
+            '@laker_77',
+            '@c10mm',
+            '@noxx_uagtaV',
+            '@zhdanovrostyslav',
+            '@blisssbabe'
         ];
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('open');
@@ -910,12 +936,6 @@
                     document.getElementById('superMenuItem2').style.display = 'flex';
                     document.getElementById('superMenuItem3').style.display = 'flex';
                 }
-                VanillaTilt.init(document.querySelectorAll('.card'), {
-                    max: 8,
-                    speed: 400,
-                    glare: true,
-                    'max-glare': 0.2
-                });
             } catch (error) {
                 console.error('Помилка відображення контенту:', error);
                 showAccessDenied();
