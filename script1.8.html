@@ -47,7 +47,7 @@
         radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
     }
 
-    canvas#stars-canvas {
+    canvas#logo-canvas {
       position: fixed;
       top: 0;
       left: 0;
@@ -71,6 +71,26 @@
       z-index: 1000;
       padding: 1.5rem;
       border-right: 1px solid var(--card-border);
+      overflow-y: auto; /* Enable vertical scrolling */
+      scrollbar-width: thin; /* For Firefox */
+      scrollbar-color: var(--primary-color) var(--glass-bg); /* For Firefox */
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px; /* Width of the scrollbar */
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: var(--glass-bg); /* Track color */
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--primary-color); /* Thumb color */
+      border-radius: 4px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-color); /* Hover color */
     }
 
     .sidebar.open {
@@ -106,6 +126,7 @@
       flex-direction: column;
       gap: 0.5rem;
       margin-top: 2.5rem;
+      min-height: 100%; /* Ensure menu takes full height for scrolling */
     }
 
     .menu-category {
@@ -524,7 +545,7 @@
   </style>
 </head>
 <body>
-  <canvas id="stars-canvas"></canvas>
+  <canvas id="logo-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
   <div class="sidebar" id="sidebar">
@@ -899,9 +920,11 @@
   </div>
 
   <script>
-    // Falling Stars Animation
-    const canvas = document.getElementById('stars-canvas');
+    // Falling Logos Animation
+    const canvas = document.getElementById('logo-canvas');
     const ctx = canvas.getContext('2d');
+    const logoImg = new Image();
+    logoImg.src = '1-17ffebdc.ico';
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -911,10 +934,10 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    const stars = [];
-    const numStars = 30;
+    const logos = [];
+    const numLogos = 20; // Reduced number for performance
 
-    class Star {
+    class Logo {
       constructor() {
         this.reset();
       }
@@ -922,40 +945,50 @@
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 1.5 + 0.5;
+        this.size = Math.random() * 20 + 10; // Logo size between 10-30px
         this.speed = Math.random() * 2 + 0.5;
         this.opacity = Math.random() * 0.4 + 0.2;
+        this.rotation = Math.random() * Math.PI * 2; // Random initial rotation
+        this.rotationSpeed = (Math.random() - 0.5) * 0.05; // Random rotation speed
       }
 
       update() {
         this.y += this.speed;
+        this.rotation += this.rotationSpeed; // Rotate logo
         if (this.y > canvas.height) {
           this.reset();
         }
       }
 
       draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.fill();
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(logoImg, -this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
       }
     }
 
-    for (let i = 0; i < numStars; i++) {
-      stars.push(new Star());
-    }
+    logoImg.onload = () => {
+      for (let i = 0; i < numLogos; i++) {
+        logos.push(new Logo());
+      }
+      animateLogos();
+    };
 
-    function animateStars() {
+    logoImg.onerror = () => {
+      console.error('Failed to load logo image: 1-17ffebdc.ico');
+    };
+
+    function animateLogos() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(star => {
-        star.update();
-        star.draw();
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
       });
-      requestAnimationFrame(animateStars);
+      requestAnimationFrame(animateLogos);
     }
-
-    animateStars();
 
     document.getElementById('sidebarToggle').addEventListener('click', () => {
       console.log('Toggling sidebar');
