@@ -290,7 +290,7 @@
       box-shadow: var(--shadow);
     }
 
-    h liền
+    h1 {
       font-size: 2.5rem;
       font-weight: 700;
       background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
@@ -363,14 +363,13 @@
     }
 
     h3 {
-      font generalized
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--primary-color);
-        margin: 1.5rem 0 0.75rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 1.5rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .highlight {
@@ -394,23 +393,22 @@
 
     .feature-block {
       display: flex;
-      align-items: flex éte
-        margin: 1rem 0;
-        padding: 1rem;
-        background: rgba(20, 22, 35, 0.5);
-        border-radius: 0.5rem;
-        gap: 1rem;
-        border-left: 4px solid var(--primary-color);
+      align-items: flex-start;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(20, 22, 35, 0.5);
+      border-radius: 0.5rem;
+      gap: 1rem;
+      border-left: 4px solid var(--primary-color);
     }
 
     .feature-icon {
-      font不受
-        font-size: 1.5rem;
-        color: var(--primary-color);
-        min-width: 30px;
-        text-align: center;
-        padding-top: 0.25rem;
-        flex-shrink: 0;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      min-width: 30px;
+      text-align: center;
+      padding-top: 0.25rem;
+      flex-shrink: 0;
     }
 
     .system-note {
@@ -753,160 +751,161 @@
               <h3>Тверда робота I</h3>
               <p>Завдання: здобути 350 одиниць руди.</p>
               <ul>
-                <li>Нагорода: 180,000 вал Servers
-                    <li>КД: 5 год</li>
-                    <li>Виконання: 7 год</li>
-                </ul>
+                <li>Нагорода: 180,000 валюти, 150 репутації, 110 досвіду</li>
+                <li>КД: 5 год</li>
+                <li>Виконання: 7 год</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-tools"></i></div>
             <div>
-                <h3>Тверда робота II</h3>
-                <p>Завдання: здобути 600 одиниць руди.</p>
-                <ul>
-                    <li>Нагорода: 220,000 валюти, 190 репутації, 140 досвіду</li>
-                    <li>КД: 6 год</li>
-                    <li>Виконання: 8 год</li>
-                </ul>
+              <h3>Тверда робота II</h3>
+              <p>Завдання: здобути 600 одиниць руди.</p>
+              <ul>
+                <li>Нагорода: 220,000 валюти, 190 репутації, 140 досвіду</li>
+                <li>КД: 6 год</li>
+                <li>Виконання: 8 год</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-leaf"></i></div>
             <div>
-                <h3>Гровер I (легальна гілка)</h3>
-                <p>Завдання: зібрати 850 одиниць рослинності.</p>
-                <ul>
-                    <li>Нагорода: 135,000 валюти, 90 репутації, 120 досвіду</li>
-                    <li>КД: 6 год</li>
-                    <li>Виконання: 6 год</li>
-                </ul>
+              <h3>Гровер I (легальна гілка)</h3>
+              <p>Завдання: зібрати 850 одиниць рослинності.</p>
+              <ul>
+                <li>Нагорода: 135,000 валюти, 90 репутації, 120 досвіду</li>
+                <li>КД: 6 год</li>
+                <li>Виконання: 6 год</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-leaf"></i></div>
             <div>
-                <h3>Гровер II (легальна гілка)</h3>
-                <p>Завдання: зібрати 1300 одиниць рослинності.</p>
-                <ul>
-                    <li>Нагорода: 165,000 валюти, 140 репутації, 110 досвіду</li>
-                    <li>КД: 7 год</li>
-                    <li>Виконання: 7 год</li>
-                </ul>
+              <h3>Гровер II (легальна гілка)</h3>
+              <p>Завдання: зібрати 1300 одиниць рослинності.</p>
+              <ul>
+                <li>Нагорода: 165,000 валюти, 140 репутації, 110 досвіду</li>
+                <li>КД: 7 год</li>
+                <li>Виконання: 7 год</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-cannabis"></i></div>
             <div>
-                <h3>Гровер I (нелегальна гілка)</h3>
-                <p>Завдання: зібрати 150 одиниць <span class="highlight">OG Kush</span>.</p>
-                <ul>
-                    <li>Нагорода: 115,000 валюти, 100 репутації, 90 досвіду</li>
-                    <li>КД: 5 год</li>
-                    <li>Виконання: 6 год</li>
-                </ul>
+              <h3>Гровер I (нелегальна гілка)</h3>
+              <p>Завдання: зібрати 150 одиниць <span class="highlight">OG Kush</span>.</p>
+              <ul>
+                <li>Нагорода: 115,000 валюти, 100 репутації, 90 досвіду</li>
+                <li>КД: 5 год</li>
+                <li>Виконання: 6 год</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-cannabis"></i></div>
             <div>
-                <h3>Гровер II (нелегальна гілка)</h3>
-                <p>Завдання: зібрати 350 одиниць <span class="highlight">OG Kush</span>.</p>
-                <ul>
-                    <li>Нагорода: 155,000 валюти, 130 репутації, 110 досвіду</li>
-                    <li>КД: 6 год</li>
-                    <li>Виконання: 7 год</li>
-                </ul>
+              <h3>Гровер II (нелегальна гілка)</h3>
+              <p>Завдання: зібрати 350 одиниць <span class="highlight">OG Kush</span>.</p>
+              <ul>
+                <li>Нагорода: 155,000 валюти, 130 репутації, 110 досвіду</li>
+                <li>КД: 6 год</li>
+                <li>Виконання: 7 год</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-cannabis"></i></div>
             <div>
-                <h3>Гровер III (нелегальна гілка)</h3>
-                <p>Завдання: зібрати 600 одиниць <span class="highlight">OG Kush</span>.</p>
-                <ul>
-                    <li>Нагорода: 185,000 валюти, 160 репутації, 130 досвіду</li>
-                    <li>КД: 7 год</li>
-                    <li>Виконання: 8 год</li>
-                </ul>
+              <h3>Гровер III (нелегальна гілка)</h3>
+              <p>Завдання: зібрати 600 одиниць <span class="highlight">OG Kush</span>.</p>
+              <ul>
+                <li>Нагорода: 185,000 валюти, 160 репутації, 130 досвіду</li>
+                <li>КД: 7 год</li>
+                <li>Виконання: 8 год</li>
+              </ul>
             </div>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
 
-<div class="section">
-    <div class="section-header" onclick="toggleSection(this)">
-        <h2><i class="fas fa-plus-circle"></i> Додаткові нововведення</h2>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-    <div class="section-body">
-        <div class="feature-block">
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-plus-circle"></i> Додаткові нововведення</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-tshirt"></i></div>
             <div>
-                <h3>Магазин одягу</h3>
-                <p>Доданий магазин <span class="highlight">True Clothes</span> із сімейним та донатним одягом. Новий одяг у донат товарах через M-Меню.</p>
+              <h3>Магазин одягу</h3>
+              <p>Доданий магазин <span class="highlight">True Clothes</span> із сімейним та донатним одягом. Новий одяг у донат товарах через M-Меню.</p>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-car"></i></div>
             <div>
-                <h3>Нові авто</h3>
-                <ul>
-                    <li>2023 ZEEKR 001 - Контейнери</li>
-                    <li>2020 Audi SQ7 - Автосалон Люкс</li>
-                    <li>Tesla Cybertruck - Кейс “Кібер Вольт”</li>
-                    <li>Volkswagen Caddy Maxi 2016 - Автосалон Люкс</li>
-                </ul>
-                <p>Оновлена модель <span class="highlight">Rolls Royce Cullinan</span> із деталізованим дизайном та можливістю ховати/піднімати значок.</p>
+              <h3>Нові авто</h3>
+              <ul>
+                <li>2023 ZEEKR 001 - Контейнери</li>
+                <li>2020 Audi SQ7 - Автосалон Люкс</li>
+                <li>Tesla Cybertruck - Кейс “Кібер Вольт”</li>
+                <li>Volkswagen Caddy Maxi 2016 - Автосалон Люкс</li>
+              </ul>
+              <p>Оновлена модель <span class="highlight">Rolls Royce Cullinan</span> із деталізованим дизайном та можливістю ховати/піднімати значок.</p>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-bullhorn"></i></div>
             <div>
-                <h3>Інші зміни</h3>
-                <ul>
-                    <li>Оновлений дизайн споряджень фракцій, можливість брати кілька речей.</li>
-                    <li>Мегафони для держфракцій через клавішу TAB.</li>
-                    <li>Новий дизайн прийняття пропозицій через “Y” та “N”.</li>
-                </ul>
+              <h3>Інші зміни</h3>
+              <ul>
+                <li>Оновлений дизайн споряджень фракцій, можливість брати кілька речей.</li>
+                <li>Мегафони для держфракцій через клавішу TAB.</li>
+                <li>Новий дизайн прийняття пропозицій через “Y” та “N”.</li>
+              </ul>
             </div>
-        </div>
-        <div class="feature-block">
+          </div>
+          <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
             <div>
-                <h3>Розклад івентів</h3>
-                <ul>
-                    <li>Понеділок: ВЗХ - Держслужбовці + Мафії</li>
-                    <li>Вівторок: Кайо-Періко</li>
-                    <li>Середа: ВЗХ - Держслужбовці + Банди</li>
-                    <li>Четвер: Кайо-Періко та ВЗХ - Сім’ї</li>
-                    <li>П’ятниця: ВЗВ</li>
-                    <li>Субота: Кайо-Періко</li>
-                    <li>Неділя: ВЗХ - Сім’ї</li>
-                </ul>
-                <p><span class="highlight">Х2</span> активний з 09.08 по 10.08.</p>
+              <h3>Розклад івентів</h3>
+              <ul>
+                <li>Понеділок: ВЗХ - Держслужбовці + Мафії</li>
+                <li>Вівторок: Кайо-Періко</li>
+                <li>Середа: ВЗХ - Держслужбовці + Банди</li>
+                <li>Четвер: Кайо-Періко та ВЗХ - Сім’ї</li>
+                <li>П’ятниця: ВЗВ</li>
+                <li>Субота: Кайо-Періко</li>
+                <li>Неділя: ВЗХ - Сім’ї</li>
+              </ul>
+              <p><span class="highlight">Х2</span> активний з 09.08 по 10.08.</p>
             </div>
-        </div>
-        <div class="system-note warning">
+          </div>
+          <div class="system-note warning">
             <i class="fas fa-exclamation-triangle"></i> РОЗПОВСЮДЖЕННЯ ЦЬОГО СКРИПТУ ПРИЗВЕДЕ ДО ЧС ПРОЕКТІВ UKRAINE GAMES!
+          </div>
         </div>
+      </div>
+
+      <footer>
+        <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        <p class="logo">Ukraine GTA 5 RolePlay</p>
+      </footer>
     </div>
-</div>
+  </div>
 
-<footer>
-    <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-    <p class="logo">Ukraine GTA 5 RolePlay</p>
-</footer>
-</div>
-
-<script>
+  <script>
     // Falling Stars Animation
     const canvas = document.getElementById('stars-canvas');
     const ctx = canvas.getContext('2d');
 
     function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
 
     resizeCanvas();
@@ -916,42 +915,60 @@
     const numStars = 30;
 
     class Star {
-        constructor() {
-            this.reset();
-        }
+      constructor() {
+        this.reset();
+      }
 
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * -canvas.height;
-            this.size = Math.random() * 1.5 + 0.5;
-            this.speed = Math.random() * 2 + 0.5;
-            this.opacity = Math.random() * 0.4 + 0.2;
-        }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speed = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.2;
+      }
 
-        update() {
-            this.y += this.speed;
-            if (this.y > canvas.height) {
-                this.reset();
-            }
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
         }
+      }
 
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    animateStars();
 
     document.getElementById('sidebarToggle').addEventListener('click', () => {
-        console.log('Toggling sidebar');
-        document.getElementById('sidebar').classList.toggle('open');
+      console.log('Toggling sidebar');
+      document.getElementById('sidebar').classList.toggle('open');
     });
 
     document.addEventListener('click', (event) => {
-        const sidebar = document.getElementById('sidebar');
-        const toggle = document.getElementById('sidebarToggle');
-        if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
-            console.log('Closing sidebar');
-            sidebar.classList.remove('open');
-        }
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        console.log('Closing sidebar');
+        sidebar.classList.remove('open');
+      }
     });
 
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
@@ -960,132 +977,145 @@
     const superAdmins = ['@laker_77', '@B_m_b1', '@c10mm'];
 
     async function getSheetData(sheetName) {
-        console.log(`Fetching data for sheet: ${sheetName}`);
-        try {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-            const res = await axios.get(url, { timeout: 10000 });
-            console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
-            return res.data.values || [];
-        } catch (error) {
-            console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
-            return [];
-        }
+      console.log(`Fetching data for sheet: ${sheetName}`);
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Error fetching data from ${sheetName}:`, error.message);
+        alert(`Помилка при отриманні даних: ${error.message}`);
+        return [];
+      }
     }
 
     async function onTelegramAuth(user) {
-        console.log('Telegram auth triggered:', user);
-        if (!user || !user.username) {
-            console.error('Invalid user data:', user);
-            alert('Невалідні дані користувача');
-            showLoginForm();
-            return;
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        alert('Невалідні дані користувача');
+        showLoginForm();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+      console.log('Processing user:', telegramUsername);
+
+      try {
+        const isSuperAdmin = superAdmins.includes(telegramUsername);
+        let userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: isSuperAdmin
+        };
+
+        if (isSuperAdmin) {
+          console.log('User is superAdmin, granting access');
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          showContent(userData);
+          return;
         }
 
-        const telegramUsername = '@' + user.username;
-        console.log('Processing user:', telegramUsername);
-
-        try {
-            const ticketsData = await getSheetData('Май_2025_таблица');
-            if (!ticketsData.length) {
-                console.error('No tickets data found');
-                alert('Дані не знайдено');
-                showLoginForm();
-                return;
-            }
-            const ticketsHeaders = ticketsData[0];
-            const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-
-            if (telegramColIndex === -1) {
-                console.error('Telegram column not found in tickets data');
-                alert('Помилка структури даних: відсутній стовпець Telegram');
-                showLoginForm();
-                return;
-            }
-
-            const userTicketsRow = ticketsData.find(row => 
-                row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-            );
-
-            if (userTicketsRow) {
-                console.log('User found in tickets data:', userTicketsRow);
-                const userData = {
-                    username: telegramUsername,
-                    nickname: userTicketsRow[0] || user.first_name || user.username,
-                    isAdmin: superAdmins.includes(telegramUsername)
-                };
-                localStorage.setItem('tg_auth', JSON.stringify(userData));
-                showContent(userData);
-            } else {
-                console.error('User not found in tickets data:', telegramUsername);
-                localStorage.removeItem('tg_auth');
-                alert('Користувача не знайдено в таблиці. Доступ заборонено.');
-                showLoginForm();
-            }
-        } catch (error) {
-            console.error('Помилка перевірки авторизації:', error);
-            alert('Помилка під час завантаження даних');
-            showLoginForm();
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          console.error('No tickets data found');
+          alert('Дані не знайдено');
+          showLoginForm();
+          return;
         }
+
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          alert('Помилка структури даних: відсутній стовпець Telegram');
+          showLoginForm();
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+
+        if (userTicketsRow) {
+          console.log('User found in tickets data:', userTicketsRow);
+          userData.nickname = userTicketsRow[0] || user.first_name || user.username;
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          showContent(userData);
+        } else {
+          console.error('User not found in tickets data:', telegramUsername);
+          localStorage.removeItem('tg_auth');
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
+        }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error.message);
+        alert('Помилка під час завантаження даних');
+        showLoginForm();
+      }
     }
 
     function showContent(userData) {
-        console.log('Showing content for user:', userData);
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('content').style.display = 'block';
-        document.getElementById('logout-btn').classList.remove('hidden');
-        document.getElementById('sidebarToggle').classList.remove('hidden');
+      console.log('Showing content for user:', userData);
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+      console.log('Content display:', document.getElementById('content').style.display);
 
-        if (userData.isAdmin) {
-            console.log('User is superAdmin, showing super menu');
-            document.getElementById('superMenuCategory').style.display = 'block';
-            document.getElementById('superMenuItem1').style.display = 'flex';
-            document.getElementById('superMenuItem2').style.display = 'flex';
-            document.getElementById('superMenuItem3').style.display = 'flex';
-        }
+      if (userData.isAdmin) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
     }
 
     function showLoginForm() {
-        console.log('Showing login form');
-        document.getElementById('login-section').style.display = 'flex';
-        document.getElementById('content').style.display = 'none';
-        document.getElementById('logout-btn').classList.add('hidden');
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('sidebarToggle').classList.add('hidden');
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
     }
 
     function logout() {
-        console.log('Logging out');
-        localStorage.removeItem('tg_auth');
-        showLoginForm();
+      console.log('Logging out');
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
     }
 
     function toggleSection(header) {
-        const body = header.nextElementSibling;
-        const icon = header.querySelector('i');
-        body.classList.toggle('hidden');
-        icon.classList.toggle('collapsed');
+      const body = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      body.classList.toggle('hidden');
+      icon.classList.toggle('collapsed');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded');
-        document.getElementById('logout-btn').addEventListener('click', logout);
+      console.log('DOM loaded');
+      document.getElementById('logout-btn').addEventListener('click', logout);
 
-        const savedAuth = localStorage.getItem('tg_auth');
-        if (savedAuth) {
-            try {
-                console.log('Found saved auth:', savedAuth);
-                const userData = JSON.parse(savedAuth);
-                showContent(userData);
-            } catch (e) {
-                console.error('Error parsing saved auth:', e);
-                localStorage.removeItem('tg_auth');
-                showLoginForm();
-            }
-        } else {
-            console.log('No saved auth, showing login form');
-            showLoginForm();
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
         }
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
+      }
     });
-</script>
+  </script>
 </body>
 </html>
