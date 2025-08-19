@@ -10,51 +10,18 @@
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Updated color tokens to match modern design brief */
-      --background: #ffffff;
-      --foreground: #1f2937;
-      --card: #f1f5f9;
-      --card-foreground: #1f2937;
-      --popover: #ffffff;
-      --popover-foreground: #1f2937;
-      --primary: #8b5cf6;
-      --primary-foreground: #ffffff;
-      --secondary: #6b7280;
-      --secondary-foreground: #ffffff;
-      --muted: #f1f5f9;
-      --muted-foreground: #6b7280;
-      --accent: #8b5cf6;
-      --accent-foreground: #ffffff;
-      --destructive: #ea580c;
-      --destructive-foreground: #ffffff;
-      --border: #e5e7eb;
-      --input: #f1f5f9;
-      --ring: rgba(139, 92, 246, 0.5);
-      --chart-1: #6366f1;
-      --chart-2: #4f46e5;
-      --chart-3: #4338ca;
-      --chart-4: #3730a3;
-      --chart-5: #312e81;
-      --radius: 0.5rem;
-      --sidebar: #f1f5f9;
-      --sidebar-foreground: #1f2937;
-      --sidebar-primary: #ffffff;
-      --sidebar-primary-foreground: #1f2937;
-      --sidebar-accent: #8b5cf6;
-      --sidebar-accent-foreground: #ffffff;
-      --sidebar-border: #e5e7eb;
-      --sidebar-ring: rgba(139, 92, 246, 0.5);
-      
-      /* Dark mode overrides for existing functionality */
-      --background-dark: #0f172a;
-      --glass-bg: rgba(15, 23, 42, 0.8);
-      --glass-blur: blur(20px);
-      --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
+      --primary-color: #3B82F6;
+      --secondary-color: #10B981;
+      --accent-color: #F59E0B;
+      --background-dark: #0A0C1A;
+      --card-bg: rgba(20, 22, 35, 0.9);
+      --glass-bg: rgba(20, 22, 35, 0.7);
+      --glass-blur: blur(15px);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --text-primary: #F3F4F6;
+      --text-secondary: #D1D5DB;
     }
 
     * {
@@ -64,22 +31,16 @@
     }
 
     body {
-      /* Enhanced gradient background with modern colors */
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+      background: linear-gradient(135deg, var(--background-dark), #1E293B);
       color: var(--text-primary);
-      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
     }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 600;
-    }
-
-    /* Enhanced falling logos animation with favicon icons */
-    canvas#falling-logos-canvas {
+    /* Falling Stars Animation */
+    canvas#stars-canvas {
       position: fixed;
       top: 0;
       left: 0;
@@ -87,117 +48,88 @@
       height: 100%;
       z-index: -1;
       pointer-events: none;
-      opacity: 0.6;
+      opacity: 0.8;
     }
 
-    /* Modern glassmorphism sidebar with enhanced styling */
     .sidebar {
       position: fixed;
       top: 0;
-      left: -320px;
-      width: 320px;
+      left: -300px;
+      width: 300px;
       height: 100%;
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       box-shadow: var(--shadow);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: left 0.3s ease;
       z-index: 1000;
-      padding: 2rem;
-      border-right: 1px solid rgba(139, 92, 246, 0.2);
+      padding: 1.5rem;
     }
 
     .sidebar.open {
       left: 0;
     }
 
-    /* Enhanced sidebar toggle with modern hover effects */
     .sidebar-toggle {
       position: fixed;
-      top: 2rem;
-      left: 2rem;
-      width: 3rem;
-      height: 3rem;
+      top: 1.5rem;
+      left: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
-      color: var(--primary);
-      font-size: 1.25rem;
-      border-radius: 1rem;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      border-radius: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s ease;
       z-index: 1001;
-      border: 1px solid rgba(139, 92, 246, 0.3);
     }
 
     .sidebar-toggle:hover {
-      transform: scale(1.1) rotate(90deg);
-      background: rgba(139, 92, 246, 0.2);
-      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+      transform: scale(1.1);
+      background: rgba(59, 130, 246, 0.2);
     }
 
     .sidebar-menu {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-      margin-top: 4rem;
+      gap: 0.5rem;
+      margin-top: 3rem;
     }
 
     .menu-category {
-      font-size: 0.875rem;
-      font-weight: 700;
-      color: var(--primary);
-      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      padding: 0.5rem 1rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      border-bottom: 1px solid rgba(139, 92, 246, 0.2);
-      margin-bottom: 0.5rem;
     }
 
-    /* Enhanced menu items with modern hover animations */
     .menu-item, .super-menu-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1rem 1.25rem;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
       color: var(--text-primary);
       text-decoration: none;
-      border-radius: 0.75rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
       font-size: 0.9rem;
-      font-weight: 500;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .menu-item::before, .super-menu-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
-      transition: left 0.5s;
-    }
-
-    .menu-item:hover::before, .super-menu-item:hover::before {
-      left: 100%;
     }
 
     .menu-item:hover, .super-menu-item:hover {
-      background: rgba(139, 92, 246, 0.15);
-      transform: translateX(8px);
-      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+      background: rgba(59, 130, 246, 0.3);
+      transform: translateX(5px);
     }
 
     .super-menu-item {
-      color: var(--accent);
-      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: var(--accent-color);
     }
 
-    /* Enhanced login section with modern glassmorphism */
+    /* Login Section Styles */
     #login-section {
       position: fixed;
       top: 0;
@@ -207,7 +139,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: linear-gradient(135deg, #0A0C1A, #1E293B);
       z-index: 1000;
       overflow: hidden;
     }
@@ -215,15 +147,15 @@
     .login-container {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
-      padding: 3rem 2.5rem;
-      border-radius: 2rem;
-      box-shadow: var(--shadow);
-      text-align: center;
-      max-width: 450px;
+      padding: 3rem 2rem;
+      border-radius: 1.5rem;
+      max-width: 500px;
       width: 90%;
-      border: 1px solid rgba(139, 92, 246, 0.2);
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+      text-align: center;
       position: relative;
       overflow: hidden;
+      animation: fadeInUp 1s ease-out;
     }
 
     .login-container::before {
@@ -233,413 +165,455 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: conic-gradient(from 0deg, transparent, rgba(139, 92, 246, 0.1), transparent);
-      animation: rotate 10s linear infinite;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
+      background-size: 40px 40px;
+      animation: moveBackground 30s linear infinite;
       z-index: -1;
     }
 
-    @keyframes rotate {
-      to { transform: rotate(360deg); }
-    }
-
     .login-logo {
-      margin-bottom: 2rem;
-      position: relative;
-    }
-
-    .login-logo i {
-      font-size: 4rem;
-      color: var(--primary);
-      filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      animation: pulse 2s infinite;
     }
 
     .login-title {
       font-size: 2rem;
       font-weight: 700;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, var(--primary), #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
     }
 
     .login-subtitle {
+      font-size: 1rem;
       color: var(--text-secondary);
-      margin-bottom: 2.5rem;
-      font-size: 1.1rem;
+      margin-bottom: 2rem;
     }
 
     .telegram-button-wrapper {
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: center;
+      display: inline-block;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 0 20px var(--primary-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--primary-color);
     }
 
     .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
       color: var(--text-secondary);
-      font-size: 0.9rem;
     }
 
     .login-footer a {
-      color: var(--primary);
+      color: var(--primary-color);
       text-decoration: none;
       transition: color 0.3s ease;
     }
 
     .login-footer a:hover {
-      color: #a855f7;
-    }
-
-    /* Enhanced access denied section */
-    #access-denied-section {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      z-index: 1000;
-    }
-
-    .access-denied-content {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      padding: 3rem 2.5rem;
-      border-radius: 2rem;
-      box-shadow: var(--shadow);
-      text-align: center;
-      max-width: 500px;
-      width: 90%;
-      border: 1px solid rgba(234, 88, 12, 0.3);
-    }
-
-    .access-denied-icon {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 0 20px rgba(234, 88, 12, 0.5));
-    }
-
-    .access-denied-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--destructive);
-      margin-bottom: 1.5rem;
-    }
-
-    .access-denied-message {
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-      line-height: 1.6;
-    }
-
-    .back-to-login-btn {
-      background: var(--destructive);
-      color: var(--destructive-foreground);
-      padding: 0.75rem 2rem;
-      border: none;
-      border-radius: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .back-to-login-btn:hover {
-      background: #dc2626;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(234, 88, 12, 0.3);
-    }
-
-    /* Enhanced dashboard styles with modern cards */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      margin-top: 5rem;
-    }
-
-    #welcome-header {
-      font-size: 3rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 3rem;
-      background: linear-gradient(135deg, var(--primary), #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: fadeInUp 1s ease-out;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      color: var(--secondary-color);
     }
 
     .admins-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+      flex-wrap: wrap;
     }
 
     .admin-card {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
-      padding: 2rem;
-      border-radius: 1.5rem;
+      border-radius: 1rem;
+      padding: 1.5rem;
       box-shadow: var(--shadow);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      max-width: 500px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1 1 400px;
     }
 
-    .admin-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
-      transition: left 0.8s ease;
-    }
-
-    .admin-card:hover::before {
-      left: 100%;
+    .admin-card.low {
+      border-color: rgba(239, 68, 68, 0.2);
     }
 
     .admin-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 25px 50px rgba(139, 92, 246, 0.2);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
     }
 
-    .admin-card.low {
-      border-color: rgba(234, 88, 12, 0.3);
+    .admin-card.low:hover {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
     }
 
     .admin-card h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
+      font-size: 1.6rem;
+      font-weight: 600;
       color: var(--text-primary);
-    }
-
-    .week-info {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
     }
 
     .admin-list {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+      flex-grow: 1;
     }
 
-    /* Enhanced stats section with modern styling */
-    #stats-section {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      padding: 2.5rem;
-      border-radius: 1.5rem;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      margin-top: 2rem;
+    .admin-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    #stats-section h2 {
-      font-size: 2rem;
-      margin-bottom: 2rem;
+    .admin-item:hover {
+      background: rgba(59, 130, 246, 0.2);
+    }
+
+    .admin-item.low:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .admin-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: var(--primary-color);
       color: var(--text-primary);
+    }
+
+    .admin-item.gold .admin-avatar {
+      border-color: #FBBF24;
+    }
+
+    .admin-item.silver .admin-avatar {
+      border-color: #D1D5DB;
+    }
+
+    .admin-item.bronze .admin-avatar {
+      border-color: #D97706;
+    }
+
+    .admin-item.normal .admin-avatar {
+      border-color: var(--primary-color);
+    }
+
+    .admin-item.low .admin-avatar {
+      border-color: #EF4444;
+    }
+
+    .admin-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .admin-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .admin-stats {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .admin-stat-value {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .admin-item.low .admin-stat-value {
+      color: #EF4444;
+    }
+
+    .medal, .low-medal {
+      font-size: 1.8rem;
+      margin-left: auto;
+    }
+
+    .week-info {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
     .stats-grid > div {
-      background: rgba(139, 92, 246, 0.1);
-      padding: 1.5rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(139, 92, 246, 0.2);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 1rem;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow);
       transition: all 0.3s ease;
     }
 
     .stats-grid > div:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 25px rgba(139, 92, 246, 0.2);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     }
 
     .stats-grid h3 {
-      color: var(--primary);
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-
-    .stats-grid p {
-      color: var(--text-secondary);
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      font-weight: 600;
       margin-bottom: 0.5rem;
     }
 
-    .chart-container {
-      background: rgba(139, 92, 246, 0.05);
-      padding: 2rem;
-      border-radius: 1rem;
-      border: 1px solid rgba(139, 92, 246, 0.1);
-      margin-bottom: 2rem;
-    }
-
-    .chart-container h3 {
-      color: var(--text-primary);
-      margin-bottom: 1.5rem;
+    .stats-grid p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
     }
 
     .table-container {
-      background: rgba(139, 92, 246, 0.05);
-      border-radius: 1rem;
-      overflow: hidden;
-      border: 1px solid rgba(139, 92, 246, 0.1);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+      max-width: 100%;
     }
 
-    table {
+    .table-container table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.85rem;
+      color: var(--text-primary);
     }
 
-    th, td {
-      padding: 1rem;
+    .table-container th {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--primary-color);
+      padding: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
       text-align: left;
-      border-bottom: 1px solid rgba(139, 92, 246, 0.1);
     }
 
-    th {
-      background: rgba(139, 92, 246, 0.1);
-      color: var(--primary);
+    .table-container td {
+      padding: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      transition: background 0.2s ease;
+    }
+
+    .table-container tbody tr:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .table-container tbody tr:last-child td {
       font-weight: 600;
     }
 
-    td {
-      color: var(--text-secondary);
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1E293B, #334155);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    #admin-notice {
+    .access-denied-content {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       padding: 2rem;
-      border-radius: 1.5rem;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      margin-bottom: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
+      text-align: center;
+      max-width: 500px;
     }
 
-    #admin-notice h3 {
-      color: var(--primary);
+    .access-denied-icon {
+      font-size: 4rem;
+      color: #EF4444;
       margin-bottom: 1rem;
+      animation: pulse 2s infinite;
     }
 
-    #admin-notice p {
+    .access-denied-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 1rem;
       color: var(--text-secondary);
-      line-height: 1.6;
+      margin-bottom: 1.5rem;
     }
 
-    /* Responsive design improvements */
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 280px;
-        left: -280px;
-      }
-      
-      .admins-row {
-        grid-template-columns: 1fr;
-      }
-      
-      #welcome-header {
-        font-size: 2rem;
-      }
-      
-      .login-title {
-        font-size: 1.5rem;
-      }
-      
-      .container {
-        padding: 1rem;
-        margin-top: 4rem;
-      }
-    }
-
-    /* Utility classes for animations */
-    .animate-fade-in {
-      animation: fadeIn 0.8s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .animate-slide-up {
-      animation: slideUp 0.6s ease-out;
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Hidden utility */
-    .hidden {
-      display: none !important;
-    }
-
-    /* Logout button styling */
-    #logout-btn {
-      position: fixed;
-      top: 2rem;
-      right: 2rem;
-      background: var(--destructive);
-      color: var(--destructive-foreground);
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 0.75rem;
+    .back-to-login-btn {
+      background: #EF4444;
+      color: var(--text-primary);
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    #logout-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #EF4444;
+      color: var(--text-primary);
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
       z-index: 1001;
+      transition: all 0.3s ease;
     }
 
     #logout-btn:hover {
-      background: #dc2626;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(234, 88, 12, 0.3);
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50%, -50%); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chart-container {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      max-height: 300px;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), transparent);
+      z-index: -1;
+      animation: chartGlow 5s ease-in-out infinite;
+    }
+
+    @keyframes chartGlow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 250px;
+      }
+      .admins-row {
+        flex-direction: column;
+        align-items: center;
+      }
+      .admin-card {
+        max-width: 100%;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .table-container table {
+        font-size: 0.75rem;
+      }
+      .table-container th, .table-container td {
+        padding: 0.5rem;
+      }
+      .login-container {
+        padding: 2rem 1.5rem;
+      }
+      .login-title {
+        font-size: 1.5rem;
+      }
+      .login-subtitle {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Enhanced falling logos canvas animation -->
-  <canvas id="falling-logos-canvas"></canvas>
+  <canvas id="stars-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
   <div class="sidebar" id="sidebar">
@@ -683,7 +657,7 @@
   <div id="login-section">
     <div class="login-container">
       <div class="login-logo">
-        <i class="fas fa-shield-alt"></i>
+        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--text-primary);"></i>
       </div>
       <h1 class="login-title">Вітаємо в кабінеті адміністратора</h1>
       <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
@@ -702,31 +676,31 @@
     </div>
   </div>
 
-  <div class="container">
-    <h1 id="welcome-header">Ласкаво просимо!</h1>
+  <div class="container mx-auto p-4 sm:p-6">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center" id="welcome-header">Ласкаво просимо!</h1>
 
     <div id="dashboard" class="hidden">
       <div class="admins-row">
-        <div class="admin-card animate-slide-up" id="top-admins-section">
+        <div class="admin-card" id="top-admins-section">
           <h2>🏆 Адміни тижня</h2>
           <div class="week-info" id="week-range">Період: 01.05.2023 - 07.05.2023</div>
           <div class="admin-list" id="top-admins-container"></div>
         </div>
-        <div class="admin-card low animate-slide-up" id="low-admins-section">
+        <div class="admin-card low" id="low-admins-section">
           <h2>⚠️ Низька активність</h2>
           <div class="week-info" id="low-week-range">Період: 01.05.2023 - 07.05.2023</div>
           <div class="admin-list" id="low-admins-container"></div>
         </div>
       </div>
 
-      <div id="admin-notice" class="hidden animate-fade-in">
-        <h3>👑 Ви - адміністратор системи</h3>
-        <p>Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
-        <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
+      <div id="admin-notice" class="hidden">
+        <h3 class="text-lg sm:text-xl font-bold text-[var(--primary-color)] mb-3">👑 Ви - адміністратор системи</h3>
+        <p class="mb-2 text-sm sm:text-base">Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+        <p class="text-sm sm:text-base">Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
       </div>
 
-      <div id="stats-section" class="animate-fade-in">
-        <h2>Ваша статистика:</h2>
+      <div id="stats-section">
+        <h2 class="text-lg sm:text-xl font-bold mb-4">Ваша статистика:</h2>
         <div class="stats-grid">
           <div>
             <h3>Сьогодні</h3>
@@ -746,12 +720,12 @@
         </div>
 
         <div class="chart-container">
-          <h3>Динаміка тікетів та часу</h3>
+          <h3 class="text-base sm:text-lg font-bold mb-3">Динаміка тікетів та часу</h3>
           <canvas id="statsChart" height="120"></canvas>
         </div>
 
-        <div>
-          <h3>Детальна статистика по днях:</h3>
+        <div class="mt-4">
+          <h3 class="text-base sm:text-lg font-bold mb-3">Детальна статистика по днях:</h3>
           <div class="table-container">
             <table>
               <thead>
@@ -771,7 +745,8 @@
   </div>
 
   <script>
-    const canvas = document.getElementById('falling-logos-canvas');
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
     const ctx = canvas.getContext('2d');
     
     function resizeCanvas() {
@@ -782,144 +757,51 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    const logos = [];
-    const numLogos = 25;
+    const stars = [];
+    const numStars = 50;
     
-    class Logo {
+    class Star {
       constructor() {
         this.reset();
-        this.type = Math.floor(Math.random() * 4); // Different logo types
       }
       
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 20 + 15;
-        this.speed = Math.random() * 2 + 0.5;
-        this.opacity = Math.random() * 0.3 + 0.1;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
       }
       
       update() {
         this.y += this.speed;
-        this.rotation += this.rotationSpeed;
-        if (this.y > canvas.height + this.size) {
+        if (this.y > canvas.height) {
           this.reset();
         }
       }
       
       draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
-        ctx.globalAlpha = this.opacity;
-        
-        // Draw different favicon-like shapes
-        switch(this.type) {
-          case 0: // Shield (like the main logo)
-            this.drawShield();
-            break;
-          case 1: // Star
-            this.drawStar();
-            break;
-          case 2: // Circle with dot
-            this.drawCircleDot();
-            break;
-          case 3: // Diamond
-            this.drawDiamond();
-            break;
-        }
-        
-        ctx.restore();
-      }
-      
-      drawShield() {
-        const gradient = ctx.createLinearGradient(-this.size/2, -this.size/2, this.size/2, this.size/2);
-        gradient.addColorStop(0, '#8b5cf6');
-        gradient.addColorStop(1, '#a855f7');
-        
-        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.moveTo(0, -this.size/2);
-        ctx.lineTo(this.size/3, -this.size/3);
-        ctx.lineTo(this.size/3, this.size/4);
-        ctx.lineTo(0, this.size/2);
-        ctx.lineTo(-this.size/3, this.size/4);
-        ctx.lineTo(-this.size/3, -this.size/3);
-        ctx.closePath();
-        ctx.fill();
-      }
-      
-      drawStar() {
-        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size/2);
-        gradient.addColorStop(0, '#fbbf24');
-        gradient.addColorStop(1, '#f59e0b');
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        for (let i = 0; i < 5; i++) {
-          const angle = (i * Math.PI * 2) / 5 - Math.PI / 2;
-          const x = Math.cos(angle) * this.size / 3;
-          const y = Math.sin(angle) * this.size / 3;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-          
-          const innerAngle = ((i + 0.5) * Math.PI * 2) / 5 - Math.PI / 2;
-          const innerX = Math.cos(innerAngle) * this.size / 6;
-          const innerY = Math.sin(innerAngle) * this.size / 6;
-          ctx.lineTo(innerX, innerY);
-        }
-        ctx.closePath();
-        ctx.fill();
-      }
-      
-      drawCircleDot() {
-        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size/2);
-        gradient.addColorStop(0, '#10b981');
-        gradient.addColorStop(1, '#059669');
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(0, 0, this.size/3, 0, Math.PI * 2);
-        ctx.fill();
-        
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(0, 0, this.size/8, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      
-      drawDiamond() {
-        const gradient = ctx.createLinearGradient(-this.size/2, -this.size/2, this.size/2, this.size/2);
-        gradient.addColorStop(0, '#ef4444');
-        gradient.addColorStop(1, '#dc2626');
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.moveTo(0, -this.size/3);
-        ctx.lineTo(this.size/3, 0);
-        ctx.lineTo(0, this.size/3);
-        ctx.lineTo(-this.size/3, 0);
-        ctx.closePath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
         ctx.fill();
       }
     }
     
-    for (let i = 0; i < numLogos; i++) {
-      logos.push(new Logo());
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
     }
     
-    function animateLogos() {
+    function animateStars() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      logos.forEach(logo => {
-        logo.update();
-        logo.draw();
+      stars.forEach(star => {
+        star.update();
+        star.draw();
       });
-      requestAnimationFrame(animateLogos);
+      requestAnimationFrame(animateStars);
     }
     
-    animateLogos();
+    animateStars();
 
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
@@ -969,367 +851,786 @@
       }
     }
 
-    function formatTime(minutes) {
-      if (!minutes || minutes === 0) return '0 хв';
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
-      if (hours > 0) {
-        return mins > 0 ? `${hours}г ${mins}хв` : `${hours}г`;
-      }
-      return `${mins}хв`;
+    function parseDate(str) {
+      if (!str || typeof str !== 'string') return new Date();
+      const [d, m, y] = str.split('.');
+      return new Date(y, m - 1, d);
     }
 
-    function getWeekRange() {
+    function formatDate(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function secondsToHHMMSS(seconds) {
+      if (!seconds || isNaN(seconds)) return '0хв';
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
+    }
+
+    function getDateWithoutTime(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function getPreviousWeekRange() {
       const now = new Date();
       const dayOfWeek = now.getDay();
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      
       const monday = new Date(now);
-      monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+      monday.setDate(now.getDate() + diffToMonday - 7);
       monday.setHours(0, 0, 0, 0);
       
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
       sunday.setHours(23, 59, 59, 999);
       
-      const formatDate = (date) => {
-        return date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      return {
+        start: formatDate(monday),
+        end: formatDate(sunday),
+        startDate: monday,
+        endDate: sunday
       };
+    }
+
+    function shouldRefreshTopAdmins() {
+      const lastUpdate = localStorage.getItem('topAdminsLastUpdate');
+      if (!lastUpdate) return true;
+      const now = new Date();
+      const lastUpdateDate = new Date(parseInt(lastUpdate));
+      return (now - lastUpdateDate) > 15 * 60 * 1000;
+    }
+
+    async function autoRefreshData() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKeyTop = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cacheKeyLow = `lowAdmins_${weekRange.start}_${weekRange.end}`;
       
-      return `${formatDate(monday)} - ${formatDate(sunday)}`;
+      localStorage.removeItem(cacheKeyTop);
+      localStorage.removeItem(cacheKeyLow);
+      localStorage.removeItem('topAdminsLastUpdate');
+      await loadAndRenderAdmins();
     }
 
-    async function loadTopAdmins() {
+    async function getTopAdmins(weekRange) {
       try {
-        const data = await getSheetData('Статистика');
-        if (!data || data.length < 2) {
-          console.log('Немає даних для топ адмінів');
-          return;
-        }
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
 
-        const headers = data[0];
-        const dateIndex = headers.findIndex(h => h.toLowerCase().includes('дата'));
-        const nameIndex = headers.findIndex(h => h.toLowerCase().includes('нік') || h.toLowerCase().includes('ім\'я'));
-        const ticketsIndex = headers.findIndex(h => h.toLowerCase().includes('тікет'));
-        const timeIndex = headers.findIndex(h => h.toLowerCase().includes('час'));
+        if (!ticketsData.length || !timeData.length) return [];
 
-        if (dateIndex === -1 || nameIndex === -1 || ticketsIndex === -1 || timeIndex === -1) {
-          console.error('Не знайдено необхідні колонки');
-          return;
-        }
+        const ticketsHeaders = ticketsData[0] || [];
+        const timeHeaders = timeData[0] || [];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
 
-        const now = new Date();
-        const dayOfWeek = now.getDay();
-        const monday = new Date(now);
-        monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-        monday.setHours(0, 0, 0, 0);
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
 
-        const weekData = {};
-        
-        for (let i = 1; i < data.length; i++) {
-          const row = data[i];
-          if (!row[dateIndex] || !row[nameIndex]) continue;
+        const admins = [];
 
-          const dateStr = row[dateIndex];
-          let rowDate;
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex] || '';
+          const telegram = row[telegramColIndex] || '';
           
-          if (dateStr.includes('.')) {
-            const [day, month, year] = dateStr.split('.');
-            rowDate = new Date(2000 + parseInt(year), parseInt(month) - 1, parseInt(day));
-          } else {
-            rowDate = new Date(dateStr);
-          }
+          if (!name || !telegram) return;
 
-          if (isNaN(rowDate.getTime()) || rowDate < monday) continue;
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
 
-          const name = row[nameIndex];
-          const tickets = parseInt(row[ticketsIndex]) || 0;
-          const timeStr = row[timeIndex] || '0';
-          let timeMinutes = 0;
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                    }
+                  }
+                }
+              }
+            }
+          });
 
-          if (timeStr.includes('г') || timeStr.includes('хв')) {
-            const hours = timeStr.match(/(\d+)г/);
-            const minutes = timeStr.match(/(\d+)хв/);
-            timeMinutes = (hours ? parseInt(hours[1]) * 60 : 0) + (minutes ? parseInt(minutes[1]) : 0);
-          } else {
-            timeMinutes = parseInt(timeStr) || 0;
-          }
-
-          if (!weekData[name]) {
-            weekData[name] = { tickets: 0, time: 0 };
-          }
-          weekData[name].tickets += tickets;
-          weekData[name].time += timeMinutes;
-        }
-
-        const sortedAdmins = Object.entries(weekData)
-          .map(([name, stats]) => ({ name, ...stats }))
-          .sort((a, b) => b.tickets - a.tickets || b.time - a.time)
-          .slice(0, 5);
-
-        const lowAdmins = Object.entries(weekData)
-          .map(([name, stats]) => ({ name, ...stats }))
-          .filter(admin => !excludedLowAdmins.includes(admin.name))
-          .sort((a, b) => a.tickets - b.tickets || a.time - b.time)
-          .slice(0, 3);
-
-        const topContainer = document.getElementById('top-admins-container');
-        const lowContainer = document.getElementById('low-admins-container');
-        
-        topContainer.innerHTML = sortedAdmins.map((admin, index) => {
-          const medal = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'][index];
-          return `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(139, 92, 246, 0.1); border-radius: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="font-weight: 600;">${medal} ${admin.name}</span>
-              <span style="color: var(--text-secondary);">${admin.tickets} тікетів, ${formatTime(admin.time)}</span>
-            </div>
-          `;
-        }).join('');
-
-        lowContainer.innerHTML = lowAdmins.map(admin => `
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: rgba(234, 88, 12, 0.1); border-radius: 0.5rem; margin-bottom: 0.5rem;">
-            <span style="font-weight: 600;">⚠️ ${admin.name}</span>
-            <span style="color: var(--text-secondary);">${admin.tickets} тікетів, ${formatTime(admin.time)}</span>
-          </div>
-        `).join('');
-
-        const weekRange = getWeekRange();
-        document.getElementById('week-range').textContent = `Період: ${weekRange}`;
-        document.getElementById('low-week-range').textContent = `Період: ${weekRange}`;
-
-      } catch (error) {
-        console.error('Помилка при завантаженні топ адмінів:', error);
-      }
-    }
-
-    async function loadUserStats(username) {
-      try {
-        const data = await getSheetData('Статистика');
-        if (!data || data.length < 2) {
-          console.log('Немає даних для статистики користувача');
-          return;
-        }
-
-        const headers = data[0];
-        const dateIndex = headers.findIndex(h => h.toLowerCase().includes('дата'));
-        const nameIndex = headers.findIndex(h => h.toLowerCase().includes('нік') || h.toLowerCase().includes('ім\'я'));
-        const ticketsIndex = headers.findIndex(h => h.toLowerCase().includes('тікет'));
-        const timeIndex = headers.findIndex(h => h.toLowerCase().includes('час'));
-
-        if (dateIndex === -1 || nameIndex === -1 || ticketsIndex === -1 || timeIndex === -1) {
-          console.error('Не знайдено необхідні колонки');
-          return;
-        }
-
-        const userRows = data.filter(row => row[nameIndex] === username);
-        
-        if (userRows.length === 0) {
-          console.log('Користувача не знайдено в статистиці');
-          document.getElementById('admin-notice').classList.remove('hidden');
-          return;
-        }
-
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        
-        const dayOfWeek = now.getDay();
-        const monday = new Date(now);
-        monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
-        monday.setHours(0, 0, 0, 0);
-
-        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-        let todayStats = { tickets: 0, time: 0 };
-        let weekStats = { tickets: 0, time: 0 };
-        let monthStats = { tickets: 0, time: 0 };
-        const dailyStats = [];
-
-        userRows.forEach(row => {
-          if (!row[dateIndex]) return;
-
-          const dateStr = row[dateIndex];
-          let rowDate;
-          
-          if (dateStr.includes('.')) {
-            const [day, month, year] = dateStr.split('.');
-            rowDate = new Date(2000 + parseInt(year), parseInt(month) - 1, parseInt(day));
-          } else {
-            rowDate = new Date(dateStr);
-          }
-
-          if (isNaN(rowDate.getTime())) return;
-
-          const tickets = parseInt(row[ticketsIndex]) || 0;
-          const timeStr = row[timeIndex] || '0';
-          let timeMinutes = 0;
-
-          if (timeStr.includes('г') || timeStr.includes('хв')) {
-            const hours = timeStr.match(/(\d+)г/);
-            const minutes = timeStr.match(/(\d+)хв/);
-            timeMinutes = (hours ? parseInt(hours[1]) * 60 : 0) + (minutes ? parseInt(minutes[1]) : 0);
-          } else {
-            timeMinutes = parseInt(timeStr) || 0;
-          }
-
-          if (rowDate.getTime() === today.getTime()) {
-            todayStats.tickets += tickets;
-            todayStats.time += timeMinutes;
-          }
-
-          if (rowDate >= monday) {
-            weekStats.tickets += tickets;
-            weekStats.time += timeMinutes;
-          }
-
-          if (rowDate >= firstDayOfMonth) {
-            monthStats.tickets += tickets;
-            monthStats.time += timeMinutes;
-          }
-
-          dailyStats.push({
-            date: rowDate.toLocaleDateString('uk-UA'),
-            tickets,
-            time: timeMinutes,
-            inactive: row[4] || '—'
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
           });
         });
 
-        document.getElementById('today-tickets').textContent = todayStats.tickets;
-        document.getElementById('today-time').textContent = formatTime(todayStats.time);
-        document.getElementById('week-tickets').textContent = weekStats.tickets;
-        document.getElementById('week-time').textContent = formatTime(weekStats.time);
-        document.getElementById('month-tickets').textContent = monthStats.tickets;
-        document.getElementById('month-time').textContent = formatTime(monthStats.time);
+        admins.sort((a, b) => {
+          if (b.tickets !== a.tickets) return b.tickets - a.tickets;
+          return b.time - a.time;
+        });
 
-        const dailyStatsBody = document.getElementById('daily-stats-body');
-        dailyStatsBody.innerHTML = dailyStats
-          .sort((a, b) => new Date(b.date.split('.').reverse().join('-')) - new Date(a.date.split('.').reverse().join('-')))
-          .slice(0, 10)
-          .map(stat => `
-            <tr>
-              <td>${stat.date}</td>
-              <td>${stat.tickets}</td>
-              <td>${formatTime(stat.time)}</td>
-              <td>${stat.inactive}</td>
-            </tr>
-          `).join('');
-
-        createChart(dailyStats.slice(-7));
-
+        return admins.slice(0, 5);
       } catch (error) {
-        console.error('Помилка при завантаженні статистики користувача:', error);
+        console.error('Помилка при завантаженні топу адміністраторів:', error);
+        return [];
       }
     }
 
-    function createChart(data) {
-      const ctx = document.getElementById('statsChart').getContext('2d');
-      
-      if (window.myChart) {
-        window.myChart.destroy();
+    async function getLowAdmins(weekRange) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) return [];
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const timeHeaders = timeData[0] || [];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
+        const admins = [];
+
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex] || '';
+          const telegram = row[telegramColIndex] || '';
+          
+          if (!name || !telegram || excludedLowAdmins.includes(telegram)) return;
+
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
+          });
+        });
+
+        admins.sort((a, b) => {
+          if (a.tickets !== b.tickets) return a.tickets - b.tickets;
+          return a.time - b.time;
+        });
+
+        return admins.slice(0, 5);
+      } catch (error) {
+        console.error('Помилка при завантаженні адміністраторів з низькою активністю:', error);
+        return [];
       }
+    }
 
-      const labels = data.map(d => d.date);
-      const ticketsData = data.map(d => d.tickets);
-      const timeData = data.map(d => Math.round(d.time / 60 * 10) / 10);
-
-      window.myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Тікети',
-            data: ticketsData,
-            borderColor: '#8b5cf6',
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-            tension: 0.4,
-            fill: true
-          }, {
-            label: 'Час (години)',
-            data: timeData,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              labels: {
-                color: '#f8fafc'
-              }
-            }
-          },
-          scales: {
-            x: {
-              ticks: {
-                color: '#cbd5e1'
-              },
-              grid: {
-                color: 'rgba(203, 213, 225, 0.1)'
-              }
-            },
-            y: {
-              ticks: {
-                color: '#cbd5e1'
-              },
-              grid: {
-                color: 'rgba(203, 213, 225, 0.1)'
-              }
-            }
-          }
+    function renderTopAdmins(admins, weekRange) {
+      const container = document.getElementById('top-admins-container');
+      container.innerHTML = '';
+      
+      document.getElementById('week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      admins.forEach((admin, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item';
+        
+        let medalClass = 'normal';
+        let medal = '';
+        
+        if (index === 0) {
+          medalClass = 'gold';
+          medal = '🥇';
+        } else if (index === 1) {
+          medalClass = 'silver';
+          medal = '🥈';
+        } else if (index === 2) {
+          medalClass = 'bronze';
+          medal = '🥉';
         }
+        
+        item.innerHTML = `
+          <div class="admin-avatar ${medalClass}">
+            <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+                 alt="${admin.name}" 
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          </div>
+          <div class="admin-info">
+            <div class="admin-name">${admin.name}</div>
+            <div class="admin-stats">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
+          </div>
+          <div class="${medalClass} medal">${medal}</div>
+        `;
+        
+        container.appendChild(item);
+      });
+
+      VanillaTilt.init(document.querySelectorAll('#top-admins-section'), {
+        max: 8,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.2
       });
     }
 
-    function onTelegramAuth(user) {
-      console.log('Telegram auth:', user);
-      const username = '@' + user.username;
+    function renderLowAdmins(admins, weekRange) {
+      const container = document.getElementById('low-admins-container');
+      container.innerHTML = '';
       
-      if (!allowedAdmins.includes(username)) {
-        console.log('Доступ заборонено для:', username);
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('low-week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      admins.forEach((admin, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item low';
+        
+        item.innerHTML = `
+          <div class="admin-avatar low">
+            <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+                 alt="${admin.name}" 
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          </div>
+          <div class="admin-info">
+            <div class="admin-name">${admin.name}</div>
+            <div class="admin-stats">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
+          </div>
+          <div class="low-medal">⚠️</div>
+        `;
+        
+        container.appendChild(item);
+      });
+
+      VanillaTilt.init(document.querySelectorAll('#low-admins-section'), {
+        max: 8,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.2
+      });
+    }
+
+    async function loadAndRenderAdmins() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKeyTop = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cacheKeyLow = `lowAdmins_${weekRange.start}_${weekRange.end}`;
+      
+      if (!shouldRefreshTopAdmins()) {
+        const cachedTopData = localStorage.getItem(cacheKeyTop);
+        const cachedLowData = localStorage.getItem(cacheKeyLow);
+        
+        if (cachedTopData) {
+          const { admins } = JSON.parse(cachedTopData);
+          renderTopAdmins(admins, weekRange);
+        }
+        
+        if (cachedLowData) {
+          const { admins } = JSON.parse(cachedLowData);
+          renderLowAdmins(admins, weekRange);
+        }
+        
+        if (cachedTopData && cachedLowData) return;
+      }
+      
+      const [topAdmins, lowAdmins] = await Promise.all([
+        getTopAdmins(weekRange),
+        getLowAdmins(weekRange)
+      ]);
+      
+      localStorage.setItem(cacheKeyTop, JSON.stringify({ admins: topAdmins }));
+      localStorage.setItem(cacheKeyLow, JSON.stringify({ admins: lowAdmins }));
+      localStorage.setItem('topAdminsLastUpdate', Date.now());
+      
+      renderTopAdmins(topAdmins, weekRange);
+      renderLowAdmins(lowAdmins, weekRange);
+    }
+
+    async function fetchUserStatsByTelegram(telegramUsername) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) {
+          console.error('Дані не знайдено');
+          alert('Дані не знайдено');
+          return;
+        }
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+
+        if (telegramColIndex === -1 || nameColIndex === -1) {
+          console.error('Помилка структури даних: відсутні необхідні стовпці');
+          alert('Помилка структури даних: відсутні необхідні стовпці');
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
+        if (!userTicketsRow) {
+          console.error('Користувача не знайдено в таблиці тікетів:', telegramUsername);
+          alert('Користувача не знайдено в таблиці тікетів');
+          return;
+        }
+
+        const userName = userTicketsRow[nameColIndex];
+
+        const timeHeaders = timeData[0] || [];
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
+        if (!userTimeRow) {
+          console.error('Користувача не знайдено в таблиці часу:', userName);
+          alert('Користувача не знайдено в таблиці часу');
+          return;
+        }
+
+        const today = getDateWithoutTime(new Date());
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({ header: h, index: i }))
+          .filter(({ header }) => /^\d{2}\.\d{2}\.\d{4}$/.test(header));
+
+        function sumTicketsAndTime(startDate, endDate) {
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          dateCols.forEach(({ header, index }) => {
+            const dt = parseDate(header);
+            if (dt >= startDate && dt <= endDate) {
+              ticketsSum += parseInt(userTicketsRow[index]) || 0;
+              const timeColIndex = timeHeaders.indexOf(header);
+              if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+                const timeStr = userTimeRow[timeColIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                }
+              }
+            }
+          });
+
+          return { ticketsSum, timeSecondsSum };
+        }
+
+        const todayStats = sumTicketsAndTime(today, today);
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        const weekStats = sumTicketsAndTime(weekStart, today);
+        const monthStats = sumTicketsAndTime(monthStart, today);
+
+        document.getElementById('today-tickets').textContent = todayStats.ticketsSum || 0;
+        document.getElementById('today-time').textContent = secondsToHHMMSS(todayStats.timeSecondsSum);
+        document.getElementById('week-tickets').textContent = weekStats.ticketsSum || 0;
+        document.getElementById('week-time').textContent = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
+        document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
+
+        const tbody = document.getElementById('daily-stats-body');
+        tbody.innerHTML = '';
+        let inactiveCount = 0;
+        const chartLabels = [];
+        const chartTickets = [];
+        const chartTimeHours = [];
+
+        dateCols.forEach(({ header, index }) => {
+          const dt = parseDate(header);
+          if (dt >= monthStart && dt <= today) {
+            const dayTickets = parseInt(userTicketsRow[index]) || 0;
+            const timeColIndex = timeHeaders.indexOf(header);
+            let dayTimeStr = 'Н';
+            let dayTimeSeconds = 0;
+            if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+              dayTimeStr = userTimeRow[timeColIndex];
+              if (dayTimeStr !== 'Н') {
+                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+              }
+            }
+            if (dayTimeStr === 'Н') inactiveCount++;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${header}</td>
+              <td>${dayTickets}</td>
+              <td>${dayTimeStr}</td>
+              <td>${dayTimeStr === 'Н' ? 'Так' : ''}</td>
+            `;
+            tbody.appendChild(tr);
+
+            chartLabels.push(header);
+            chartTickets.push(dayTickets);
+            chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
+          }
+        });
+
+        const trTotal = document.createElement('tr');
+        trTotal.innerHTML = `
+          <td class="font-bold">Усього неактивів</td>
+          <td class="font-bold" colspan="3">${inactiveCount}</td>
+        `;
+        tbody.appendChild(trTotal);
+
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+        window.statsChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartLabels,
+            datasets: [
+              {
+                label: 'Тікети',
+                data: chartTickets,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                yAxisID: 'yTickets',
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                fill: true,
+              },
+              {
+                label: 'Час у грі (години)',
+                data: chartTimeHours,
+                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                yAxisID: 'yTime',
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                fill: true,
+              }
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            scales: {
+              yTickets: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Тікети',
+                  color: 'var(--text-primary)',
+                  font: { size: 14, weight: '600' },
+                },
+                beginAtZero: true,
+                ticks: { 
+                  color: 'var(--text-secondary)',
+                  precision: 0,
+                  maxTicksLimit: 6,
+                },
+                grid: { 
+                  color: 'rgba(255, 255, 255, 0.1)',
+                  borderColor: 'var(--text-secondary)',
+                },
+              },
+              yTime: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Час (години)',
+                  color: 'var(--text-primary)',
+                  font: { size: 14, weight: '600' },
+                },
+                beginAtZero: true,
+                ticks: { 
+                  color: 'var(--text-secondary)',
+                  precision: 1,
+                  maxTicksLimit: 6,
+                },
+                grid: { drawOnChartArea: false },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 0,
+                  minRotation: 0,
+                  maxTicksLimit: 7,
+                  color: 'var(--text-secondary)',
+                  font: { size: 12 },
+                  callback: function(value, index, values) {
+                    const date = this.getLabelForValue(value);
+                    const [day, month] = date.split('.');
+                    return `${day}.${month}`;
+                  }
+                },
+                grid: { 
+                  color: 'rgba(255, 255, 255, 0.1)',
+                  borderColor: 'var(--text-secondary)',
+                },
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { 
+                  color: 'var(--text-primary)',
+                  font: { size: 12, weight: '600' },
+                  padding: 15,
+                  boxWidth: 20,
+                },
+              },
+              tooltip: {
+                backgroundColor: 'var(--glass-bg)',
+                titleFont: { size: 14, weight: '600' },
+                bodyFont: { size: 12 },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                    ? `${ctx.parsed.y} год`
+                    : ctx.parsed.y,
+                }
+              }
+            },
+            animation: {
+              duration: 1500,
+              easing: 'easeOutCubic',
+            }
+          },
+        });
+      } catch (error) {
+        console.error('Помилка під час завантаження даних:', error);
+        alert('Помилка під час завантаження даних');
+      }
+    }
+
+    function showAccessDenied() {
+      console.log('Showing access denied section');
+      document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+    }
+
+    async function onTelegramAuth(user) {
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        showAccessDenied();
         return;
       }
 
-      console.log('Доступ дозволено для:', username);
-      
-      if (superAdmins.includes(username)) {
-        document.getElementById('superMenuCategory').style.display = 'block';
-        document.getElementById('superMenuItem1').style.display = 'block';
-        document.getElementById('superMenuItem2').style.display = 'block';
-        document.getElementById('superMenuItem3').style.display = 'block';
+      const telegramUsername = '@' + user.username;
+      console.log('Processing user:', telegramUsername);
+
+      if (allowedAdmins.includes(telegramUsername)) {
+        console.log('User is in allowedAdmins');
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        console.log('Calling showDashboard for admin');
+        await showDashboard(userData.nickname, telegramUsername, true);
+        return;
       }
 
+      try {
+        console.log('Fetching tickets data for non-admin user');
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          console.error('No tickets data found');
+          showAccessDenied();
+          return;
+        }
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          showAccessDenied();
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          console.log('User found in tickets data:', userTicketsRow);
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: false
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          console.log('Calling showDashboard for non-admin');
+          await showDashboard(userData.nickname, telegramUsername, false);
+        } else {
+          console.error('User not found in tickets data:', telegramUsername);
+          localStorage.removeItem('tg_auth');
+          showAccessDenied();
+        }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        showAccessDenied();
+      }
+    }
+
+    async function showDashboard(nickname, telegramUsername, isAdmin) {
+      console.log('showDashboard called:', { nickname, telegramUsername, isAdmin });
+
+      if (!isAdmin) {
+        try {
+          console.log('Verifying non-admin user access');
+          const ticketsData = await getSheetData('Май_2025_таблица');
+          if (!ticketsData.length) {
+            console.error('No tickets data for verification');
+            showAccessDenied();
+            return;
+          }
+          const ticketsHeaders = ticketsData[0];
+          const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+          
+          const userExists = ticketsData.some(row => 
+            row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+          );
+          
+          if (!userExists) {
+            console.error('User not found during verification:', telegramUsername);
+            showAccessDenied();
+            return;
+          }
+        } catch (error) {
+          console.error('Помилка перевірки доступу:', error);
+          showAccessDenied();
+          return;
+        }
+      }
+
+      console.log('Showing dashboard');
       document.getElementById('login-section').style.display = 'none';
-      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('sidebarToggle').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
       
-      document.getElementById('welcome-header').textContent = `Вітаємо, ${user.first_name}!`;
+      if (superAdmins.includes(telegramUsername)) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
       
-      loadTopAdmins();
-      loadUserStats(username);
+      document.getElementById('top-admins-section').classList.remove('hidden');
+      document.getElementById('low-admins-section').classList.remove('hidden');
+      console.log('Loading admins data');
+      await loadAndRenderAdmins();
+      
+      if (isAdmin) {
+        console.log('User is admin, showing admin notice');
+        document.getElementById('admin-notice').classList.remove('hidden');
+        document.getElementById('stats-section').classList.add('hidden');
+      } else {
+        console.log('User is not admin, fetching stats');
+        document.getElementById('admin-notice').classList.add('hidden');
+        document.getElementById('stats-section').classList.remove('hidden');
+        await fetchUserStatsByTelegram(telegramUsername);
+      }
+    }
+
+    function showLoginForm() {
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.querySelector('h1').innerText = 'Ласкаво просимо!';
+      document.getElementById('top-admins-section').classList.add('hidden');
+      document.getElementById('low-admins-section').classList.add('hidden');
     }
 
     function logout() {
-      document.getElementById('login-section').style.display = 'flex';
-      document.getElementById('access-denied-section').style.display = 'none';
-      document.getElementById('dashboard').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('admin-notice').classList.add('hidden');
-      
-      document.getElementById('superMenuCategory').style.display = 'none';
-      document.getElementById('superMenuItem1').style.display = 'none';
-      document.getElementById('superMenuItem2').style.display = 'none';
-      document.getElementById('superMenuItem3').style.display = 'none';
-      
-      document.getElementById('welcome-header').textContent = 'Ласкаво просимо!';
+      console.log('Logging out');
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
     }
 
-    document.getElementById('logout-btn').addEventListener('click', logout);
-
-    window.addEventListener('load', () => {
-      document.body.classList.add('animate-fade-in');
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
+      }
+      
+      setInterval(() => {
+        if (shouldRefreshTopAdmins()) {
+          console.log('Auto-refreshing admins data');
+          autoRefreshData();
+        }
+      }, 5 * 60 * 1000);
+      
+      console.log('Initial admins data load');
+      autoRefreshData();
     });
   </script>
 </body>
