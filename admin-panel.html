@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Сучасна Адмін Панель</title>
+    <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background: #1f2937;
+            --foreground: #f9fafb;
+            --card: #374151;
+            --card-foreground: #f9fafb;
+            --primary: #dc2626;
+            --primary-foreground: #f9fafb;
+            --secondary: #f59e0b;
+            --secondary-foreground: #1f2937;
+            --muted: #4b5563;
+            --muted-foreground: #9ca3af;
+            --accent: #f59e0b;
+            --accent-foreground: #1f2937;
+            --border: #4b5563;
+            --input: #374151;
+            --ring: rgba(220, 38, 38, 0.3);
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--muted);
+        }
+
+        .btn-destructive {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .btn-destructive:hover {
+            background: #b91c1c;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Search */
+        .search-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--foreground);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--ring);
+        }
+
+        .search-input::placeholder {
+            color: var(--muted-foreground);
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--muted);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--foreground);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table th:hover {
+            background: var(--border);
+        }
+
+        .table th.sorted-asc::after {
+            content: " ↑";
+            color: var(--primary);
+        }
+
+        .table th.sorted-desc::after {
+            content: " ↓";
+            color: var(--primary);
+        }
+
+        .table td {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .table tbody tr:hover {
+            background: var(--muted);
+        }
+
+        /* Rank Badge */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+        .rank-2 { background: linear-gradient(135deg, #d1d5db, #9ca3af); }
+        .rank-3 { background: linear-gradient(135deg, #cd7c2f, #92400e); }
+        .rank-default { background: var(--primary); }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: var(--card);
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 1200px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--muted-foreground);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--foreground);
+        }
+
+        /* Employee Details */
+        .employee-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .employee-avatar {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-foreground);
+        }
+
+        .employee-name {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .employee-telegram {
+            color: var(--accent);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .employee-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .employee-stat-card {
+            background: var(--input);
+            border-radius: var(--radius);
+            padding: 1rem;
+            min-width: 120px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .employee-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .employee-stat-label {
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        /* Week Container */
+        .week-container {
+            margin-bottom: 1.5rem;
+            background: var(--input);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .week-header {
+            background: var(--muted);
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .day-cell {
+            background: var(--input);
+            padding: 1rem;
+            min-height: 120px;
+        }
+
+        .day-date {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted-foreground);
+        }
+
+        .day-stat {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .norm-indicator {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+        }
+
+        .norm-fulfilled { background: #10b981; }
+        .norm-stretched { background: var(--accent); }
+        .norm-missing { background: var(--primary); }
+        .norm-fired { background: var(--muted); }
+
+        /* Loader */
+        .loader {
+            border: 4px solid var(--muted);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            color: white;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            max-width: 400px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success { background: #10b981; }
+        .notification.error { background: var(--primary); }
+        .notification.info { background: var(--accent); color: var(--accent-foreground); }
+
+        /* Utilities */
+        .hidden { display: none; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .gap-2 { gap: 0.5rem; }
+        .font-medium { font-weight: 500; }
+        .text-sm { font-size: 0.875rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header { flex-direction: column; gap: 1rem; }
+            .header-title { font-size: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .employee-header { flex-direction: column; text-align: center; }
+            .days-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="header-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                Сучасна Адмін Панель
+            </h1>
+            <div class="header-actions">
+                <button id="refresh-btn" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    Оновити
+                </button>
+                <button id="admin-logout-btn" class="btn btn-destructive">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    </svg>
+                    Вийти
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card animate-fade-in-up">
+                <h3 class="stat-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 2 2h8c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h4v2zm0-3H9V6h4v2z"/>
+                    </svg>
+                    Тикети
+                </h3>
+                <div class="stat-item">
+                    <span>За вчора:</span>
+                    <span id="total-tickets-yesterday" class="stat-value">...</span>
+                </div>
+                <div class="stat-item">
+                    <span>За тиждень:</span>
+                    <span id="total-tickets-week" class="stat-value">...</span>
+                </div>
+                <div class="stat-item">
+                    <span>За місяць:</span>
+                    <span id="total-tickets-month" class="stat-value">...</span>
+                </div>
+            </div>
+
+            <div class="stat-card animate-fade-in-up" style="animation-delay: 0.1s">
+                <h3 class="stat-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+                    </svg>
+                    Топ співробітників
+                </h3>
+                <div class="stat-item">
+                    <span>Тікети (вчора):</span>
+                    <span id="top-tickets" class="stat-value">...</span>
+                </div>
+                <div class="stat-item">
+                    <span>Час у грі (вчора):</span>
+                    <span id="top-time" class="stat-value">...</span>
+                </div>
+                <div class="stat-item">
+                    <span>Конкурс:</span>
+                    <span id="top-contest" class="stat-value">...</span>
+                </div>
+            </div>
+
+            <div class="stat-card animate-fade-in-up" style="animation-delay: 0.2s">
+                <h3 class="stat-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v-3h2l1 2h2l1-2h2v3h3v4H4z"/>
+                    </svg>
+                    Співробітники
+                </h3>
+                <div class="stat-item">
+                    <span>Кількість:</span>
+                    <span id="total-employees" class="stat-value">...</span>
+                </div>
+                <div class="stat-item">
+                    <span>Середня активність:</span>
+                    <span id="avg-activity" class="stat-value">...</span>
+                </div>
+            </div>
+
+            <div class="stat-card animate-fade-in-up" style="animation-delay: 0.3s">
+                <h3 class="stat-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                    </svg>
+                    Загальна статистика
+                </h3>
+                <div class="stat-item">
+                    <span>Тікети (всього):</span>
+                    <span id="total-tickets-all" class="stat-value">...</span>
+                </div>
+                <div class="stat-item">
+                    <span>Час (всього):</span>
+                    <span id="total-time-all" class="stat-value">...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="🔍 Пошук співробітників за ім'ям або Telegram...">
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="loader"></div>
+
+        <!-- Table -->
+        <div id="admin-stats-container" class="hidden">
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th data-sort="name">Співробітник</th>
+                            <th data-sort="yesterday-tickets">Тікети (вчора)</th>
+                            <th data-sort="yesterday-time">Час (вчора)</th>
+                            <th data-sort="week-tickets">Тікети (тиждень)</th>
+                            <th data-sort="week-time">Час (тиждень)</th>
+                            <th data-sort="month-tickets">Тікети (місяць)</th>
+                            <th data-sort="month-time">Час (місяць)</th>
+                            <th data-sort="total-tickets">Тікети (всього)</th>
+                            <th data-sort="total-time">Час (всього)</th>
+                            <th data-sort="rank">Місце</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-stats-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Modal -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="employee-header">
+                <div class="employee-avatar" id="employee-avatar">JD</div>
+                <div class="employee-info">
+                    <h2 class="employee-name" id="employee-name">Іван Петренко</h2>
+                    <div class="employee-telegram" id="employee-telegram">@ivan_p</div>
+                    <div class="employee-stats">
+                        <div class="employee-stat-card">
+                            <div class="employee-stat-value" id="employee-rank">3</div>
+                            <div class="employee-stat-label">Місце</div>
+                        </div>
+                        <div class="employee-stat-card">
+                            <div class="employee-stat-value" id="employee-total-tickets">215</div>
+                            <div class="employee-stat-label">Тікети (місяць)</div>
+                        </div>
+                        <div class="employee-stat-card">
+                            <div class="employee-stat-value" id="employee-total-time">98.5 год</div>
+                            <div class="employee-stat-label">Час (місяць)</div>
+                        </div>
+                        <div class="employee-stat-card">
+                            <div class="employee-stat-value" id="employee-total-all-tickets">500</div>
+                            <div class="employee-stat-label">Тікети (всього)</div>
+                        </div>
+                        <div class="employee-stat-card">
+                            <div class="employee-stat-value" id="employee-total-all-time">250 год</div>
+                            <div class="employee-stat-label">Час (всього)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="weeks-container"></div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+        const allowedAdmins = [
+            '@laker_77',
+            '@noxx_uagtaV',
+            '@c10mm',
+            '@zhdanovrostyslav',
+        ].map(admin => admin.toLowerCase().trim());
+
+        let employeesData = [];
+        let ticketsData = [];
+        let timeData = [];
+        let currentSort = { column: 'rank', direction: 'asc' };
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        async function getSheetData(sheetName) {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+            try {
+                const res = await axios.get(url);
+                return res.data.values;
+            } catch (error) {
+                console.error('Помилка під час отримання даних:', error);
+                showNotification('Помилка завантаження даних', 'error');
+                return null;
+            }
+        }
+
+        function parseDate(str) {
+            const [d, m, y] = str.split('.');
+            return new Date(y, m-1, d);
+        }
+
+        function formatDate(date) {
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            return `${dd}.${mm}.${yyyy}`;
+        }
+
+        function secondsToHHMMSS(seconds) {
+            if (seconds === 0) return "0г 0хв";
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            return `${hours}г ${minutes}хв`;
+        }
+
+        function timeToSeconds(timeStr) {
+            if (!timeStr || timeStr === 'Н') return 0;
+            const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        function getRankElement(rank) {
+            let rankClass = "rank-default";
+            if (rank === 1) rankClass = "rank-1";
+            else if (rank === 2) rankClass = "rank-2";
+            else if (rank === 3) rankClass = "rank-3";
+            return `<span class="rank-badge ${rankClass}">${rank}</span>`;
+        }
+
+        function getNormStatus(tickets, timeSeconds) {
+            if (timeSeconds === 0) return "Звільнений";
+            if (tickets >= 15 && timeSeconds >= 10800) return "Норма виконана";
+            if (tickets >= 10 && timeSeconds >= 7200) return "Норма натягнута";
+            return "Норма не виконана";
+        }
+
+        function getNormClass(normStatus) {
+            switch(normStatus) {
+                case "Норма виконана": return "norm-fulfilled";
+                case "Норма натягнута": return "norm-stretched";
+                case "Звільнений": return "norm-fired";
+                default: return "norm-missing";
+            }
+        }
+
+        async function calculateAdminStats() {
+            try {
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - 7);
+                const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+                ticketsData = await getSheetData('Май_2025_таблица');
+                timeData = await getSheetData('Время_в_игре');
+
+                if (!ticketsData || !timeData) {
+                    throw new Error("Не вдалося отримати дані з Google Sheets");
+                }
+
+                const ticketsHeaders = ticketsData[0];
+                const timeHeaders = timeData[0];
+                const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+                const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+
+                const dateCols = ticketsHeaders
+                    .map((h, i) => ({ h, i }))
+                    .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+
+                const employees = [];
+                let totalTicketsYesterday = 0;
+                let totalTicketsWeek = 0;
+                let totalTicketsMonth = 0;
+                let totalTicketsAll = 0;
+                let totalTimeAll = 0;
+                let totalActiveDays = 0;
+                let maxTicketsYesterday = 0;
+                let maxTimeYesterday = 0;
+                let maxTicketsEmployee = "";
+                let maxTimeEmployee = "";
+
+                const yesterdayStr = formatDate(yesterday);
+
+                for (let i = 1; i < ticketsData.length; i++) {
+                    const ticketRow = ticketsData[i];
+                    const employeeName = ticketRow[nameColIndex];
+                    const telegram = ticketRow[telegramColIndex];
+                    const timeRow = timeData.find(row => row[timeNameColIndex] === employeeName);
+
+                    if (!timeRow) continue;
+
+                    let yesterdayTickets = 0;
+                    let yesterdayTime = 0;
+                    let weekTickets = 0;
+                    let weekTime = 0;
+                    let monthTickets = 0;
+                    let monthTime = 0;
+                    let totalTickets = 0;
+                    let totalTime = 0;
+                    let activeDays = 0;
+
+                    for (const { h: dateStr, i: dateIndex } of dateCols) {
+                        const date = parseDate(dateStr);
+                        const tickets = parseInt(ticketRow[dateIndex]) || 0;
+                        const timeColIndex = timeHeaders.indexOf(dateStr);
+                        let timeSeconds = 0;
+
+                        if (timeColIndex >= 0 && timeRow[timeColIndex] && timeRow[timeColIndex] !== 'Н') {
+                            timeSeconds = timeToSeconds(timeRow[timeColIndex]);
+                            if (timeSeconds > 0) activeDays++;
+                        }
+
+                        totalTickets += tickets;
+                        totalTime += timeSeconds;
+
+                        if (dateStr === yesterdayStr) {
+                            yesterdayTickets = tickets;
+                            yesterdayTime = timeSeconds;
+                            totalTicketsYesterday += tickets;
+
+                            if (tickets > maxTicketsYesterday) {
+                                maxTicketsYesterday = tickets;
+                                maxTicketsEmployee = employeeName;
+                            }
+                            if (timeSeconds > maxTimeYesterday) {
+                                maxTimeYesterday = timeSeconds;
+                                maxTimeEmployee = employeeName;
+                            }
+                        }
+
+                        if (date >= weekStart && date <= today) {
+                            weekTickets += tickets;
+                            weekTime += timeSeconds;
+                        }
+
+                        if (date >= monthStart && date <= monthEnd) {
+                            monthTickets += tickets;
+                            monthTime += timeSeconds;
+                        }
+                    }
+
+                    totalTicketsWeek += weekTickets;
+                    totalTicketsMonth += monthTickets;
+                    totalTicketsAll += totalTickets;
+                    totalTimeAll += totalTime;
+                    totalActiveDays += activeDays;
+
+                    employees.push({
+                        name: employeeName,
+                        telegram: telegram,
+                        stats: {
+                            yesterday: { tickets: yesterdayTickets, time: yesterdayTime },
+                            week: { tickets: weekTickets, time: weekTime },
+                            month: { tickets: monthTickets, time: monthTime },
+                            total: { tickets: totalTickets, time: totalTime }
+                        }
+                    });
+                }
+
+                employees.sort((a, b) => {
+                    if (b.stats.month.tickets !== a.stats.month.tickets) {
+                        return b.stats.month.tickets - a.stats.month.tickets;
+                    }
+                    return b.stats.month.time - a.stats.month.time;
+                });
+
+                employees.forEach((emp, index) => {
+                    emp.rank = index + 1;
+                });
+
+                // Update UI
+                document.getElementById('total-employees').textContent = employees.length;
+                document.getElementById('total-tickets-yesterday').textContent = totalTicketsYesterday;
+                document.getElementById('total-tickets-week').textContent = totalTicketsWeek;
+                document.getElementById('total-tickets-month').textContent = totalTicketsMonth;
+                document.getElementById('total-tickets-all').textContent = totalTicketsAll;
+                document.getElementById('total-time-all').textContent = secondsToHHMMSS(totalTimeAll);
+
+                const avgActivity = totalActiveDays > 0 ? Math.round((totalActiveDays / employees.length) * 100) / 100 : 0;
+                document.getElementById('avg-activity').textContent = `${avgActivity} дн/м`;
+
+                document.getElementById('top-tickets').textContent = maxTicketsEmployee ? 
+                    `${maxTicketsEmployee} - ${maxTicketsYesterday}` : "Немає даних";
+                document.getElementById('top-time').textContent = maxTimeEmployee ? 
+                    `${maxTimeEmployee} - ${secondsToHHMMSS(maxTimeYesterday)}` : "Немає даних";
+                document.getElementById('top-contest').textContent = employees[0] ? 
+                    `${employees[0].name} - 1 місце` : "Немає даних";
+
+                return employees;
+            } catch (error) {
+                console.error('Помилка під час отримання даних:', error);
+                showNotification('Помилка завантаження даних', 'error');
+                return [];
+            }
+        }
+
+        function sortData(data, column, direction = 'asc') {
+            return [...data].sort((a, b) => {
+                let valueA, valueB;
+
+                switch(column) {
+                    case 'name':
+                        valueA = a.name.toLowerCase();
+                        valueB = b.name.toLowerCase();
+                        return direction === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+                    case 'yesterday-tickets':
+                        valueA = a.stats.yesterday.tickets;
+                        valueB = b.stats.yesterday.tickets;
+                        break;
+                    case 'yesterday-time':
+                        valueA = a.stats.yesterday.time;
+                        valueB = b.stats.yesterday.time;
+                        break;
+                    case 'week-tickets':
+                        valueA = a.stats.week.tickets;
+                        valueB = b.stats.week.tickets;
+                        break;
+                    case 'week-time':
+                        valueA = a.stats.week.time;
+                        valueB = b.stats.week.time;
+                        break;
+                    case 'month-tickets':
+                        valueA = a.stats.month.tickets;
+                        valueB = b.stats.month.tickets;
+                        break;
+                    case 'month-time':
+                        valueA = a.stats.month.time;
+                        valueB = b.stats.month.time;
+                        break;
+                    case 'total-tickets':
+                        valueA = a.stats.total.tickets;
+                        valueB = b.stats.total.tickets;
+                        break;
+                    case 'total-time':
+                        valueA = a.stats.total.time;
+                        valueB = b.stats.total.time;
+                        break;
+                    case 'rank':
+                    default:
+                        valueA = a.rank;
+                        valueB = b.rank;
+                }
+
+                return direction === 'asc' ? valueA - valueB : valueB - valueA;
+            });
+        }
+
+        function renderEmployeeTable(data, searchQuery = "") {
+            const tbody = document.getElementById("admin-stats-body");
+            tbody.innerHTML = "";
+
+            const lowerQuery = searchQuery.toLowerCase();
+
+            data.forEach(employee => {
+                if (searchQuery && 
+                    !employee.name.toLowerCase().includes(lowerQuery) && 
+                    !employee.telegram.toLowerCase().includes(lowerQuery)) {
+                    return;
+                }
+
+                const row = document.createElement("tr");
+                row.dataset.employeeId = employee.telegram;
+                row.innerHTML = `
+                    <td>
+                        <div class="font-medium">${employee.name}</div>
+                        <div class="text-sm" style="color: var(--muted-foreground)">${employee.telegram}</div>
+                    </td>
+                    <td>${employee.stats.yesterday.tickets}</td>
+                    <td>${secondsToHHMMSS(employee.stats.yesterday.time)}</td>
+                    <td>${employee.stats.week.tickets}</td>
+                    <td>${secondsToHHMMSS(employee.stats.week.time)}</td>
+                    <td>${employee.stats.month.tickets}</td>
+                    <td>${secondsToHHMMSS(employee.stats.month.time)}</td>
+                    <td>${employee.stats.total.tickets}</td>
+                    <td>${secondsToHHMMSS(employee.stats.total.time)}</td>
+                    <td>${getRankElement(employee.rank)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add click handlers
+            document.querySelectorAll('#admin-stats-body tr').forEach(row => {
+                row.addEventListener('click', () => {
+                    const employeeId = row.dataset.employeeId;
+                    const employee = data.find(emp => emp.telegram === employeeId);
+                    if (employee) {
+                        showEmployeeDetails(employee);
+                    }
+                });
+            });
+        }
+
+        function showEmployeeDetails(employee) {
+            document.getElementById('employee-name').textContent = employee.name;
+            document.getElementById('employee-telegram').textContent = employee.telegram;
+            document.getElementById('employee-avatar').textContent = 
+                employee.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('employee-rank').textContent = employee.rank;
+            document.getElementById('employee-total-tickets').textContent = employee.stats.month.tickets;
+            document.getElementById('employee-total-time').textContent = 
+                secondsToHHMMSS(employee.stats.month.time);
+            document.getElementById('employee-total-all-tickets').textContent = employee.stats.total.tickets;
+            document.getElementById('employee-total-all-time').textContent = 
+                secondsToHHMMSS(employee.stats.total.time);
+
+            const weeksContainer = document.getElementById('weeks-container');
+            weeksContainer.innerHTML = '';
+
+            const dateCols = ticketsData[0]
+                .map((h, i) => ({ h, i }))
+                .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
+
+            const nameColIndex = ticketsData[0].indexOf('Имя сотрудника');
+            const ticketRow = ticketsData.find(row => row[nameColIndex] === employee.name);
+            const timeNameColIndex = timeData[0].indexOf('Имя сотрудника');
+            const timeRow = timeData.find(row => row[timeNameColIndex] === employee.name);
+
+            if (!ticketRow || !timeRow) return;
+
+            const weeks = {};
+            dateCols.forEach(({ h: dateStr }) => {
+                const date = parseDate(dateStr);
+                const year = date.getFullYear();
+                const weekNum = getWeekNumber(date);
+                const weekKey = `${year}-W${weekNum}`;
+
+                if (!weeks[weekKey]) {
+                    weeks[weekKey] = [];
+                }
+                weeks[weekKey].push({ date: dateStr, dateObj: date });
+            });
+
+            const sortedWeeks = Object.keys(weeks).sort().reverse();
+
+            sortedWeeks.forEach(weekKey => {
+                const week = weeks[weekKey];
+                const weekDates = week.map(d => d.dateObj);
+                const minDate = new Date(Math.min(...weekDates));
+                const maxDate = new Date(Math.max(...weekDates));
+
+                const weekContainer = document.createElement('div');
+                weekContainer.className = 'week-container';
+                weekContainer.innerHTML = `
+                    <div class="week-header">
+                        Тиждень ${formatDate(minDate)} - ${formatDate(maxDate)}
+                    </div>
+                    <div class="days-grid" id="days-${weekKey}"></div>
+                `;
+                weeksContainer.appendChild(weekContainer);
+
+                const daysGrid = document.getElementById(`days-${weekKey}`);
+                week.sort((a, b) => a.dateObj - b.dateObj);
+
+                week.forEach(day => {
+                    const dateStr = day.date;
+                    const tickets = parseInt(ticketRow[ticketsData[0].indexOf(dateStr)]) || 0;
+                    const timeColIndex = timeData[0].indexOf(dateStr);
+                    let timeSeconds = 0;
+
+                    if (timeColIndex >= 0 && timeRow[timeColIndex] && timeRow[timeColIndex] !== 'Н') {
+                        timeSeconds = timeToSeconds(timeRow[timeColIndex]);
+                    }
+
+                    const normStatus = getNormStatus(tickets, timeSeconds);
+                    const normClass = getNormClass(normStatus);
+
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'day-cell';
+                    dayCell.innerHTML = `
+                        <div class="day-date">
+                            <span class="norm-indicator ${normClass}"></span>
+                            ${dateStr}
+                        </div>
+                        <div class="day-stats">
+                            <div class="day-stat">Тікети: <b>${tickets}</b></div>
+                            <div class="day-stat">Час: <b>${secondsToHHMMSS(timeSeconds)}</b></div>
+                        </div>
+                    `;
+                    daysGrid.appendChild(dayCell);
+                });
+            });
+
+            document.getElementById('employee-modal').style.display = 'block';
+        }
+
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        }
+
+        async function refreshData() {
+            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('admin-stats-container').classList.add('hidden');
+
+            employeesData = await calculateAdminStats();
+
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('admin-stats-container').classList.remove('hidden');
+
+            const sortedData = sortData(employeesData, currentSort.column, currentSort.direction);
+            renderEmployeeTable(sortedData);
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", async function() {
+            const savedAuth = localStorage.getItem("tg_auth");
+            if (!savedAuth) {
+                showNotification("Будь ласка, увійдіть через головну сторінку", "error");
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2000);
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(savedAuth);
+                const telegramUsername = userData.username ? userData.username.toLowerCase().trim() : null;
+
+                if (!telegramUsername) {
+                    showNotification("Не вдалося отримати ім'я користувача з Telegram", "error");
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 3000);
+                    return;
+                }
+
+                if (!allowedAdmins.includes(telegramUsername)) {
+                    showNotification("Доступ заборонено. Ви не є адміністратором", "error");
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 5000);
+                    return;
+                }
+
+                await refreshData();
+
+                // Event listeners
+                document.getElementById("search-input").addEventListener("input", function(e) {
+                    renderEmployeeTable(employeesData, e.target.value);
+                });
+
+                document.getElementById("refresh-btn").addEventListener("click", refreshData);
+
+                document.getElementById("admin-logout-btn").addEventListener("click", function() {
+                    localStorage.removeItem("tg_auth");
+                    window.location.href = "index.html";
+                });
+
+                document.querySelector('.modal-close').addEventListener('click', function() {
+                    document.getElementById('employee-modal').style.display = 'none';
+                });
+
+                window.addEventListener('click', function(event) {
+                    const modal = document.getElementById('employee-modal');
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+
+                // Table sorting
+                document.querySelectorAll('.table th[data-sort]').forEach(th => {
+                    th.addEventListener('click', () => {
+                        const column = th.dataset.sort;
+
+                        document.querySelectorAll('.table th').forEach(h => {
+                            h.classList.remove('sorted-asc', 'sorted-desc');
+                        });
+
+                        if (currentSort.column === column) {
+                            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                        } else {
+                            currentSort.column = column;
+                            currentSort.direction = 'asc';
+                        }
+
+                        th.classList.add(`sorted-${currentSort.direction}`);
+
+                        const sortedData = sortData(employeesData, column, currentSort.direction);
+                        renderEmployeeTable(sortedData);
+                    });
+                });
+
+                showNotification(`Вітаємо, ${userData.nickname || 'адміністраторе'}!`, 'success');
+
+            } catch (e) {
+                console.error("Помилка ініціалізації:", e);
+                showNotification(`Помилка: ${e.message}`, 'error');
+                localStorage.removeItem("tg_auth");
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
