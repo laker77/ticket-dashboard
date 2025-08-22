@@ -16,18 +16,18 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #D6567A;
-      --secondary-color: #FFFBEF;
-      --accent-color: #F59E0B;
-      --background-dark: #050608;
-      --nav-bg: #121315;
-      --card-bg: rgba(18, 19, 21, 0.9);
-      --glass-bg: rgba(18, 19, 21, 0.7);
+      --primary-color: #3B82F6; /* Light blue primary color */
+      --secondary-color: #E0F2FE; /* Very light blue secondary color */
+      --accent-color: #60A5FA; /* Slightly darker blue accent */
+      --background-dark: #0F172A; /* Dark slate blue background */
+      --nav-bg: #1E293B; /* Darker slate blue for navigation */
+      --card-bg: rgba(30, 41, 59, 0.9); /* Semi-transparent dark slate for cards */
+      --glass-bg: rgba(30, 41, 59, 0.7); /* Semi-transparent glass effect */
       --glass-blur: blur(5px);
       --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      --text-primary: #FFFBEF;
-      --text-secondary: #D1D5DB;
-      --card-border: rgba(214, 86, 122, 0.2);
+      --text-primary: #E0F2FE; /* Light blue text */
+      --text-secondary: #BFDBFE; /* Slightly darker blue text */
+      --card-border: rgba(59, 130, 246, 0.2); /* Light blue border */
     }
 
     * {
@@ -44,12 +44,12 @@
       position: relative;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 10% 20%, rgba(214, 86, 122, 0.05) 0%, transparent 20%),
-        radial-gradient(circle at 90% 80%, rgba(214, 86, 122, 0.05) 0%, transparent 20%);
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
     }
 
-    /* Enhanced animated background with floating particles */
-    canvas#stars-canvas {
+    /* Floating favicon logos background */
+    canvas#logo-canvas {
       position: fixed;
       top: 0;
       left: 0;
@@ -57,10 +57,9 @@
       height: 100%;
       z-index: -1;
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.6;
     }
 
-    /* Added floating orbs background effect */
     .floating-orbs {
       position: fixed;
       top: 0;
@@ -75,7 +74,7 @@
     .orb {
       position: absolute;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(214, 86, 122, 0.1), transparent);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1), transparent);
       animation: float 20s infinite linear;
       filter: blur(1px);
     }
@@ -111,7 +110,6 @@
       left: 0;
     }
 
-    /* Enhanced sidebar toggle with pulse animation */
     .sidebar-toggle {
       position: fixed;
       top: 1rem;
@@ -133,12 +131,12 @@
     }
 
     @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 5px rgba(214, 86, 122, 0.3); }
-      50% { box-shadow: 0 0 20px rgba(214, 86, 122, 0.6), 0 0 30px rgba(214, 86, 122, 0.3); }
+      0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.3); }
     }
 
     .sidebar-toggle:hover {
-      background: rgba(214, 86, 122, 0.3);
+      background: rgba(59, 130, 246, 0.3);
       transform: scale(1.1) rotate(90deg);
     }
 
@@ -158,7 +156,6 @@
       letter-spacing: 0.05em;
     }
 
-    /* Enhanced menu items with better hover effects */
     .menu-item, .super-menu-item {
       display: flex;
       align-items: center;
@@ -180,7 +177,7 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(214, 86, 122, 0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
       transition: left 0.5s ease;
     }
 
@@ -189,9 +186,9 @@
     }
 
     .menu-item:hover, .super-menu-item:hover {
-      background: linear-gradient(90deg, rgba(214, 86, 122, 0.3), transparent);
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.3), transparent);
       transform: translateX(8px) scale(1.02);
-      box-shadow: 0 4px 15px rgba(214, 86, 122, 0.2);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
     }
 
     .menu-item.active::before {
@@ -223,7 +220,6 @@
       overflow: hidden;
     }
 
-    /* Enhanced login container with better animations */
     .login-container {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -231,12 +227,12 @@
       border-radius: 1rem;
       max-width: 400px;
       width: 90%;
-      box-shadow: 0 0 50px rgba(214, 86, 122, 0.4);
+      box-shadow: 0 0 50px rgba(59, 130, 246, 0.4);
       text-align: center;
       position: relative;
       overflow: hidden;
       animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(214, 86, 122, 0.3);
+      border: 1px solid rgba(59, 130, 246, 0.3);
     }
 
     .login-container::before {
@@ -246,13 +242,12 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(214, 86, 122, 0.1) 8%, transparent 8.01%);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 8%, transparent 8.01%);
       background-size: 30px 30px;
       animation: moveBackground 25s linear infinite;
       z-index: -1;
     }
 
-    /* Enhanced login logo with rotation animation */
     .login-logo {
       width: 80px;
       height: 80px;
@@ -262,7 +257,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 30px rgba(214, 86, 122, 0.6);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
       animation: pulse-rotate 3s infinite ease-in-out;
     }
 
@@ -295,12 +290,11 @@
       margin-bottom: 1.5rem;
     }
 
-    /* Enhanced telegram button with hover effects */
     .telegram-button-wrapper {
       display: inline-block;
       border-radius: 0.75rem;
       overflow: hidden;
-      box-shadow: 0 0 25px rgba(214, 86, 122, 0.5);
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
     }
@@ -321,7 +315,7 @@
 
     .telegram-button-wrapper:hover {
       transform: scale(1.05) translateY(-2px);
-      box-shadow: 0 10px 40px rgba(214, 86, 122, 0.8);
+      box-shadow: 0 10px 40px rgba(59, 130, 246, 0.8);
     }
 
     .telegram-button-wrapper:hover::before {
@@ -360,7 +354,6 @@
       color: var(--accent-color);
     }
 
-    /* Enhanced logout button */
     #logout-btn {
       position: fixed;
       top: 1rem;
@@ -395,7 +388,6 @@
       margin-bottom: 2rem;
     }
 
-    /* Enhanced header with animated background */
     .header-content {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -415,7 +407,7 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(214, 86, 122, 0.1), transparent);
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
       animation: shimmer 3s infinite;
     }
 
@@ -429,7 +421,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Enhanced main title with text effects */
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
@@ -442,13 +433,13 @@
       justify-content: center;
       gap: 0.75rem;
       margin-bottom: 1rem;
-      text-shadow: 0 0 15px rgba(214, 86, 122, 0.3);
+      text-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
       animation: gradient-shift 4s ease infinite, text-glow 2s ease-in-out infinite alternate;
     }
 
     @keyframes text-glow {
-      from { filter: drop-shadow(0 0 5px rgba(214, 86, 122, 0.3)); }
-      to { filter: drop-shadow(0 0 15px rgba(214, 86, 122, 0.6)); }
+      from { filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3)); }
+      to { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6)); }
     }
 
     .header-content p {
@@ -462,7 +453,6 @@
       to { opacity: 1; }
     }
 
-    /* Enhanced sections with staggered animations */
     .section {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -504,14 +494,13 @@
 
     .section:hover {
       transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(214, 86, 122, 0.2);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.2);
     }
 
     .section:hover::before {
       transform: scaleX(1);
     }
 
-    /* Enhanced section headers with icon animations */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -559,7 +548,6 @@
       transform: rotate(180deg);
     }
 
-    /* Enhanced section body with smooth transitions */
     .section-body {
       display: block;
       opacity: 1;
@@ -640,13 +628,12 @@
       list-style-type: disc;
     }
 
-    /* Enhanced feature blocks with hover effects */
     .feature-block {
       display: flex;
       align-items: flex-start;
       margin: 1rem 0;
       padding: 1rem;
-      background: rgba(18, 19, 21, 0.5);
+      background: rgba(30, 41, 59, 0.5);
       border-radius: 0.5rem;
       gap: 1rem;
       border-left: 4px solid var(--primary-color);
@@ -662,14 +649,14 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(214, 86, 122, 0.1), transparent);
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
       transition: left 0.5s ease;
     }
 
     .feature-block:hover {
-      background: rgba(18, 19, 21, 0.7);
+      background: rgba(30, 41, 59, 0.7);
       transform: translateX(5px);
-      box-shadow: 0 5px 20px rgba(214, 86, 122, 0.2);
+      box-shadow: 0 5px 20px rgba(59, 130, 246, 0.2);
       border-left-color: var(--accent-color);
     }
 
@@ -677,7 +664,6 @@
       left: 100%;
     }
 
-    /* Enhanced feature icons with animations */
     .feature-icon {
       font-size: 1.5rem;
       color: var(--primary-color);
@@ -693,9 +679,8 @@
       transform: scale(1.2) rotate(5deg);
     }
 
-    /* Enhanced system notes */
     .system-note {
-      background: rgba(18, 19, 21, 0.7);
+      background: rgba(30, 41, 59, 0.7);
       padding: 1rem;
       border-radius: 0.5rem;
       margin: 1rem 0;
@@ -717,7 +702,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(45deg, transparent 30%, rgba(214, 86, 122, 0.05) 50%, transparent 70%);
+      background: linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.05) 50%, transparent 70%);
       transform: translateX(-100%);
       transition: transform 0.6s ease;
     }
@@ -733,7 +718,7 @@
 
     .system-note:hover {
       transform: translateX(5px);
-      box-shadow: 0 4px 15px rgba(214, 86, 122, 0.2);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
     }
 
     .content-image {
@@ -767,18 +752,17 @@
       display: inline-block;
       padding: 0.5rem 1rem;
       border-radius: 1.5rem;
-      background: rgba(214, 86, 122, 0.1);
+      background: rgba(59, 130, 246, 0.1);
       border: 1px solid var(--card-border);
       transition: all 0.3s ease;
     }
 
     .logo:hover {
-      background: rgba(214, 86, 122, 0.2);
+      background: rgba(59, 130, 246, 0.2);
       transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(214, 86, 122, 0.3);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
 
-    /* Enhanced keyframe animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -794,7 +778,6 @@
       100% { transform: translate(-50%, -50%); }
     }
 
-    /* Added scroll reveal animation */
     .scroll-reveal {
       opacity: 0;
       transform: translateY(50px);
@@ -866,7 +849,6 @@
   </style>
 </head>
 <body>
-  <!-- Added floating orbs background -->
   <div class="floating-orbs">
     <div class="orb"></div>
     <div class="orb"></div>
@@ -874,7 +856,7 @@
     <div class="orb"></div>
   </div>
   
-  <canvas id="stars-canvas"></canvas>
+  <canvas id="logo-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
   <div class="sidebar" id="sidebar">
@@ -1003,7 +985,7 @@
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-bullhorn"></i></div>
             <div>
-              <h3>Оголошення івенту</h3>
+              <h3>Оголошення івенту</-KBD>
               <p>Кожного дня раз на <span class="highlight">4 години</span> в чаті з'являється повідомлення, що через <span class="highlight">15 хвилин</span> до берегів міста припливе субмарина з цінним вантажем.</p>
               <p>Після цього в чаті з'являється сповіщення, що субмарина на місці.</p>
               <p>Субмарина спавниться рандомно на мапі і позначена <span class="highlight">синім колом</span> у бліпі субмарини.</p>
@@ -1219,93 +1201,86 @@
   </div>
 
   <script>
-    const canvas = document.getElementById('stars-canvas');
+    const canvas = document.getElementById('logo-canvas');
     const ctx = canvas.getContext('2d');
-    
+    const favicon = new Image();
+    favicon.src = '1-17ffebdc.ico';
+
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-    
+
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    
-    const stars = [];
-    const numStars = 50; // Increased number of stars
-    
-    class Star {
+
+    const logos = [];
+    const numLogos = 30; // Number of falling logos
+
+    class Logo {
       constructor() {
         this.reset();
         this.twinkle = Math.random() * Math.PI * 2;
       }
-      
+
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 2 + 0.5;
-        this.speed = Math.random() * 3 + 0.5;
-        this.opacity = Math.random() * 0.6 + 0.2;
-        this.color = Math.random() > 0.8 ? '#D6567A' : '#FFFFFF';
+        this.size = Math.random() * 20 + 10; // Size between 10-30px
+        this.speed = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.2;
+        this.rotation = Math.random() * Math.PI * 2;
       }
-      
+
       update() {
         this.y += this.speed;
-        this.twinkle += 0.02;
+        this.rotation += 0.02;
         if (this.y > canvas.height) {
           this.reset();
         }
       }
-      
+
       draw() {
         const twinkleOpacity = this.opacity * (0.5 + 0.5 * Math.sin(this.twinkle));
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color === '#D6567A' ? 
-          `rgba(214, 86, 122, ${twinkleOpacity})` : 
-          `rgba(255, 255, 255, ${twinkleOpacity})`;
-        ctx.fill();
-        
-        // Add glow effect for colored stars
-        if (this.color === '#D6567A') {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(214, 86, 122, ${twinkleOpacity * 0.2})`;
-          ctx.fill();
-        }
+        ctx.save();
+        ctx.globalAlpha = twinkleOpacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(favicon, -this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
       }
     }
-    
-    for (let i = 0; i < numStars; i++) {
-      stars.push(new Star());
-    }
-    
-    function animateStars() {
+
+    favicon.onload = () => {
+      for (let i = 0; i < numLogos; i++) {
+        logos.push(new Logo());
+      }
+      animateLogos();
+    };
+
+    function animateLogos() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(star => {
-        star.update();
-        star.draw();
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
       });
-      requestAnimationFrame(animateStars);
+      requestAnimationFrame(animateLogos);
     }
-    
-    animateStars();
 
     function revealOnScroll() {
       const reveals = document.querySelectorAll('.scroll-reveal');
-      
       for (let i = 0; i < reveals.length; i++) {
         const windowHeight = window.innerHeight;
         const elementTop = reveals[i].getBoundingClientRect().top;
         const elementVisible = 150;
-        
         if (elementTop < windowHeight - elementVisible) {
           reveals[i].classList.add('revealed');
         }
       }
     }
-    
+
     window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll(); // Check on load
+    revealOnScroll();
 
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
@@ -1365,7 +1340,7 @@
         }
         const ticketsHeaders = ticketsData[0];
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-        
+
         if (telegramColIndex === -1) {
           console.error('Telegram column not found in tickets data');
           alert('Помилка структури даних: відсутній стовпець Telegram');
@@ -1376,7 +1351,7 @@
         const userTicketsRow = ticketsData.find(row => 
           row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
         );
-        
+
         if (userTicketsRow) {
           console.log('User found in tickets data:', userTicketsRow);
           const userData = {
