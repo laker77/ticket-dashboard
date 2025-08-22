@@ -48,6 +48,7 @@
         radial-gradient(circle at 90% 80%, rgba(214, 86, 122, 0.05) 0%, transparent 20%);
     }
 
+    /* Enhanced animated background with floating particles */
     canvas#stars-canvas {
       position: fixed;
       top: 0;
@@ -56,7 +57,39 @@
       height: 100%;
       z-index: -1;
       pointer-events: none;
-      opacity: 0.6;
+      opacity: 0.8;
+    }
+
+    /* Added floating orbs background effect */
+    .floating-orbs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(214, 86, 122, 0.1), transparent);
+      animation: float 20s infinite linear;
+      filter: blur(1px);
+    }
+
+    .orb:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+    .orb:nth-child(2) { width: 120px; height: 120px; left: 20%; animation-delay: -5s; }
+    .orb:nth-child(3) { width: 60px; height: 60px; left: 70%; animation-delay: -10s; }
+    .orb:nth-child(4) { width: 100px; height: 100px; left: 80%; animation-delay: -15s; }
+
+    @keyframes float {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.3; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
     }
 
     .sidebar {
@@ -68,7 +101,7 @@
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       box-shadow: var(--shadow);
-      transition: left 0.3s ease;
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1000;
       padding: 1.5rem;
       border-right: 1px solid var(--card-border);
@@ -78,6 +111,7 @@
       left: 0;
     }
 
+    /* Enhanced sidebar toggle with pulse animation */
     .sidebar-toggle {
       position: fixed;
       top: 1rem;
@@ -95,11 +129,17 @@
       cursor: pointer;
       transition: all 0.3s ease;
       z-index: 1001;
+      animation: pulse-glow 3s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(214, 86, 122, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(214, 86, 122, 0.6), 0 0 30px rgba(214, 86, 122, 0.3); }
     }
 
     .sidebar-toggle:hover {
       background: rgba(214, 86, 122, 0.3);
-      transform: scale(1.1);
+      transform: scale(1.1) rotate(90deg);
     }
 
     .sidebar-menu {
@@ -118,6 +158,7 @@
       letter-spacing: 0.05em;
     }
 
+    /* Enhanced menu items with better hover effects */
     .menu-item, .super-menu-item {
       display: flex;
       align-items: center;
@@ -126,15 +167,31 @@
       color: var(--text-primary);
       text-decoration: none;
       border-radius: 0.5rem;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       font-size: 0.9rem;
       position: relative;
       overflow: hidden;
     }
 
+    .menu-item::before, .super-menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(214, 86, 122, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .menu-item:hover::before, .super-menu-item:hover::before {
+      left: 100%;
+    }
+
     .menu-item:hover, .super-menu-item:hover {
       background: linear-gradient(90deg, rgba(214, 86, 122, 0.3), transparent);
-      transform: translateX(5px);
+      transform: translateX(8px) scale(1.02);
+      box-shadow: 0 4px 15px rgba(214, 86, 122, 0.2);
     }
 
     .menu-item.active::before {
@@ -145,6 +202,7 @@
       height: 100%;
       width: 4px;
       background: var(--primary-color);
+      box-shadow: 0 0 10px var(--primary-color);
     }
 
     .super-menu-item {
@@ -165,6 +223,7 @@
       overflow: hidden;
     }
 
+    /* Enhanced login container with better animations */
     .login-container {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -172,11 +231,12 @@
       border-radius: 1rem;
       max-width: 400px;
       width: 90%;
-      box-shadow: 0 0 30px rgba(214, 86, 122, 0.3);
+      box-shadow: 0 0 50px rgba(214, 86, 122, 0.4);
       text-align: center;
       position: relative;
       overflow: hidden;
-      animation: fadeInUp 0.8s ease-out;
+      animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(214, 86, 122, 0.3);
     }
 
     .login-container::before {
@@ -186,12 +246,13 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: radial-gradient(circle, rgba(214, 86, 122, 0.2) 8%, transparent 8.01%);
+      background: radial-gradient(circle, rgba(214, 86, 122, 0.1) 8%, transparent 8.01%);
       background-size: 30px 30px;
       animation: moveBackground 25s linear infinite;
       z-index: -1;
     }
 
+    /* Enhanced login logo with rotation animation */
     .login-logo {
       width: 80px;
       height: 80px;
@@ -201,17 +262,31 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 25px rgba(214, 86, 122, 0.5);
-      animation: pulse 2.5s infinite ease-in-out;
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.6);
+      animation: pulse-rotate 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse-rotate {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      25% { transform: scale(1.05) rotate(90deg); }
+      50% { transform: scale(1.1) rotate(180deg); }
+      75% { transform: scale(1.05) rotate(270deg); }
     }
 
     .login-title {
       font-size: 1.75rem;
       font-weight: 700;
-      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 0.5rem;
+      animation: gradient-shift 3s ease infinite;
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .login-subtitle {
@@ -220,17 +295,37 @@
       margin-bottom: 1.5rem;
     }
 
+    /* Enhanced telegram button with hover effects */
     .telegram-button-wrapper {
       display: inline-block;
       border-radius: 0.75rem;
       overflow: hidden;
-      box-shadow: 0 0 20px rgba(214, 86, 122, 0.5);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 25px rgba(214, 86, 122, 0.5);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .telegram-button-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+      border-radius: 0.75rem;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     .telegram-button-wrapper:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(214, 86, 122, 0.7);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 10px 40px rgba(214, 86, 122, 0.8);
+    }
+
+    .telegram-button-wrapper:hover::before {
+      opacity: 1;
     }
 
     .login-footer {
@@ -242,18 +337,35 @@
     .login-footer a {
       color: var(--primary-color);
       text-decoration: none;
-      transition: color 0.3s ease;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .login-footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    .login-footer a:hover::after {
+      width: 100%;
     }
 
     .login-footer a:hover {
       color: var(--accent-color);
     }
 
+    /* Enhanced logout button */
     #logout-btn {
       position: fixed;
       top: 1rem;
       right: 1rem;
-      background: #EF4444;
+      background: linear-gradient(135deg, #EF4444, #DC2626);
       color: var(--text-primary);
       padding: 0.5rem 1.25rem;
       border-radius: 0.5rem;
@@ -262,12 +374,13 @@
       z-index: 1001;
       transition: all 0.3s ease;
       border: none;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
     }
 
     #logout-btn:hover {
-      background: #DC2626;
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+      background: linear-gradient(135deg, #DC2626, #B91C1C);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
     }
 
     .container {
@@ -282,6 +395,7 @@
       margin-bottom: 2rem;
     }
 
+    /* Enhanced header with animated background */
     .header-content {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -289,12 +403,38 @@
       border-radius: 1rem;
       border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      animation: slideInDown 1s ease-out;
     }
 
+    .header-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(214, 86, 122, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    @keyframes slideInDown {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Enhanced main title with text effects */
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
-      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+      background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: flex;
@@ -303,13 +443,26 @@
       gap: 0.75rem;
       margin-bottom: 1rem;
       text-shadow: 0 0 15px rgba(214, 86, 122, 0.3);
+      animation: gradient-shift 4s ease infinite, text-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes text-glow {
+      from { filter: drop-shadow(0 0 5px rgba(214, 86, 122, 0.3)); }
+      to { filter: drop-shadow(0 0 15px rgba(214, 86, 122, 0.6)); }
     }
 
     .header-content p {
       font-size: 1rem;
       color: var(--text-secondary);
+      animation: fadeIn 1.5s ease-out 0.5s both;
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Enhanced sections with staggered animations */
     .section {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
@@ -318,14 +471,47 @@
       margin-bottom: 2rem;
       border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideInUp 0.8s ease-out forwards;
+    }
+
+    .section:nth-child(1) { animation-delay: 0.1s; }
+    .section:nth-child(2) { animation-delay: 0.2s; }
+    .section:nth-child(3) { animation-delay: 0.3s; }
+    .section:nth-child(4) { animation-delay: 0.4s; }
+    .section:nth-child(5) { animation-delay: 0.5s; }
+    .section:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes slideInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
     }
 
     .section:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(214, 86, 122, 0.2);
     }
 
+    .section:hover::before {
+      transform: scaleX(1);
+    }
+
+    /* Enhanced section headers with icon animations */
     .section-header {
       display: flex;
       justify-content: space-between;
@@ -334,6 +520,11 @@
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--card-border);
       margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .section-header:hover {
+      border-bottom-color: var(--primary-color);
     }
 
     .section-header h2 {
@@ -343,24 +534,45 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .section-header h2 i {
+      transition: all 0.3s ease;
+    }
+
+    .section-header:hover h2 {
+      color: var(--accent-color);
+    }
+
+    .section-header:hover h2 i {
+      transform: scale(1.2) rotate(10deg);
     }
 
     .section-header i {
       font-size: 1.2rem;
       color: var(--text-secondary);
-      transition: transform 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .section-header i.collapsed {
       transform: rotate(180deg);
     }
 
+    /* Enhanced section body with smooth transitions */
     .section-body {
       display: block;
+      opacity: 1;
+      max-height: none;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .section-body.hidden {
-      display: none;
+      opacity: 0;
+      max-height: 0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
 
     h3 {
@@ -371,12 +583,47 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      position: relative;
+    }
+
+    h3::before {
+      content: '';
+      position: absolute;
+      left: -1rem;
+      top: 50%;
+      width: 4px;
+      height: 0;
+      background: var(--accent-color);
+      transition: height 0.3s ease;
+      transform: translateY(-50%);
+    }
+
+    h3:hover::before {
+      height: 100%;
     }
 
     .highlight {
       color: var(--accent-color);
       font-weight: 700;
       font-size: 1rem;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-color), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .highlight:hover::after {
+      opacity: 1;
     }
 
     p, li {
@@ -384,6 +631,7 @@
       color: var(--text-secondary);
       font-size: 0.95rem;
       margin-bottom: 0.75rem;
+      transition: color 0.3s ease;
     }
 
     ul, ol {
@@ -392,6 +640,7 @@
       list-style-type: disc;
     }
 
+    /* Enhanced feature blocks with hover effects */
     .feature-block {
       display: flex;
       align-items: flex-start;
@@ -401,8 +650,34 @@
       border-radius: 0.5rem;
       gap: 1rem;
       border-left: 4px solid var(--primary-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
+    .feature-block::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(214, 86, 122, 0.1), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .feature-block:hover {
+      background: rgba(18, 19, 21, 0.7);
+      transform: translateX(5px);
+      box-shadow: 0 5px 20px rgba(214, 86, 122, 0.2);
+      border-left-color: var(--accent-color);
+    }
+
+    .feature-block:hover::before {
+      left: 100%;
+    }
+
+    /* Enhanced feature icons with animations */
     .feature-icon {
       font-size: 1.5rem;
       color: var(--primary-color);
@@ -410,8 +685,15 @@
       text-align: center;
       padding-top: 0.25rem;
       flex-shrink: 0;
+      transition: all 0.3s ease;
     }
 
+    .feature-block:hover .feature-icon {
+      color: var(--accent-color);
+      transform: scale(1.2) rotate(5deg);
+    }
+
+    /* Enhanced system notes */
     .system-note {
       background: rgba(18, 19, 21, 0.7);
       padding: 1rem;
@@ -423,11 +705,35 @@
       display: flex;
       align-items: flex-start;
       gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .system-note::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent 30%, rgba(214, 86, 122, 0.05) 50%, transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .system-note:hover::before {
+      transform: translateX(100%);
     }
 
     .system-note.warning {
       border-left-color: #EF4444;
       background: rgba(239, 68, 68, 0.2);
+    }
+
+    .system-note:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(214, 86, 122, 0.2);
     }
 
     .content-image {
@@ -436,6 +742,12 @@
       border-radius: 0.5rem;
       margin: 1rem 0;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .content-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
     }
 
     footer {
@@ -444,6 +756,7 @@
       color: var(--text-secondary);
       font-size: 0.9rem;
       margin-top: 2rem;
+      animation: fadeIn 2s ease-out 1s both;
     }
 
     .logo {
@@ -456,8 +769,16 @@
       border-radius: 1.5rem;
       background: rgba(214, 86, 122, 0.1);
       border: 1px solid var(--card-border);
+      transition: all 0.3s ease;
     }
 
+    .logo:hover {
+      background: rgba(214, 86, 122, 0.2);
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(214, 86, 122, 0.3);
+    }
+
+    /* Enhanced keyframe animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
@@ -471,6 +792,18 @@
     @keyframes moveBackground {
       0% { transform: translate(0, 0); }
       100% { transform: translate(-50%, -50%); }
+    }
+
+    /* Added scroll reveal animation */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     @media (max-width: 768px) {
@@ -533,6 +866,14 @@
   </style>
 </head>
 <body>
+  <!-- Added floating orbs background -->
+  <div class="floating-orbs">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+  </div>
+  
   <canvas id="stars-canvas"></canvas>
   <button id="logout-btn" class="hidden">Вийти</button>
 
@@ -595,9 +936,9 @@
         </div>
       </header>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
-          <h2><i class="fas fa-tools"></i> Робота “Хендімен”</h2>
+          <h2><i class="fas fa-tools"></i> Робота "Хендімен"</h2>
           <i class="fas fa-chevron-down"></i>
         </div>
         <div class="section-body">
@@ -606,7 +947,7 @@
             <div>
               <h3>Як влаштуватись</h3>
               <p>Щоб влаштуватись на роботу, потрібно підійти до відповідного NPC на мапі та влаштуватись, після цього прийняти замовлення також в NPC.</p>
-              <p>На мапі з’являється <span class="highlight">10 міток</span> куди треба під’їхати та допомогти, вони розкидані рандомно, тому може бути чогось більше, а чогось менше.</p>
+              <p>На мапі з'являється <span class="highlight">10 міток</span> куди треба під'їхати та допомогти, вони розкидані рандомно, тому може бути чогось більше, а чогось менше.</p>
             </div>
           </div>
           <div class="feature-block">
@@ -626,9 +967,9 @@
             <div>
               <h3>Міні-ігри</h3>
               <ul>
-                <li><span class="highlight">Миття басейнів та вікон</span>: на екрані з’являються відповідні букви, які треба затиснути на клавіатурі.</li>
+                <li><span class="highlight">Миття басейнів та вікон</span>: на екрані з'являються відповідні букви, які треба затиснути на клавіатурі.</li>
                 <li><span class="highlight">Кидання таблеток з хлором</span>: потрібно тримати лінію в зелений круг, щоб досягти 100%.</li>
-                <li><span class="highlight">З'єднання дротів</span>: з’єднати дроти відповідного кольору. Якщо з'єднати неправильно, вдарить струмом, і доведеться починати заново.</li>
+                <li><span class="highlight">З'єднання дротів</span>: з'єднати дроти відповідного кольору. Якщо з'єднати неправильно, вдарить струмом, і доведеться починати заново.</li>
               </ul>
               <p>Під час з'єднання дротів є шанс, що випаде спорядження чи мікросхема, які можна продати скупнику спорядження.</p>
             </div>
@@ -645,15 +986,15 @@
             <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
             <div>
               <h3>Мітки на мапі</h3>
-              <p>Мітка, де знаходиться робота: <img src="https://via.placeholder.com/300x150?text=Мітка+роботи" alt="Мітка роботи" class="content-image"></p>
-              <p>Точки на міні-мапі: <img src="https://via.placeholder.com/300x150?text=Міні-мапа+точки" alt="Міні-мапа точки" class="content-image"></p>
-              <p>Мітка скупника спорядження (ціни оновлюються раз на 4 години, є обмеження по предметам): <img src="https://via.placeholder.com/300x150?text=Скупник+спорядження" alt="Скупник спорядження" class="content-image"></p>
+              <p>Мітка, де знаходиться робота: <img src="/placeholder.svg?height=150&width=300" alt="Мітка роботи" class="content-image"></p>
+              <p>Точки на міні-мапі: <img src="/placeholder.svg?height=150&width=300" alt="Міні-мапа точки" class="content-image"></p>
+              <p>Мітка скупника спорядження (ціни оновлюються раз на 4 години, є обмеження по предметам): <img src="/placeholder.svg?height=150&width=300" alt="Скупник спорядження" class="content-image"></p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
           <h2><i class="fas fa-ship"></i> Безодня</h2>
           <i class="fas fa-chevron-down"></i>
@@ -663,8 +1004,8 @@
             <div class="feature-icon"><i class="fas fa-bullhorn"></i></div>
             <div>
               <h3>Оголошення івенту</h3>
-              <p>Кожного дня раз на <span class="highlight">4 години</span> в чаті з’являється повідомлення, що через <span class="highlight">15 хвилин</span> до берегів міста припливе субмарина з цінним вантажем.</p>
-              <p>Після цього в чаті з’являється сповіщення, що субмарина на місці.</p>
+              <p>Кожного дня раз на <span class="highlight">4 години</span> в чаті з'являється повідомлення, що через <span class="highlight">15 хвилин</span> до берегів міста припливе субмарина з цінним вантажем.</p>
+              <p>Після цього в чаті з'являється сповіщення, що субмарина на місці.</p>
               <p>Субмарина спавниться рандомно на мапі і позначена <span class="highlight">синім колом</span> у бліпі субмарини.</p>
             </div>
           </div>
@@ -673,7 +1014,7 @@
             <div>
               <h3>Відкриття субмарини</h3>
               <p>Для відкриття субмарини потрібні <span class="highlight">гідравлічні ножиці</span>, які купуються в магазині 24/7.</p>
-              <p>Якщо субмарину вже відкрили, достатньо натиснути <span class="highlight">“E”</span>, щоб зайти.</p>
+              <p>Якщо субмарину вже відкрили, достатньо натиснути <span class="highlight">"E"</span>, щоб зайти.</p>
               <p>Для глибоких локацій потрібен <span class="highlight">комплект для дайвінгу</span> з риболовного магазину. Якщо оксиген закінчується, комплект пропадає, заправка неможлива.</p>
               <p>Перший гравець, який допливе до шлюзу, проходить міні-гру: вибрати правильні пази для круга, після чого шлюз відкривається.</p>
             </div>
@@ -682,7 +1023,7 @@
             <div class="feature-icon"><i class="fas fa-box-open"></i></div>
             <div>
               <h3>Вміст субмарини</h3>
-              <p>У субмарині є <span class="highlight">3 ящика</span>, які спавняться рандомно. Для їх відкриття потрібно підійти і натиснути <span class="highlight">“E”</span>, після чого чекати <span class="highlight">5 хвилин</span>.</p>
+              <p>У субмарині є <span class="highlight">3 ящика</span>, які спавняться рандомно. Для їх відкриття потрібно підійти і натиснути <span class="highlight">"E"</span>, після чого чекати <span class="highlight">5 хвилин</span>.</p>
               <p>У ящиках знаходяться цінні предмети, включаючи унікальні, які можна продати скупнику спорядження за велику суму.</p>
             </div>
           </div>
@@ -690,7 +1031,7 @@
             <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
             <div>
               <h3>Мітка субмарини</h3>
-              <p>Як виглядає субмарина на мапі: <img src="https://via.placeholder.com/300x150?text=Мітка+субмарини" alt="Мітка субмарини" class="content-image"></p>
+              <p>Як виглядає субмарина на мапі: <img src="/placeholder.svg?height=150&width=300" alt="Мітка субмарини" class="content-image"></p>
             </div>
           </div>
           <div class="feature-block">
@@ -703,7 +1044,7 @@
         </div>
       </div>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
           <h2><i class="fas fa-anchor"></i> Ліцензія на водний транспорт</h2>
           <i class="fas fa-chevron-down"></i>
@@ -713,15 +1054,15 @@
             <div class="feature-icon"><i class="fas fa-certificate"></i></div>
             <div>
               <h3>Отримання ліцензії та покупка</h3>
-              <p>На мапі з’явилось місце, де можна здати на <span class="highlight">ліцензію на водний транспорт</span> та придбати водний транспорт.</p>
-              <p>Салон водного транспорту: <img src="https://via.placeholder.com/300x150?text=Салон+водного+транспорту" alt="Салон водного транспорту" class="content-image"></p>
+              <p>На мапі з'явилось місце, де можна здати на <span class="highlight">ліцензію на водний транспорт</span> та придбати водний транспорт.</p>
+              <p>Салон водного транспорту: <img src="/placeholder.svg?height=150&width=300" alt="Салон водного транспорту" class="content-image"></p>
               <p>Водний транспорт можна забрати лише на відповідній парковці на <span class="highlight">Пристані</span>.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
           <h2><i class="fas fa-fingerprint"></i> Серійні номери на зброї</h2>
           <i class="fas fa-chevron-down"></i>
@@ -735,20 +1076,20 @@
               <ul>
                 <li><span class="highlight">FRG</span> — Зброя, скрафчена на складі державної фракції (легальна).</li>
                 <li><span class="highlight">FRC</span> — Зброя, скрафчена на складі Мафії/Банд (нелегальна).</li>
-                <li><span class="highlight">FMC</span> — Зброя, скрафчена на складі сім’ї по гілці крайм (нелегальна).</li>
-                <li><span class="highlight">FMG</span> — Зброя, скрафчена на складі сім’ї по гілці гов (легальна).</li>
+                <li><span class="highlight">FMC</span> — Зброя, скрафчена на складі сім'ї по гілці крайм (нелегальна).</li>
+                <li><span class="highlight">FMG</span> — Зброя, скрафчена на складі сім'ї по гілці гов (легальна).</li>
                 <li><span class="highlight">AMM</span> — Зброя, куплена в амуніції (легальна за наявності ліцензії).</li>
                 <li><span class="highlight">CIV</span> — Зброя з БП/ЕйрДроп тощо.</li>
               </ul>
-              <p>Приклад серійного номера: <span class="highlight">FRC - 0N11J143703314</span>, де після “N” — ID фракції (11), далі — рандомні цифри до 0, і після 0 — статичний ID (3314).</p>
+              <p>Приклад серійного номера: <span class="highlight">FRC - 0N11J143703314</span>, де після "N" — ID фракції (11), далі — рандомні цифри до 0, і після 0 — статичний ID (3314).</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
-          <h2><i class="fas fa-building"></i> Новий інтер’єр FIB</h2>
+          <h2><i class="fas fa-building"></i> Новий інтер'єр FIB</h2>
           <i class="fas fa-chevron-down"></i>
         </div>
         <div class="section-body">
@@ -756,13 +1097,13 @@
             <div class="feature-icon"><i class="fas fa-door-open"></i></div>
             <div>
               <h3>Оновлення</h3>
-              <p>Додано новий інтер’єр FIB (перша частина, будуть ще дві).</p>
+              <p>Додано новий інтер'єр FIB (перша частина, будуть ще дві).</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
           <h2><i class="fas fa-plus-circle"></i> Додаткові нововведення</h2>
           <i class="fas fa-chevron-down"></i>
@@ -787,31 +1128,31 @@
             <div class="feature-icon"><i class="fas fa-id-card"></i></div>
             <div>
               <h3>Перевірка документів</h3>
-              <p>Працівники державних організацій можуть перевіряти документи гравця в кайданках через клавішу <span class="highlight">“G”</span>.</p>
+              <p>Працівники державних організацій можуть перевіряти документи гравця в кайданках через клавішу <span class="highlight">"G"</span>.</p>
             </div>
           </div>
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-car"></i></div>
             <div>
               <h3>Система угону для LSPD, FIB, BCSD</h3>
-              <p>Виклик приймається через планшет на клавішу <span class="highlight">“P”</span>. На мапі з’являється мітка, де їде автомобіль.</p>
-              <p>Якщо гравець близько, мітка з’являється на міні-мапі.</p>
-              <p>Після посадки в ТЗ з’являється сповіщення про доставку на штрафмайданчик. Винагорода залежить від рівня угонки: <span class="highlight">10,000 × рівень</span> (наприклад, 5 рівень = 50,000).</p>
+              <p>Виклик приймається через планшет на клавішу <span class="highlight">"P"</span>. На мапі з'являється мітка, де їде автомобіль.</p>
+              <p>Якщо гравець близько, мітка з'являється на міні-мапі.</p>
+              <p>Після посадки в ТЗ з'являється сповіщення про доставку на штрафмайданчик. Винагорода залежить від рівня угонки: <span class="highlight">10,000 × рівень</span> (наприклад, 5 рівень = 50,000).</p>
             </div>
           </div>
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-store"></i></div>
             <div>
               <h3>Сімейний магазин</h3>
-              <p>У сімейному планшеті додано можливість зміни логотипу та назви сім’ї.</p>
-              <p>Додана перевірка на сімейний одяг: тільки учасники сім’ї можуть купувати одяг з їх магазину.</p>
+              <p>У сімейному планшеті додано можливість зміни логотипу та назви сім'ї.</p>
+              <p>Додана перевірка на сімейний одяг: тільки учасники сім'ї можуть купувати одяг з їх магазину.</p>
             </div>
           </div>
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-box"></i></div>
             <div>
               <h3>Новий кейс</h3>
-              <p>Додано новий кейс <span class="highlight">“Смарагдове Божевілля”</span>.</p>
+              <p>Додано новий кейс <span class="highlight">"Смарагдове Божевілля"</span>.</p>
             </div>
           </div>
           <div class="feature-block">
@@ -858,7 +1199,7 @@
         </div>
       </div>
 
-      <div class="section">
+      <div class="section scroll-reveal">
         <div class="section-header" onclick="toggleSection(this)">
           <h2><i class="fas fa-exclamation-triangle"></i> Увага</h2>
           <i class="fas fa-chevron-down"></i>
@@ -872,13 +1213,12 @@
 
       <footer>
         <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-        < Maddox class="logo">Ukraine GTA 5 RolePlay</p>
+        <p class="logo">Ukraine GTA 5 RolePlay</p>
       </footer>
     </div>
   </div>
 
   <script>
-    // Falling Stars Animation
     const canvas = document.getElementById('stars-canvas');
     const ctx = canvas.getContext('2d');
     
@@ -891,33 +1231,47 @@
     window.addEventListener('resize', resizeCanvas);
     
     const stars = [];
-    const numStars = 30;
+    const numStars = 50; // Increased number of stars
     
     class Star {
       constructor() {
         this.reset();
+        this.twinkle = Math.random() * Math.PI * 2;
       }
       
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 1.5 + 0.5;
-        this.speed = Math.random() * 2 + 0.5;
-        this.opacity = Math.random() * 0.4 + 0.2;
+        this.size = Math.random() * 2 + 0.5;
+        this.speed = Math.random() * 3 + 0.5;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.color = Math.random() > 0.8 ? '#D6567A' : '#FFFFFF';
       }
       
       update() {
         this.y += this.speed;
+        this.twinkle += 0.02;
         if (this.y > canvas.height) {
           this.reset();
         }
       }
       
       draw() {
+        const twinkleOpacity = this.opacity * (0.5 + 0.5 * Math.sin(this.twinkle));
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fillStyle = this.color === '#D6567A' ? 
+          `rgba(214, 86, 122, ${twinkleOpacity})` : 
+          `rgba(255, 255, 255, ${twinkleOpacity})`;
         ctx.fill();
+        
+        // Add glow effect for colored stars
+        if (this.color === '#D6567A') {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(214, 86, 122, ${twinkleOpacity * 0.2})`;
+          ctx.fill();
+        }
       }
     }
     
@@ -935,6 +1289,23 @@
     }
     
     animateStars();
+
+    function revealOnScroll() {
+      const reveals = document.querySelectorAll('.scroll-reveal');
+      
+      for (let i = 0; i < reveals.length; i++) {
+        const windowHeight = window.innerHeight;
+        const elementTop = reveals[i].getBoundingClientRect().top;
+        const elementVisible = 150;
+        
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add('revealed');
+        }
+      }
+    }
+    
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Check on load
 
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
@@ -1016,7 +1387,7 @@
           localStorage.setItem('tg_auth', JSON.stringify(userData));
           showContent(userData);
         } else {
-    console.error('User not found in tickets data:', telegramUsername);
+          console.error('User not found in tickets data:', telegramUsername);
           localStorage.removeItem('tg_auth');
           alert('Користувача не знайдено в таблиці. Доступ заборонено.');
           showLoginForm();
@@ -1062,8 +1433,14 @@
     function toggleSection(header) {
       const body = header.nextElementSibling;
       const icon = header.querySelector('i');
-      body.classList.toggle('hidden');
-      icon.classList.toggle('collapsed');
+      
+      if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        icon.classList.remove('collapsed');
+      } else {
+        body.classList.add('hidden');
+        icon.classList.add('collapsed');
+      }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
