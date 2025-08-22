@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Скрипт оновлення 1.9 | Ukraine GTA 5</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script async src="https://telegram.org/js/telegram-widget.js?7" 
+          data-telegram-login="ticket_tracker_UG_bot" 
+          data-size="large"
+          data-userpic="false"
+          data-request-access="write"
+          data-onauth="onTelegramAuth(user)"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #D6567A;
+      --secondary-color: #FFFBEF;
+      --accent-color: #F59E0B;
+      --background-dark: #050608;
+      --nav-bg: #121315;
+      --card-bg: rgba(18, 19, 21, 0.9);
+      --glass-bg: rgba(18, 19, 21, 0.7);
+      --glass-blur: blur(5px);
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      --text-primary: #FFFBEF;
+      --text-secondary: #D1D5DB;
+      --card-border: rgba(214, 86, 122, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--background-dark);
+      color: var(--text-primary);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(214, 86, 122, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(214, 86, 122, 0.05) 0%, transparent 20%);
+    }
+
+    canvas#stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
+      border-right: 1px solid var(--card-border);
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--primary-color);
+      font-size: 1.3rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .sidebar-toggle:hover {
+      background: rgba(214, 86, 122, 0.3);
+      transform: scale(1.1);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .menu-category {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: linear-gradient(90deg, rgba(214, 86, 122, 0.3), transparent);
+      transform: translateX(5px);
+    }
+
+    .menu-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--primary-color);
+    }
+
+    .super-menu-item {
+      color: var(--accent-color);
+    }
+
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background-dark);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .login-container {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.3);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(214, 86, 122, 0.2) 8%, transparent 8.01%);
+      background-size: 30px 30px;
+      animation: moveBackground 25s linear infinite;
+      z-index: -1;
+    }
+
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(214, 86, 122, 0.5);
+      animation: pulse 2.5s infinite ease-in-out;
+    }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(214, 86, 122, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(214, 86, 122, 0.7);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-color);
+    }
+
+    #logout-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #EF4444;
+      color: var(--text-primary);
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1001;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    #logout-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .header-content {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      padding: 2rem;
+      border-radius: 1rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 15px rgba(214, 86, 122, 0.3);
+    }
+
+    .header-content p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .section {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header i {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+    }
+
+    .section-header i.collapsed {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: block;
+    }
+
+    .section-body.hidden {
+      display: none;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      margin: 1.5rem 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .highlight {
+      color: var(--accent-color);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    p, li {
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+      list-style-type: disc;
+    }
+
+    .feature-block {
+      display: flex;
+      align-items: flex-start;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: rgba(18, 19, 21, 0.5);
+      border-radius: 0.5rem;
+      gap: 1rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      min-width: 30px;
+      text-align: center;
+      padding-top: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .system-note {
+      background: rgba(18, 19, 21, 0.7);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-left: 3px solid var(--primary-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .system-note.warning {
+      border-left-color: #EF4444;
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .content-image {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    .logo {
+      color: var(--primary-color);
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 1.5rem;
+      background: rgba(214, 86, 122, 0.1);
+      border: 1px solid var(--card-border);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes moveBackground {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50%, -50%); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 240px;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+      }
+
+      p, li {
+        font-size: 0.9rem;
+      }
+
+      .login-container {
+        padding: 2rem 1.25rem;
+      }
+
+      .login-title {
+        font-size: 1.5rem;
+      }
+
+      .login-subtitle {
+        font-size: 0.9rem;
+      }
+
+      .login-logo {
+        width: 70px;
+        height: 70px;
+      }
+
+      .feature-block {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .feature-icon {
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars-canvas"></canvas>
+  <button id="logout-btn" class="hidden">Вийти</button>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
+      <a href="script1.9.html" class="menu-item active"><i class="fas fa-code"></i> Скрипт 1.9</a>
+      <div class="menu-category">Інформація</div>
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
+  <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
+
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-shield-alt" style="font-size: 2rem; color: var(--text-primary);"></i>
+      </div>
+      <h1 class="login-title">Скрипт оновлення 1.9</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до контенту</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="content" class="hidden">
+    <div class="container">
+      <header>
+        <div class="header-content">
+          <h1><i class="fas fa-file-code"></i> Скрипт оновлення 1.9</h1>
+          <p>Повний гайд по новим функціям та змінам в оновленні 1.9</p>
+        </div>
+      </header>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-tools"></i> Робота “Хендімен”</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-briefcase"></i></div>
+            <div>
+              <h3>Як влаштуватись</h3>
+              <p>Щоб влаштуватись на роботу, потрібно підійти до відповідного NPC на мапі та влаштуватись, після цього прийняти замовлення також в NPC.</p>
+              <p>На мапі з’являється <span class="highlight">10 міток</span> куди треба під’їхати та допомогти, вони розкидані рандомно, тому може бути чогось більше, а чогось менше.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-tasks"></i></div>
+            <div>
+              <h3>Види робіт</h3>
+              <p>Всього є 3 види роботи: мити басейни, мити вікна, та з'єднання дротів.</p>
+              <ul>
+                <li>Для миття басейнів потрібно купити <span class="highlight">сочок</span> та <span class="highlight">таблетки хлору</span> в магазині 24/7. Для одного басейну потрібно <span class="highlight">1 відро</span>, міцність сочка зменшується з кожним басейном.</li>
+                <li>Для миття вікон потрібно купити <span class="highlight">рушник</span> в магазині 24/7, міцність якого також зменшується з кожним вікном.</li>
+                <li>З'єднання дротів не потребує спорядження.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gamepad"></i></div>
+            <div>
+              <h3>Міні-ігри</h3>
+              <ul>
+                <li><span class="highlight">Миття басейнів та вікон</span>: на екрані з’являються відповідні букви, які треба затиснути на клавіатурі.</li>
+                <li><span class="highlight">Кидання таблеток з хлором</span>: потрібно тримати лінію в зелений круг, щоб досягти 100%.</li>
+                <li><span class="highlight">З'єднання дротів</span>: з’єднати дроти відповідного кольору. Якщо з'єднати неправильно, вдарить струмом, і доведеться починати заново.</li>
+              </ul>
+              <p>Під час з'єднання дротів є шанс, що випаде спорядження чи мікросхема, які можна продати скупнику спорядження.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-money-bill"></i></div>
+            <div>
+              <h3>Заробіток та штрафи</h3>
+              <p>Кошти нараховуються рандомно залежно від виконаної роботи після кожної успішної мітки.</p>
+              <p>Якщо звільнитись з роботи, не пройшовши всі мітки, знімається <span class="highlight">50% від заробленої суми</span>.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <h3>Мітки на мапі</h3>
+              <p>Мітка, де знаходиться робота: <img src="https://via.placeholder.com/300x150?text=Мітка+роботи" alt="Мітка роботи" class="content-image"></p>
+              <p>Точки на міні-мапі: <img src="https://via.placeholder.com/300x150?text=Міні-мапа+точки" alt="Міні-мапа точки" class="content-image"></p>
+              <p>Мітка скупника спорядження (ціни оновлюються раз на 4 години, є обмеження по предметам): <img src="https://via.placeholder.com/300x150?text=Скупник+спорядження" alt="Скупник спорядження" class="content-image"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-ship"></i> Безодня</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-bullhorn"></i></div>
+            <div>
+              <h3>Оголошення івенту</h3>
+              <p>Кожного дня раз на <span class="highlight">4 години</span> в чаті з’являється повідомлення, що через <span class="highlight">15 хвилин</span> до берегів міста припливе субмарина з цінним вантажем.</p>
+              <p>Після цього в чаті з’являється сповіщення, що субмарина на місці.</p>
+              <p>Субмарина спавниться рандомно на мапі і позначена <span class="highlight">синім колом</span> у бліпі субмарини.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-tools"></i></div>
+            <div>
+              <h3>Відкриття субмарини</h3>
+              <p>Для відкриття субмарини потрібні <span class="highlight">гідравлічні ножиці</span>, які купуються в магазині 24/7.</p>
+              <p>Якщо субмарину вже відкрили, достатньо натиснути <span class="highlight">“E”</span>, щоб зайти.</p>
+              <p>Для глибоких локацій потрібен <span class="highlight">комплект для дайвінгу</span> з риболовного магазину. Якщо оксиген закінчується, комплект пропадає, заправка неможлива.</p>
+              <p>Перший гравець, який допливе до шлюзу, проходить міні-гру: вибрати правильні пази для круга, після чого шлюз відкривається.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-box-open"></i></div>
+            <div>
+              <h3>Вміст субмарини</h3>
+              <p>У субмарині є <span class="highlight">3 ящика</span>, які спавняться рандомно. Для їх відкриття потрібно підійти і натиснути <span class="highlight">“E”</span>, після чого чекати <span class="highlight">5 хвилин</span>.</p>
+              <p>У ящиках знаходяться цінні предмети, включаючи унікальні, які можна продати скупнику спорядження за велику суму.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <h3>Мітка субмарини</h3>
+              <p>Як виглядає субмарина на мапі: <img src="https://via.placeholder.com/300x150?text=Мітка+субмарини" alt="Мітка субмарини" class="content-image"></p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-book"></i></div>
+            <div>
+              <h3>Правила івенту</h3>
+              <p>Ознайомтесь з правилами івенту на форумі: <a href="#" class="highlight">Посилання</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-anchor"></i> Ліцензія на водний транспорт</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-certificate"></i></div>
+            <div>
+              <h3>Отримання ліцензії та покупка</h3>
+              <p>На мапі з’явилось місце, де можна здати на <span class="highlight">ліцензію на водний транспорт</span> та придбати водний транспорт.</p>
+              <p>Салон водного транспорту: <img src="https://via.placeholder.com/300x150?text=Салон+водного+транспорту" alt="Салон водного транспорту" class="content-image"></p>
+              <p>Водний транспорт можна забрати лише на відповідній парковці на <span class="highlight">Пристані</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-fingerprint"></i> Серійні номери на зброї</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-barcode"></i></div>
+            <div>
+              <h3>Типи серійних номерів</h3>
+              <p>Кожна зброя має свій серійний номер:</p>
+              <ul>
+                <li><span class="highlight">FRG</span> — Зброя, скрафчена на складі державної фракції (легальна).</li>
+                <li><span class="highlight">FRC</span> — Зброя, скрафчена на складі Мафії/Банд (нелегальна).</li>
+                <li><span class="highlight">FMC</span> — Зброя, скрафчена на складі сім’ї по гілці крайм (нелегальна).</li>
+                <li><span class="highlight">FMG</span> — Зброя, скрафчена на складі сім’ї по гілці гов (легальна).</li>
+                <li><span class="highlight">AMM</span> — Зброя, куплена в амуніції (легальна за наявності ліцензії).</li>
+                <li><span class="highlight">CIV</span> — Зброя з БП/ЕйрДроп тощо.</li>
+              </ul>
+              <p>Приклад серійного номера: <span class="highlight">FRC - 0N11J143703314</span>, де після “N” — ID фракції (11), далі — рандомні цифри до 0, і після 0 — статичний ID (3314).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-building"></i> Новий інтер’єр FIB</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-door-open"></i></div>
+            <div>
+              <h3>Оновлення</h3>
+              <p>Додано новий інтер’єр FIB (перша частина, будуть ще дві).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-plus-circle"></i> Додаткові нововведення</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-book"></i></div>
+            <div>
+              <h3>Логування</h3>
+              <p>Додано логування в планшетах фракцій та сімей. Записуються всі дії учасників.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-user-clock"></i></div>
+            <div>
+              <h3>Зміни для державних фракцій</h3>
+              <p>Додано можливість початку та кінця зміни. Без активної зміни фракційний функціонал недоступний.</p>
+              <p>Для початку/кінця зміни потрібно підійти до NPC, доданого до кожної фракції.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-id-card"></i></div>
+            <div>
+              <h3>Перевірка документів</h3>
+              <p>Працівники державних організацій можуть перевіряти документи гравця в кайданках через клавішу <span class="highlight">“G”</span>.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-car"></i></div>
+            <div>
+              <h3>Система угону для LSPD, FIB, BCSD</h3>
+              <p>Виклик приймається через планшет на клавішу <span class="highlight">“P”</span>. На мапі з’являється мітка, де їде автомобіль.</p>
+              <p>Якщо гравець близько, мітка з’являється на міні-мапі.</p>
+              <p>Після посадки в ТЗ з’являється сповіщення про доставку на штрафмайданчик. Винагорода залежить від рівня угонки: <span class="highlight">10,000 × рівень</span> (наприклад, 5 рівень = 50,000).</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-store"></i></div>
+            <div>
+              <h3>Сімейний магазин</h3>
+              <p>У сімейному планшеті додано можливість зміни логотипу та назви сім’ї.</p>
+              <p>Додана перевірка на сімейний одяг: тільки учасники сім’ї можуть купувати одяг з їх магазину.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-box"></i></div>
+            <div>
+              <h3>Новий кейс</h3>
+              <p>Додано новий кейс <span class="highlight">“Смарагдове Божевілля”</span>.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-tshirt"></i></div>
+            <div>
+              <h3>Новий одяг та аксесуари</h3>
+              <p>Додано новий одяг, аксесуари та сумки в донат-магазині.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-car"></i></div>
+            <div>
+              <h3>Нові автомобілі</h3>
+              <ul>
+                <li><span class="highlight">Benefactor AWG GT</span> — Кейс.</li>
+                <li><span class="highlight">Joop Crand Geroke</span> — Автосалон Люкс.</li>
+                <li><span class="highlight">Ubermacht K5N Y70</span> — Автосалон Люкс.</li>
+                <li><span class="highlight">Ferrani 458 Spec Aferta</span> — Донат.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-trash"></i></div>
+            <div>
+              <h3>Скупник сміття</h3>
+              <p>Додано скупника сміття на сміттєзвалищі. Гравці можуть продавати предмети, отримані з мусору, за вигідними цінами.</p>
+              <p>Ціни на деяких скупників збільшено.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-headset"></i></div>
+            <div>
+              <h3>Адміністрація</h3>
+              <p>У HUD додано відображення кількості не взятих тікетів та онлайн адміністраторів.</p>
+            </div>
+          </div>
+          <div class="feature-block">
+            <div class="feature-icon"><i class="fas fa-gift"></i></div>
+            <div>
+              <h3>Акція</h3>
+              <p>Акція <span class="highlight">x2</span> діє з <span class="highlight">23.08.2025</span> по <span class="highlight">24.08.2025</span>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <h2><i class="fas fa-exclamation-triangle"></i> Увага</h2>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="section-body">
+          <div class="system-note warning">
+            <i class="fas fa-exclamation-triangle"></i> Розповсюдження цього скрипта призведе до <span class="highlight">ЧС</span> на всіх проєктах Ukraine Games!
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+        < Maddox class="logo">Ukraine GTA 5 RolePlay</p>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const stars = [];
+    const numStars = 30;
+    
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speed = Math.random() * 2 + 0.5;
+        this.opacity = Math.random() * 0.4 + 0.2;
+      }
+      
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+    
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
+
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+
+    const superAdmins = [
+      '@laker_77',
+      '@B_m_b1',
+      '@c10mm'
+    ];
+
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      console.log('Toggling sidebar');
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        console.log('Closing sidebar');
+        sidebar.classList.remove('open');
+      }
+    });
+
+    async function getSheetData(sheetName) {
+      console.log(`Fetching data for sheet: ${sheetName}`);
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
+    }
+
+    async function onTelegramAuth(user) {
+      console.log('Telegram auth triggered:', user);
+      if (!user || !user.username) {
+        console.error('Invalid user data:', user);
+        alert('Невалідні дані користувача');
+        showLoginForm();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+      console.log('Processing user:', telegramUsername);
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          console.error('No tickets data found');
+          alert('Дані не знайдено');
+          showLoginForm();
+          return;
+        }
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        if (telegramColIndex === -1) {
+          console.error('Telegram column not found in tickets data');
+          alert('Помилка структури даних: відсутній стовпець Telegram');
+          showLoginForm();
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          console.log('User found in tickets data:', userTicketsRow);
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: superAdmins.includes(telegramUsername)
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          showContent(userData);
+        } else {
+    console.error('User not found in tickets data:', telegramUsername);
+          localStorage.removeItem('tg_auth');
+          alert('Користувача не знайдено в таблиці. Доступ заборонено.');
+          showLoginForm();
+        }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        alert('Помилка під час завантаження даних');
+        showLoginForm();
+      }
+    }
+
+    function showContent(userData) {
+      console.log('Showing content for user:', userData);
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+
+      if (userData.isAdmin) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+    }
+
+    function showLoginForm() {
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+    }
+
+    function logout() {
+      console.log('Logging out');
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    function toggleSection(header) {
+      const body = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      body.classList.toggle('hidden');
+      icon.classList.toggle('collapsed');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
+      }
+    });
+  </script>
+</body>
+</html>
