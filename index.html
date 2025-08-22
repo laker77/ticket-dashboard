@@ -531,6 +531,70 @@
       box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
     }
 
+    /* Banner Styles */
+    .banner {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      text-align: center;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      transition: all 0.3s ease;
+      animation: slideIn 1s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), transparent);
+      z-index: -1;
+      animation: chartGlow 5s ease-in-out infinite;
+    }
+
+    .banner:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .banner-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .banner-text {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .banner-link {
+      display: inline-block;
+      background: var(--primary-color);
+      color: var(--text-primary);
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .banner-link:hover {
+      background: var(--secondary-color);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+    }
+
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -609,6 +673,15 @@
       .login-subtitle {
         font-size: 0.9rem;
       }
+      .banner {
+        padding: 1rem;
+      }
+      .banner-title {
+        font-size: 1.25rem;
+      }
+      .banner-text {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
@@ -627,7 +700,7 @@
       <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
       <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
       <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
-                  <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+      <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
       <div class="menu-category">Інформація</div>
       <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
       <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
@@ -681,6 +754,12 @@
     <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center" id="welcome-header">Ласкаво просимо!</h1>
 
     <div id="dashboard" class="hidden">
+      <div class="banner">
+        <h2 class="banner-title">Скрипт 1.9 вже доступний!</h2>
+        <p class="banner-text">Ознайомтеся з новим скриптом 1.9 для покращення вашої роботи.</p>
+        <a href="script1.9.html" class="banner-link"><i class="fas fa-code mr-2"></i>Перейти до скрипту</a>
+      </div>
+
       <div class="admins-row">
         <div class="admin-card" id="top-admins-section">
           <h2>🏆 Адміни тижня</h2>
@@ -1281,7 +1360,7 @@
             if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
               dayTimeStr = userTimeRow[timeColIndex];
               if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                const [hh, mm, ss] = timeStr.split(':').map(Number);
                 dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
               }
             }
@@ -1636,4 +1715,3 @@
   </script>
 </body>
 </html>
-
