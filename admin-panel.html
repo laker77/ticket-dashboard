@@ -722,15 +722,14 @@
                     <thead>
                         <tr>
                             <th data-sort="name">Співробітник</th>
-                            <th data-sort="yesterday-tickets">Тікети (вчора)</th>
-                            <th data-sort="yesterday-time">Час (вчора)</th>
-                            <th data-sort="week-tickets">Тікети (тиждень)</th>
-                            <th data-sort="week-time">Час (тиждень)</th>
+                            <th data-sort="norm-fulfilled">Виконана норма</th>
+                            <th data-sort="norm-stretched">Натягнута норма</th>
+                            <th data-sort="norm-missing">Норма відсутня</th>
+                            <th data-sort="norm-fired">Неактивів</th>
                             <th data-sort="month-tickets">Тікети (місяць)</th>
                             <th data-sort="month-time">Час (місяць)</th>
                             <th data-sort="total-tickets">Тікети (всього)</th>
                             <th data-sort="total-time">Час (всього)</th>
-                            <th data-sort="rank">Місце</th>
                         </tr>
                     </thead>
                     <tbody id="admin-stats-body">
@@ -793,7 +792,7 @@
         let employeesData = [];
         let ticketsData = [];
         let timeData = [];
-        let currentSort = { column: 'rank', direction: 'asc' };
+        let currentSort = { column: 'month-tickets', direction: 'desc' };
 
         function showNotification(message, type = 'info') {
             const notification = document.getElementById('notification');
@@ -923,6 +922,10 @@
                     let totalTickets = 0;
                     let totalTime = 0;
                     let activeDays = 0;
+                    let normFulfilled = 0;
+                    let normStretched = 0;
+                    let normMissing = 0;
+                    let normFired = 0;
 
                     for (const { h: dateStr, i: dateIndex } of dateCols) {
                         const date = parseDate(dateStr);
@@ -961,6 +964,13 @@
                         if (date >= monthStart && date <= monthEnd) {
                             monthTickets += tickets;
                             monthTime += timeSeconds;
+                            const normStatus = getNormStatus(tickets, timeSeconds);
+                            switch (normStatus) {
+                                case "Норма виконана": normFulfilled++; break;
+                                case "Норма натягнута": normStretched++; break;
+                                case "Норма не виконана": normMissing++; break;
+                                case "Звільнений": normFired++; break;
+                            }
                         }
                     }
 
@@ -977,7 +987,8 @@
                             yesterday: { tickets: yesterdayTickets, time: yesterdayTime },
                             week: { tickets: weekTickets, time: weekTime },
                             month: { tickets: monthTickets, time: monthTime },
-                            total: { tickets: totalTickets, time: totalTime }
+                            total: { tickets: totalTickets, time: totalTime },
+                            norms: { fulfilled: normFulfilled, stretched: normStretched, missing: normMissing, fired: normFired }
                         }
                     });
                 }
@@ -1002,7 +1013,7 @@
                 document.getElementById('total-time-all').textContent = secondsToHHMMSS(totalTimeAll);
 
                 const avgActivity = totalActiveDays > 0 ? Math.round((totalActiveDays / employees.length) * 100) / 100 : 0;
-                document.getElementById('avg-activity').textContent = `${avgActivity} дн/м`;
+                document.getElementById('avg-activity').textContent = `${avgActivity} дн`;
 
                 document.getElementById('top-tickets').textContent = maxTicketsEmployee ? 
                     `${maxTicketsEmployee} - ${maxTicketsYesterday}` : "Немає даних";
@@ -1026,21 +1037,21 @@
                         valueA = a.name.toLowerCase();
                         valueB = b.name.toLowerCase();
                         return direction === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
-                    case 'yesterday-tickets':
-                        valueA = a.stats.yesterday.tickets;
-                        valueB = b.stats.yesterday.tickets;
+                    case 'norm-fulfilled':
+                        valueA = a.stats.norms.fulfilled;
+                        valueB = b.stats.norms.fulfilled;
                         break;
-                    case 'yesterday-time':
-                        valueA = a.stats.yesterday.time;
-                        valueB = b.stats.yesterday.time;
+                    case 'norm-stretched':
+                        valueA = a.stats.norms.stretched;
+                        valueB = b.stats.norms.stretched;
                         break;
-                    case 'week-tickets':
-                        valueA = a.stats.week.tickets;
-                        valueB = b.stats.week.tickets;
+                    case 'norm-missing':
+                        valueA = a.stats.norms.missing;
+                        valueB = b.stats.norms.missing;
                         break;
-                    case 'week-time':
-                        valueA = a.stats.week.time;
-                        valueB = b.stats.week.time;
+                    case 'norm-fired':
+                        valueA = a.stats.norms.fired;
+                        valueB = b.stats.norms.fired;
                         break;
                     case 'month-tickets':
                         valueA = a.stats.month.tickets;
@@ -1058,10 +1069,9 @@
                         valueA = a.stats.total.time;
                         valueB = b.stats.total.time;
                         break;
-                    case 'rank':
                     default:
-                        valueA = a.rank;
-                        valueB = b.rank;
+                        valueA = a.stats.month.tickets;
+                        valueB = b.stats.month.tickets;
                 }
 
                 return direction === 'asc' ? valueA - valueB : valueB - valueA;
@@ -1088,15 +1098,14 @@
                         <div class="font-medium">${employee.name}</div>
                         <div class="text-sm" style="color: var(--muted-foreground)">${employee.telegram}</div>
                     </td>
-                    <td>${employee.stats.yesterday.tickets}</td>
-                    <td>${secondsToHHMMSS(employee.stats.yesterday.time)}</td>
-                    <td>${employee.stats.week.tickets}</td>
-                    <td>${secondsToHHMMSS(employee.stats.week.time)}</td>
+                    <td>${employee.stats.norms.fulfilled}</td>
+                    <td>${employee.stats.norms.stretched}</td>
+                    <td>${employee.stats.norms.missing}</td>
+                    <td>${employee.stats.norms.fired}</td>
                     <td>${employee.stats.month.tickets}</td>
                     <td>${secondsToHHMMSS(employee.stats.month.time)}</td>
                     <td>${employee.stats.total.tickets}</td>
                     <td>${secondsToHHMMSS(employee.stats.total.time)}</td>
-                    <td>${getRankElement(employee.rank)}</td>
                 `;
                 tbody.appendChild(row);
             });
