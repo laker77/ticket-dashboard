@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Розрахунок зарплати співробітників</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background: #0f172a;
+            --foreground: #f8fafc;
+            --card: #1e293b;
+            --card-foreground: #f1f5f9;
+            --primary: #0ea5e9;
+            --primary-foreground: #f0f9ff;
+            --secondary: #0369a1;
+            --secondary-foreground: #e0f2fe;
+            --muted: #334155;
+            --muted-foreground: #94a3b8;
+            --accent: #38bdf8;
+            --accent-foreground: #0c4a6e;
+            --border: #334155;
+            --input: #1e293b;
+            --ring: rgba(14, 165, 233, 0.3);
+            --radius: 0.75rem;
+            --header-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--muted);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(145deg, var(--card), #1a2536);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--foreground);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--ring);
+        }
+
+        .table-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: var(--muted);
+            padding: 1.25rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--accent);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th:hover {
+            background: #2d3748;
+        }
+
+        .table td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .loader {
+            border: 4px solid var(--muted);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 3.5rem;
+            height: 3.5rem;
+            animation: spin 1s linear infinite;
+            margin: 3rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1.25rem 1.75rem;
+            border-radius: var(--radius);
+            color: white;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success { background: rgba(16, 185, 129, 0.9); }
+        .notification.error { background: rgba(239, 68, 68, 0.9); }
+        .notification.info { background: rgba(56, 189, 248, 0.9); }
+
+        .hidden { display: none; }
+        .summary-row {
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .summary-row td {
+            border-top: 2px solid var(--border);
+        }
+
+        .positive-value {
+            color: #10b981;
+        }
+
+        .negative-value {
+            color: #ef4444;
+        }
+
+        .editable-cell {
+            background: rgba(56, 189, 248, 0.1);
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            transition: background 0.2s ease;
+        }
+
+        .editable-cell:hover {
+            background: rgba(56, 189, 248, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header { flex-direction: column; gap: 1.25rem; padding: 1.25rem; }
+            .header-title { font-size: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="header-title">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                Розрахунок зарплати співробітників
+            </h1>
+            <div class="header-actions">
+                <button id="calculate-btn" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                    Розрахувати
+                </button>
+                <button id="back-btn" class="btn btn-secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                    Назад
+                </button>
+            </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 class="stat-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                    Налаштування системи
+                </h3>
+                <div class="input-group">
+                    <label class="input-label">Загальний бюджет (грн)</label>
+                    <input type="number" id="total-budget" class="input-field" value="40000">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Кількість днів у місяці</label>
+                    <input type="number" id="days-in-month" class="input-field" value="30">
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3 class="stat-card-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                    </svg>
+                    Статистика розподілу
+                </h3>
+                <div class="stat-item">
+                    <span>Загальна вага днів:</span>
+                    <span id="total-weight" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Вартість вагового дня:</span>
+                    <span id="day-value" class="stat-value">0 грн</span>
+                </div>
+                <div class="stat-item">
+                    <span>Загалом до виплати:</span>
+                    <span id="total-payout" class="stat-value">0 грн</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loader -->
+        <div id="loader" class="loader hidden"></div>
+
+        <!-- Salary Table -->
+        <div id="salary-container" class="hidden">
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Співробітник</th>
+                            <th>Днів норми</th>
+                            <th>Днів натягнуто</th>
+                            <th>Днів не виконано</th>
+                            <th>Днів неактиву</th>
+                            <th>Вага днів</th>
+                            <th>Зарплата за норми</th>
+                            <th>Додаткові бонуси</th>
+                            <th>Разом до виплати</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salary-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Конфігурація
+        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+        
+        // Глобальні змінні
+        let employeesData = [];
+        let salaryData = [];
+
+        // Функції для сповіщень
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Отримання даних з Google Sheets
+        async function getSheetData(sheetName) {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+            try {
+                const res = await axios.get(url);
+                return res.data.values;
+            } catch (error) {
+                console.error('Помилка під час отримання даних:', error);
+                showNotification('Помилка завантаження даних', 'error');
+                return null;
+            }
+        }
+
+        // Завантаження даних співробітників
+        async function loadEmployeesData() {
+            document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('salary-container').classList.add('hidden');
+            
+            // Отримуємо дані з таблиці (припускаємо, що дані зберігаються у аркуші "Дані_співробітників")
+            const data = await getSheetData('Дані_співробітників');
+            
+            if (!data) {
+                document.getElementById('loader').classList.add('hidden');
+                return;
+            }
+            
+            // Парсимо дані (припускаємо структуру: Ім'я, ДнівНорми, ДнівНатягнуто, ДнівНеВиконано, ДнівНеактиву, Бонуси)
+            employeesData = [];
+            const headers = data[0];
+            
+            for (let i = 1; i < data.length; i++) {
+                const row = data[i];
+                if (row.length >= 5) {
+                    employeesData.push({
+                        name: row[0],
+                        normDays: parseInt(row[1]) || 0,
+                        stretchedDays: parseInt(row[2]) || 0,
+                        missingDays: parseInt(row[3]) || 0,
+                        inactiveDays: parseInt(row[4]) || 0,
+                        bonuses: parseInt(row[5]) || 0
+                    });
+                }
+            }
+            
+            document.getElementById('loader').classList.add('hidden');
+            return employeesData;
+        }
+
+        // Розрахунок зарплати
+        function calculateSalaries() {
+            const totalBudget = parseFloat(document.getElementById('total-budget').value);
+            const daysInMonth = parseInt(document.getElementById('days-in-month').value);
+            const employeesCount = employeesData.length;
+            
+            // Розраховуємо денну ставку
+            const dailyRate = totalBudget / (employeesCount * daysInMonth);
+            
+            // Розраховуємо вагу для кожного співробітника
+            let totalWeight = 0;
+            salaryData = [];
+            
+            employeesData.forEach(employee => {
+                // Розрахунок ваги: норма * 1, натягнута * 0.5, не виконано * -1, неактив * 0
+                const weight = (employee.normDays * 1) + 
+                              (employee.stretchedDays * 0.5) + 
+                              (employee.missingDays * -1) + 
+                              (employee.inactiveDays * 0);
+                
+                totalWeight += Math.max(0, weight); // Враховуємо тільки позитивну вагу
+                
+                salaryData.push({
+                    ...employee,
+                    weight: weight,
+                    salary: 0, // Розрахуємо далі
+                    total: 0
+                });
+            });
+            
+            // Розраховуємо вартість одного вагового дня
+            const weightValue = totalWeight > 0 ? totalBudget / totalWeight : 0;
+            
+            // Розраховуємо зарплату для кожного співробітника
+            let totalPayout = 0;
+            
+            salaryData.forEach(employee => {
+                // Зарплата за нормами = вага * вартість вагового дня (тільки якщо вага позитивна)
+                employee.salary = Math.max(0, employee.weight) * weightValue;
+                employee.total = employee.salary + (employee.bonuses || 0);
+                totalPayout += employee.total;
+            });
+            
+            // Оновлюємо статистику
+            document.getElementById('total-weight').textContent = totalWeight.toFixed(2);
+            document.getElementById('day-value').textContent = weightValue.toFixed(2) + ' грн';
+            document.getElementById('total-payout').textContent = totalPayout.toFixed(2) + ' грн';
+            
+            return salaryData;
+        }
+
+        // Відображення таблиці зарплат
+        function renderSalaryTable() {
+            const tbody = document.getElementById('salary-body');
+            tbody.innerHTML = '';
+            
+            salaryData.forEach(employee => {
+                const row = document.createElement('tr');
+                
+                // Визначаємо клас для ваги (позитивна/негативна)
+                const weightClass = employee.weight >= 0 ? 'positive-value' : 'negative-value';
+                
+                row.innerHTML = `
+                    <td>${employee.name}</td>
+                    <td>${employee.normDays}</td>
+                    <td>${employee.stretchedDays}</td>
+                    <td>${employee.missingDays}</td>
+                    <td>${employee.inactiveDays}</td>
+                    <td class="${weightClass}">${employee.weight.toFixed(2)}</td>
+                    <td>${employee.salary.toFixed(2)} грн</td>
+                    <td>${employee.bonuses || 0} грн</td>
+                    <td><strong>${employee.total.toFixed(2)} грн</strong></td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            // Додаємо підсумковий рядок
+            const totalRow = document.createElement('tr');
+            totalRow.className = 'summary-row';
+            
+            const totalSalary = salaryData.reduce((sum, emp) => sum + emp.salary, 0);
+            const totalBonuses = salaryData.reduce((sum, emp) => sum + (emp.bonuses || 0), 0);
+            const totalPayout = salaryData.reduce((sum, emp) => sum + emp.total, 0);
+            
+            totalRow.innerHTML = `
+                <td><strong>Всього</strong></td>
+                <td>${salaryData.reduce((sum, emp) => sum + emp.normDays, 0)}</td>
+                <td>${salaryData.reduce((sum, emp) => sum + emp.stretchedDays, 0)}</td>
+                <td>${salaryData.reduce((sum, emp) => sum + emp.missingDays, 0)}</td>
+                <td>${salaryData.reduce((sum, emp) => sum + emp.inactiveDays, 0)}</td>
+                <td>${salaryData.reduce((sum, emp) => sum + Math.max(0, emp.weight), 0).toFixed(2)}</td>
+                <td>${totalSalary.toFixed(2)} грн</td>
+                <td>${totalBonuses.toFixed(2)} грн</td>
+                <td>${totalPayout.toFixed(2)} грн</td>
+            `;
+            
+            tbody.appendChild(totalRow);
+            
+            // Показуємо таблицю
+            document.getElementById('salary-container').classList.remove('hidden');
+        }
+
+        // Обробник події для кнопки розрахунку
+        document.getElementById('calculate-btn').addEventListener('click', async function() {
+            await loadEmployeesData();
+            calculateSalaries();
+            renderSalaryTable();
+            showNotification('Зарплати успішно розраховані', 'success');
+        });
+
+        // Обробник події для кнопки назад
+        document.getElementById('back-btn').addEventListener('click', function() {
+            window.location.href = 'admin_panel.html'; // Замініть на вашу адмінську панель
+        });
+
+        // Ініціалізація при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', function() {
+            // Можна автоматично завантажити дані при відкритті сторінки
+            // loadEmployeesData();
+        });
+    </script>
+</body>
+</html>
