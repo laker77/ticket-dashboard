@@ -379,6 +379,27 @@
                     <label class="input-label">Кількість днів у місяці</label>
                     <input type="number" id="days-in-month" class="input-field" value="30">
                 </div>
+                <div class="input-group">
+                    <label class="input-label">Місяць для аналізу</label>
+                    <select id="month-select" class="input-field">
+                        <option value="0">Січень</option>
+                        <option value="1">Лютий</option>
+                        <option value="2">Березень</option>
+                        <option value="3">Квітень</option>
+                        <option value="4">Травень</option>
+                        <option value="5">Червень</option>
+                        <option value="6">Липень</option>
+                        <option value="7">Серпень</option>
+                        <option value="8">Вересень</option>
+                        <option value="9">Жовтень</option>
+                        <option value="10">Листопад</option>
+                        <option value="11">Грудень</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Рік для аналізу</label>
+                    <input type="number" id="year-select" class="input-field" value="2025">
+                </div>
             </div>
 
             <div class="stat-card">
@@ -400,6 +421,10 @@
                     <span>Загалом до виплати:</span>
                     <span id="total-payout" class="stat-value">0 грн</span>
                 </div>
+                <div class="stat-item">
+                    <span>Кількість співробітників:</span>
+                    <span id="total-employees" class="stat-value">0</span>
+                </div>
             </div>
         </div>
 
@@ -413,10 +438,10 @@
                     <thead>
                         <tr>
                             <th>Співробітник</th>
-                            <th>Днів норми</th>
-                            <th>Днів натягнуто</th>
-                            <th>Днів не виконано</th>
-                            <th>Днів неактиву</th>
+                            <th>Днів норми<br>(≥20 тікетів)</th>
+                            <th>Днів натягнуто<br>(10-19 тікетів)</th>
+                            <th>Днів не виконано<br>(<10 тікетів)</th>
+                            <th>Днів неактиву<br>(Н)</th>
                             <th>Вага днів</th>
                             <th>Зарплата за норми</th>
                             <th>Додаткові бонуси</th>
@@ -465,35 +490,108 @@
             }
         }
 
+        // Конвертація часу у секунди
+        function timeToSeconds(timeStr) {
+            if (!timeStr || timeStr === 'Н') return 0;
+            const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+            return hours * 3600 + minutes * 60 + seconds;
+        }
+
+        // Визначення статусу дня на основі кількості тікетів
+        function getDayStatus(tickets, timeSeconds) {
+            if (timeSeconds === 0) return "inactive"; // Неактив
+            if (tickets >= 20) return "norm";         // Норма виконана
+            if (tickets >= 10) return "stretched";    // Натягнута норма
+            return "missing";                         // Не виконано
+        }
+
         // Завантаження даних співробітників
         async function loadEmployeesData() {
             document.getElementById('loader').classList.remove('hidden');
             document.getElementById('salary-container').classList.add('hidden');
             
-            // Отримуємо дані з таблиці (припускаємо, що дані зберігаються у аркуші "Дані_співробітників")
-            const data = await getSheetData('Дані_співробітників');
+            const month = parseInt(document.getElementById('month-select').value);
+            const year = parseInt(document.getElementById('year-select').value);
             
-            if (!data) {
+            // Отримуємо дані з таблиць
+            const ticketsSheetName = `Май_${year}_таблица`; // Замініть на правильну назву аркуша
+            const timeSheetName = `Время_в_игре`; // Замініть на правильну назву аркуша
+            
+            const ticketsData = await getSheetData(ticketsSheetName);
+            const timeData = await getSheetData(timeSheetName);
+            
+            if (!ticketsData || !timeData) {
                 document.getElementById('loader').classList.add('hidden');
                 return;
             }
             
-            // Парсимо дані (припускаємо структуру: Ім'я, ДнівНорми, ДнівНатягнуто, ДнівНеВиконано, ДнівНеактиву, Бонуси)
+            // Обробка даних
             employeesData = [];
-            const headers = data[0];
+            const ticketsHeaders = ticketsData[0];
+            const timeHeaders = timeData[0];
             
-            for (let i = 1; i < data.length; i++) {
-                const row = data[i];
-                if (row.length >= 5) {
-                    employeesData.push({
-                        name: row[0],
-                        normDays: parseInt(row[1]) || 0,
-                        stretchedDays: parseInt(row[2]) || 0,
-                        missingDays: parseInt(row[3]) || 0,
-                        inactiveDays: parseInt(row[4]) || 0,
-                        bonuses: parseInt(row[5]) || 0
-                    });
+            const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+            const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+            const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+            
+            // Знаходимо стовпці з датами за вказаний місяць
+            const dateRegex = /^\d{2}\.\d{2}\.\d{4}$/;
+            const dateCols = ticketsHeaders
+                .map((header, index) => ({ header, index }))
+                .filter(({ header }) => {
+                    if (!dateRegex.test(header)) return false;
+                    const [day, monthStr, yearStr] = header.split('.');
+                    const dateMonth = parseInt(monthStr) - 1;
+                    const dateYear = parseInt(yearStr);
+                    return dateMonth === month && dateYear === year;
+                });
+            
+            // Обробляємо кожного співробітника
+            for (let i = 1; i < ticketsData.length; i++) {
+                const ticketRow = ticketsData[i];
+                const employeeName = ticketRow[nameColIndex];
+                const telegram = ticketRow[telegramColIndex];
+                
+                if (!employeeName) continue;
+                
+                // Знаходимо відповідний рядок у даних про час
+                const timeRow = timeData.find(row => row[timeNameColIndex] === employeeName);
+                if (!timeRow) continue;
+                
+                // Підрахунок статусів днів
+                let normDays = 0;
+                let stretchedDays = 0;
+                let missingDays = 0;
+                let inactiveDays = 0;
+                
+                for (const { header: dateStr, index: dateIndex } of dateCols) {
+                    const tickets = parseInt(ticketRow[dateIndex]) || 0;
+                    const timeColIndex = timeHeaders.indexOf(dateStr);
+                    let timeSeconds = 0;
+                    
+                    if (timeColIndex >= 0 && timeRow[timeColIndex]) {
+                        timeSeconds = timeToSeconds(timeRow[timeColIndex]);
+                    }
+                    
+                    const status = getDayStatus(tickets, timeSeconds);
+                    
+                    switch (status) {
+                        case "norm": normDays++; break;
+                        case "stretched": stretchedDays++; break;
+                        case "missing": missingDays++; break;
+                        case "inactive": inactiveDays++; break;
+                    }
                 }
+                
+                employeesData.push({
+                    name: employeeName,
+                    telegram: telegram,
+                    normDays: normDays,
+                    stretchedDays: stretchedDays,
+                    missingDays: missingDays,
+                    inactiveDays: inactiveDays,
+                    bonuses: 0 // Можна додати функціонал для бонусів
+                });
             }
             
             document.getElementById('loader').classList.add('hidden');
@@ -547,6 +645,7 @@
             document.getElementById('total-weight').textContent = totalWeight.toFixed(2);
             document.getElementById('day-value').textContent = weightValue.toFixed(2) + ' грн';
             document.getElementById('total-payout').textContent = totalPayout.toFixed(2) + ' грн';
+            document.getElementById('total-employees').textContent = employeesData.length;
             
             return salaryData;
         }
@@ -563,7 +662,7 @@
                 const weightClass = employee.weight >= 0 ? 'positive-value' : 'negative-value';
                 
                 row.innerHTML = `
-                    <td>${employee.name}</td>
+                    <td>${employee.name}<br><small>${employee.telegram || 'Немає Telegram'}</small></td>
                     <td>${employee.normDays}</td>
                     <td>${employee.stretchedDays}</td>
                     <td>${employee.missingDays}</td>
@@ -581,16 +680,20 @@
             const totalRow = document.createElement('tr');
             totalRow.className = 'summary-row';
             
+            const totalNormDays = salaryData.reduce((sum, emp) => sum + emp.normDays, 0);
+            const totalStretchedDays = salaryData.reduce((sum, emp) => sum + emp.stretchedDays, 0);
+            const totalMissingDays = salaryData.reduce((sum, emp) => sum + emp.missingDays, 0);
+            const totalInactiveDays = salaryData.reduce((sum, emp) => sum + emp.inactiveDays, 0);
             const totalSalary = salaryData.reduce((sum, emp) => sum + emp.salary, 0);
             const totalBonuses = salaryData.reduce((sum, emp) => sum + (emp.bonuses || 0), 0);
             const totalPayout = salaryData.reduce((sum, emp) => sum + emp.total, 0);
             
             totalRow.innerHTML = `
                 <td><strong>Всього</strong></td>
-                <td>${salaryData.reduce((sum, emp) => sum + emp.normDays, 0)}</td>
-                <td>${salaryData.reduce((sum, emp) => sum + emp.stretchedDays, 0)}</td>
-                <td>${salaryData.reduce((sum, emp) => sum + emp.missingDays, 0)}</td>
-                <td>${salaryData.reduce((sum, emp) => sum + emp.inactiveDays, 0)}</td>
+                <td>${totalNormDays}</td>
+                <td>${totalStretchedDays}</td>
+                <td>${totalMissingDays}</td>
+                <td>${totalInactiveDays}</td>
                 <td>${salaryData.reduce((sum, emp) => sum + Math.max(0, emp.weight), 0).toFixed(2)}</td>
                 <td>${totalSalary.toFixed(2)} грн</td>
                 <td>${totalBonuses.toFixed(2)} грн</td>
@@ -616,10 +719,11 @@
             window.location.href = 'admin_panel.html'; // Замініть на вашу адмінську панель
         });
 
-        // Ініціалізація при завантаженні сторінки
+        // Встановлюємо поточний місяць за замовчуванням
         document.addEventListener('DOMContentLoaded', function() {
-            // Можна автоматично завантажити дані при відкритті сторінки
-            // loadEmployeesData();
+            const now = new Date();
+            document.getElementById('month-select').value = now.getMonth();
+            document.getElementById('year-select').value = now.getFullYear();
         });
     </script>
 </body>
