@@ -16,18 +16,18 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #3B82F6; /* Light blue primary color */
-      --secondary-color: #E0F2FE; /* Very light blue secondary color */
-      --accent-color: #60A5FA; /* Slightly darker blue accent */
-      --background-dark: #0F172A; /* Dark slate blue background */
-      --nav-bg: #1E293B; /* Darker slate blue for navigation */
-      --card-bg: rgba(30, 41, 59, 0.9); /* Semi-transparent dark slate for cards */
-      --glass-bg: rgba(30, 41, 59, 0.7); /* Semi-transparent glass effect */
+      --primary-color: #3B82F6;
+      --secondary-color: #E0F2FE;
+      --accent-color: #60A5FA;
+      --background-dark: #0F172A;
+      --nav-bg: #1E293B;
+      --card-bg: rgba(30, 41, 59, 0.9);
+      --glass-bg: rgba(30, 41, 59, 0.7);
       --glass-blur: blur(5px);
       --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-      --text-primary: #E0F2FE; /* Light blue text */
-      --text-secondary: #BFDBFE; /* Slightly darker blue text */
-      --card-border: rgba(59, 130, 246, 0.2); /* Light blue border */
+      --text-primary: #E0F2FE;
+      --text-secondary: #BFDBFE;
+      --card-border: rgba(59, 130, 246, 0.2);
     }
 
     * {
@@ -48,7 +48,6 @@
         radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 20%);
     }
 
-    /* Floating favicon logos background */
     canvas#logo-canvas {
       position: fixed;
       top: 0;
@@ -102,12 +101,36 @@
       box-shadow: var(--shadow);
       transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1000;
-      padding: 1.5rem;
+      padding: 1.5rem 0;
       border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
     }
 
     .sidebar.open {
       left: 0;
+    }
+
+    .sidebar-menu-container {
+      overflow-y: auto;
+      flex: 1;
+      padding: 0 1.5rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-menu-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-menu-container::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+
+    .sidebar-menu-container::-webkit-scrollbar-thumb {
+      background-color: var(--primary-color);
+      border-radius: 3px;
     }
 
     .sidebar-toggle {
@@ -144,7 +167,6 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      margin-top: 2.5rem;
     }
 
     .menu-category {
@@ -154,6 +176,11 @@
       padding: 0.5rem 1rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-top: 1rem;
+    }
+
+    .menu-category:first-child {
+      margin-top: 0;
     }
 
     .menu-item, .super-menu-item {
@@ -860,30 +887,32 @@
   <button id="logout-btn" class="hidden">Вийти</button>
 
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-menu">
-      <div class="menu-category">Скрипти</div>
-      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
-      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
-      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
-      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
-      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
-      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
-      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
-      <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
-      <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
-      <a href="battlepass_autumn.html" class="menu-item active"><i class="fas fa-trophy"></i> Осінній Батлпас</a>
-      <div class="menu-category">Інформація</div>
-      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
-      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
-      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
-      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
-      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
-      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
-      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
-      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
-      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
-      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
-      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    <div class="sidebar-menu-container">
+      <div class="sidebar-menu">
+        <div class="menu-category">Скрипти</div>
+        <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+        <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+        <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+        <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+        <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+        <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+        <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+        <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
+        <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+        <a href="battlepass_autumn.html" class="menu-item active"><i class="fas fa-trophy"></i> Осінній Батлпас</a>
+        <div class="menu-category">Інформація</div>
+        <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+        <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+        <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+        <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+        <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+        <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+        <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+        <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+        <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+        <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+        <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+      </div>
     </div>
   </div>
   <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
@@ -942,15 +971,15 @@
             <div class="feature-icon"><i class="fas fa-box"></i></div>
             <div>
               <h3>Додаткові рівні</h3>
-              <p>Додано <span class="highlight">30 додаткових рівнів</span> після 120, де випадає кейс <span class="highlight">“Засекречений”</span>.</p>
-              <p>Кейс можна відкрити лише за наявності в інвентарі. Він з’являється в меню кейсів, коли є в інвентарі.</p>
+              <p>Додано <span class="highlight">30 додаткових рівнів</span> після 120, де випадає кейс <span class="highlight">"Засекречений"</span>.</p>
+              <p>Кейс можна відкрити лише за наявності в інвентарі. Він з'являється в меню кейсів, коли є в інвентарі.</p>
             </div>
           </div>
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-crown"></i></div>
             <div>
               <h3>Список лідерів</h3>
-              <p>Додано вкладку <span class="highlight">“Список лідерів”</span>, де відображається <span class="highlight">топ-10 гравців</span> за досвідом БП.</p>
+              <p>Додано вкладку <span class="highlight">"Список лідерів"</span>, де відображається <span class="highlight">топ-10 гравців</span> за досвідом БП.</p>
               <p>Наприкінці батлпасу ці гравці отримають нагороди, вказані у списку.</p>
             </div>
           </div>
@@ -958,7 +987,7 @@
             <div class="feature-icon"><i class="fas fa-star"></i></div>
             <div>
               <h3>VIP Пропуск</h3>
-              <p>Додана можливість купівлі додаткового досвіду у вкладці <span class="highlight">“VIP Пропуск”</span>.</p>
+              <p>Додана можливість купівлі додаткового досвіду у вкладці <span class="highlight">"VIP Пропуск"</span>.</p>
             </div>
           </div>
         </div>
@@ -974,7 +1003,7 @@
             <div class="feature-icon"><i class="fas fa-smoking"></i></div>
             <div>
               <h3>Кальян</h3>
-              <p>Кальян — одноразовий предмет. Щоб поставити його на землю, натисніть у інвентарі <span class="highlight">правою кнопкою миші → “Застосувати”</span>.</p>
+              <p>Кальян — одноразовий предмет. Щоб поставити його на землю, натисніть у інвентарі <span class="highlight">правою кнопкою миші → "Застосувати"</span>.</p>
               <ul>
                 <li>Після встановлення кальян нагрівається протягом <span class="highlight">1 хвилини</span>.</li>
                 <li>Можна зробити <span class="highlight">10 тяг</span>.</li>
@@ -1002,7 +1031,7 @@
             <div>
               <h3>Набір самореанімації</h3>
               <p>Якщо гравець помирає і має в інвентарі <span class="highlight">набір самореанімації</span>, він може використати його, натиснувши відповідну клавішу.</p>
-              <p>Гравець піднімається з <span class="highlight">40% здоров’я</span>.</p>
+              <p>Гравець піднімається з <span class="highlight">40% здоров'я</span>.</p>
             </div>
           </div>
         </div>
@@ -1026,14 +1055,14 @@
             <div class="feature-icon"><i class="fas fa-upload"></i></div>
             <div>
               <h3>Додавання своєї музики</h3>
-              <p>Гравці можуть додавати власну музику через особистий кабінет на сайті у вкладці <span class="highlight">“Бумбокс”</span> біля рулетки.</p>
+              <p>Гравці можуть додавати власну музику через особистий кабінет на сайті у вкладці <span class="highlight">"Бумбокс"</span> біля рулетки.</p>
               <ul>
                 <li>Максимум <span class="highlight">10 пісень</span> на модерації одночасно.</li>
                 <li>Якщо з 10 пісень 2 пройшли модерацію, можна завантажити ще 2.</li>
                 <li>Формат файлу: <span class="highlight">mp3</span>.</li>
                 <li>Завантажуються пісні з робочого столу.</li>
               </ul>
-              <p>Після проходження модерації пісні можна відтворювати в бумбоксі в грі.</p>
+              <p>Після проходження модeration пісні можна відтворювати в бумбоксі в грі.</p>
             </div>
           </div>
         </div>
@@ -1049,15 +1078,15 @@
             <div class="feature-icon"><i class="fas fa-hand-pointer"></i></div>
             <div>
               <h3>Механіка взаємодії</h3>
-              <p>Для взаємодії з предметом, автомобілем чи персонажем наведіть на нього, доки не з’явиться <span class="highlight">кружок</span>, після чого натисніть клавішу <span class="highlight">“G”</span>.</p>
+              <p>Для взаємодії з предметом, автомобілем чи персонажем наведіть на нього, доки не з'явиться <span class="highlight">кружок</span>, після чого натисніть клавішу <span class="highlight">"G"</span>.</p>
             </div>
           </div>
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-door-open"></i></div>
             <div>
               <h3>Взаємодія з дверима</h3>
-              <p>Додано взаємодію з дверима державних фракцій. Гравці можуть відкривати/закривати двері на титулі своєї фракції за допомогою клавіші <span class="highlight">“G”</span>.</p>
-              <p>Якщо двері зачинені, з’являється відповідна мітка.</p>
+              <p>Додано взаємодію з дверима державних фракцій. Гравці можуть відкривати/закривати двері на титулі своєї фракції за допомогою клавіші <span class="highlight">"G"</span>.</p>
+              <p>Якщо двері зачинені, з'являється відповідна мітка.</p>
             </div>
           </div>
         </div>
@@ -1084,8 +1113,8 @@
           <div class="feature-block">
             <div class="feature-icon"><i class="fas fa-building"></i></div>
             <div>
-              <h3>Інтер’єр FIB</h3>
-              <p>Додано другу частину інтер’єру для фракції FIB.</p>
+              <h3>Інтер'єр FIB</h3>
+              <p>Додано другу частину інтер'єру для фракції FIB.</p>
             </div>
           </div>
           <div class="feature-block">
@@ -1125,22 +1154,82 @@
   </div>
 
   <script>
-    const canvas = document.getElementById('logo-canvas');
-    const ctx = canvas.getContext('2d');
-    const favicon = new Image();
-    favicon.src = '1-17ffebdc.ico';
+    // Глобальные переменные
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+    const superAdmins = ['@laker_77', '@B_m_b1', '@c10mm'];
+    let canvas, ctx, favicon, logos = [];
+    const numLogos = 30;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    // Инициализация при загрузке DOM
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      initializeCanvas();
+      setupEventListeners();
+      checkAuthStatus();
+      revealOnScroll();
+    });
+
+    // Инициализация canvas для фона
+    function initializeCanvas() {
+      canvas = document.getElementById('logo-canvas');
+      ctx = canvas.getContext('2d');
+      favicon = new Image();
+      favicon.src = '1-17ffebdc.ico';
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      favicon.onload = () => {
+        for (let i = 0; i < numLogos; i++) {
+          logos.push(new Logo());
+        }
+        animateLogos();
+      };
     }
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    // Настройка обработчиков событий
+    function setupEventListeners() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
+      
+      document.addEventListener('click', (event) => {
+        const sidebar = document.getElementById('sidebar');
+        const toggle = document.getElementById('sidebarToggle');
+        if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+          sidebar.classList.remove('open');
+        }
+      });
 
-    const logos = [];
-    const numLogos = 30; // Number of falling logos
+      // Закрытие меню при клике на пункт меню
+      const menuItems = document.querySelectorAll('.menu-item, .super-menu-item');
+      menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+          document.getElementById('sidebar').classList.remove('open');
+        });
+      });
+    }
 
+    // Проверка статуса авторизации
+    function checkAuthStatus() {
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          console.log('Found saved auth:', savedAuth);
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        console.log('No saved auth, showing login form');
+        showLoginForm();
+      }
+    }
+
+    // Класс для логотипов на фоне
     class Logo {
       constructor() {
         this.reset();
@@ -1150,7 +1239,7 @@
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 20 + 10; // Size between 10-30px
+        this.size = Math.random() * 20 + 10;
         this.speed = Math.random() * 2 + 0.5;
         this.opacity = Math.random() * 0.4 + 0.2;
         this.rotation = Math.random() * Math.PI * 2;
@@ -1159,6 +1248,7 @@
       update() {
         this.y += this.speed;
         this.rotation += 0.02;
+        this.twinkle += 0.05;
         if (this.y > canvas.height) {
           this.reset();
         }
@@ -1175,13 +1265,7 @@
       }
     }
 
-    favicon.onload = () => {
-      for (let i = 0; i < numLogos; i++) {
-        logos.push(new Logo());
-      }
-      animateLogos();
-    };
-
+    // Анимация логотипов
     function animateLogos() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       logos.forEach(logo => {
@@ -1191,6 +1275,67 @@
       requestAnimationFrame(animateLogos);
     }
 
+    // Изменение размера canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    // Показать/скрыть боковое меню
+    function toggleSidebar() {
+      console.log('Toggling sidebar');
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // Показать контент после авторизации
+    function showContent(userData) {
+      console.log('Showing content for user:', userData);
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('content').style.display = 'block';
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+
+      if (userData.isAdmin) {
+        console.log('User is superAdmin, showing super menu');
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+    }
+
+    // Показать форму входа
+    function showLoginForm() {
+      console.log('Showing login form');
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('content').style.display = 'none';
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+    }
+
+    // Выход из системы
+    function logout() {
+      console.log('Logging out');
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    // Переключение секций
+    function toggleSection(header) {
+      const body = header.nextElementSibling;
+      const icon = header.querySelector('i');
+      
+      if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        icon.classList.remove('collapsed');
+      } else {
+        body.classList.add('hidden');
+        icon.classList.add('collapsed');
+      }
+    }
+
+    // Анимация появления при прокрутке
     function revealOnScroll() {
       const reveals = document.querySelectorAll('.scroll-reveal');
       for (let i = 0; i < reveals.length; i++) {
@@ -1204,31 +1349,8 @@
     }
 
     window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll();
 
-    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-
-    const superAdmins = [
-      '@laker_77',
-      '@B_m_b1',
-      '@c10mm'
-    ];
-
-    document.getElementById('sidebarToggle').addEventListener('click', () => {
-      console.log('Toggling sidebar');
-      document.getElementById('sidebar').classList.toggle('open');
-    });
-
-    document.addEventListener('click', (event) => {
-      const sidebar = document.getElementById('sidebar');
-      const toggle = document.getElementById('sidebarToggle');
-      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
-        console.log('Closing sidebar');
-        sidebar.classList.remove('open');
-      }
-    });
-
+    // Получение данных из Google Sheets
     async function getSheetData(sheetName) {
       console.log(`Fetching data for sheet: ${sheetName}`);
       try {
@@ -1242,6 +1364,7 @@
       }
     }
 
+    // Обработчик авторизации через Telegram
     async function onTelegramAuth(user) {
       console.log('Telegram auth triggered:', user);
       if (!user || !user.username) {
@@ -1297,71 +1420,6 @@
         showLoginForm();
       }
     }
-
-    function showContent(userData) {
-      console.log('Showing content for user:', userData);
-      document.getElementById('login-section').style.display = 'none';
-      document.getElementById('content').style.display = 'block';
-      document.getElementById('logout-btn').classList.remove('hidden');
-      document.getElementById('sidebarToggle').classList.remove('hidden');
-
-      if (userData.isAdmin) {
-        console.log('User is superAdmin, showing super menu');
-        document.getElementById('superMenuCategory').style.display = 'block';
-        document.getElementById('superMenuItem1').style.display = 'flex';
-        document.getElementById('superMenuItem2').style.display = 'flex';
-        document.getElementById('superMenuItem3').style.display = 'flex';
-      }
-    }
-
-    function showLoginForm() {
-      console.log('Showing login form');
-      document.getElementById('login-section').style.display = 'flex';
-      document.getElementById('content').style.display = 'none';
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarToggle').classList.add('hidden');
-    }
-
-    function logout() {
-      console.log('Logging out');
-      localStorage.removeItem('tg_auth');
-      showLoginForm();
-    }
-
-    function toggleSection(header) {
-      const body = header.nextElementSibling;
-      const icon = header.querySelector('i');
-      
-      if (body.classList.contains('hidden')) {
-        body.classList.remove('hidden');
-        icon.classList.remove('collapsed');
-      } else {
-        body.classList.add('hidden');
-        icon.classList.add('collapsed');
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded');
-      document.getElementById('logout-btn').addEventListener('click', logout);
-      
-      const savedAuth = localStorage.getItem('tg_auth');
-      if (savedAuth) {
-        try {
-          console.log('Found saved auth:', savedAuth);
-          const userData = JSON.parse(savedAuth);
-          showContent(userData);
-        } catch (e) {
-          console.error('Error parsing saved auth:', e);
-          localStorage.removeItem('tg_auth');
-          showLoginForm();
-        }
-      } else {
-        console.log('No saved auth, showing login form');
-        showLoginForm();
-      }
-    });
   </script>
 </body>
 </html>
