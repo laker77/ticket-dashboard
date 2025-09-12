@@ -49,8 +49,8 @@
             overflow-x: hidden;
         }
 
-        /* Анимация падающих звезд */
-        canvas#stars-canvas {
+        /* Логотип вместо звезд */
+        .logo-background {
             position: fixed;
             top: 0;
             left: 0;
@@ -58,7 +58,17 @@
             height: 100%;
             z-index: -1;
             pointer-events: none;
-            opacity: 0.8;
+            opacity: 0.05;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEwMCAxNjYuNjY3QzEzNi44NCAxNjYuNjY3IDE2Ni42NyAxMzYuODQgMTY2LjY3IDEwMEMxNjYuNjcgNjMuMTYwMSAxMzYuODQgMzMuMzMzNCAxMDAgMzMuMzMzNEM2My4xNjAxIDMzLjMzMzQgMzMuMzMzNCA2My4xNjAxIDMzLjMzMzQgMTAwQzMzLjMzMzQgMTM2Ljg0IDYzLjE2MDEgMTY2LjY3IDEwMCAxNjYuNjdaIiBzdHJva2U9IiM0NDQiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxwYXRoIGQ9Ik03NSA2Ni42NjdDODMuMjg0MyA2Ni42NjcgOTAgNTkuOTUxMiA5MCA1MS42NjdDOTAgNDMuMzgyNyA4My4yODQzIDM2LjY2NyA3NSAzNi42NjdDNjYuNzE1NyAzNi42NjcgNjAgNDMuMzgyNyA2MCA1MS42NjdDNjAgNTkuOTUxMiA2Ni43MTU3IDY2LjY2NyA3NSA2Ni42NjdaIiBmaWxsPSIjNDQ0Ii8+CiAgPHBhdGggZD0iTTEyNSA2Ni42NjdDMTMzLjI4NCA2Ni42NjcgMTQwIDU5Ljk1MTIgMTQwIDUxLjY2N0MxNDAgNDMuMzgyNyAxMzMuMjg0IDM2LjY2NyAxMjUgMzYuNjY3QzExNi43MTYgMzYuNjY3IDExMCA0My4zODI3IDExMCA1MS42NjdDMTEwIDU5Ljk1MTIgMTE2LjcxNiA2Ni42NjcgMTI1IDY2LjY2N1oiIGZpbGw9IiM0NDQiLz4KICA8cGF0aCBkPSJNNzUgMTMzLjMzM0M4OC44MDg1IDEzMy4zMzMgMTAwIDEyMi4xNDEgMTAwIDEwOC4zMzNDMTAwIDk0LjUyNDcgODguODA4NSA4My4zMzM0IDc1IDgzLjMzMzRDNjEuMTkxNSA4My4zMzM0IDUwIDk0LjUyNDcgNTAgMTA4LjMzM0M1MCAxMjIuMTQxIDYxLjE5MTUgMTMzLjMzMyA3NSAxMzMuMzMzWiIgZmlsbD0iIzQ0NCIvPgo8L3N2Zz4K');
+            background-repeat: repeat;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-5px, -5px) rotate(-1deg); }
+            50% { transform: translate(5px, 5px) rotate(1deg); }
+            75% { transform: translate(5px, -5px) rotate(-1deg); }
         }
 
         /* Боковое меню */
@@ -486,6 +496,28 @@
             border: 2px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
             transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .avatar::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .avatar:hover::after {
+            opacity: 1;
         }
 
         .avatar:hover {
@@ -563,6 +595,16 @@
             line-height: 1.6;
             color: var(--text-secondary);
             transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .responsibilities li::before {
+            content: '•';
+            color: var(--primary-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
         }
 
         .responsibilities li:hover {
@@ -696,6 +738,47 @@
             100% { left: 100%; }
         }
 
+        /* Новые стили для улучшенного дизайна */
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .owner .role-badge { background: rgba(255, 215, 0, 0.2); color: var(--owner); }
+        .tech .role-badge { background: rgba(96, 165, 250, 0.2); color: var(--tech); }
+        .test .role-badge { background: rgba(74, 222, 128, 0.2); color: var(--test); }
+        .media .role-badge { background: rgba(236, 72, 153, 0.2); color: var(--media); }
+        .management .role-badge { background: rgba(192, 132, 252, 0.2); color: var(--management); }
+        .curators .role-badge { background: rgba(251, 191, 36, 0.2); color: var(--curators); }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .social-link {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .team-container {
                 grid-template-columns: 1fr;
@@ -731,10 +814,14 @@
                 font-size: 0.9rem;
             }
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <canvas id="stars-canvas"></canvas>
+    <div class="logo-background"></div>
 
     <!-- Боковое меню -->
     <div class="sidebar" id="sidebar">
@@ -748,8 +835,8 @@
             <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
             <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
             <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
-                        <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
-                  <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
+            <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+            <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
             <div class="menu-category">Інформація</div>
             <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
             <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
@@ -792,7 +879,7 @@
     <button id="logout-btn" class="hidden">Вийти</button>
 
     <!-- Секция отказа в доступе -->
-    <div id="access-denied-section">
+    <div id="access-denied-section" class="hidden">
         <div class="access-denied-content">
             <div class="access-denied-icon">🚫</div>
             <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
@@ -908,7 +995,7 @@
                     <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
-                                <img src="https://i.imgur.com/lkMXTmr.jpg" alt="@Bloomberger_01">
+                                <img src="https://imgur.com/4BOsvuL.jpg" alt="@Bloomberger_01">
                             </div>
                             <div class="member-info">
                                 <div class="member-name">@Nazarko_Parkhyts</div>
@@ -1115,7 +1202,7 @@
                 </div>
             </section>
             
-            <!-- Куратори -->
+            <!-- Кураторы -->
             <section class="curators">
                 <div class="department">
                     <div class="department-icon">
@@ -1231,9 +1318,9 @@
                                 <img src="https://i.imgur.com/HOFIjOF.jpg" alt="@L1337N">
                             </div>
                             <div class="member-info">
-                                <div class="member-name"></div>
+                                <div class="member-name">Lev</div>
                                 <div class="member-role">Головний куратор Family</div>
-                                <div class="member-contact">Lev/div>
+                                <div class="member-contact">Lev</div>
                             </div>
                         </div>
                         <div class="card-content">
@@ -1255,17 +1342,16 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                                    <div class="member-card">
+                    <div class="member-card">
                         <div class="card-header">
                             <div class="avatar">
                                 <img src="https://imgur.com/UxWzVKr.jpg" alt="@L1337N">
                             </div>
                             <div class="member-info">
-                                <div class="member-name"></div>
+                                <div class="member-name">Navarro</div>
                                 <div class="member-role">Event Manager</div>
-                                <div class="member-contact">Navarro/div>
+                                <div class="member-contact">Navarro</div>
                             </div>
                         </div>
                         <div class="card-content">
@@ -1288,7 +1374,6 @@
                         </div>
                     </div>
                 </div>
-
             </section>
             
             <!-- Примітка -->
@@ -1309,64 +1394,6 @@
     </div>
 
     <script>
-        // Анимация падающих звезд
-        const canvas = document.getElementById('stars-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        const stars = [];
-        const numStars = 50;
-        
-        class Star {
-            constructor() {
-                this.reset();
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speed = Math.random() * 3 + 1;
-                this.opacity = Math.random() * 0.5 + 0.3;
-            }
-            
-            update() {
-                this.y += this.speed;
-                if (this.y > canvas.height) {
-                    this.reset();
-                }
-            }
-            
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
-            }
-        }
-        
-        for (let i = 0; i < numStars; i++) {
-            stars.push(new Star());
-        }
-        
-        function animateStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.update();
-                star.draw();
-            });
-            requestAnimationFrame(animateStars);
-        }
-        
-        animateStars();
-
         // Конфигурация Google Sheets
         const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
         const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
@@ -1458,10 +1485,10 @@
         function showContent(telegramUsername) {
             console.log('Showing content for:', telegramUsername);
             document.getElementById('login-section').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
+            document.getElementById('content').classList.remove('hidden');
             document.getElementById('sidebarToggle').classList.remove('hidden');
             document.getElementById('logout-btn').classList.remove('hidden');
-            document.getElementById('access-denied-section').style.display = 'none';
+            document.getElementById('access-denied-section').classList.add('hidden');
 
             if (superAdmins.includes(telegramUsername)) {
                 console.log('User is superAdmin, showing super menu');
@@ -1484,19 +1511,19 @@
         function showLoginForm() {
             console.log('Showing login form');
             document.getElementById('login-section').style.display = 'flex';
-            document.getElementById('content').style.display = 'none';
+            document.getElementById('content').classList.add('hidden');
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarToggle').classList.add('hidden');
             document.getElementById('logout-btn').classList.add('hidden');
-            document.getElementById('access-denied-section').style.display = 'none';
+            document.getElementById('access-denied-section').classList.add('hidden');
         }
 
         // Показ сообщения об отказе в доступе
         function showAccessDenied() {
             console.log('Showing access denied section');
-            document.getElementById('access-denied-section').style.display = 'flex';
+            document.getElementById('access-denied-section').classList.remove('hidden');
             document.getElementById('login-section').style.display = 'none';
-            document.getElementById('content').style.display = 'none';
+            document.getElementById('content').classList.add('hidden');
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarToggle').classList.add('hidden');
             document.getElementById('logout-btn').classList.add('hidden');
