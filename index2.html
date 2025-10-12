@@ -1,1563 +1,1845 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель куратора</title>
-    <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-primary: #0A0A0A;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1A1A1A;
-            --bg-elevated: #1F1F1F;
-            --border-primary: #2A2A2A;
-            --border-secondary: #333333;
-            --text-primary: #EDEDED;
-            --text-secondary: #A1A1A1;
-            --text-tertiary: #707070;
-            --accent-blue: #3B82F6;
-            --accent-blue-hover: #60A5FA;
-            --success: #10B981;
-            --success-bg: rgba(16, 185, 129, 0.1);
-            --error: #EF4444;
-            --error-bg: rgba(239, 68, 68, 0.1);
-            --warning: #F59E0B;
-            --warning-bg: rgba(245, 158, 11, 0.1);
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
-
-        [data-theme="light"] {
-            --bg-primary: #FFFFFF;
-            --bg-secondary: #FAFAFA;
-            --bg-tertiary: #F5F5F5;
-            --bg-elevated: #FFFFFF;
-            --border-primary: #E5E5E5;
-            --border-secondary: #D4D4D4;
-            --text-primary: #0A0A0A;
-            --text-secondary: #525252;
-            --text-tertiary: #A3A3A3;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border-primary);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-primary);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-blue);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .logo img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-        }
-
-        .logo-text {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 16px 12px;
-            overflow-y: auto;
-        }
-
-        .nav-section {
-            margin-bottom: 24px;
-        }
-
-        .nav-section-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 0 12px 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            margin-bottom: 2px;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .nav-item i {
-            width: 18px;
-            font-size: 16px;
-        }
-
-        .sidebar-footer {
-            padding: 16px;
-            border-top: 1px solid var(--border-primary);
-        }
-
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 12px;
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: var(--bg-elevated);
-        }
-
-        .theme-toggle-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .theme-toggle-switch {
-            width: 40px;
-            height: 22px;
-            background: var(--border-secondary);
-            border-radius: 11px;
-            position: relative;
-            transition: background 0.3s ease;
-        }
-
-        .theme-toggle-switch::after {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s ease;
-        }
-
-        [data-theme="light"] .theme-toggle-switch {
-            background: var(--accent-blue);
-        }
-
-        [data-theme="light"] .theme-toggle-switch::after {
-            transform: translateX(18px);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 240px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .top-bar {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-primary);
-            padding: 16px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(10px);
-        }
-
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .page-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: var(--success-bg);
-            color: var(--success);
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-badge i {
-            font-size: 10px;
-        }
-
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .time-display {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .content-wrapper {
-            padding: 32px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-primary);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.2s ease;
-        }
-
-        .stat-card:hover {
-            border-color: var(--border-secondary);
-            transform: translateY(-2px);
-        }
-
-        .stat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .stat-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .stat-icon.pending {
-            background: var(--warning-bg);
-            color: var(--warning);
-        }
-
-        .stat-icon.approved {
-            background: var(--success-bg);
-            color: var(--success);
-        }
-
-        .stat-icon.rejected {
-            background: var(--error-bg);
-            color: var(--error);
-        }
-
-        .stat-icon.total {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--accent-blue);
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-
-        .stat-trend {
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-
-        /* Content Section */
-        .content-section {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-primary);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .section-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-primary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .filters {
-            display: flex;
-            gap: 8px;
-        }
-
-        .filter-btn {
-            padding: 8px 14px;
-            border: 1px solid var(--border-primary);
-            background: transparent;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--border-secondary);
-            color: var(--text-primary);
-        }
-
-        .filter-btn.active {
-            background: var(--accent-blue);
-            color: white;
-            border-color: var(--accent-blue);
-        }
-
-        .section-content {
-            padding: 24px;
-        }
-
-        /* News Grid */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 20px;
-        }
-
-        .news-card {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-primary);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .news-card:hover {
-            border-color: var(--border-secondary);
-            transform: translateY(-2px);
-        }
-
-        .news-card-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-primary);
-        }
-
-        .news-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .news-meta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 12px;
-            color: var(--text-tertiary);
-        }
-
-        .news-author {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .news-status {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: var(--warning-bg);
-            color: var(--warning);
-        }
-
-        .status-approved {
-            background: var(--success-bg);
-            color: var(--success);
-        }
-
-        .status-rejected {
-            background: var(--error-bg);
-            color: var(--error);
-        }
-
-        .news-card-body {
-            padding: 16px;
-        }
-
-        .news-text {
-            color: var(--text-secondary);
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .news-image {
-            width: 100%;
-            height: 160px;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .news-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .news-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid var(--border-primary);
-            background: transparent;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-approve {
-            color: var(--success);
-        }
-
-        .btn-approve:hover {
-            background: var(--success);
-            color: white;
-            border-color: var(--success);
-        }
-
-        .btn-reject {
-            color: var(--error);
-        }
-
-        .btn-reject:hover {
-            background: var(--error);
-            color: white;
-            border-color: var(--error);
-        }
-
-        .btn-edit {
-            color: var(--accent-blue);
-        }
-
-        .btn-edit:hover {
-            background: var(--accent-blue);
-            color: white;
-            border-color: var(--accent-blue);
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .article-modal {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-primary);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 1200px;
-            max-height: 90vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.95);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .article-modal {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-primary);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .close-modal {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            border: 1px solid var(--border-primary);
-            background: transparent;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .close-modal:hover {
-            background: var(--error);
-            color: white;
-            border-color: var(--error);
-        }
-
-        .modal-content {
-            padding: 24px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            flex: 1;
-        }
-
-        .editor-section, .preview-section {
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-primary);
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .section-header-modal {
-            padding: 16px;
-            border-bottom: 1px solid var(--border-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-blue);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-        }
-
-        .section-title-modal {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .section-content-modal {
-            padding: 16px;
-            flex: 1;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            font-size: 13px;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-primary);
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-primary);
-            background: var(--bg-elevated);
-            transition: all 0.2s ease;
-            outline: none;
-        }
-
-        textarea {
-            min-height: 150px;
-            resize: vertical;
-            line-height: 1.6;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .image-preview {
-            width: 100%;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            border: 1px solid var(--border-primary);
-        }
-
-        .image-preview img {
-            width: 100%;
-            display: block;
-        }
-
-        .image-upload-area {
-            border: 2px dashed var(--border-primary);
-            padding: 20px;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: var(--bg-elevated);
-        }
-
-        .image-upload-area:hover {
-            border-color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .upload-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--accent-blue);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 16px;
-            margin: 0 auto 10px;
-        }
-
-        .image-upload-area p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .image-upload-area .hint {
-            font-size: 11px;
-            color: var(--text-tertiary);
-        }
-
-        /* Discord Preview */
-        .discord-preview-content {
-            background: #36393f;
-            padding: 16px;
-            border-radius: 6px;
-            color: #dcddde;
-            font-family: 'Inter', sans-serif;
-            min-height: 400px;
-        }
-
-        .discord-message {
-            display: flex;
-            margin-bottom: 16px;
-        }
-
-        .discord-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 16px;
-            background: var(--accent-blue);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-
-        .discord-content {
-            flex: 1;
-        }
-
-        .discord-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .discord-author {
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 15px;
-            margin-right: 8px;
-        }
-
-        .discord-bot-tag {
-            background: #5865f2;
-            color: white;
-            font-size: 10px;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-weight: 500;
-        }
-
-        .discord-timestamp {
-            color: #72767d;
-            font-size: 12px;
-            margin-left: 8px;
-        }
-
-        .discord-embed {
-            background: #2f3136;
-            border-left: 4px solid var(--accent-blue);
-            border-radius: 4px;
-            padding: 12px 16px;
-            margin-top: 8px;
-            max-width: 432px;
-        }
-
-        .discord-embed-title {
-            color: #00aff4;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .discord-embed-description {
-            font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 8px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .discord-embed-image {
-            max-width: 100%;
-            border-radius: 4px;
-            margin-top: 10px;
-        }
-
-        .discord-embed-footer {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #40444b;
-            font-size: 12px;
-            color: #b9bbbe;
-        }
-
-        .discord-embed-footer img {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-        }
-
-        .modal-actions {
-            padding: 20px 24px;
-            border-top: 1px solid var(--border-primary);
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-        }
-
-        .modal-btn {
-            padding: 10px 16px;
-            border: 1px solid var(--border-primary);
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-btn-primary {
-            background: var(--accent-blue);
-            color: white;
-            border-color: var(--accent-blue);
-        }
-
-        .modal-btn-primary:hover {
-            background: var(--accent-blue-hover);
-            border-color: var(--accent-blue-hover);
-        }
-
-        .modal-btn-secondary {
-            background: transparent;
-            color: var(--text-secondary);
-        }
-
-        .modal-btn-secondary:hover {
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-        }
-
-        .modal-btn-success {
-            background: var(--success);
-            color: white;
-            border-color: var(--success);
-        }
-
-        .modal-btn-success:hover {
-            opacity: 0.9;
-        }
-
-        .modal-btn-danger {
-            background: var(--error);
-            color: white;
-            border-color: var(--error);
-        }
-
-        .modal-btn-danger:hover {
-            opacity: 0.9;
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-primary);
-            padding: 16px 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
-            max-width: 400px;
-        }
-
-        .notification.success {
-            border-left: 4px solid var(--success);
-        }
-
-        .notification.error {
-            border-left: 4px solid var(--error);
-        }
-
-        .notification.info {
-            border-left: 4px solid var(--accent-blue);
-        }
-
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
-            font-size: 13px;
-            color: var(--text-primary);
-        }
-
-        .notification.success .notification-content i {
-            color: var(--success);
-        }
-
-        .notification.error .notification-content i {
-            color: var(--error);
-        }
-
-        .notification.info .notification-content i {
-            color: var(--accent-blue);
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .news-card {
-            animation: fadeIn 0.3s ease forwards;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .news-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            }
-
-            .modal-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .content-wrapper {
-                padding: 20px;
-            }
-
-            .top-bar {
-                padding: 12px 20px;
-            }
-
-            .filters {
-                flex-wrap: wrap;
-            }
-
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-actions {
-                flex-direction: column;
-            }
-
-            .modal-btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Особистий Кабінет Адміністратора</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1A1;
+      --text-tertiary: #6B6B6B;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-yellow: #F59E0B;
+      --accent-red: #EF4444;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F9FAFB;
+      --bg-tertiary: #F3F4F6;
+      --border-color: #E5E7EB;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: var(--transition);
+    }
+
+    /* Falling Stars Animation */
+    canvas#stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    [data-theme="light"] canvas#stars-canvas {
+      opacity: 0.2;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      padding: 1.5rem 0;
+      overflow-y: auto;
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1rem 0.75rem;
+    }
+
+    .menu-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      padding: 0.5rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: var(--transition);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .menu-item i, .super-menu-item i {
+      width: 16px;
+      font-size: 0.875rem;
+    }
+
+    .super-menu-item {
+      color: var(--accent-yellow);
+    }
+
+    .super-menu-item:hover {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .top-bar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 0;
+      margin-top: 60px;
+      padding: 2rem 1.5rem;
+      min-height: calc(100vh - 60px);
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Login Section */
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      z-index: 2000;
+    }
+
+    .login-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 3rem 2rem;
+      border-radius: 12px;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.5rem;
+      border-radius: 12px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-logo i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: translateY(-2px);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-green);
+    }
+
+    /* Access Denied */
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+    }
+
+    .access-denied-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .access-denied-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .back-to-login-btn {
+      padding: 0.625rem 1.5rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Banner */
+    .banner {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .banner:hover {
+      border-color: var(--accent-blue);
+    }
+
+    .banner-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .banner-text {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .banner-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      background: var(--accent-blue);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .banner-link:hover {
+      background: #2563EB;
+      transform: translateY(-2px);
+    }
+
+    /* Admin Cards Row */
+    .admins-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .admin-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: var(--transition);
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+    }
+
+    .admin-card.low:hover {
+      border-color: var(--accent-red);
+      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
+    }
+
+    .admin-card h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .week-info {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex-grow: 1;
+    }
+
+    .admin-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: var(--bg-tertiary);
+      transition: var(--transition);
+    }
+
+    .admin-item:hover {
+      background: var(--bg-primary);
+    }
+
+    .admin-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-blue);
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .admin-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .admin-item.gold .admin-avatar {
+      border-color: #FBBF24;
+    }
+
+    .admin-item.silver .admin-avatar {
+      border-color: #D1D5DB;
+    }
+
+    .admin-item.bronze .admin-avatar {
+      border-color: #D97706;
+    }
+
+    .admin-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .admin-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0.25rem;
+    }
+
+    .admin-stats {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 1rem;
+    }
+
+    .admin-stat-value {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .admin-item.low .admin-stat-value {
+      color: var(--accent-red);
+    }
+
+    .medal {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Stats Section */
+    #admin-notice {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    #admin-notice h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #admin-notice p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stats-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      border-radius: 12px;
+      transition: var(--transition);
+    }
+
+    .stats-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+    }
+
+    .stats-card h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stats-card p {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .stats-card span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Chart Container */
+    .chart-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-container h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Table Container */
+    .table-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .table-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .table-container table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+
+    .table-container th {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-container td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .table-container tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .table-container tbody tr:last-child td {
+      font-weight: 600;
+      border-bottom: none;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 0 1rem;
+      }
+
+      .main-content {
+        padding: 1.5rem 1rem;
+      }
+
+      .admins-row {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-stats {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-tertiary);
+    }
+  </style>
 </head>
-<body>
-    <div class="app-container">
-         Sidebar 
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <img src="1-17ffebdc.ico" alt="Logo">
-                </div>
-                <div class="logo-text">Панель куратора</div>
-            </div>
+<body data-theme="dark">
+  <canvas id="stars-canvas"></canvas>
 
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">Головне</div>
-                    <a href="#" class="nav-item active">
-                        <i class="fas fa-home"></i>
-                        <span>Огляд</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Новини</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Аналітика</span>
-                    </a>
-                </div>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="sidebar-title">Адмін Панель</div>
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
+      <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+      <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
+      
+      <div class="menu-category">Інформація</div>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">Управління</div>
-                    <a href="#" class="nav-item">
-                        <i class="fas fa-users"></i>
-                        <span>Користувачі</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <i class="fas fa-cog"></i>
-                        <span>Налаштування</span>
-                    </a>
-                </div>
-            </nav>
+  <!-- Top Bar -->
+  <div class="top-bar hidden" id="top-bar">
+    <div class="top-bar-left">
+      <button class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="top-bar-title" id="top-bar-title">Панель адміністратора</div>
+    </div>
+    <div class="top-bar-right">
+      <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="logout-btn" id="logout-btn">Вийти</button>
+    </div>
+  </div>
 
-            <div class="sidebar-footer">
-                <div class="theme-toggle" onclick="toggleTheme()">
-                    <div class="theme-toggle-label">
-                        <i class="fas fa-moon"></i>
-                        <span>Тема</span>
-                    </div>
-                    <div class="theme-toggle-switch"></div>
-                </div>
-            </div>
-        </aside>
+  <!-- Access Denied Section -->
+  <div id="access-denied-section">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">🚫</div>
+      <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+      <p class="access-denied-message">
+        Ваш обліковий запис не має доступу до цієї системи.<br>
+        Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+      </p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
 
-         Main Content 
-        <main class="main-content">
-            <div class="top-bar">
-                <div class="top-bar-left">
-                    <h1 class="page-title">Модерація новин</h1>
-                    <div class="status-badge">
-                        <i class="fas fa-circle"></i>
-                        <span>Онлайн</span>
-                    </div>
-                </div>
-                <div class="top-bar-right">
-                    <div class="time-display">
-                        <i class="fas fa-clock"></i>
-                        <span id="current-time">12:00</span>
-                    </div>
-                    <div class="time-display">
-                        <i class="fas fa-calendar"></i>
-                        <span id="current-date">Завантаження...</span>
-                    </div>
-                </div>
-            </div>
+  <!-- Login Section -->
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <h1 class="login-title">Вітаємо в кабінеті адміністратора</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
+    </div>
+  </div>
 
-            <div class="content-wrapper">
-                 Stats Grid 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-label">На перевірці</div>
-                            <div class="stat-icon pending">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="pending-count">0</div>
-                        <div class="stat-trend">+0 з ранку</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-label">Схвалено</div>
-                            <div class="stat-icon approved">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="approved-count">0</div>
-                        <div class="stat-trend">+0 за день</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-label">Відхилено</div>
-                            <div class="stat-icon rejected">
-                                <i class="fas fa-times-circle"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="rejected-count">0</div>
-                        <div class="stat-trend">+0 за день</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-label">Всього новин</div>
-                            <div class="stat-icon total">
-                                <i class="fas fa-newspaper"></i>
-                            </div>
-                        </div>
-                        <div class="stat-value" id="total-count">0</div>
-                        <div class="stat-trend">+0 за день</div>
-                    </div>
-                </div>
-
-                 News Section 
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Новини на модерації</h2>
-                        <div class="filters">
-                            <button class="filter-btn active" data-filter="all">Всі</button>
-                            <button class="filter-btn" data-filter="pending">На перевірці</button>
-                            <button class="filter-btn" data-filter="approved">Схвалені</button>
-                            <button class="filter-btn" data-filter="rejected">Відхилені</button>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div class="news-grid" id="news-container">
-                             News cards will be loaded here 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+  <!-- Main Content -->
+  <div class="main-content hidden" id="main-content">
+    <!-- Banner -->
+    <div class="banner">
+      <h2 class="banner-title">Скрипт Осінній БатлКвас вже доступний!</h2>
+      <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи.</p>
+      <a href="scriptbaltpass.html" class="banner-link">
+        <i class="fas fa-code"></i>
+        Перейти до скрипту
+      </a>
     </div>
 
-     Modal 
-    <div class="modal-overlay" id="article-modal">
-        <div class="article-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">Редагування статті</h2>
-                <button class="close-modal" id="close-modal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+    <!-- Admin Cards Row -->
+    <div class="admins-row">
+      <div class="admin-card" id="top-admins-section">
+        <h2><i class="fas fa-trophy" style="color: var(--accent-yellow);"></i> Адміни тижня</h2>
+        <div class="week-info" id="week-range">Період: завантаження...</div>
+        <div class="admin-list" id="top-admins-container"></div>
+      </div>
+      <div class="admin-card low" id="low-admins-section">
+        <h2><i class="fas fa-exclamation-triangle" style="color: var(--accent-red);"></i> Низька активність</h2>
+        <div class="week-info" id="low-week-range">Період: завантаження...</div>
+        <div class="admin-list" id="low-admins-container"></div>
+      </div>
+    </div>
 
-            <div class="modal-content">
-                <div class="editor-section">
-                    <div class="section-header-modal">
-                        <div class="section-icon">
-                            <i class="fas fa-edit"></i>
-                        </div>
-                        <div class="section-title-modal">Редактор</div>
-                    </div>
-                    <div class="section-content-modal">
-                        <div class="form-group">
-                            <label for="modal-title">Заголовок</label>
-                            <input type="text" id="modal-title" placeholder="Введіть заголовок">
-                        </div>
+    <!-- Admin Notice -->
+    <div id="admin-notice" class="hidden">
+      <h3><i class="fas fa-crown" style="color: var(--accent-yellow);"></i> Ви - адміністратор системи</h3>
+      <p>Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+      <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
+    </div>
 
-                        <div class="form-group">
-                            <label for="modal-content">Текст статті</label>
-                            <textarea id="modal-content" placeholder="Введіть текст"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Зображення</label>
-                            <div class="image-preview" id="modal-image-preview" style="display: none;">
-                                <img id="modal-preview-img" src="/placeholder.svg" alt="Preview">
-                            </div>
-                            <div class="image-upload-area" onclick="document.getElementById('modal-image-input').click()">
-                                <div class="upload-icon">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                </div>
-                                <p>Завантажити зображення</p>
-                                <p class="hint">PNG, JPG, GIF до 8MB</p>
-                            </div>
-                            <input type="file" id="modal-image-input" accept="image/*" style="display: none;" onchange="handleModalImageUpload(event)">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="preview-section">
-                    <div class="section-header-modal">
-                        <div class="section-icon">
-                            <i class="fab fa-discord"></i>
-                        </div>
-                        <div class="section-title-modal">Discord Preview</div>
-                    </div>
-                    <div class="section-content-modal">
-                        <div class="discord-preview-content">
-                            <div class="discord-message">
-                                <div class="discord-avatar">N</div>
-                                <div class="discord-content">
-                                    <div class="discord-header">
-                                        <span class="discord-author">News Bot</span>
-                                        <span class="discord-bot-tag">BOT</span>
-                                        <span class="discord-timestamp" id="discord-timestamp">Сьогодні о 14:30</span>
-                                    </div>
-                                    <div class="discord-embed">
-                                        <div class="discord-embed-title" id="discord-embed-title">Заголовок статті</div>
-                                        <div class="discord-embed-description" id="discord-embed-description">Текст статті з'явиться тут...</div>
-                                        <img class="discord-embed-image" id="discord-embed-image" style="display: none;" src="/placeholder.svg" alt="Image">
-                                        <div class="discord-embed-footer">
-                                            <img src="1-17ffebdc.ico" alt="Logo">
-                                            <span>News • <span id="discord-date">Сьогодні</span></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-actions">
-                <button class="modal-btn modal-btn-danger" id="reject-btn">
-                    <i class="fas fa-times"></i>
-                    Відхилити
-                </button>
-                <button class="modal-btn modal-btn-secondary" id="save-btn">
-                    <i class="fas fa-save"></i>
-                    Зберегти
-                </button>
-                <button class="modal-btn modal-btn-success" id="publish-btn">
-                    <i class="fas fa-paper-plane"></i>
-                    Опублікувати
-                </button>
-            </div>
+    <!-- Stats Section -->
+    <div id="stats-section" class="hidden">
+      <div class="stats-grid">
+        <div class="stats-card">
+          <h3>Сьогодні</h3>
+          <p>Тікети: <span id="today-tickets">—</span></p>
+          <p>Час у грі: <span id="today-time">—</span></p>
         </div>
+        <div class="stats-card">
+          <h3>Тиждень</h3>
+          <p>Тікети: <span id="week-tickets">—</span></p>
+          <p>Час у грі: <span id="week-time">—</span></p>
+        </div>
+        <div class="stats-card">
+          <h3>Місяць</h3>
+          <p>Тікети: <span id="month-tickets">—</span></p>
+          <p>Час у грі: <span id="month-time">—</span></p>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>Динаміка тікетів та часу</h3>
+        <div class="chart-wrapper">
+          <canvas id="statsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <h3>Детальна статистика по днях</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Тікети</th>
+                <th>Час у грі</th>
+                <th>Неактив</th>
+              </tr>
+            </thead>
+            <tbody id="daily-stats-body"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Theme Toggle
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+  <script>
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const stars = [];
+    const numStars = 50;
+    
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
+      }
+      
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
         }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+    
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+    
+    function updateThemeIcon(theme) {
+      const icon = themeToggle.querySelector('i');
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
 
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
-            const dateString = now.toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' });
-            
-            document.getElementById('current-time').textContent = timeString;
-            document.getElementById('current-date').textContent = dateString;
-        }
+    // Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    
+    document.addEventListener('click', (event) => {
+      if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
 
-        updateTime();
-        setInterval(updateTime, 1000);
+    // Google Sheets Configuration
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
 
-        // Mock data for demonstration
-        const mockNews = [
-            {
-                id: 1,
-                title: 'Важлива новина про місто',
-                content: 'Це приклад тексту новини. Тут буде повний опис події, яка сталася в місті.',
-                author: 'Журналіст 1',
-                status: 'pending',
-                image: 'https://via.placeholder.com/400x200'
-            },
-            {
-                id: 2,
-                title: 'Оновлення в центрі міста',
-                content: 'Детальний опис подій, які відбулися сьогодні в центральній частині міста.',
-                author: 'Журналіст 2',
-                status: 'approved',
-                image: 'https://via.placeholder.com/400x200'
-            },
-            {
-                id: 3,
-                title: 'Спортивні новини',
-                content: 'Результати останніх спортивних змагань та аналіз виступів команд.',
-                author: 'Журналіст 3',
-                status: 'rejected',
-                image: 'https://via.placeholder.com/400x200'
+    const allowedAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    const superAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    const excludedLowAdmins = [
+      '@vanchff',
+      '@blisssbabe'
+    ];
+
+    async function getSheetData(sheetName) {
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
+    }
+
+    function parseDate(str) {
+      if (!str || typeof str !== 'string') return new Date();
+      const [d, m, y] = str.split('.');
+      return new Date(y, m - 1, d);
+    }
+
+    function formatDate(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function secondsToHHMMSS(seconds) {
+      if (!seconds || isNaN(seconds)) return '0хв';
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
+    }
+
+    function getDateWithoutTime(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function getPreviousWeekRange() {
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday - 7);
+      monday.setHours(0, 0, 0, 0);
+      
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+      
+      return {
+        start: formatDate(monday),
+        end: formatDate(sunday),
+        startDate: monday,
+        endDate: sunday
+      };
+    }
+
+    function shouldRefreshTopAdmins() {
+      const lastUpdate = localStorage.getItem('topAdminsLastUpdate');
+      if (!lastUpdate) return true;
+      const now = new Date();
+      const lastUpdateDate = new Date(parseInt(lastUpdate));
+      return (now - lastUpdateDate) > 15 * 60 * 1000;
+    }
+
+    async function autoRefreshData() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKeyTop = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cacheKeyLow = `lowAdmins_${weekRange.start}_${weekRange.end}`;
+      
+      localStorage.removeItem(cacheKeyTop);
+      localStorage.removeItem(cacheKeyLow);
+      localStorage.removeItem('topAdminsLastUpdate');
+      await loadAndRenderAdmins();
+    }
+
+    async function getTopAdmins(weekRange) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) return [];
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const timeHeaders = timeData[0] || [];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
+        const admins = [];
+
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex] || '';
+          const telegram = row[telegramColIndex] || '';
+          
+          if (!name || !telegram) return;
+
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                    }
+                  }
+                }
+              }
             }
-        ];
+          });
 
-        // Load news
-        function loadNews(filter = 'all') {
-            const container = document.getElementById('news-container');
-            const filteredNews = filter === 'all' ? mockNews : mockNews.filter(n => n.status === filter);
-            
-            container.innerHTML = filteredNews.map(news => `
-                <div class="news-card" onclick="openModal(${news.id})">
-                    <div class="news-card-header">
-                        <div class="news-title">${news.title}</div>
-                        <div class="news-meta">
-                            <div class="news-author">
-                                <i class="fas fa-user"></i>
-                                <span>${news.author}</span>
-                            </div>
-                            <span class="news-status status-${news.status}">
-                                ${news.status === 'pending' ? 'На перевірці' : news.status === 'approved' ? 'Схвалено' : 'Відхилено'}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="news-card-body">
-                        <div class="news-image">
-                            <img src="${news.image}" alt="${news.title}">
-                        </div>
-                        <div class="news-text">${news.content}</div>
-                        <div class="news-actions" onclick="event.stopPropagation()">
-                            <button class="action-btn btn-approve" onclick="approveNews(${news.id})">
-                                <i class="fas fa-check"></i>
-                                Схвалити
-                            </button>
-                            <button class="action-btn btn-reject" onclick="rejectNews(${news.id})">
-                                <i class="fas fa-times"></i>
-                                Відхилити
-                            </button>
-                            <button class="action-btn btn-edit" onclick="openModal(${news.id})">
-                                <i class="fas fa-edit"></i>
-                                Редагувати
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            updateStats();
-        }
-
-        // Update stats
-        function updateStats() {
-            document.getElementById('pending-count').textContent = mockNews.filter(n => n.status === 'pending').length;
-            document.getElementById('approved-count').textContent = mockNews.filter(n => n.status === 'approved').length;
-            document.getElementById('rejected-count').textContent = mockNews.filter(n => n.status === 'rejected').length;
-            document.getElementById('total-count').textContent = mockNews.length;
-        }
-
-        // Filter buttons
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                loadNews(btn.dataset.filter);
-            });
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
+          });
         });
 
-        // Modal functions
-        let currentNewsId = null;
-
-        function openModal(newsId) {
-            currentNewsId = newsId;
-            const news = mockNews.find(n => n.id === newsId);
-            
-            document.getElementById('modal-title').value = news.title;
-            document.getElementById('modal-content').value = news.content;
-            
-            if (news.image) {
-                document.getElementById('modal-preview-img').src = news.image;
-                document.getElementById('modal-image-preview').style.display = 'block';
-                document.getElementById('discord-embed-image').src = news.image;
-                document.getElementById('discord-embed-image').style.display = 'block';
-            }
-            
-            updateDiscordPreview();
-            document.getElementById('article-modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('article-modal').classList.remove('active');
-            currentNewsId = null;
-        }
-
-        document.getElementById('close-modal').addEventListener('click', closeModal);
-        document.getElementById('article-modal').addEventListener('click', (e) => {
-            if (e.target.id === 'article-modal') closeModal();
+        admins.sort((a, b) => {
+          if (b.tickets !== a.tickets) return b.tickets - a.tickets;
+          return b.time - a.time;
         });
 
-        // Update Discord preview
-        function updateDiscordPreview() {
-            const title = document.getElementById('modal-title').value || 'Заголовок статті';
-            const content = document.getElementById('modal-content').value || 'Текст статті з\'явиться тут...';
-            
-            document.getElementById('discord-embed-title').textContent = title;
-            document.getElementById('discord-embed-description').textContent = content;
-        }
+        return admins.slice(0, 5);
+      } catch (error) {
+        console.error('Помилка при завантаженні топу адміністраторів:', error);
+        return [];
+      }
+    }
 
-        document.getElementById('modal-title').addEventListener('input', updateDiscordPreview);
-        document.getElementById('modal-content').addEventListener('input', updateDiscordPreview);
+    async function getLowAdmins(weekRange) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
 
-        // Image upload
-        function handleModalImageUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('modal-preview-img').src = e.target.result;
-                    document.getElementById('modal-image-preview').style.display = 'block';
-                    document.getElementById('discord-embed-image').src = e.target.result;
-                    document.getElementById('discord-embed-image').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        if (!ticketsData.length || !timeData.length) return [];
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const timeHeaders = timeData[0] || [];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
+        const admins = [];
+
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex] || '';
+          const telegram = row[telegramColIndex] || '';
+          
+          if (!name || !telegram || excludedLowAdmins.includes(telegram)) return;
+
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                    }
+                  }
+                }
+              }
             }
-        }
+          });
 
-        // Action buttons
-        function approveNews(id) {
-            const news = mockNews.find(n => n.id === id);
-            news.status = 'approved';
-            loadNews(document.querySelector('.filter-btn.active').dataset.filter);
-            showNotification('Новину схвалено!', 'success');
-        }
-
-        function rejectNews(id) {
-            const news = mockNews.find(n => n.id === id);
-            news.status = 'rejected';
-            loadNews(document.querySelector('.filter-btn.active').dataset.filter);
-            showNotification('Новину відхилено!', 'error');
-        }
-
-        document.getElementById('publish-btn').addEventListener('click', () => {
-            if (currentNewsId) {
-                approveNews(currentNewsId);
-                closeModal();
-            }
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
+          });
         });
 
-        document.getElementById('reject-btn').addEventListener('click', () => {
-            if (currentNewsId) {
-                rejectNews(currentNewsId);
-                closeModal();
+        admins.sort((a, b) => {
+          if (a.tickets !== b.tickets) return a.tickets - b.tickets;
+          return a.time - b.time;
+        });
+
+        return admins.slice(0, 5);
+      } catch (error) {
+        console.error('Помилка при завантаженні адміністраторів з низькою активністю:', error);
+        return [];
+      }
+    }
+
+    function renderTopAdmins(admins, weekRange) {
+      const container = document.getElementById('top-admins-container');
+      container.innerHTML = '';
+      
+      document.getElementById('week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      admins.forEach((admin, index) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item';
+        
+        let medalClass = 'normal';
+        let medal = '';
+        
+        if (index === 0) {
+          medalClass = 'gold';
+          medal = '🥇';
+        } else if (index === 1) {
+          medalClass = 'silver';
+          medal = '🥈';
+        } else if (index === 2) {
+          medalClass = 'bronze';
+          medal = '🥉';
+        }
+        
+        item.classList.add(medalClass);
+        
+        item.innerHTML = `
+          <div class="admin-avatar">
+            <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+                 alt="${admin.name}" 
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';">
+          </div>
+          <div class="admin-info">
+            <div class="admin-name">${admin.name}</div>
+            <div class="admin-stats">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
+          </div>
+          ${medal ? `<div class="medal">${medal}</div>` : ''}
+        `;
+        
+        container.appendChild(item);
+      });
+
+      VanillaTilt.init(document.querySelectorAll('#top-admins-section'), {
+        max: 5,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.1
+      });
+    }
+
+    function renderLowAdmins(admins, weekRange) {
+      const container = document.getElementById('low-admins-container');
+      container.innerHTML = '';
+      
+      document.getElementById('low-week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      admins.forEach((admin) => {
+        const item = document.createElement('div');
+        item.className = 'admin-item low';
+        
+        item.innerHTML = `
+          <div class="admin-avatar">
+            <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+                 alt="${admin.name}" 
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';">
+          </div>
+          <div class="admin-info">
+            <div class="admin-name">${admin.name}</div>
+            <div class="admin-stats">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
+          </div>
+          <div class="medal">⚠️</div>
+        `;
+        
+        container.appendChild(item);
+      });
+
+      VanillaTilt.init(document.querySelectorAll('#low-admins-section'), {
+        max: 5,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.1
+      });
+    }
+
+    async function loadAndRenderAdmins() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKeyTop = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cacheKeyLow = `lowAdmins_${weekRange.start}_${weekRange.end}`;
+      
+      if (!shouldRefreshTopAdmins()) {
+        const cachedTopData = localStorage.getItem(cacheKeyTop);
+        const cachedLowData = localStorage.getItem(cacheKeyLow);
+        
+        if (cachedTopData) {
+          const { admins } = JSON.parse(cachedTopData);
+          renderTopAdmins(admins, weekRange);
+        }
+        
+        if (cachedLowData) {
+          const { admins } = JSON.parse(cachedLowData);
+          renderLowAdmins(admins, weekRange);
+        }
+        
+        if (cachedTopData && cachedLowData) return;
+      }
+      
+      const [topAdmins, lowAdmins] = await Promise.all([
+        getTopAdmins(weekRange),
+        getLowAdmins(weekRange)
+      ]);
+      
+      localStorage.setItem(cacheKeyTop, JSON.stringify({ admins: topAdmins }));
+      localStorage.setItem(cacheKeyLow, JSON.stringify({ admins: lowAdmins }));
+      localStorage.setItem('topAdminsLastUpdate', Date.now());
+      
+      renderTopAdmins(topAdmins, weekRange);
+      renderLowAdmins(lowAdmins, weekRange);
+    }
+
+    async function fetchUserStatsByTelegram(telegramUsername) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) {
+          console.error('Дані не знайдено');
+          return;
+        }
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+
+        if (telegramColIndex === -1 || nameColIndex === -1) {
+          console.error('Помилка структури даних');
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
+        if (!userTicketsRow) {
+          console.error('Користувача не знайдено');
+          return;
+        }
+
+        const userName = userTicketsRow[nameColIndex];
+
+        const timeHeaders = timeData[0] || [];
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
+        if (!userTimeRow) {
+          console.error('Користувача не знайдено в таблиці часу');
+          return;
+        }
+
+        const today = getDateWithoutTime(new Date());
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({ header: h, index: i }))
+          .filter(({ header }) => /^\d{2}\.\d{2}\.\d{4}$/.test(header));
+
+        function sumTicketsAndTime(startDate, endDate) {
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          dateCols.forEach(({ header, index }) => {
+            const dt = parseDate(header);
+            if (dt >= startDate && dt <= endDate) {
+              ticketsSum += parseInt(userTicketsRow[index]) || 0;
+              const timeColIndex = timeHeaders.indexOf(header);
+              if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+                const timeStr = userTimeRow[timeColIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                }
+              }
             }
-        });
+          });
 
-        document.getElementById('save-btn').addEventListener('click', () => {
-            const news = mockNews.find(n => n.id === currentNewsId);
-            news.title = document.getElementById('modal-title').value;
-            news.content = document.getElementById('modal-content').value;
-            loadNews(document.querySelector('.filter-btn.active').dataset.filter);
-            showNotification('Зміни збережено!', 'info');
-            closeModal();
-        });
+          return { ticketsSum, timeSecondsSum };
+        }
 
-        // Notification
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
-                    <span>${message}</span>
-                </div>
+        const todayStats = sumTicketsAndTime(today, today);
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        const weekStats = sumTicketsAndTime(weekStart, today);
+        const monthStats = sumTicketsAndTime(monthStart, today);
+
+        document.getElementById('today-tickets').textContent = todayStats.ticketsSum || 0;
+        document.getElementById('today-time').textContent = secondsToHHMMSS(todayStats.timeSecondsSum);
+        document.getElementById('week-tickets').textContent = weekStats.ticketsSum || 0;
+        document.getElementById('week-time').textContent = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
+        document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
+
+        const tbody = document.getElementById('daily-stats-body');
+        tbody.innerHTML = '';
+        let inactiveCount = 0;
+        const chartLabels = [];
+        const chartTickets = [];
+        const chartTimeHours = [];
+
+        dateCols.forEach(({ header, index }) => {
+          const dt = parseDate(header);
+          if (dt >= monthStart && dt <= today) {
+            const dayTickets = parseInt(userTicketsRow[index]) || 0;
+            const timeColIndex = timeHeaders.indexOf(header);
+            let dayTimeStr = 'Н';
+            let dayTimeSeconds = 0;
+            if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+              dayTimeStr = userTimeRow[timeColIndex];
+              if (dayTimeStr !== 'Н') {
+                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+                dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+              }
+            }
+            if (dayTimeStr === 'Н') inactiveCount++;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${header}</td>
+              <td>${dayTickets}</td>
+              <td>${dayTimeStr}</td>
+              <td>${dayTimeStr === 'Н' ? 'Так' : ''}</td>
             `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideOutRight 0.3s ease';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            tbody.appendChild(tr);
+
+            chartLabels.push(header);
+            chartTickets.push(dayTickets);
+            chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
+          }
+        });
+
+        const trTotal = document.createElement('tr');
+        trTotal.innerHTML = `
+          <td>Усього неактивів</td>
+          <td colspan="3">${inactiveCount}</td>
+        `;
+        tbody.appendChild(trTotal);
+
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDark ? '#A1A1A1' : '#6B7280';
+
+        window.statsChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartLabels,
+            datasets: [
+              {
+                label: 'Тікети',
+                data: chartTickets,
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                yAxisID: 'yTickets',
+                tension: 0.4,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                borderWidth: 2,
+                fill: true,
+              },
+              {
+                label: 'Час у грі (години)',
+                data: chartTimeHours,
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                yAxisID: 'yTime',
+                tension: 0.4,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                borderWidth: 2,
+                fill: true,
+              }
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            scales: {
+              yTickets: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Тікети',
+                  color: textColor,
+                  font: { size: 12, weight: '600' },
+                },
+                beginAtZero: true,
+                ticks: { 
+                  color: textColor,
+                  precision: 0,
+                },
+                grid: { 
+                  color: gridColor,
+                },
+              },
+              yTime: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Час (години)',
+                  color: textColor,
+                  font: { size: 12, weight: '600' },
+                },
+                beginAtZero: true,
+                ticks: { 
+                  color: textColor,
+                  precision: 1,
+                },
+                grid: { drawOnChartArea: false },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 0,
+                  minRotation: 0,
+                  color: textColor,
+                  font: { size: 11 },
+                  callback: function(value, index, values) {
+                    const date = this.getLabelForValue(value);
+                    const [day, month] = date.split('.');
+                    return `${day}.${month}`;
+                  }
+                },
+                grid: { 
+                  color: gridColor,
+                },
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { 
+                  color: textColor,
+                  font: { size: 12, weight: '500' },
+                  padding: 12,
+                  boxWidth: 16,
+                  usePointStyle: true,
+                },
+              },
+              tooltip: {
+                backgroundColor: isDark ? 'rgba(17, 17, 17, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                titleColor: isDark ? '#FAFAFA' : '#111827',
+                bodyColor: isDark ? '#A1A1A1' : '#6B7280',
+                borderColor: isDark ? '#2A2A2A' : '#E5E7EB',
+                borderWidth: 1,
+                titleFont: { size: 13, weight: '600' },
+                bodyFont: { size: 12 },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                    ? `${ctx.parsed.y} год`
+                    : ctx.parsed.y,
+                }
+              }
+            },
+          },
+        });
+      } catch (error) {
+        console.error('Помилка під час завантаження даних:', error);
+      }
+    }
+
+    function showAccessDenied() {
+      document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+    }
+
+    async function onTelegramAuth(user) {
+      if (!user || !user.username) {
+        showAccessDenied();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        await showDashboard(userData.nickname, telegramUsername, true);
+        return;
+      }
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          showAccessDenied();
+          return;
+        }
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        if (telegramColIndex === -1) {
+          showAccessDenied();
+          return;
         }
 
-        // Initialize
-        loadNews();
-    </script>
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: false
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          await showDashboard(userData.nickname, telegramUsername, false);
+        } else {
+          localStorage.removeItem('tg_auth');
+          showAccessDenied();
+        }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        showAccessDenied();
+      }
+    }
+
+    async function showDashboard(nickname, telegramUsername, isAdmin) {
+      if (!isAdmin) {
+        try {
+          const ticketsData = await getSheetData('Май_2025_таблица');
+          if (!ticketsData.length) {
+            showAccessDenied();
+            return;
+          }
+          const ticketsHeaders = ticketsData[0];
+          const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+          
+          const userExists = ticketsData.some(row => 
+            row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+          );
+          
+          if (!userExists) {
+            showAccessDenied();
+            return;
+          }
+        } catch (error) {
+          console.error('Помилка перевірки доступу:', error);
+          showAccessDenied();
+          return;
+        }
+      }
+
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.remove('hidden');
+      document.getElementById('top-bar').classList.remove('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.getElementById('top-bar-title').textContent = `Вітаємо, ${nickname}!`;
+      
+      if (superAdmins.includes(telegramUsername)) {
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+      
+      await loadAndRenderAdmins();
+      
+      if (isAdmin) {
+        document.getElementById('admin-notice').classList.remove('hidden');
+        document.getElementById('stats-section').classList.add('hidden');
+      } else {
+        document.getElementById('admin-notice').classList.add('hidden');
+        document.getElementById('stats-section').classList.remove('hidden');
+        await fetchUserStatsByTelegram(telegramUsername);
+      }
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      sidebar.classList.remove('open');
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        showLoginForm();
+      }
+      
+      setInterval(() => {
+        if (shouldRefreshTopAdmins()) {
+          autoRefreshData();
+        }
+      }, 5 * 60 * 1000);
+      
+      autoRefreshData();
+    });
+  </script>
 </body>
 </html>
