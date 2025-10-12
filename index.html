@@ -8,20 +8,36 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #3B82F6;
-      --secondary-color: #10B981;
-      --accent-color: #F59E0B;
-      --background-dark: #0A0C1A;
-      --card-bg: rgba(20, 22, 35, 0.9);
-      --glass-bg: rgba(20, 22, 35, 0.7);
-      --glass-blur: blur(15px);
-      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      --text-primary: #F3F4F6;
-      --text-secondary: #D1D5DB;
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1A1;
+      --text-tertiary: #6B6B6B;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-yellow: #F59E0B;
+      --accent-red: #EF4444;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F9FAFB;
+      --bg-tertiary: #F3F4F6;
+      --border-color: #E5E7EB;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
     }
 
     * {
@@ -31,12 +47,13 @@
     }
 
     body {
-      background: linear-gradient(135deg, var(--background-dark), #1E293B);
+      background: var(--bg-primary);
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
+      transition: var(--transition);
     }
 
     /* Falling Stars Animation */
@@ -46,91 +63,211 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1;
+      z-index: 0;
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.6;
     }
 
+    [data-theme="light"] canvas#stars-canvas {
+      opacity: 0.2;
+    }
+
+    /* Sidebar */
     .sidebar {
       position: fixed;
       top: 0;
-      left: -300px;
-      width: 300px;
+      left: 0;
+      width: 260px;
       height: 100%;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      box-shadow: var(--shadow);
-      transition: left 0.3s ease;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1000;
-      padding: 1.5rem;
+      padding: 1.5rem 0;
       overflow-y: auto;
+      transform: translateX(-100%);
     }
 
     .sidebar.open {
-      left: 0;
+      transform: translateX(0);
     }
 
-    .sidebar-toggle {
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      color: var(--primary-color);
-      font-size: 1.5rem;
-      border-radius: 0.5rem;
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent-blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      z-index: 1001;
+      color: white;
+      font-size: 1.25rem;
     }
 
-    .sidebar-toggle:hover {
-      transform: scale(1.1);
-      background: rgba(59, 130, 246, 0.2);
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
     .sidebar-menu {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      margin-top: 3rem;
+      gap: 0.25rem;
+      padding: 1rem 0.75rem;
     }
 
     .menu-category {
-      font-size: 0.9rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: var(--text-primary);
-      padding: 0.5rem 1rem;
+      color: var(--text-tertiary);
+      padding: 0.5rem 0.75rem;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .menu-item, .super-menu-item {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      color: var(--text-primary);
+      padding: 0.625rem 0.75rem;
+      color: var(--text-secondary);
       text-decoration: none;
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
-      font-size: 0.9rem;
+      border-radius: 6px;
+      transition: var(--transition);
+      font-size: 0.875rem;
+      font-weight: 500;
     }
 
     .menu-item:hover, .super-menu-item:hover {
-      background: rgba(59, 130, 246, 0.3);
-      transform: translateX(5px);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .menu-item i, .super-menu-item i {
+      width: 16px;
+      font-size: 0.875rem;
     }
 
     .super-menu-item {
-      color: var(--accent-color);
+      color: var(--accent-yellow);
     }
 
-    /* Login Section Styles */
+    .super-menu-item:hover {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .top-bar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 0;
+      margin-top: 60px;
+      padding: 2rem 1.5rem;
+      min-height: calc(100vh - 60px);
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Login Section */
     #login-section {
       position: fixed;
       top: 0;
@@ -140,139 +277,230 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #0A0C1A, #1E293B);
-      z-index: 1000;
-      overflow: hidden;
+      background: var(--bg-primary);
+      z-index: 2000;
     }
 
     .login-container {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
       padding: 3rem 2rem;
-      border-radius: 1.5rem;
-      max-width: 500px;
+      border-radius: 12px;
+      max-width: 440px;
       width: 90%;
-      box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+      box-shadow: var(--shadow);
       text-align: center;
-      position: relative;
-      overflow: hidden;
-      animation: fadeInUp 1s ease-out;
-    }
-
-    .login-container::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
-      background-size: 40px 40px;
-      animation: moveBackground 30s linear infinite;
-      z-index: -1;
+      animation: fadeInUp 0.6s ease-out;
     }
 
     .login-logo {
-      width: 80px;
-      height: 80px;
+      width: 64px;
+      height: 64px;
       margin: 0 auto 1.5rem;
-      border-radius: 50%;
-      background: var(--primary-color);
+      border-radius: 12px;
+      background: var(--accent-blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-      animation: pulse 2s infinite;
+    }
+
+    .login-logo i {
+      font-size: 2rem;
+      color: white;
     }
 
     .login-title {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 0.5rem;
     }
 
     .login-subtitle {
-      font-size: 1rem;
+      font-size: 0.875rem;
       color: var(--text-secondary);
       margin-bottom: 2rem;
     }
 
     .telegram-button-wrapper {
       display: inline-block;
-      border-radius: 0.75rem;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 0 20px var(--primary-color);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: var(--transition);
     }
 
     .telegram-button-wrapper:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px var(--primary-color);
+      transform: translateY(-2px);
     }
 
     .login-footer {
       margin-top: 1.5rem;
-      font-size: 0.85rem;
+      font-size: 0.8125rem;
       color: var(--text-secondary);
     }
 
     .login-footer a {
-      color: var(--primary-color);
+      color: var(--accent-blue);
       text-decoration: none;
-      transition: color 0.3s ease;
+      transition: var(--transition);
     }
 
     .login-footer a:hover {
-      color: var(--secondary-color);
+      color: var(--accent-green);
     }
 
-    .admins-row {
-      display: flex;
+    /* Access Denied */
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 2000;
+      align-items: center;
       justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+    }
+
+    .access-denied-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .access-denied-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .back-to-login-btn {
+      padding: 0.625rem 1.5rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Banner */
+    .banner {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .banner:hover {
+      border-color: var(--accent-blue);
+    }
+
+    .banner-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .banner-text {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .banner-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      background: var(--accent-blue);
+      color: white;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .banner-link:hover {
+      background: #2563EB;
+      transform: translateY(-2px);
+    }
+
+    /* Admin Cards Row */
+    .admins-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
-      max-width: 1400px;
-      margin-left: auto;
-      margin-right: auto;
-      flex-wrap: wrap;
     }
 
     .admin-card {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      max-width: 500px;
+      transition: var(--transition);
       min-height: 320px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      flex: 1 1 400px;
-    }
-
-    .admin-card.low {
-      border-color: rgba(239, 68, 68, 0.2);
     }
 
     .admin-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
     }
 
     .admin-card.low:hover {
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+      border-color: var(--accent-red);
+      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
     }
 
     .admin-card h2 {
-      font-size: 1.6rem;
+      font-size: 1.125rem;
       font-weight: 600;
       color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .week-info {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
       margin-bottom: 1rem;
-      text-align: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .admin-list {
@@ -285,33 +513,36 @@
     .admin-item {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
       padding: 0.75rem;
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      background: var(--bg-tertiary);
+      transition: var(--transition);
     }
 
     .admin-item:hover {
-      background: rgba(59, 130, 246, 0.2);
-    }
-
-    .admin-item.low:hover {
-      background: rgba(239, 68, 68, 0.2);
+      background: var(--bg-primary);
     }
 
     .admin-avatar {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      object-fit: cover;
+      overflow: hidden;
+      flex-shrink: 0;
       border: 2px solid transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      background: var(--primary-color);
-      color: var(--text-primary);
+      background: var(--accent-blue);
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .admin-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .admin-item.gold .admin-avatar {
@@ -326,55 +557,66 @@
       border-color: #D97706;
     }
 
-    .admin-item.normal .admin-avatar {
-      border-color: var(--primary-color);
-    }
-
-    .admin-item.low .admin-avatar {
-      border-color: #EF4444;
-    }
-
     .admin-info {
       flex: 1;
       min-width: 0;
     }
 
     .admin-name {
-      font-size: 1rem;
+      font-size: 0.875rem;
       font-weight: 600;
       color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-bottom: 0.25rem;
     }
 
     .admin-stats {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+      gap: 1rem;
     }
 
     .admin-stat-value {
-      color: var(--primary-color);
+      color: var(--accent-blue);
       font-weight: 600;
     }
 
     .admin-item.low .admin-stat-value {
-      color: #EF4444;
+      color: var(--accent-red);
     }
 
-    .medal, .low-medal {
-      font-size: 1.8rem;
-      margin-left: auto;
+    .medal {
+      font-size: 1.5rem;
+      flex-shrink: 0;
     }
 
-    .week-info {
-      text-align: center;
+    /* Stats Section */
+    #admin-notice {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    #admin-notice h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #admin-notice p {
+      font-size: 0.875rem;
       color: var(--text-secondary);
-      font-size: 0.85rem;
-      margin-top: 0.75rem;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
     }
 
     .stats-grid {
@@ -384,313 +626,192 @@
       margin-bottom: 2rem;
     }
 
-    .stats-grid > div {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      padding: 1rem;
-      border-radius: 0.75rem;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
+    .stats-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      border-radius: 12px;
+      transition: var(--transition);
     }
 
-    .stats-grid > div:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+    .stats-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
     }
 
-    .stats-grid h3 {
-      color: var(--primary-color);
-      font-size: 1.1rem;
+    .stats-card h3 {
+      font-size: 0.875rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
-    .stats-grid p {
-      font-size: 0.9rem;
+    .stats-card p {
+      font-size: 0.8125rem;
       color: var(--text-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    .stats-card span {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Chart Container */
+    .chart-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .chart-container h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 300px;
+    }
+
+    /* Table Container */
+    .table-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .table-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
     }
 
     .table-container {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 0.75rem;
-      padding: 0.75rem;
-      box-shadow: var(--shadow);
       overflow-x: auto;
-      max-width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
     }
 
     .table-container table {
       width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      font-size: 0.85rem;
-      color: var(--text-primary);
+      border-collapse: collapse;
+      font-size: 0.8125rem;
     }
 
     .table-container th {
-      background: rgba(59, 130, 246, 0.15);
-      color: var(--primary-color);
-      padding: 0.75rem;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
       font-weight: 600;
       text-transform: uppercase;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
       text-align: left;
+      border-bottom: 1px solid var(--border-color);
     }
 
     .table-container td {
-      padding: 0.75rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      transition: background 0.2s ease;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
     }
 
     .table-container tbody tr:hover {
-      background: rgba(59, 130, 246, 0.1);
+      background: var(--bg-tertiary);
     }
 
     .table-container tbody tr:last-child td {
       font-weight: 600;
+      border-bottom: none;
     }
 
-    #access-denied-section {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #1E293B, #334155);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Utilities */
+    .hidden {
+      display: none !important;
     }
 
-    .access-denied-content {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
-      text-align: center;
-      max-width: 500px;
-    }
-
-    .access-denied-icon {
-      font-size: 4rem;
-      color: #EF4444;
-      margin-bottom: 1rem;
-      animation: pulse 2s infinite;
-    }
-
-    .access-denied-title {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-    }
-
-    .access-denied-message {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-    }
-
-    .back-to-login-btn {
-      background: #EF4444;
-      color: var(--text-primary);
-      padding: 0.5rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .back-to-login-btn:hover {
-      background: #DC2626;
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-    }
-
-    #logout-btn {
-      position: fixed;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: #EF4444;
-      color: var(--text-primary);
-      padding: 0.5rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 1001;
-      transition: all 0.3s ease;
-    }
-
-    #logout-btn:hover {
-      background: #DC2626;
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-    }
-
-    /* Banner Styles */
-    .banner {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 0.75rem;
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      text-align: center;
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      transition: all 0.3s ease;
-      animation: slideIn 1s ease-out;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .banner::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), transparent);
-      z-index: -1;
-      animation: chartGlow 5s ease-in-out infinite;
-    }
-
-    .banner:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-    }
-
-    .banner-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .banner-text {
-      font-size: 1rem;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
-    }
-
-    .banner-link {
-      display: inline-block;
-      background: var(--primary-color);
-      color: var(--text-primary);
-      padding: 0.5rem 1.5rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .banner-link:hover {
-      background: var(--secondary-color);
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    @keyframes moveBackground {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-50%, -50%); }
-    }
-
+    /* Animations */
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(50px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .chart-container {
-      background: var(--glass-bg);
-      backdrop-filter: var(--glass-blur);
-      border-radius: 0.75rem;
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      max-height: 300px;
-      margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chart-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), transparent);
-      z-index: -1;
-      animation: chartGlow 5s ease-in-out infinite;
-    }
-
-    @keyframes chartGlow {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-
+    /* Responsive */
     @media (max-width: 768px) {
-      .sidebar {
-        width: 250px;
+      .top-bar {
+        padding: 0 1rem;
       }
+
+      .main-content {
+        padding: 1.5rem 1rem;
+      }
+
       .admins-row {
-        flex-direction: column;
-        align-items: center;
+        grid-template-columns: 1fr;
       }
-      .admin-card {
-        max-width: 100%;
-      }
+
       .stats-grid {
         grid-template-columns: 1fr;
       }
-      .table-container table {
-        font-size: 0.75rem;
+
+      .admin-stats {
+        flex-direction: column;
+        gap: 0.25rem;
       }
-      .table-container th, .table-container td {
-        padding: 0.5rem;
+
+      .sidebar {
+        width: 100%;
       }
-      .login-container {
-        padding: 2rem 1.5rem;
-      }
-      .login-title {
-        font-size: 1.5rem;
-      }
-      .login-subtitle {
-        font-size: 0.9rem;
-      }
-      .banner {
-        padding: 1rem;
-      }
-      .banner-title {
-        font-size: 1.25rem;
-      }
-      .banner-text {
-        font-size: 0.9rem;
-      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-tertiary);
     }
   </style>
 </head>
-<body>
+<body data-theme="dark">
   <canvas id="stars-canvas"></canvas>
-  <button id="logout-btn" class="hidden">Вийти</button>
 
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="sidebar-title">Адмін Панель</div>
+    </div>
     <div class="sidebar-menu">
       <div class="menu-category">Скрипти</div>
       <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
@@ -711,14 +832,31 @@
       <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
       <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
       <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      
       <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
       <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
       <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
       <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
     </div>
   </div>
-  <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
 
+  <!-- Top Bar -->
+  <div class="top-bar hidden" id="top-bar">
+    <div class="top-bar-left">
+      <button class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="top-bar-title" id="top-bar-title">Панель адміністратора</div>
+    </div>
+    <div class="top-bar-right">
+      <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="logout-btn" id="logout-btn">Вийти</button>
+    </div>
+  </div>
+
+  <!-- Access Denied Section -->
   <div id="access-denied-section">
     <div class="access-denied-content">
       <div class="access-denied-icon">🚫</div>
@@ -731,10 +869,11 @@
     </div>
   </div>
 
+  <!-- Login Section -->
   <div id="login-section">
     <div class="login-container">
       <div class="login-logo">
-        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--text-primary);"></i>
+        <i class="fas fa-shield-alt"></i>
       </div>
       <h1 class="login-title">Вітаємо в кабінеті адміністратора</h1>
       <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
@@ -753,75 +892,80 @@
     </div>
   </div>
 
-  <div class="container mx-auto p-4 sm:p-6">
-    <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-center" id="welcome-header">Ласкаво просимо!</h1>
+  <!-- Main Content -->
+  <div class="main-content hidden" id="main-content">
+    <!-- Banner -->
+    <div class="banner">
+      <h2 class="banner-title">Скрипт Осінній БатлКвас вже доступний!</h2>
+      <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи.</p>
+      <a href="scriptbaltpass.html" class="banner-link">
+        <i class="fas fa-code"></i>
+        Перейти до скрипту
+      </a>
+    </div>
 
-    <div id="dashboard" class="hidden">
-      <div class="banner">
-        <h2 class="banner-title">Скрипт Осінній БатлКвас вже доступний!</h2>
-        <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи.</p>
-        <a href="scriptbaltpass.html" class="banner-link"><i class="fas fa-code mr-2"></i>Перейти до скрипту</a>
+    <!-- Admin Cards Row -->
+    <div class="admins-row">
+      <div class="admin-card" id="top-admins-section">
+        <h2><i class="fas fa-trophy" style="color: var(--accent-yellow);"></i> Адміни тижня</h2>
+        <div class="week-info" id="week-range">Період: завантаження...</div>
+        <div class="admin-list" id="top-admins-container"></div>
+      </div>
+      <div class="admin-card low" id="low-admins-section">
+        <h2><i class="fas fa-exclamation-triangle" style="color: var(--accent-red);"></i> Низька активність</h2>
+        <div class="week-info" id="low-week-range">Період: завантаження...</div>
+        <div class="admin-list" id="low-admins-container"></div>
+      </div>
+    </div>
+
+    <!-- Admin Notice -->
+    <div id="admin-notice" class="hidden">
+      <h3><i class="fas fa-crown" style="color: var(--accent-yellow);"></i> Ви - адміністратор системи</h3>
+      <p>Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+      <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
+    </div>
+
+    <!-- Stats Section -->
+    <div id="stats-section" class="hidden">
+      <div class="stats-grid">
+        <div class="stats-card">
+          <h3>Сьогодні</h3>
+          <p>Тікети: <span id="today-tickets">—</span></p>
+          <p>Час у грі: <span id="today-time">—</span></p>
+        </div>
+        <div class="stats-card">
+          <h3>Тиждень</h3>
+          <p>Тікети: <span id="week-tickets">—</span></p>
+          <p>Час у грі: <span id="week-time">—</span></p>
+        </div>
+        <div class="stats-card">
+          <h3>Місяць</h3>
+          <p>Тікети: <span id="month-tickets">—</span></p>
+          <p>Час у грі: <span id="month-time">—</span></p>
+        </div>
       </div>
 
-      <div class="admins-row">
-        <div class="admin-card" id="top-admins-section">
-          <h2>🏆 Адміни тижня</h2>
-          <div class="week-info" id="week-range">Період: 01.05.2023 - 07.05.2023</div>
-          <div class="admin-list" id="top-admins-container"></div>
-        </div>
-        <div class="admin-card low" id="low-admins-section">
-          <h2>⚠️ Низька активність</h2>
-          <div class="week-info" id="low-week-range">Період: 01.05.2023 - 07.05.2023</div>
-          <div class="admin-list" id="low-admins-container"></div>
+      <div class="chart-container">
+        <h3>Динаміка тікетів та часу</h3>
+        <div class="chart-wrapper">
+          <canvas id="statsChart"></canvas>
         </div>
       </div>
 
-      <div id="admin-notice" class="hidden">
-        <h3 class="text-lg sm:text-xl font-bold text-[var(--primary-color)] mb-3">👑 Ви - адміністратор системи</h3>
-        <p class="mb-2 text-sm sm:text-base">Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
-        <p class="text-sm sm:text-base">Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
-      </div>
-
-      <div id="stats-section">
-        <h2 class="text-lg sm:text-xl font-bold mb-4">Ваша статистика:</h2>
-        <div class="stats-grid">
-          <div>
-            <h3>Сьогодні</h3>
-            <p>Тікети: <span id="today-tickets">—</span></p>
-            <p>Час у грі: <span id="today-time">—</span></p>
-          </div>
-          <div>
-            <h3>Тиждень</h3>
-            <p>Тікети: <span id="week-tickets">—</span></p>
-            <p>Час у грі: <span id="week-time">—</span></p>
-          </div>
-          <div>
-            <h3>Місяць</h3>
-            <p>Тікети: <span id="month-tickets">—</span></p>
-            <p>Час у грі: <span id="month-time">—</span></p>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <h3 class="text-base sm:text-lg font-bold mb-3">Динаміка тікетів та часу</h3>
-          <canvas id="statsChart" height="120"></canvas>
-        </div>
-
-        <div class="mt-4">
-          <h3 class="text-base sm:text-lg font-bold mb-3">Детальна статистика по днях:</h3>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Дата</th>
-                  <th>Тікети</th>
-                  <th>Час у грі</th>
-                  <th>Неактив</th>
-                </tr>
-              </thead>
-              <tbody id="daily-stats-body"></tbody>
-            </table>
-          </div>
+      <div class="table-section">
+        <h3>Детальна статистика по днях</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Тікети</th>
+                <th>Час у грі</th>
+                <th>Неактив</th>
+              </tr>
+            </thead>
+            <tbody id="daily-stats-body"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -886,6 +1030,43 @@
     
     animateStars();
 
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+    
+    function updateThemeIcon(theme) {
+      const icon = themeToggle.querySelector('i');
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    
+    document.addEventListener('click', (event) => {
+      if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+
+    // Google Sheets Configuration
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
 
@@ -910,23 +1091,10 @@
       '@blisssbabe'
     ];
 
-    document.getElementById('sidebarToggle').addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('open');
-    });
-
-    document.addEventListener('click', (event) => {
-      const sidebar = document.getElementById('sidebar');
-      const toggle = document.getElementById('sidebarToggle');
-      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
-      }
-    });
-
     async function getSheetData(sheetName) {
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
         const res = await axios.get(url, { timeout: 10000 });
-        console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
         return res.data.values || [];
       } catch (error) {
         console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
@@ -1161,12 +1329,13 @@
           medal = '🥉';
         }
         
+        item.classList.add(medalClass);
+        
         item.innerHTML = `
-          <div class="admin-avatar ${medalClass}">
+          <div class="admin-avatar">
             <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
                  alt="${admin.name}" 
-                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
-                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';">
           </div>
           <div class="admin-info">
             <div class="admin-name">${admin.name}</div>
@@ -1175,17 +1344,17 @@
               <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
             </div>
           </div>
-          <div class="${medalClass} medal">${medal}</div>
+          ${medal ? `<div class="medal">${medal}</div>` : ''}
         `;
         
         container.appendChild(item);
       });
 
       VanillaTilt.init(document.querySelectorAll('#top-admins-section'), {
-        max: 8,
+        max: 5,
         speed: 400,
         glare: true,
-        'max-glare': 0.2
+        'max-glare': 0.1
       });
     }
 
@@ -1196,16 +1365,15 @@
       document.getElementById('low-week-range').textContent = 
         `Період: ${weekRange.start} - ${weekRange.end}`;
       
-      admins.forEach((admin, index) => {
+      admins.forEach((admin) => {
         const item = document.createElement('div');
         item.className = 'admin-item low';
         
         item.innerHTML = `
-          <div class="admin-avatar low">
+          <div class="admin-avatar">
             <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
                  alt="${admin.name}" 
-                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
-                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';">
           </div>
           <div class="admin-info">
             <div class="admin-name">${admin.name}</div>
@@ -1214,17 +1382,17 @@
               <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
             </div>
           </div>
-          <div class="low-medal">⚠️</div>
+          <div class="medal">⚠️</div>
         `;
         
         container.appendChild(item);
       });
 
       VanillaTilt.init(document.querySelectorAll('#low-admins-section'), {
-        max: 8,
+        max: 5,
         speed: 400,
         glare: true,
-        'max-glare': 0.2
+        'max-glare': 0.1
       });
     }
 
@@ -1272,7 +1440,6 @@
 
         if (!ticketsData.length || !timeData.length) {
           console.error('Дані не знайдено');
-          alert('Дані не знайдено');
           return;
         }
 
@@ -1281,15 +1448,13 @@
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
 
         if (telegramColIndex === -1 || nameColIndex === -1) {
-          console.error('Помилка структури даних: відсутні необхідні стовпці');
-          alert('Помилка структури даних: відсутні необхідні стовпці');
+          console.error('Помилка структури даних');
           return;
         }
 
         const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
         if (!userTicketsRow) {
-          console.error('Користувача не знайдено в таблиці тікетів:', telegramUsername);
-          alert('Користувача не знайдено в таблиці тікетів');
+          console.error('Користувача не знайдено');
           return;
         }
 
@@ -1299,8 +1464,7 @@
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
         const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
         if (!userTimeRow) {
-          console.error('Користувача не знайдено в таблиці часу:', userName);
-          alert('Користувача не знайдено в таблиці часу');
+          console.error('Користувача не знайдено в таблиці часу');
           return;
         }
 
@@ -1363,7 +1527,7 @@
             if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
               dayTimeStr = userTimeRow[timeColIndex];
               if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = timeStr.split(':').map(Number);
+                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
                 dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
               }
             }
@@ -1386,13 +1550,17 @@
 
         const trTotal = document.createElement('tr');
         trTotal.innerHTML = `
-          <td class="font-bold">Усього неактивів</td>
-          <td class="font-bold" colspan="3">${inactiveCount}</td>
+          <td>Усього неактивів</td>
+          <td colspan="3">${inactiveCount}</td>
         `;
         tbody.appendChild(trTotal);
 
         const ctx = document.getElementById('statsChart').getContext('2d');
         if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDark ? '#A1A1A1' : '#6B7280';
 
         window.statsChartInstance = new Chart(ctx, {
           type: 'line',
@@ -1402,24 +1570,24 @@
               {
                 label: 'Тікети',
                 data: chartTickets,
-                borderColor: 'rgba(59, 130, 246, 1)',
-                backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                borderColor: '#3B82F6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 yAxisID: 'yTickets',
                 tension: 0.4,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                pointRadius: 3,
+                pointHoverRadius: 5,
                 borderWidth: 2,
                 fill: true,
               },
               {
                 label: 'Час у грі (години)',
                 data: chartTimeHours,
-                borderColor: 'rgba(16, 185, 129, 1)',
-                backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 yAxisID: 'yTime',
                 tension: 0.4,
-                pointRadius: 4,
-                pointHoverRadius: 6,
+                pointRadius: 3,
+                pointHoverRadius: 5,
                 borderWidth: 2,
                 fill: true,
               }
@@ -1440,18 +1608,16 @@
                 title: {
                   display: true,
                   text: 'Тікети',
-                  color: 'var(--text-primary)',
-                  font: { size: 14, weight: '600' },
+                  color: textColor,
+                  font: { size: 12, weight: '600' },
                 },
                 beginAtZero: true,
                 ticks: { 
-                  color: 'var(--text-secondary)',
+                  color: textColor,
                   precision: 0,
-                  maxTicksLimit: 6,
                 },
                 grid: { 
-                  color: 'rgba(255, 255, 255, 0.1)',
-                  borderColor: 'var(--text-secondary)',
+                  color: gridColor,
                 },
               },
               yTime: {
@@ -1461,14 +1627,13 @@
                 title: {
                   display: true,
                   text: 'Час (години)',
-                  color: 'var(--text-primary)',
-                  font: { size: 14, weight: '600' },
+                  color: textColor,
+                  font: { size: 12, weight: '600' },
                 },
                 beginAtZero: true,
                 ticks: { 
-                  color: 'var(--text-secondary)',
+                  color: textColor,
                   precision: 1,
-                  maxTicksLimit: 6,
                 },
                 grid: { drawOnChartArea: false },
               },
@@ -1476,9 +1641,8 @@
                 ticks: {
                   maxRotation: 0,
                   minRotation: 0,
-                  maxTicksLimit: 7,
-                  color: 'var(--text-secondary)',
-                  font: { size: 12 },
+                  color: textColor,
+                  font: { size: 11 },
                   callback: function(value, index, values) {
                     const date = this.getLabelForValue(value);
                     const [day, month] = date.split('.');
@@ -1486,8 +1650,7 @@
                   }
                 },
                 grid: { 
-                  color: 'rgba(255, 255, 255, 0.1)',
-                  borderColor: 'var(--text-secondary)',
+                  color: gridColor,
                 },
               }
             },
@@ -1495,15 +1658,20 @@
               legend: {
                 position: 'top',
                 labels: { 
-                  color: 'var(--text-primary)',
-                  font: { size: 12, weight: '600' },
-                  padding: 15,
-                  boxWidth: 20,
+                  color: textColor,
+                  font: { size: 12, weight: '500' },
+                  padding: 12,
+                  boxWidth: 16,
+                  usePointStyle: true,
                 },
               },
               tooltip: {
-                backgroundColor: 'var(--glass-bg)',
-                titleFont: { size: 14, weight: '600' },
+                backgroundColor: isDark ? 'rgba(17, 17, 17, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                titleColor: isDark ? '#FAFAFA' : '#111827',
+                bodyColor: isDark ? '#A1A1A1' : '#6B7280',
+                borderColor: isDark ? '#2A2A2A' : '#E5E7EB',
+                borderWidth: 1,
+                titleFont: { size: 13, weight: '600' },
                 bodyFont: { size: 12 },
                 padding: 12,
                 cornerRadius: 8,
@@ -1514,57 +1682,42 @@
                 }
               }
             },
-            animation: {
-              duration: 1500,
-              easing: 'easeOutCubic',
-            }
           },
         });
       } catch (error) {
         console.error('Помилка під час завантаження даних:', error);
-        alert('Помилка під час завантаження даних');
       }
     }
 
     function showAccessDenied() {
-      console.log('Showing access denied section');
       document.getElementById('access-denied-section').style.display = 'flex';
       document.getElementById('login-section').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'none';
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarToggle').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
     }
 
     async function onTelegramAuth(user) {
-      console.log('Telegram auth triggered:', user);
       if (!user || !user.username) {
-        console.error('Invalid user data:', user);
         showAccessDenied();
         return;
       }
 
       const telegramUsername = '@' + user.username;
-      console.log('Processing user:', telegramUsername);
 
       if (allowedAdmins.includes(telegramUsername)) {
-        console.log('User is in allowedAdmins');
         const userData = {
           username: telegramUsername,
           nickname: user.first_name || user.username,
           isAdmin: true
         };
         localStorage.setItem('tg_auth', JSON.stringify(userData));
-        console.log('Calling showDashboard for admin');
         await showDashboard(userData.nickname, telegramUsername, true);
         return;
       }
 
       try {
-        console.log('Fetching tickets data for non-admin user');
         const ticketsData = await getSheetData('Май_2025_таблица');
         if (!ticketsData.length) {
-          console.error('No tickets data found');
           showAccessDenied();
           return;
         }
@@ -1572,7 +1725,6 @@
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         
         if (telegramColIndex === -1) {
-          console.error('Telegram column not found in tickets data');
           showAccessDenied();
           return;
         }
@@ -1582,17 +1734,14 @@
         );
         
         if (userTicketsRow) {
-          console.log('User found in tickets data:', userTicketsRow);
           const userData = {
             username: telegramUsername,
             nickname: userTicketsRow[0] || user.first_name || user.username,
             isAdmin: false
           };
           localStorage.setItem('tg_auth', JSON.stringify(userData));
-          console.log('Calling showDashboard for non-admin');
           await showDashboard(userData.nickname, telegramUsername, false);
         } else {
-          console.error('User not found in tickets data:', telegramUsername);
           localStorage.removeItem('tg_auth');
           showAccessDenied();
         }
@@ -1603,14 +1752,10 @@
     }
 
     async function showDashboard(nickname, telegramUsername, isAdmin) {
-      console.log('showDashboard called:', { nickname, telegramUsername, isAdmin });
-
       if (!isAdmin) {
         try {
-          console.log('Verifying non-admin user access');
           const ticketsData = await getSheetData('Май_2025_таблица');
           if (!ticketsData.length) {
-            console.error('No tickets data for verification');
             showAccessDenied();
             return;
           }
@@ -1622,7 +1767,6 @@
           );
           
           if (!userExists) {
-            console.error('User not found during verification:', telegramUsername);
             showAccessDenied();
             return;
           }
@@ -1633,33 +1777,25 @@
         }
       }
 
-      console.log('Showing dashboard');
       document.getElementById('login-section').style.display = 'none';
-      document.getElementById('dashboard').style.display = 'block';
-      document.getElementById('sidebarToggle').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('main-content').classList.remove('hidden');
+      document.getElementById('top-bar').classList.remove('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
-      document.querySelector('h1').innerText = `Вітаємо, ${nickname}!`;
+      document.getElementById('top-bar-title').textContent = `Вітаємо, ${nickname}!`;
       
       if (superAdmins.includes(telegramUsername)) {
-        console.log('User is superAdmin, showing super menu');
         document.getElementById('superMenuCategory').style.display = 'block';
         document.getElementById('superMenuItem1').style.display = 'flex';
         document.getElementById('superMenuItem2').style.display = 'flex';
         document.getElementById('superMenuItem3').style.display = 'flex';
       }
       
-      document.getElementById('top-admins-section').classList.remove('hidden');
-      document.getElementById('low-admins-section').classList.remove('hidden');
-      console.log('Loading admins data');
       await loadAndRenderAdmins();
       
       if (isAdmin) {
-        console.log('User is admin, showing admin notice');
         document.getElementById('admin-notice').classList.remove('hidden');
         document.getElementById('stats-section').classList.add('hidden');
       } else {
-        console.log('User is not admin, fetching stats');
         document.getElementById('admin-notice').classList.add('hidden');
         document.getElementById('stats-section').classList.remove('hidden');
         await fetchUserStatsByTelegram(telegramUsername);
@@ -1667,32 +1803,24 @@
     }
 
     function showLoginForm() {
-      console.log('Showing login form');
       document.getElementById('login-section').style.display = 'flex';
-      document.getElementById('dashboard').style.display = 'none';
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('sidebarToggle').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
-      document.querySelector('h1').innerText = 'Ласкаво просимо!';
-      document.getElementById('top-admins-section').classList.add('hidden');
-      document.getElementById('low-admins-section').classList.add('hidden');
+      sidebar.classList.remove('open');
     }
 
     function logout() {
-      console.log('Logging out');
       localStorage.removeItem('tg_auth');
       showLoginForm();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded');
       document.getElementById('logout-btn').addEventListener('click', logout);
       
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
         try {
-          console.log('Found saved auth:', savedAuth);
           const userData = JSON.parse(savedAuth);
           showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
         } catch (e) {
@@ -1701,18 +1829,15 @@
           showLoginForm();
         }
       } else {
-        console.log('No saved auth, showing login form');
         showLoginForm();
       }
       
       setInterval(() => {
         if (shouldRefreshTopAdmins()) {
-          console.log('Auto-refreshing admins data');
           autoRefreshData();
         }
       }, 5 * 60 * 1000);
       
-      console.log('Initial admins data load');
       autoRefreshData();
     });
   </script>
