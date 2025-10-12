@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Особистий Кабінет Адміністратора</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3B82F6;
+      --secondary: #10B981;
+      --accent: #F59E0B;
+      --bg-dark: #0A0C1A;
+      --bg-darker: #050610;
+      --card-bg: rgba(20, 22, 35, 0.85);
+      --glass-bg: rgba(20, 22, 35, 0.6);
+      --text-primary: #F3F4F6;
+      --text-secondary: #9CA3AF;
+      --border: rgba(59, 130, 246, 0.2);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --glow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    [data-theme="light"] {
+      --primary: #2563EB;
+      --secondary: #059669;
+      --accent: #D97706;
+      --bg-dark: #F9FAFB;
+      --bg-darker: #F3F4F6;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --border: rgba(37, 99, 235, 0.2);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --glow: 0 0 20px rgba(37, 99, 235, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    canvas#stars-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 1.5rem;
+      right: 5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      color: var(--primary);
+      font-size: 1.2rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+      border: 1px solid var(--border);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--glow);
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 0.75rem;
+      background: var(--card-bg);
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .sidebar-logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.5rem;
+    }
+
+    .sidebar-logo-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      color: var(--primary);
+      font-size: 1.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+      border: 1px solid var(--border);
+    }
+
+    .sidebar-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--glow);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .menu-category {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.5rem;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+    }
+
+    .menu-item:hover {
+      background: var(--card-bg);
+      border-color: var(--border);
+      transform: translateX(5px);
+    }
+
+    .super-menu-item {
+      color: var(--accent);
+      background: rgba(217, 119, 6, 0.1);
+    }
+
+    .super-menu-item:hover {
+      background: rgba(217, 119, 6, 0.2);
+      border-color: var(--accent);
+      transform: translateX(5px);
+    }
+
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .login-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      padding: 3rem 2rem;
+      border-radius: 1.5rem;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out;
+      border: 1px solid var(--border);
+    }
+
+    .login-logo {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 1.5rem;
+      border-radius: 1rem;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--glow);
+      animation: pulse 2s infinite;
+      overflow: hidden;
+    }
+
+    .login-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: var(--glow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--primary);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-footer a:hover {
+      color: var(--secondary);
+    }
+
+    .marquee-section {
+      margin-bottom: 2rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .marquee-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .marquee-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .marquee-container {
+      overflow: hidden;
+      position: relative;
+      height: 120px;
+    }
+
+    .marquee-content {
+      display: flex;
+      gap: 1rem;
+      animation: scroll 30s linear infinite;
+      width: max-content;
+    }
+
+    .marquee-content:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .admin-card-mini {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .admin-card-mini:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .admin-card-mini.low {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .admin-card-mini.low:hover {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .admin-avatar-mini {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      background: var(--primary);
+      color: var(--text-primary);
+      flex-shrink: 0;
+    }
+
+    .admin-card-mini.gold .admin-avatar-mini {
+      border-color: #FBBF24;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+    }
+
+    .admin-card-mini.silver .admin-avatar-mini {
+      border-color: #D1D5DB;
+      box-shadow: 0 0 15px rgba(209, 213, 219, 0.5);
+    }
+
+    .admin-card-mini.bronze .admin-avatar-mini {
+      border-color: #D97706;
+      box-shadow: 0 0 15px rgba(217, 119, 6, 0.5);
+    }
+
+    .admin-card-mini.low .admin-avatar-mini {
+      border-color: #EF4444;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+    }
+
+    .admin-info-mini {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .admin-name-mini {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0.25rem;
+    }
+
+    .admin-stats-mini {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .admin-stat-value {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .admin-card-mini.low .admin-stat-value {
+      color: #EF4444;
+    }
+
+    .medal-mini {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .stat-card h3 {
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .calendar-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+    }
+
+    .calendar-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+    }
+
+    .calendar-day-header {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      min-height: 80px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .calendar-day:hover {
+      transform: scale(1.05);
+      box-shadow: var(--glow);
+      z-index: 10;
+    }
+
+    .calendar-day.inactive {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+    }
+
+    .calendar-day.inactive:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .calendar-day.has-data {
+      border-color: var(--primary);
+    }
+
+    .calendar-day.no-activity {
+      border-color: #EF4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .calendar-day-number {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .calendar-day-stats {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .calendar-day-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .calendar-day-stat i {
+      font-size: 0.65rem;
+      color: var(--primary);
+    }
+
+    .calendar-day.no-activity .calendar-day-stat i {
+      color: #EF4444;
+    }
+
+    .chart-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .chart-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 500px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .access-denied-icon {
+      font-size: 4rem;
+      color: #EF4444;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    .access-denied-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .back-to-login-btn {
+      background: #EF4444;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    #logout-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #EF4444;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1001;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.9rem;
+    }
+
+    #logout-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    .banner {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      text-align: center;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      animation: slideIn 1s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), transparent);
+      z-index: -1;
+    }
+
+    .banner:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .banner-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .banner-text {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .banner-link {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .banner-link:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 250px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .calendar-grid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+      }
+      .calendar-day {
+        min-height: 60px;
+        padding: 0.5rem;
+      }
+      .calendar-day-number {
+        font-size: 0.8rem;
+      }
+      .calendar-day-stats {
+        font-size: 0.6rem;
+      }
+      .login-container {
+        padding: 2rem 1.5rem;
+      }
+      .login-title {
+        font-size: 1.5rem;
+      }
+      .banner {
+        padding: 1rem;
+      }
+      .banner-title {
+        font-size: 1.25rem;
+      }
+      .marquee-container {
+        height: 100px;
+      }
+      .admin-card-mini {
+        min-width: 240px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <canvas id="stars-canvas"></canvas>
+  
+  <button id="logout-btn" class="hidden">Вийти</button>
+  <div class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="1-17ffebdc.ico" alt="Logo" onerror="this.style.display='none'">
+      <span class="sidebar-logo-text">Адмін Панель</span>
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
+      <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+      <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
+      
+      <div class="menu-category">Інформація</div>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
+  
+  <div class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <div id="access-denied-section">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">🚫</div>
+      <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+      <p class="access-denied-message">
+        Ваш обліковий запис не має доступу до цієї системи.<br>
+        Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+      </p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
+
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <img src="1-17ffebdc.ico" alt="Logo" onerror="this.innerHTML='<i class=\'fas fa-shield-alt\' style=\'font-size: 3rem; color: white;\'></i>'">
+      </div>
+      <h1 class="login-title">Вітаємо в кабінеті адміністратора</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 1400px; margin: 0 auto; padding: 5rem 1.5rem 2rem;">
+    <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem; text-align: center;" id="welcome-header">Ласкаво просимо!</h1>
+
+    <div id="dashboard" class="hidden">
+      <div class="banner">
+        <h2 class="banner-title">🍂 Скрипт Осінній БатлКвас вже доступний!</h2>
+        <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи.</p>
+        <a href="scriptbaltpass.html" class="banner-link"><i class="fas fa-code" style="margin-right: 0.5rem;"></i>Перейти до скрипту</a>
+      </div>
+
+      <div class="marquee-section" id="top-admins-section">
+        <div class="marquee-title">
+          🏆 Адміни тижня
+        </div>
+        <div class="marquee-subtitle" id="week-range">Період: завантаження...</div>
+        <div class="marquee-container">
+          <div class="marquee-content" id="top-admins-container"></div>
+        </div>
+      </div>
+
+      <div class="marquee-section" id="low-admins-section" style="border-color: rgba(239, 68, 68, 0.3);">
+        <div class="marquee-title">
+          ⚠️ Низька активність
+        </div>
+        <div class="marquee-subtitle" id="low-week-range">Період: завантаження...</div>
+        <div class="marquee-container">
+          <div class="marquee-content" id="low-admins-container"></div>
+        </div>
+      </div>
+
+      <div id="admin-notice" class="hidden" style="background: var(--card-bg); backdrop-filter: blur(15px); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border);">
+        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-bottom: 0.75rem;">👑 Ви - адміністратор системи</h3>
+        <p style="margin-bottom: 0.5rem; color: var(--text-secondary);">Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+        <p style="color: var(--text-secondary);">Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
+      </div>
+
+      <div id="stats-section">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">📊 Ваша статистика</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3><i class="fas fa-calendar-day"></i> Сьогодні</h3>
+            <p>Тікети: <span class="stat-value" id="today-tickets">—</span></p>
+            <p>Час у грі: <span class="stat-value" id="today-time">—</span></p>
+          </div>
+          <div class="stat-card">
+            <h3><i class="fas fa-calendar-week"></i> Тиждень</h3>
+            <p>Тікети: <span class="stat-value" id="week-tickets">—</span></p>
+            <p>Час у грі: <span class="stat-value" id="week-time">—</span></p>
+          </div>
+          <div class="stat-card">
+            <h3><i class="fas fa-calendar-alt"></i> Місяць</h3>
+            <p>Тікети: <span class="stat-value" id="month-tickets">—</span></p>
+            <p>Час у грі: <span class="stat-value" id="month-time">—</span></p>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <i class="fas fa-chart-line"></i>
+            Динаміка тікетів та часу
+          </div>
+          <canvas id="statsChart" height="120"></canvas>
+        </div>
+
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <i class="fas fa-calendar"></i>
+            Календар активності
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    const body = document.body;
+    
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+    
+    function updateThemeIcon(theme) {
+      const icon = themeToggle.querySelector('i');
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // Falling Stars Animation
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const stars = [];
+    const numStars = 50;
+    
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
+      }
+      
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        const theme = document.body.getAttribute('data-theme');
+        const opacity = theme === 'light' ? this.opacity * 0.3 : this.opacity;
+        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        ctx.fill();
+      }
+    }
+    
+    for (let i = 0; i < numStars; i++) {
+      stars.push(new Star());
+    }
+    
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      requestAnimationFrame(animateStars);
+    }
+    
+    animateStars();
+
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+
+    const allowedAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    const superAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    const excludedLowAdmins = [
+      '@vanchff',
+      '@blisssbabe'
+    ];
+
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+
+    async function getSheetData(sheetName) {
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
+    }
+
+    function parseDate(str) {
+      if (!str || typeof str !== 'string') return new Date();
+      const [d, m, y] = str.split('.');
+      return new Date(y, m - 1, d);
+    }
+
+    function formatDate(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
+    }
+
+    function secondsToHHMMSS(seconds) {
+      if (!seconds || isNaN(seconds)) return '0хв';
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      return h > 0 ? `${h}г ${m}хв` : `${m}хв`;
+    }
+
+    function getDateWithoutTime(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function getPreviousWeekRange() {
+      const now = new Date();
+      const dayOfWeek = now.getDay();
+      const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      
+      const monday = new Date(now);
+      monday.setDate(now.getDate() + diffToMonday - 7);
+      monday.setHours(0, 0, 0, 0);
+      
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      sunday.setHours(23, 59, 59, 999);
+      
+      return {
+        start: formatDate(monday),
+        end: formatDate(sunday),
+        startDate: monday,
+        endDate: sunday
+      };
+    }
+
+    function shouldRefreshTopAdmins() {
+      const lastUpdate = localStorage.getItem('topAdminsLastUpdate');
+      if (!lastUpdate) return true;
+      const now = new Date();
+      const lastUpdateDate = new Date(parseInt(lastUpdate));
+      return (now - lastUpdateDate) > 15 * 60 * 1000;
+    }
+
+    async function autoRefreshData() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKeyTop = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cacheKeyLow = `lowAdmins_${weekRange.start}_${weekRange.end}`;
+      
+      localStorage.removeItem(cacheKeyTop);
+      localStorage.removeItem(cacheKeyLow);
+      localStorage.removeItem('topAdminsLastUpdate');
+      await loadAndRenderAdmins();
+    }
+
+    async function getTopAdmins(weekRange) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) return [];
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const timeHeaders = timeData[0] || [];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
+        const admins = [];
+
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex] || '';
+          const telegram = row[telegramColIndex] || '';
+          
+          if (!name || !telegram) return;
+
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
+          });
+        });
+
+        admins.sort((a, b) => {
+          if (b.tickets !== a.tickets) return b.tickets - a.tickets;
+          return b.time - a.time;
+        });
+
+        return admins.slice(0, 5);
+      } catch (error) {
+        console.error('Помилка при завантаженні топу адміністраторів:', error);
+        return [];
+      }
+    }
+
+    async function getLowAdmins(weekRange) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) return [];
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const timeHeaders = timeData[0] || [];
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (nameColIndex === -1 || telegramColIndex === -1) return [];
+
+        const admins = [];
+
+        ticketsData.slice(1).forEach(row => {
+          const name = row[nameColIndex] || '';
+          const telegram = row[telegramColIndex] || '';
+          
+          if (!name || !telegram || excludedLowAdmins.includes(telegram)) return;
+
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          ticketsHeaders.forEach((header, index) => {
+            if (/^\d{2}\.\d{2}\.\d{4}$/.test(header)) {
+              const date = parseDate(header);
+              if (date >= weekRange.startDate && date <= weekRange.endDate) {
+                ticketsSum += parseInt(row[index]) || 0;
+                
+                const timeRow = timeData.find(r => r[0] === name);
+                if (timeRow) {
+                  const timeColIndex = timeHeaders.indexOf(header);
+                  if (timeColIndex >= 0) {
+                    const timeStr = timeRow[timeColIndex];
+                    if (timeStr && timeStr !== 'Н') {
+                      const [hh, mm, ss] = timeStr.split(':').map(Number);
+                      timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          admins.push({
+            name,
+            telegram,
+            tickets: ticketsSum,
+            time: timeSecondsSum,
+            timeFormatted: secondsToHHMMSS(timeSecondsSum)
+          });
+        });
+
+        admins.sort((a, b) => {
+          if (a.tickets !== b.tickets) return a.tickets - b.tickets;
+          return a.time - b.time;
+        });
+
+        return admins.slice(0, 5);
+      } catch (error) {
+        console.error('Помилка при завантаженні адміністраторів з низькою активністю:', error);
+        return [];
+      }
+    }
+
+    function renderTopAdmins(admins, weekRange) {
+      const container = document.getElementById('top-admins-container');
+      container.innerHTML = '';
+      
+      document.getElementById('week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      const medals = ['gold', 'silver', 'bronze', 'normal', 'normal'];
+      const medalIcons = ['🥇', '🥈', '🥉', '🏅', '🏅'];
+      
+      // Duplicate for seamless loop
+      const duplicatedAdmins = [...admins, ...admins];
+      
+      duplicatedAdmins.forEach((admin, index) => {
+        const realIndex = index % admins.length;
+        const item = document.createElement('div');
+        item.className = `admin-card-mini ${medals[realIndex]}`;
+        
+        item.innerHTML = `
+          <div class="admin-avatar-mini">
+            <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+                 alt="${admin.name}" 
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          </div>
+          <div class="admin-info-mini">
+            <div class="admin-name-mini">${admin.name}</div>
+            <div class="admin-stats-mini">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
+          </div>
+          <div class="medal-mini">${medalIcons[realIndex]}</div>
+        `;
+        
+        container.appendChild(item);
+      });
+    }
+
+    function renderLowAdmins(admins, weekRange) {
+      const container = document.getElementById('low-admins-container');
+      container.innerHTML = '';
+      
+      document.getElementById('low-week-range').textContent = 
+        `Період: ${weekRange.start} - ${weekRange.end}`;
+      
+      // Duplicate for seamless loop
+      const duplicatedAdmins = [...admins, ...admins];
+      
+      duplicatedAdmins.forEach((admin) => {
+        const item = document.createElement('div');
+        item.className = 'admin-card-mini low';
+        
+        item.innerHTML = `
+          <div class="admin-avatar-mini">
+            <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
+                 alt="${admin.name}" 
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          </div>
+          <div class="admin-info-mini">
+            <div class="admin-name-mini">${admin.name}</div>
+            <div class="admin-stats-mini">
+              <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
+              <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
+            </div>
+          </div>
+          <div class="medal-mini">⚠️</div>
+        `;
+        
+        container.appendChild(item);
+      });
+    }
+
+    async function loadAndRenderAdmins() {
+      const weekRange = getPreviousWeekRange();
+      const cacheKeyTop = `topAdmins_${weekRange.start}_${weekRange.end}`;
+      const cacheKeyLow = `lowAdmins_${weekRange.start}_${weekRange.end}`;
+      
+      if (!shouldRefreshTopAdmins()) {
+        const cachedTopData = localStorage.getItem(cacheKeyTop);
+        const cachedLowData = localStorage.getItem(cacheKeyLow);
+        
+        if (cachedTopData) {
+          const { admins } = JSON.parse(cachedTopData);
+          renderTopAdmins(admins, weekRange);
+        }
+        
+        if (cachedLowData) {
+          const { admins } = JSON.parse(cachedLowData);
+          renderLowAdmins(admins, weekRange);
+        }
+        
+        if (cachedTopData && cachedLowData) return;
+      }
+      
+      const [topAdmins, lowAdmins] = await Promise.all([
+        getTopAdmins(weekRange),
+        getLowAdmins(weekRange)
+      ]);
+      
+      localStorage.setItem(cacheKeyTop, JSON.stringify({ admins: topAdmins }));
+      localStorage.setItem(cacheKeyLow, JSON.stringify({ admins: lowAdmins }));
+      localStorage.setItem('topAdminsLastUpdate', Date.now());
+      
+      renderTopAdmins(topAdmins, weekRange);
+      renderLowAdmins(lowAdmins, weekRange);
+    }
+
+    async function fetchUserStatsByTelegram(telegramUsername) {
+      try {
+        const [ticketsData, timeData] = await Promise.all([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        if (!ticketsData.length || !timeData.length) {
+          console.error('Дані не знайдено');
+          alert('Дані не знайдено');
+          return;
+        }
+
+        const ticketsHeaders = ticketsData[0] || [];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
+
+        if (telegramColIndex === -1 || nameColIndex === -1) {
+          console.error('Помилка структури даних: відсутні необхідні стовпці');
+          alert('Помилка структури даних: відсутні необхідні стовпці');
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
+        if (!userTicketsRow) {
+          console.error('Користувача не знайдено в таблиці тікетів:', telegramUsername);
+          alert('Користувача не знайдено в таблиці тікетів');
+          return;
+        }
+
+        const userName = userTicketsRow[nameColIndex];
+
+        const timeHeaders = timeData[0] || [];
+        const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
+        const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
+        if (!userTimeRow) {
+          console.error('Користувача не знайдено в таблиці часу:', userName);
+          alert('Користувача не знайдено в таблиці часу');
+          return;
+        }
+
+        const today = getDateWithoutTime(new Date());
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        const dateCols = ticketsHeaders
+          .map((h, i) => ({ header: h, index: i }))
+          .filter(({ header }) => /^\d{2}\.\d{2}\.\d{4}$/.test(header));
+
+        function sumTicketsAndTime(startDate, endDate) {
+          let ticketsSum = 0;
+          let timeSecondsSum = 0;
+
+          dateCols.forEach(({ header, index }) => {
+            const dt = parseDate(header);
+            if (dt >= startDate && dt <= endDate) {
+              ticketsSum += parseInt(userTicketsRow[index]) || 0;
+              const timeColIndex = timeHeaders.indexOf(header);
+              if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+                const timeStr = userTimeRow[timeColIndex];
+                if (timeStr && timeStr !== 'Н') {
+                  const [hh, mm, ss] = timeStr.split(':').map(Number);
+                  timeSecondsSum += (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+                }
+              }
+            }
+          });
+
+          return { ticketsSum, timeSecondsSum };
+        }
+
+        const todayStats = sumTicketsAndTime(today, today);
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - 7);
+        const weekStats = sumTicketsAndTime(weekStart, today);
+        const monthStats = sumTicketsAndTime(monthStart, today);
+
+        document.getElementById('today-tickets').textContent = todayStats.ticketsSum || 0;
+        document.getElementById('today-time').textContent = secondsToHHMMSS(todayStats.timeSecondsSum);
+        document.getElementById('week-tickets').textContent = weekStats.ticketsSum || 0;
+        document.getElementById('week-time').textContent = secondsToHHMMSS(weekStats.timeSecondsSum);
+        document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
+        document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
+
+        // Render Calendar
+        renderCalendar(dateCols, userTicketsRow, userTimeRow, timeHeaders, monthStart, today);
+
+        // Render Chart
+        const chartLabels = [];
+        const chartTickets = [];
+        const chartTimeHours = [];
+
+        dateCols.forEach(({ header, index }) => {
+          const dt = parseDate(header);
+          if (dt >= monthStart && dt <= today) {
+            const dayTickets = parseInt(userTicketsRow[index]) || 0;
+            const timeColIndex = timeHeaders.indexOf(header);
+            let dayTimeSeconds = 0;
+            if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+              const timeStr = userTimeRow[timeColIndex];
+              if (timeStr !== 'Н') {
+                const [hh, mm, ss] = timeStr.split(':').map(Number);
+                dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+              }
+            }
+
+            chartLabels.push(header);
+            chartTickets.push(dayTickets);
+            chartTimeHours.push((dayTimeSeconds / 3600).toFixed(2));
+          }
+        });
+
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        if (window.statsChartInstance) window.statsChartInstance.destroy();
+
+        window.statsChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: chartLabels,
+            datasets: [
+              {
+                label: 'Тікети',
+                data: chartTickets,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                yAxisID: 'yTickets',
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                fill: true,
+              },
+              {
+                label: 'Час у грі (години)',
+                data: chartTimeHours,
+                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                yAxisID: 'yTime',
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                borderWidth: 2,
+                fill: true,
+              }
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            },
+            scales: {
+              yTickets: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                title: {
+                  display: true,
+                  text: 'Тікети',
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                  font: { size: 14, weight: '600' },
+                },
+                beginAtZero: true,
+                ticks: { 
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                  precision: 0,
+                  maxTicksLimit: 6,
+                },
+                grid: { 
+                  color: 'rgba(255, 255, 255, 0.1)',
+                },
+              },
+              yTime: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                  display: true,
+                  text: 'Час (години)',
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                  font: { size: 14, weight: '600' },
+                },
+                beginAtZero: true,
+                ticks: { 
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                  precision: 1,
+                  maxTicksLimit: 6,
+                },
+                grid: { drawOnChartArea: false },
+              },
+              x: {
+                ticks: {
+                  maxRotation: 0,
+                  minRotation: 0,
+                  maxTicksLimit: 7,
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                  font: { size: 12 },
+                  callback: function(value, index, values) {
+                    const date = this.getLabelForValue(value);
+                    const [day, month] = date.split('.');
+                    return `${day}.${month}`;
+                  }
+                },
+                grid: { 
+                  color: 'rgba(255, 255, 255, 0.1)',
+                },
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { 
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                  font: { size: 12, weight: '600' },
+                  padding: 15,
+                  boxWidth: 20,
+                },
+              },
+              tooltip: {
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg'),
+                titleFont: { size: 14, weight: '600' },
+                bodyFont: { size: 12 },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                  label: ctx => ctx.dataset.label === 'Час у грі (години)'
+                    ? `${ctx.parsed.y} год`
+                    : ctx.parsed.y,
+                }
+              }
+            },
+            animation: {
+              duration: 1500,
+              easing: 'easeOutCubic',
+            }
+          },
+        });
+      } catch (error) {
+        console.error('Помилка під час завантаження даних:', error);
+        alert('Помилка під час завантаження даних');
+      }
+    }
+
+    function renderCalendar(dateCols, userTicketsRow, userTimeRow, timeHeaders, monthStart, today) {
+      const calendarGrid = document.getElementById('calendar-grid');
+      calendarGrid.innerHTML = '';
+      
+      // Day headers
+      const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+      dayNames.forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'calendar-day-header';
+        header.textContent = day;
+        calendarGrid.appendChild(header);
+      });
+      
+      // Get first day of month (0 = Sunday, 1 = Monday, etc.)
+      const firstDay = new Date(monthStart);
+      let dayOfWeek = firstDay.getDay();
+      // Convert Sunday (0) to 7 for our Monday-first week
+      dayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+      
+      // Add empty cells for days before month starts
+      for (let i = 1; i < dayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day inactive';
+        calendarGrid.appendChild(emptyDay);
+      }
+      
+      // Create map of dates to data
+      const dateMap = new Map();
+      dateCols.forEach(({ header, index }) => {
+        const dt = parseDate(header);
+        if (dt >= monthStart && dt <= today) {
+          const dayTickets = parseInt(userTicketsRow[index]) || 0;
+          const timeColIndex = timeHeaders.indexOf(header);
+          let dayTimeStr = 'Н';
+          let dayTimeSeconds = 0;
+          if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+            dayTimeStr = userTimeRow[timeColIndex];
+            if (dayTimeStr !== 'Н') {
+              const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+              dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+            }
+          }
+          dateMap.set(dt.getTime(), {
+            tickets: dayTickets,
+            time: dayTimeStr,
+            timeSeconds: dayTimeSeconds,
+            isInactive: dayTimeStr === 'Н'
+          });
+        }
+      });
+      
+      // Add days of the month
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const currentDate = new Date(today.getFullYear(), today.getMonth(), day);
+        const dayData = dateMap.get(currentDate.getTime());
+        
+        const dayCell = document.createElement('div');
+        dayCell.className = 'calendar-day';
+        
+        if (dayData) {
+          if (dayData.isInactive) {
+            dayCell.classList.add('no-activity');
+          } else {
+            dayCell.classList.add('has-data');
+          }
+          
+          dayCell.innerHTML = `
+            <div class="calendar-day-number">${day}</div>
+            <div class="calendar-day-stats">
+              <div class="calendar-day-stat">
+                <i class="fas fa-ticket-alt"></i>
+                <span>${dayData.tickets}</span>
+              </div>
+              <div class="calendar-day-stat">
+                <i class="fas fa-clock"></i>
+                <span>${dayData.time}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          dayCell.classList.add('inactive');
+          dayCell.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+        }
+        
+        calendarGrid.appendChild(dayCell);
+      }
+    }
+
+    function showAccessDenied() {
+      document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('themeToggle').classList.add('hidden');
+    }
+
+    async function onTelegramAuth(user) {
+      if (!user || !user.username) {
+        showAccessDenied();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        await showDashboard(userData.nickname, telegramUsername, true);
+        return;
+      }
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          showAccessDenied();
+          return;
+        }
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        if (telegramColIndex === -1) {
+          showAccessDenied();
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: false
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          await showDashboard(userData.nickname, telegramUsername, false);
+        } else {
+          localStorage.removeItem('tg_auth');
+          showAccessDenied();
+        }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        showAccessDenied();
+      }
+    }
+
+    async function showDashboard(nickname, telegramUsername, isAdmin) {
+      if (!isAdmin) {
+        try {
+          const ticketsData = await getSheetData('Май_2025_таблица');
+          if (!ticketsData.length) {
+            showAccessDenied();
+            return;
+          }
+          const ticketsHeaders = ticketsData[0];
+          const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+          
+          const userExists = ticketsData.some(row => 
+            row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+          );
+          
+          if (!userExists) {
+            showAccessDenied();
+            return;
+          }
+        } catch (error) {
+          console.error('Помилка перевірки доступу:', error);
+          showAccessDenied();
+          return;
+        }
+      }
+
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('themeToggle').classList.remove('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.getElementById('welcome-header').innerText = `Вітаємо, ${nickname}!`;
+      
+      if (superAdmins.includes(telegramUsername)) {
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+      
+      document.getElementById('top-admins-section').classList.remove('hidden');
+      document.getElementById('low-admins-section').classList.remove('hidden');
+      await loadAndRenderAdmins();
+      
+      if (isAdmin) {
+        document.getElementById('admin-notice').classList.remove('hidden');
+        document.getElementById('stats-section').classList.add('hidden');
+      } else {
+        document.getElementById('admin-notice').classList.add('hidden');
+        document.getElementById('stats-section').classList.remove('hidden');
+        await fetchUserStatsByTelegram(telegramUsername);
+      }
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('themeToggle').classList.remove('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.getElementById('welcome-header').innerText = 'Ласкаво просимо!';
+      document.getElementById('top-admins-section').classList.add('hidden');
+      document.getElementById('low-admins-section').classList.add('hidden');
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        showLoginForm();
+      }
+      
+      setInterval(() => {
+        if (shouldRefreshTopAdmins()) {
+          autoRefreshData();
+        }
+      }, 5 * 60 * 1000);
+      
+      autoRefreshData();
+    });
+  </script>
+</body>
+</html>
