@@ -56,8 +56,8 @@
       transition: var(--transition);
     }
 
-    /* Falling Stars Animation */
-    canvas#stars-canvas {
+    /* Falling Logos Animation */
+    canvas#logos-canvas {
       position: fixed;
       top: 0;
       left: 0;
@@ -65,11 +65,11 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.6;
+      opacity: 0.4;
     }
 
-    [data-theme="light"] canvas#stars-canvas {
-      opacity: 0.2;
+    [data-theme="light"] canvas#logos-canvas {
+      opacity: 0.15;
     }
 
     /* Sidebar */
@@ -411,55 +411,85 @@
 
     /* Banner */
     .banner {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      background: linear-gradient(135deg, var(--accent-blue) 0%, #1D4ED8 100%);
+      border: none;
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2rem;
       text-align: center;
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
 
-    .banner:hover {
-      border-color: var(--accent-blue);
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background-size: cover;
     }
 
-    .banner-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.5rem;
+    .banner-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .banner-text {
+      flex: 1;
+      min-width: 200px;
+      text-align: left;
+    }
+
+    .banner-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .banner-description {
       font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.9);
     }
 
     .banner-link {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.625rem 1.25rem;
-      background: var(--accent-blue);
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
       color: white;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 0.875rem;
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
       transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .banner-link:hover {
-      background: #2563EB;
+      background: rgba(255, 255, 255, 0.3);
       transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 
     /* Admin Cards Row */
     .admins-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: 1fr;
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
@@ -470,9 +500,6 @@
       border-radius: 12px;
       padding: 1.5rem;
       transition: var(--transition);
-      min-height: 320px;
-      display: flex;
-      flex-direction: column;
     }
 
     .admin-card:hover {
@@ -503,40 +530,60 @@
       border-bottom: 1px solid var(--border-color);
     }
 
-    .admin-list {
+    .admin-scroll-container {
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      flex-grow: 1;
+      gap: 1rem;
+      overflow-x: auto;
+      padding: 0.5rem 0.25rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-color) transparent;
+    }
+
+    .admin-scroll-container::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .admin-scroll-container::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 3px;
+    }
+
+    .admin-scroll-container::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 3px;
     }
 
     .admin-item {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.75rem;
-      border-radius: 8px;
+      padding: 1rem;
+      border-radius: 10px;
       background: var(--bg-tertiary);
       transition: var(--transition);
+      min-width: 160px;
+      flex-shrink: 0;
     }
 
     .admin-item:hover {
       background: var(--bg-primary);
+      transform: translateY(-2px);
     }
 
     .admin-avatar {
-      width: 48px;
-      height: 48px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       overflow: hidden;
       flex-shrink: 0;
-      border: 2px solid transparent;
+      border: 3px solid transparent;
       display: flex;
       align-items: center;
       justify-content: center;
       background: var(--accent-blue);
       color: white;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
     }
 
     .admin-avatar img {
@@ -547,19 +594,22 @@
 
     .admin-item.gold .admin-avatar {
       border-color: #FBBF24;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
     }
 
     .admin-item.silver .admin-avatar {
       border-color: #D1D5DB;
+      box-shadow: 0 0 15px rgba(209, 213, 219, 0.3);
     }
 
     .admin-item.bronze .admin-avatar {
       border-color: #D97706;
+      box-shadow: 0 0 15px rgba(217, 119, 6, 0.3);
     }
 
     .admin-info {
-      flex: 1;
-      min-width: 0;
+      text-align: center;
+      width: 100%;
     }
 
     .admin-name {
@@ -569,14 +619,15 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.5rem;
     }
 
     .admin-stats {
       font-size: 0.75rem;
       color: var(--text-secondary);
       display: flex;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.25rem;
     }
 
     .admin-stat-value {
@@ -590,7 +641,7 @@
 
     .medal {
       font-size: 1.5rem;
-      flex-shrink: 0;
+      margin-top: 0.5rem;
     }
 
     /* Stats Section */
@@ -681,59 +732,75 @@
       height: 300px;
     }
 
-    /* Table Container */
-    .table-section {
+    /* Calendar Section */
+    .calendar-section {
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       padding: 1.5rem;
-      overflow: hidden;
+      margin-bottom: 2rem;
     }
 
-    .table-section h3 {
+    .calendar-section h3 {
       font-size: 1rem;
       font-weight: 600;
       color: var(--text-primary);
       margin-bottom: 1rem;
     }
 
-    .table-container {
-      overflow-x: auto;
-      border-radius: 8px;
+    .calendar-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .calendar-day {
+      background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem;
+      transition: var(--transition);
     }
 
-    .table-container table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8125rem;
+    .calendar-day:hover {
+      background: var(--bg-primary);
+      transform: translateY(-2px);
     }
 
-    .table-container th {
-      background: var(--bg-tertiary);
-      color: var(--text-secondary);
-      padding: 0.75rem 1rem;
-      font-weight: 600;
-      text-transform: uppercase;
+    .calendar-day.inactive {
+      opacity: 0.5;
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .calendar-date {
       font-size: 0.75rem;
-      letter-spacing: 0.05em;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .table-container td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-primary);
-    }
-
-    .table-container tbody tr:hover {
-      background: var(--bg-tertiary);
-    }
-
-    .table-container tbody tr:last-child td {
       font-weight: 600;
-      border-bottom: none;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .calendar-stats {
+      font-size: 0.6875rem;
+      color: var(--text-secondary);
+    }
+
+    .calendar-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .calendar-stat-value {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .calendar-day.inactive .calendar-stat-value {
+      color: var(--accent-red);
     }
 
     /* Utilities */
@@ -761,23 +828,49 @@
 
       .main-content {
         padding: 1.5rem 1rem;
+        margin-top: 60px;
       }
 
-      .admins-row {
-        grid-template-columns: 1fr;
+      .banner-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .banner-text {
+        text-align: center;
+      }
+
+      .admin-item {
+        min-width: 140px;
+      }
+
+      .calendar-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+
+      .sidebar {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .admin-item {
+        min-width: 130px;
+        padding: 0.75rem;
+      }
+
+      .admin-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 1.25rem;
+      }
+
+      .calendar-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       }
 
       .stats-grid {
         grid-template-columns: 1fr;
-      }
-
-      .admin-stats {
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-
-      .sidebar {
-        width: 100%;
       }
     }
 
@@ -802,7 +895,7 @@
   </style>
 </head>
 <body data-theme="dark">
-  <canvas id="stars-canvas"></canvas>
+  <canvas id="logos-canvas"></canvas>
 
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
@@ -896,12 +989,21 @@
   <div class="main-content hidden" id="main-content">
     <!-- Banner -->
     <div class="banner">
-      <h2 class="banner-title">Скрипт Осінній БатлКвас вже доступний!</h2>
-      <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи.</p>
-      <a href="scriptbaltpass.html" class="banner-link">
-        <i class="fas fa-code"></i>
-        Перейти до скрипту
-      </a>
+      <div class="banner-content">
+        <div class="banner-text">
+          <h2 class="banner-title">
+            <i class="fas fa-leaf" style="color: #F59E0B;"></i>
+            Скрипт Осінній БатлКвас вже доступний!
+          </h2>
+          <p class="banner-description">
+            Новий сезонний скрипт для покращення ефективності роботи адміністраторів
+          </p>
+        </div>
+        <a href="scriptbaltpass.html" class="banner-link">
+          <i class="fas fa-rocket"></i>
+          Спробувати зараз
+        </a>
+      </div>
     </div>
 
     <!-- Admin Cards Row -->
@@ -909,12 +1011,12 @@
       <div class="admin-card" id="top-admins-section">
         <h2><i class="fas fa-trophy" style="color: var(--accent-yellow);"></i> Адміни тижня</h2>
         <div class="week-info" id="week-range">Період: завантаження...</div>
-        <div class="admin-list" id="top-admins-container"></div>
+        <div class="admin-scroll-container" id="top-admins-container"></div>
       </div>
       <div class="admin-card low" id="low-admins-section">
         <h2><i class="fas fa-exclamation-triangle" style="color: var(--accent-red);"></i> Низька активність</h2>
         <div class="week-info" id="low-week-range">Період: завантаження...</div>
-        <div class="admin-list" id="low-admins-container"></div>
+        <div class="admin-scroll-container" id="low-admins-container"></div>
       </div>
     </div>
 
@@ -952,28 +1054,17 @@
         </div>
       </div>
 
-      <div class="table-section">
-        <h3>Детальна статистика по днях</h3>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Дата</th>
-                <th>Тікети</th>
-                <th>Час у грі</th>
-                <th>Неактив</th>
-              </tr>
-            </thead>
-            <tbody id="daily-stats-body"></tbody>
-          </table>
-        </div>
+      <!-- Calendar Section -->
+      <div class="calendar-section">
+        <h3>Календар активності</h3>
+        <div class="calendar-container" id="calendar-container"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // Falling Stars Animation
-    const canvas = document.getElementById('stars-canvas');
+    // Falling Logos Animation
+    const canvas = document.getElementById('logos-canvas');
     const ctx = canvas.getContext('2d');
     
     function resizeCanvas() {
@@ -984,10 +1075,46 @@
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
-    const stars = [];
-    const numStars = 50;
+    const logos = [];
+    const numLogos = 20;
+    const logoSize = 20;
     
-    class Star {
+    // Create a simple shield logo using canvas
+    function drawLogo(x, y, size, opacity) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalAlpha = opacity;
+      
+      // Shield shape
+      ctx.beginPath();
+      ctx.moveTo(0, -size/2);
+      ctx.lineTo(size/2, size/3);
+      ctx.lineTo(0, size/2);
+      ctx.lineTo(-size/2, size/3);
+      ctx.closePath();
+      
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      ctx.fillStyle = isDark ? 'rgba(59, 130, 246, 0.7)' : 'rgba(59, 130, 246, 0.5)';
+      ctx.fill();
+      
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(59, 130, 246, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Cross in the middle
+      ctx.beginPath();
+      ctx.moveTo(0, -size/6);
+      ctx.lineTo(0, size/6);
+      ctx.moveTo(-size/6, 0);
+      ctx.lineTo(size/6, 0);
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      
+      ctx.restore();
+    }
+    
+    class Logo {
       constructor() {
         this.reset();
       }
@@ -995,40 +1122,41 @@
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speed = Math.random() * 3 + 1;
-        this.opacity = Math.random() * 0.5 + 0.3;
+        this.size = Math.random() * 8 + 12;
+        this.speed = Math.random() * 0.5 + 0.3;
+        this.opacity = Math.random() * 0.4 + 0.2;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
       }
       
       update() {
         this.y += this.speed;
+        this.rotation += this.rotationSpeed;
         if (this.y > canvas.height) {
           this.reset();
+          this.y = -this.size;
         }
       }
       
       draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.fill();
+        drawLogo(this.x, this.y, this.size, this.opacity);
       }
     }
     
-    for (let i = 0; i < numStars; i++) {
-      stars.push(new Star());
+    for (let i = 0; i < numLogos; i++) {
+      logos.push(new Logo());
     }
     
-    function animateStars() {
+    function animateLogos() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(star => {
-        star.update();
-        star.draw();
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
       });
-      requestAnimationFrame(animateStars);
+      requestAnimationFrame(animateLogos);
     }
     
-    animateStars();
+    animateLogos();
 
     // Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
@@ -1091,13 +1219,37 @@
       '@blisssbabe'
     ];
 
-    async function getSheetData(sheetName) {
+    // Cache for faster loading
+    const dataCache = {
+      tickets: null,
+      time: null,
+      lastUpdated: null
+    };
+
+    async function getSheetData(sheetName, useCache = true) {
+      // Use cache if available and not expired (5 minutes)
+      if (useCache && dataCache[sheetName] && dataCache.lastUpdated && 
+          (Date.now() - dataCache.lastUpdated) < 5 * 60 * 1000) {
+        return dataCache[sheetName];
+      }
+
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
         const res = await axios.get(url, { timeout: 10000 });
-        return res.data.values || [];
+        const data = res.data.values || [];
+        
+        // Update cache
+        dataCache[sheetName] = data;
+        dataCache.lastUpdated = Date.now();
+        
+        return data;
       } catch (error) {
         console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        // Return cached data even if expired if new request fails
+        if (dataCache[sheetName]) {
+          console.log('Використовуються кешовані дані');
+          return dataCache[sheetName];
+        }
         return [];
       }
     }
@@ -1350,12 +1502,15 @@
         container.appendChild(item);
       });
 
-      VanillaTilt.init(document.querySelectorAll('#top-admins-section'), {
-        max: 5,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.1
-      });
+      // Add tilt effect
+      if (typeof VanillaTilt !== 'undefined') {
+        VanillaTilt.init(document.querySelectorAll('#top-admins-section .admin-item'), {
+          max: 8,
+          speed: 300,
+          glare: true,
+          'max-glare': 0.1
+        });
+      }
     }
 
     function renderLowAdmins(admins, weekRange) {
@@ -1388,12 +1543,15 @@
         container.appendChild(item);
       });
 
-      VanillaTilt.init(document.querySelectorAll('#low-admins-section'), {
-        max: 5,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.1
-      });
+      // Add tilt effect
+      if (typeof VanillaTilt !== 'undefined') {
+        VanillaTilt.init(document.querySelectorAll('#low-admins-section .admin-item'), {
+          max: 8,
+          speed: 300,
+          glare: true,
+          'max-glare': 0.1
+        });
+      }
     }
 
     async function loadAndRenderAdmins() {
@@ -1429,6 +1587,36 @@
       
       renderTopAdmins(topAdmins, weekRange);
       renderLowAdmins(lowAdmins, weekRange);
+    }
+
+    // New function to render calendar
+    function renderCalendar(dailyStats) {
+      const container = document.getElementById('calendar-container');
+      container.innerHTML = '';
+      
+      dailyStats.forEach(day => {
+        const dayElement = document.createElement('div');
+        dayElement.className = `calendar-day ${day.inactive ? 'inactive' : ''}`;
+        
+        dayElement.innerHTML = `
+          <div class="calendar-date">
+            <span>${day.date}</span>
+            ${day.inactive ? '<i class="fas fa-times" style="color: var(--accent-red);"></i>' : ''}
+          </div>
+          <div class="calendar-stats">
+            <div class="calendar-stat">
+              <span>Тікети:</span>
+              <span class="calendar-stat-value">${day.tickets}</span>
+            </div>
+            <div class="calendar-stat">
+              <span>Час:</span>
+              <span class="calendar-stat-value">${day.time}</span>
+            </div>
+          </div>
+        `;
+        
+        container.appendChild(dayElement);
+      });
     }
 
     async function fetchUserStatsByTelegram(telegramUsername) {
@@ -1510,9 +1698,8 @@
         document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
         document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
 
-        const tbody = document.getElementById('daily-stats-body');
-        tbody.innerHTML = '';
-        let inactiveCount = 0;
+        // Prepare data for calendar and chart
+        const dailyStats = [];
         const chartLabels = [];
         const chartTickets = [];
         const chartTimeHours = [];
@@ -1524,23 +1711,26 @@
             const timeColIndex = timeHeaders.indexOf(header);
             let dayTimeStr = 'Н';
             let dayTimeSeconds = 0;
+            let inactive = false;
+            
             if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
               dayTimeStr = userTimeRow[timeColIndex];
               if (dayTimeStr !== 'Н') {
                 const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
                 dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+              } else {
+                inactive = true;
               }
+            } else {
+              inactive = true;
             }
-            if (dayTimeStr === 'Н') inactiveCount++;
 
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${header}</td>
-              <td>${dayTickets}</td>
-              <td>${dayTimeStr}</td>
-              <td>${dayTimeStr === 'Н' ? 'Так' : ''}</td>
-            `;
-            tbody.appendChild(tr);
+            dailyStats.push({
+              date: header,
+              tickets: dayTickets,
+              time: dayTimeStr,
+              inactive: inactive
+            });
 
             chartLabels.push(header);
             chartTickets.push(dayTickets);
@@ -1548,13 +1738,10 @@
           }
         });
 
-        const trTotal = document.createElement('tr');
-        trTotal.innerHTML = `
-          <td>Усього неактивів</td>
-          <td colspan="3">${inactiveCount}</td>
-        `;
-        tbody.appendChild(trTotal);
+        // Render calendar
+        renderCalendar(dailyStats);
 
+        // Render chart
         const ctx = document.getElementById('statsChart').getContext('2d');
         if (window.statsChartInstance) window.statsChartInstance.destroy();
 
@@ -1704,6 +1891,7 @@
 
       const telegramUsername = '@' + user.username;
 
+      // Quick check for allowed admins first
       if (allowedAdmins.includes(telegramUsername)) {
         const userData = {
           username: telegramUsername,
@@ -1715,6 +1903,7 @@
         return;
       }
 
+      // For regular users, check in the sheet
       try {
         const ticketsData = await getSheetData('Май_2025_таблица');
         if (!ticketsData.length) {
