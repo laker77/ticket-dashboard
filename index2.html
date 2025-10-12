@@ -7,37 +7,36 @@
   <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-primary: #0A0A0A;
-      --bg-secondary: #111111;
-      --bg-tertiary: #1A1A1A;
-      --border-color: #2A2A2A;
-      --text-primary: #FAFAFA;
-      --text-secondary: #A1A1A1;
-      --text-tertiary: #6B6B6B;
-      --accent-blue: #3B82F6;
-      --accent-green: #10B981;
-      --accent-yellow: #F59E0B;
-      --accent-red: #EF4444;
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --primary: #3B82F6;
+      --secondary: #10B981;
+      --accent: #F59E0B;
+      --bg-dark: #0A0C1A;
+      --bg-darker: #050610;
+      --card-bg: rgba(20, 22, 35, 0.85);
+      --glass-bg: rgba(20, 22, 35, 0.6);
+      --text-primary: #F3F4F6;
+      --text-secondary: #9CA3AF;
+      --border: rgba(59, 130, 246, 0.2);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --glow: 0 0 20px rgba(59, 130, 246, 0.3);
     }
 
     [data-theme="light"] {
-      --bg-primary: #FFFFFF;
-      --bg-secondary: #F9FAFB;
-      --bg-tertiary: #F3F4F6;
-      --border-color: #E5E7EB;
+      --primary: #2563EB;
+      --secondary: #059669;
+      --accent: #D97706;
+      --bg-dark: #F9FAFB;
+      --bg-darker: #F3F4F6;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass-bg: rgba(255, 255, 255, 0.7);
       --text-primary: #111827;
       --text-secondary: #6B7280;
-      --text-tertiary: #9CA3AF;
-      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      --border: rgba(37, 99, 235, 0.2);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --glow: 0 0 20px rgba(37, 99, 235, 0.2);
     }
 
     * {
@@ -47,227 +46,166 @@
     }
 
     body {
-      background: var(--bg-primary);
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
-      transition: var(--transition);
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
-    /* Falling Stars Animation */
-    canvas#stars-canvas {
+    /* Falling logos instead of stars */
+    canvas#logos-canvas {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 0;
+      z-index: -1;
       pointer-events: none;
-      opacity: 0.6;
+      opacity: 0.4;
     }
 
-    [data-theme="light"] canvas#stars-canvas {
-      opacity: 0.2;
-    }
-
-    /* Sidebar */
-    .sidebar {
+    .theme-toggle {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 260px;
-      height: 100%;
-      background: var(--bg-secondary);
-      border-right: 1px solid var(--border-color);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1000;
-      padding: 1.5rem 0;
-      overflow-y: auto;
-      transform: translateX(-100%);
-    }
-
-    .sidebar.open {
-      transform: translateX(0);
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .sidebar-logo {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      background: var(--accent-blue);
+      top: 1.5rem;
+      right: 5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      color: var(--primary);
+      font-size: 1.2rem;
+      border-radius: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+      border: 1px solid var(--border);
     }
 
-    .sidebar-title {
-      font-size: 0.875rem;
-      font-weight: 600;
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--glow);
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      box-shadow: var(--shadow);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 1.5rem;
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 0.75rem;
+      background: var(--card-bg);
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .sidebar-logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 0.5rem;
+    }
+
+    .sidebar-logo-text {
+      font-size: 1.1rem;
+      font-weight: 700;
       color: var(--text-primary);
+    }
+
+    .sidebar-toggle {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      color: var(--primary);
+      font-size: 1.5rem;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1001;
+      border: 1px solid var(--border);
+    }
+
+    .sidebar-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--glow);
     }
 
     .sidebar-menu {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-      padding: 1rem 0.75rem;
+      gap: 0.5rem;
     }
 
     .menu-category {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-tertiary);
-      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-top: 0.5rem;
     }
 
     .menu-item, .super-menu-item {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.625rem 0.75rem;
-      color: var(--text-secondary);
-      text-decoration: none;
-      border-radius: 6px;
-      transition: var(--transition);
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .menu-item:hover, .super-menu-item:hover {
-      background: var(--bg-tertiary);
+      padding: 0.75rem 1rem;
       color: var(--text-primary);
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
     }
 
-    .menu-item i, .super-menu-item i {
-      width: 16px;
-      font-size: 0.875rem;
+    .menu-item:hover {
+      background: var(--card-bg);
+      border-color: var(--border);
+      transform: translateX(5px);
     }
 
     .super-menu-item {
-      color: var(--accent-yellow);
+      color: var(--accent);
+      background: rgba(217, 119, 6, 0.1);
     }
 
     .super-menu-item:hover {
-      background: rgba(245, 158, 11, 0.1);
+      background: rgba(217, 119, 6, 0.2);
+      border-color: var(--accent);
+      transform: translateX(5px);
     }
 
-    /* Top Bar */
-    .top-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.5rem;
-      z-index: 999;
-      backdrop-filter: blur(8px);
-    }
-
-    .top-bar-left {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .menu-toggle {
-      width: 36px;
-      height: 36px;
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-      font-size: 1rem;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .menu-toggle:hover {
-      background: var(--bg-tertiary);
-    }
-
-    .top-bar-title {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .top-bar-right {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .theme-toggle {
-      width: 36px;
-      height: 36px;
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .theme-toggle:hover {
-      background: var(--bg-tertiary);
-    }
-
-    .logout-btn {
-      padding: 0.5rem 1rem;
-      background: var(--accent-red);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .logout-btn:hover {
-      background: #DC2626;
-    }
-
-    /* Main Content */
-    .main-content {
-      margin-left: 0;
-      margin-top: 60px;
-      padding: 2rem 1.5rem;
-      min-height: calc(100vh - 60px);
-      position: relative;
-      z-index: 1;
-      max-width: 1400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Login Section */
     #login-section {
       position: fixed;
       top: 0;
@@ -277,293 +215,207 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--bg-primary);
-      z-index: 2000;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+      z-index: 1000;
+      overflow: hidden;
     }
 
     .login-container {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
       padding: 3rem 2rem;
-      border-radius: 12px;
-      max-width: 440px;
+      border-radius: 1.5rem;
+      max-width: 500px;
       width: 90%;
       box-shadow: var(--shadow);
       text-align: center;
-      animation: fadeInUp 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 1s ease-out;
+      border: 1px solid var(--border);
     }
 
     .login-logo {
-      width: 64px;
-      height: 64px;
+      width: 100px;
+      height: 100px;
       margin: 0 auto 1.5rem;
-      border-radius: 12px;
-      background: var(--accent-blue);
+      border-radius: 1rem;
+      background: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--glow);
+      animation: pulse 2s infinite;
+      overflow: hidden;
     }
 
-    .login-logo i {
-      font-size: 2rem;
-      color: white;
+    .login-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .login-title {
-      font-size: 1.5rem;
+      font-size: 2rem;
       font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 0.5rem;
     }
 
     .login-subtitle {
-      font-size: 0.875rem;
+      font-size: 1rem;
       color: var(--text-secondary);
       margin-bottom: 2rem;
     }
 
     .telegram-button-wrapper {
       display: inline-block;
-      border-radius: 8px;
+      border-radius: 0.75rem;
       overflow: hidden;
-      transition: var(--transition);
+      box-shadow: var(--glow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .telegram-button-wrapper:hover {
-      transform: translateY(-2px);
+      transform: scale(1.05);
+      box-shadow: 0 0 30px var(--primary);
     }
 
     .login-footer {
       margin-top: 1.5rem;
-      font-size: 0.8125rem;
+      font-size: 0.85rem;
       color: var(--text-secondary);
     }
 
     .login-footer a {
-      color: var(--accent-blue);
+      color: var(--primary);
       text-decoration: none;
-      transition: var(--transition);
+      transition: color 0.3s ease;
     }
 
     .login-footer a:hover {
-      color: var(--accent-green);
+      color: var(--secondary);
     }
 
-    /* Access Denied */
-    #access-denied-section {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-primary);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .access-denied-content {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      padding: 2rem;
-      border-radius: 12px;
+    /* Marquee section for horizontal scrolling admins */
+    .marquee-section {
+      margin-bottom: 2rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
       box-shadow: var(--shadow);
-      text-align: center;
-      max-width: 440px;
-      width: 90%;
+      border: 1px solid var(--border);
+      overflow: hidden;
     }
 
-    .access-denied-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .access-denied-title {
-      font-size: 1.5rem;
+    .marquee-title {
+      font-size: 1.4rem;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 0.75rem;
-    }
-
-    .access-denied-message {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-    }
-
-    .back-to-login-btn {
-      padding: 0.625rem 1.5rem;
-      background: var(--accent-red);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .back-to-login-btn:hover {
-      background: #DC2626;
-    }
-
-    /* Banner */
-    .banner {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      text-align: center;
-      transition: var(--transition);
-    }
-
-    .banner:hover {
-      border-color: var(--accent-blue);
-    }
-
-    .banner-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--text-primary);
       margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .banner-text {
-      font-size: 0.875rem;
+    .marquee-subtitle {
+      font-size: 0.85rem;
       color: var(--text-secondary);
       margin-bottom: 1rem;
     }
 
-    .banner-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.625rem 1.25rem;
-      background: var(--accent-blue);
-      color: white;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .banner-link:hover {
-      background: #2563EB;
-      transform: translateY(-2px);
-    }
-
-    /* Admin Cards Row */
-    .admins-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .admin-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: var(--transition);
-      min-height: 320px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .admin-card:hover {
-      border-color: var(--accent-blue);
-      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
-    }
-
-    .admin-card.low:hover {
-      border-color: var(--accent-red);
-      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
-    }
-
-    .admin-card h2 {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .week-info {
-      font-size: 0.75rem;
-      color: var(--text-tertiary);
-      margin-bottom: 1rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .admin-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      flex-grow: 1;
-    }
-
-    .admin-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      border-radius: 8px;
-      background: var(--bg-tertiary);
-      transition: var(--transition);
-    }
-
-    .admin-item:hover {
-      background: var(--bg-primary);
-    }
-
-    .admin-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
+    .marquee-container {
       overflow: hidden;
+      position: relative;
+      height: 120px;
+    }
+
+    .marquee-content {
+      display: flex;
+      gap: 1rem;
+      animation: scroll 30s linear infinite;
+      width: max-content;
+    }
+
+    .marquee-content:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .admin-card-mini {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      min-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
       flex-shrink: 0;
-      border: 2px solid transparent;
+    }
+
+    .admin-card-mini:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .admin-card-mini.low {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .admin-card-mini.low:hover {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .admin-avatar-mini {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--accent-blue);
-      color: white;
-      font-size: 1.25rem;
+      font-size: 1.5rem;
+      background: var(--primary);
+      color: var(--text-primary);
+      flex-shrink: 0;
     }
 
-    .admin-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .admin-item.gold .admin-avatar {
+    .admin-card-mini.gold .admin-avatar-mini {
       border-color: #FBBF24;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
     }
 
-    .admin-item.silver .admin-avatar {
+    .admin-card-mini.silver .admin-avatar-mini {
       border-color: #D1D5DB;
+      box-shadow: 0 0 15px rgba(209, 213, 219, 0.5);
     }
 
-    .admin-item.bronze .admin-avatar {
+    .admin-card-mini.bronze .admin-avatar-mini {
       border-color: #D97706;
+      box-shadow: 0 0 15px rgba(217, 119, 6, 0.5);
     }
 
-    .admin-info {
+    .admin-card-mini.low .admin-avatar-mini {
+      border-color: #EF4444;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+    }
+
+    .admin-info-mini {
       flex: 1;
       min-width: 0;
     }
 
-    .admin-name {
-      font-size: 0.875rem;
+    .admin-name-mini {
+      font-size: 1rem;
       font-weight: 600;
       color: var(--text-primary);
       white-space: nowrap;
@@ -572,51 +424,26 @@
       margin-bottom: 0.25rem;
     }
 
-    .admin-stats {
-      font-size: 0.75rem;
+    .admin-stats-mini {
+      font-size: 0.8rem;
       color: var(--text-secondary);
       display: flex;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.15rem;
     }
 
     .admin-stat-value {
-      color: var(--accent-blue);
+      color: var(--primary);
       font-weight: 600;
     }
 
-    .admin-item.low .admin-stat-value {
-      color: var(--accent-red);
+    .admin-card-mini.low .admin-stat-value {
+      color: #EF4444;
     }
 
-    .medal {
-      font-size: 1.5rem;
+    .medal-mini {
+      font-size: 2rem;
       flex-shrink: 0;
-    }
-
-    /* Stats Section */
-    #admin-notice {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    #admin-notice h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    #admin-notice p {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 0.5rem;
     }
 
     .stats-grid {
@@ -626,191 +453,446 @@
       margin-bottom: 2rem;
     }
 
-    .stats-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      padding: 1.25rem;
-      border-radius: 12px;
-      transition: var(--transition);
-    }
-
-    .stats-card:hover {
-      border-color: var(--accent-blue);
-      transform: translateY(-2px);
-    }
-
-    .stats-card h3 {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .stats-card p {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.25rem;
-    }
-
-    .stats-card span {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    /* Chart Container */
-    .chart-container {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
+    .stat-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
       padding: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .chart-container h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 1rem;
-    }
-
-    .chart-wrapper {
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
       position: relative;
-      height: 300px;
-    }
-
-    /* Table Container */
-    .table-section {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
       overflow: hidden;
     }
 
-    .table-section h3 {
-      font-size: 1rem;
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .stat-card h3 {
+      color: var(--primary);
+      font-size: 1.1rem;
       font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    /* Calendar view for daily statistics */
+    .calendar-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+    }
+
+    .calendar-header {
+      font-size: 1.3rem;
+      font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .table-container {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
     }
 
-    .table-container table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8125rem;
-    }
-
-    .table-container th {
-      background: var(--bg-tertiary);
-      color: var(--text-secondary);
-      padding: 0.75rem 1rem;
-      font-weight: 600;
-      text-transform: uppercase;
+    .calendar-day-header {
+      text-align: center;
       font-size: 0.75rem;
-      letter-spacing: 0.05em;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .table-container td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-primary);
-    }
-
-    .table-container tbody tr:hover {
-      background: var(--bg-tertiary);
-    }
-
-    .table-container tbody tr:last-child td {
       font-weight: 600;
-      border-bottom: none;
+      color: var(--text-secondary);
+      padding: 0.5rem;
+      text-transform: uppercase;
     }
 
-    /* Utilities */
+    .calendar-day {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      min-height: 80px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .calendar-day:hover {
+      transform: scale(1.05);
+      box-shadow: var(--glow);
+      z-index: 10;
+    }
+
+    .calendar-day.inactive {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+    }
+
+    .calendar-day.inactive:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .calendar-day.has-data {
+      border-color: var(--primary);
+    }
+
+    .calendar-day.no-activity {
+      border-color: #EF4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .calendar-day-number {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .calendar-day-stats {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .calendar-day-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .calendar-day-stat i {
+      font-size: 0.65rem;
+      color: var(--primary);
+    }
+
+    .calendar-day.no-activity .calendar-day-stat i {
+      color: #EF4444;
+    }
+
+    .chart-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .chart-header {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 500px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .access-denied-icon {
+      font-size: 4rem;
+      color: #EF4444;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    .access-denied-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .back-to-login-btn {
+      background: #EF4444;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    #logout-btn {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #EF4444;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1001;
+      transition: all 0.3s ease;
+      border: none;
+      font-size: 0.9rem;
+    }
+
+    #logout-btn:hover {
+      background: #DC2626;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+    }
+
+    /* Beautiful banner for BattlePass script */
+    .banner {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      text-align: center;
+      border: 1px solid var(--primary);
+      transition: all 0.3s ease;
+      animation: slideIn 1s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .banner:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .banner-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .banner-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-text {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .banner-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+      font-size: 1.1rem;
+    }
+
+    .banner-link:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+    }
+
     .hidden {
       display: none !important;
     }
 
-    /* Animations */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Responsive */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile responsive design */
     @media (max-width: 768px) {
-      .top-bar {
-        padding: 0 1rem;
+      .sidebar {
+        width: 250px;
       }
-
-      .main-content {
-        padding: 1.5rem 1rem;
-      }
-
-      .admins-row {
-        grid-template-columns: 1fr;
-      }
-
       .stats-grid {
         grid-template-columns: 1fr;
       }
-
-      .admin-stats {
-        flex-direction: column;
+      .calendar-grid {
+        grid-template-columns: repeat(7, 1fr);
         gap: 0.25rem;
       }
-
-      .sidebar {
-        width: 100%;
+      .calendar-day {
+        min-height: 60px;
+        padding: 0.5rem;
       }
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg-primary);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border-color);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--text-tertiary);
+      .calendar-day-number {
+        font-size: 0.8rem;
+      }
+      .calendar-day-stats {
+        font-size: 0.6rem;
+      }
+      .login-container {
+        padding: 2rem 1.5rem;
+      }
+      .login-title {
+        font-size: 1.5rem;
+      }
+      .banner {
+        padding: 1.5rem;
+      }
+      .banner-title {
+        font-size: 1.4rem;
+      }
+      .banner-text {
+        font-size: 1rem;
+      }
+      .banner-link {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+      }
+      .marquee-container {
+        height: 100px;
+      }
+      .admin-card-mini {
+        min-width: 240px;
+      }
+      #logout-btn {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+      .theme-toggle {
+        top: 1rem;
+        right: 4rem;
+      }
     }
   </style>
 </head>
 <body data-theme="dark">
-  <canvas id="stars-canvas"></canvas>
+  <!-- Falling logos canvas instead of stars -->
+  <canvas id="logos-canvas"></canvas>
+  
+  <button id="logout-btn" class="hidden">Вийти</button>
+  <div class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+  </div>
 
-  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo">
-        <i class="fas fa-shield-alt"></i>
-      </div>
-      <div class="sidebar-title">Адмін Панель</div>
+    <div class="sidebar-logo">
+      <img src="1-17ffebdc.ico" alt="Logo" onerror="this.style.display='none'">
+      <span class="sidebar-logo-text">Адмін Панель</span>
     </div>
     <div class="sidebar-menu">
       <div class="menu-category">Скрипти</div>
@@ -839,24 +921,11 @@
       <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
     </div>
   </div>
-
-  <!-- Top Bar -->
-  <div class="top-bar hidden" id="top-bar">
-    <div class="top-bar-left">
-      <button class="menu-toggle" id="menu-toggle">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="top-bar-title" id="top-bar-title">Панель адміністратора</div>
-    </div>
-    <div class="top-bar-right">
-      <button class="theme-toggle" id="theme-toggle">
-        <i class="fas fa-moon"></i>
-      </button>
-      <button class="logout-btn" id="logout-btn">Вийти</button>
-    </div>
+  
+  <div class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
   </div>
 
-  <!-- Access Denied Section -->
   <div id="access-denied-section">
     <div class="access-denied-content">
       <div class="access-denied-icon">🚫</div>
@@ -869,11 +938,10 @@
     </div>
   </div>
 
-  <!-- Login Section -->
   <div id="login-section">
     <div class="login-container">
       <div class="login-logo">
-        <i class="fas fa-shield-alt"></i>
+        <img src="1-17ffebdc.ico" alt="Logo" onerror="this.innerHTML='<i class=\'fas fa-shield-alt\' style=\'font-size: 3rem; color: white;\'></i>'">
       </div>
       <h1 class="login-title">Вітаємо в кабінеті адміністратора</h1>
       <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
@@ -892,149 +960,95 @@
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div class="main-content hidden" id="main-content">
-    <!-- Banner -->
-    <div class="banner">
-      <h2 class="banner-title">Скрипт Осінній БатлКвас вже доступний!</h2>
-      <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи.</p>
-      <a href="scriptbaltpass.html" class="banner-link">
-        <i class="fas fa-code"></i>
-        Перейти до скрипту
-      </a>
-    </div>
+  <div style="max-width: 1400px; margin: 0 auto; padding: 5rem 1.5rem 2rem;">
+    <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem; text-align: center;" id="welcome-header">Ласкаво просимо!</h1>
 
-    <!-- Admin Cards Row -->
-    <div class="admins-row">
-      <div class="admin-card" id="top-admins-section">
-        <h2><i class="fas fa-trophy" style="color: var(--accent-yellow);"></i> Адміни тижня</h2>
-        <div class="week-info" id="week-range">Період: завантаження...</div>
-        <div class="admin-list" id="top-admins-container"></div>
+    <div id="dashboard" class="hidden">
+      <!-- Beautiful banner for BattlePass script -->
+      <div class="banner">
+        <div class="banner-icon">🍂</div>
+        <h2 class="banner-title">Скрипт Осінній БатлКвас вже доступний!</h2>
+        <p class="banner-text">Ознайомтеся з новим скриптом Осіннього БатлКвасу для покращення вашої роботи</p>
+        <a href="scriptbaltpass.html" class="banner-link">
+          <i class="fas fa-code"></i>
+          Перейти до скрипту
+        </a>
       </div>
-      <div class="admin-card low" id="low-admins-section">
-        <h2><i class="fas fa-exclamation-triangle" style="color: var(--accent-red);"></i> Низька активність</h2>
-        <div class="week-info" id="low-week-range">Період: завантаження...</div>
-        <div class="admin-list" id="low-admins-container"></div>
-      </div>
-    </div>
 
-    <!-- Admin Notice -->
-    <div id="admin-notice" class="hidden">
-      <h3><i class="fas fa-crown" style="color: var(--accent-yellow);"></i> Ви - адміністратор системи</h3>
-      <p>Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
-      <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
-    </div>
-
-    <!-- Stats Section -->
-    <div id="stats-section" class="hidden">
-      <div class="stats-grid">
-        <div class="stats-card">
-          <h3>Сьогодні</h3>
-          <p>Тікети: <span id="today-tickets">—</span></p>
-          <p>Час у грі: <span id="today-time">—</span></p>
+      <!-- Horizontal scrolling marquee for top admins -->
+      <div class="marquee-section" id="top-admins-section">
+        <div class="marquee-title">
+          🏆 Адміни тижня
         </div>
-        <div class="stats-card">
-          <h3>Тиждень</h3>
-          <p>Тікети: <span id="week-tickets">—</span></p>
-          <p>Час у грі: <span id="week-time">—</span></p>
-        </div>
-        <div class="stats-card">
-          <h3>Місяць</h3>
-          <p>Тікети: <span id="month-tickets">—</span></p>
-          <p>Час у грі: <span id="month-time">—</span></p>
+        <div class="marquee-subtitle" id="week-range">Період: завантаження...</div>
+        <div class="marquee-container">
+          <div class="marquee-content" id="top-admins-container"></div>
         </div>
       </div>
 
-      <div class="chart-container">
-        <h3>Динаміка тікетів та часу</h3>
-        <div class="chart-wrapper">
-          <canvas id="statsChart"></canvas>
+      <!-- Horizontal scrolling marquee for low activity admins -->
+      <div class="marquee-section" id="low-admins-section" style="border-color: rgba(239, 68, 68, 0.3);">
+        <div class="marquee-title">
+          ⚠️ Низька активність
+        </div>
+        <div class="marquee-subtitle" id="low-week-range">Період: завантаження...</div>
+        <div class="marquee-container">
+          <div class="marquee-content" id="low-admins-container"></div>
         </div>
       </div>
 
-      <div class="table-section">
-        <h3>Детальна статистика по днях</h3>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Дата</th>
-                <th>Тікети</th>
-                <th>Час у грі</th>
-                <th>Неактив</th>
-              </tr>
-            </thead>
-            <tbody id="daily-stats-body"></tbody>
-          </table>
+      <div id="admin-notice" class="hidden" style="background: var(--card-bg); backdrop-filter: blur(15px); border-radius: 1rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border);">
+        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-bottom: 0.75rem;">👑 Ви - адміністратор системи</h3>
+        <p style="margin-bottom: 0.5rem; color: var(--text-secondary);">Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
+        <p style="color: var(--text-secondary);">Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
+      </div>
+
+      <div id="stats-section">
+        <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">📊 Ваша статистика</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3><i class="fas fa-calendar-day"></i> Сьогодні</h3>
+            <p>Тікети: <span class="stat-value" id="today-tickets">—</span></p>
+            <p>Час у грі: <span class="stat-value" id="today-time">—</span></p>
+          </div>
+          <div class="stat-card">
+            <h3><i class="fas fa-calendar-week"></i> Тиждень</h3>
+            <p>Тікети: <span class="stat-value" id="week-tickets">—</span></p>
+            <p>Час у грі: <span class="stat-value" id="week-time">—</span></p>
+          </div>
+          <div class="stat-card">
+            <h3><i class="fas fa-calendar-alt"></i> Місяць</h3>
+            <p>Тікети: <span class="stat-value" id="month-tickets">—</span></p>
+            <p>Час у грі: <span class="stat-value" id="month-time">—</span></p>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <div class="chart-header">
+            <i class="fas fa-chart-line"></i>
+            Динаміка тікетів та часу
+          </div>
+          <canvas id="statsChart" height="120"></canvas>
+        </div>
+
+        <!-- Calendar view for daily statistics -->
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <i class="fas fa-calendar"></i>
+            Календар активності
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Falling Stars Animation
-    const canvas = document.getElementById('stars-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    const stars = [];
-    const numStars = 50;
-    
-    class Star {
-      constructor() {
-        this.reset();
-      }
-      
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speed = Math.random() * 3 + 1;
-        this.opacity = Math.random() * 0.5 + 0.3;
-      }
-      
-      update() {
-        this.y += this.speed;
-        if (this.y > canvas.height) {
-          this.reset();
-        }
-      }
-      
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-        ctx.fill();
-      }
-    }
-    
-    for (let i = 0; i < numStars; i++) {
-      stars.push(new Star());
-    }
-    
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      stars.forEach(star => {
-        star.update();
-        star.draw();
-      });
-      requestAnimationFrame(animateStars);
-    }
-    
-    animateStars();
-
     // Theme Toggle
-    const themeToggle = document.getElementById('theme-toggle');
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
     const body = document.body;
     
-    // Load saved theme
     const savedTheme = localStorage.getItem('theme') || 'dark';
     body.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
@@ -1052,23 +1066,76 @@
       icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
-    // Menu Toggle
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar');
+    const canvas = document.getElementById('logos-canvas');
+    const ctx = canvas.getContext('2d');
     
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('open');
-    });
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
     
-    document.addEventListener('click', (event) => {
-      if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const logos = [];
+    const numLogos = 15; // Fewer logos than stars
+    const logoImage = new Image();
+    logoImage.src = '1-17ffebdc.ico';
+    
+    class Logo {
+      constructor() {
+        this.reset();
       }
-    });
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 20 + 15; // Small logos (15-35px)
+        this.speed = Math.random() * 0.5 + 0.3; // Slower fall (0.3-0.8)
+        this.opacity = Math.random() * 0.3 + 0.2; // More transparent
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+      }
+      
+      update() {
+        this.y += this.speed;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(logoImage, -this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+    
+    logoImage.onload = () => {
+      for (let i = 0; i < numLogos; i++) {
+        logos.push(new Logo());
+      }
+      animateLogos();
+    };
+    
+    function animateLogos() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
+      });
+      requestAnimationFrame(animateLogos);
+    }
 
-    // Google Sheets Configuration
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
-    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+    
+    // Cache configuration
+    const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes
 
     const allowedAdmins = [
       '@laker_77',
@@ -1091,11 +1158,40 @@
       '@blisssbabe'
     ];
 
+    document.getElementById('sidebarToggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+
     async function getSheetData(sheetName) {
+      const cacheKey = `sheet_${sheetName}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      if (cached) {
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_DURATION) {
+          return data;
+        }
+      }
+      
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
         const res = await axios.get(url, { timeout: 10000 });
-        return res.data.values || [];
+        const data = res.data.values || [];
+        
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data,
+          timestamp: Date.now()
+        }));
+        
+        return data;
       } catch (error) {
         console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
         return [];
@@ -1152,7 +1248,7 @@
       if (!lastUpdate) return true;
       const now = new Date();
       const lastUpdateDate = new Date(parseInt(lastUpdate));
-      return (now - lastUpdateDate) > 15 * 60 * 1000;
+      return (now - lastUpdateDate) > CACHE_DURATION;
     }
 
     async function autoRefreshData() {
@@ -1311,50 +1407,35 @@
       document.getElementById('week-range').textContent = 
         `Період: ${weekRange.start} - ${weekRange.end}`;
       
-      admins.forEach((admin, index) => {
+      const medals = ['gold', 'silver', 'bronze', 'normal', 'normal'];
+      const medalIcons = ['🥇', '🥈', '🥉', '🏅', '🏅'];
+      
+      // Duplicate for seamless loop
+      const duplicatedAdmins = [...admins, ...admins];
+      
+      duplicatedAdmins.forEach((admin, index) => {
+        const realIndex = index % admins.length;
         const item = document.createElement('div');
-        item.className = 'admin-item';
-        
-        let medalClass = 'normal';
-        let medal = '';
-        
-        if (index === 0) {
-          medalClass = 'gold';
-          medal = '🥇';
-        } else if (index === 1) {
-          medalClass = 'silver';
-          medal = '🥈';
-        } else if (index === 2) {
-          medalClass = 'bronze';
-          medal = '🥉';
-        }
-        
-        item.classList.add(medalClass);
+        item.className = `admin-card-mini ${medals[realIndex]}`;
         
         item.innerHTML = `
-          <div class="admin-avatar">
+          <div class="admin-avatar-mini">
             <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
                  alt="${admin.name}" 
-                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';">
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
           </div>
-          <div class="admin-info">
-            <div class="admin-name">${admin.name}</div>
-            <div class="admin-stats">
+          <div class="admin-info-mini">
+            <div class="admin-name-mini">${admin.name}</div>
+            <div class="admin-stats-mini">
               <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
               <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
             </div>
           </div>
-          ${medal ? `<div class="medal">${medal}</div>` : ''}
+          <div class="medal-mini">${medalIcons[realIndex]}</div>
         `;
         
         container.appendChild(item);
-      });
-
-      VanillaTilt.init(document.querySelectorAll('#top-admins-section'), {
-        max: 5,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.1
       });
     }
 
@@ -1365,34 +1446,31 @@
       document.getElementById('low-week-range').textContent = 
         `Період: ${weekRange.start} - ${weekRange.end}`;
       
-      admins.forEach((admin) => {
+      // Duplicate for seamless loop
+      const duplicatedAdmins = [...admins, ...admins];
+      
+      duplicatedAdmins.forEach((admin) => {
         const item = document.createElement('div');
-        item.className = 'admin-item low';
+        item.className = 'admin-card-mini low';
         
         item.innerHTML = `
-          <div class="admin-avatar">
+          <div class="admin-avatar-mini">
             <img src="https://t.me/i/userpic/320/${admin.telegram.replace('@', '')}.jpg" 
                  alt="${admin.name}" 
-                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';">
+                 onerror="this.parentElement.innerHTML='<i class=\\'fas fa-user-shield\\'></i>';"
+                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
           </div>
-          <div class="admin-info">
-            <div class="admin-name">${admin.name}</div>
-            <div class="admin-stats">
+          <div class="admin-info-mini">
+            <div class="admin-name-mini">${admin.name}</div>
+            <div class="admin-stats-mini">
               <div>Тікети: <span class="admin-stat-value">${admin.tickets}</span></div>
               <div>Час: <span class="admin-stat-value">${admin.timeFormatted}</span></div>
             </div>
           </div>
-          <div class="medal">⚠️</div>
+          <div class="medal-mini">⚠️</div>
         `;
         
         container.appendChild(item);
-      });
-
-      VanillaTilt.init(document.querySelectorAll('#low-admins-section'), {
-        max: 5,
-        speed: 400,
-        glare: true,
-        'max-glare': 0.1
       });
     }
 
@@ -1440,6 +1518,7 @@
 
         if (!ticketsData.length || !timeData.length) {
           console.error('Дані не знайдено');
+          alert('Дані не знайдено');
           return;
         }
 
@@ -1448,13 +1527,15 @@
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
 
         if (telegramColIndex === -1 || nameColIndex === -1) {
-          console.error('Помилка структури даних');
+          console.error('Помилка структури даних: відсутні необхідні стовпці');
+          alert('Помилка структури даних: відсутні необхідні стовпці');
           return;
         }
 
         const userTicketsRow = ticketsData.find(row => row[telegramColIndex]?.toLowerCase() === telegramUsername.toLowerCase());
         if (!userTicketsRow) {
-          console.error('Користувача не знайдено');
+          console.error('Користувача не знайдено в таблиці тікетів:', telegramUsername);
+          alert('Користувача не знайдено в таблиці тікетів');
           return;
         }
 
@@ -1464,7 +1545,8 @@
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
         const userTimeRow = timeData.find(row => row[timeNameColIndex] === userName);
         if (!userTimeRow) {
-          console.error('Користувача не знайдено в таблиці часу');
+          console.error('Користувача не знайдено в таблиці часу:', userName);
+          alert('Користувача не знайдено в таблиці часу');
           return;
         }
 
@@ -1510,9 +1592,9 @@
         document.getElementById('month-tickets').textContent = monthStats.ticketsSum || 0;
         document.getElementById('month-time').textContent = secondsToHHMMSS(monthStats.timeSecondsSum);
 
-        const tbody = document.getElementById('daily-stats-body');
-        tbody.innerHTML = '';
-        let inactiveCount = 0;
+        renderCalendar(dateCols, userTicketsRow, userTimeRow, timeHeaders, monthStart, today);
+
+        // Render Chart
         const chartLabels = [];
         const chartTickets = [];
         const chartTimeHours = [];
@@ -1522,25 +1604,14 @@
           if (dt >= monthStart && dt <= today) {
             const dayTickets = parseInt(userTicketsRow[index]) || 0;
             const timeColIndex = timeHeaders.indexOf(header);
-            let dayTimeStr = 'Н';
             let dayTimeSeconds = 0;
             if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
-              dayTimeStr = userTimeRow[timeColIndex];
-              if (dayTimeStr !== 'Н') {
-                const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+              const timeStr = userTimeRow[timeColIndex];
+              if (timeStr !== 'Н') {
+                const [hh, mm, ss] = timeStr.split(':').map(Number);
                 dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
               }
             }
-            if (dayTimeStr === 'Н') inactiveCount++;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td>${header}</td>
-              <td>${dayTickets}</td>
-              <td>${dayTimeStr}</td>
-              <td>${dayTimeStr === 'Н' ? 'Так' : ''}</td>
-            `;
-            tbody.appendChild(tr);
 
             chartLabels.push(header);
             chartTickets.push(dayTickets);
@@ -1548,19 +1619,8 @@
           }
         });
 
-        const trTotal = document.createElement('tr');
-        trTotal.innerHTML = `
-          <td>Усього неактивів</td>
-          <td colspan="3">${inactiveCount}</td>
-        `;
-        tbody.appendChild(trTotal);
-
         const ctx = document.getElementById('statsChart').getContext('2d');
         if (window.statsChartInstance) window.statsChartInstance.destroy();
-
-        const isDark = document.body.getAttribute('data-theme') === 'dark';
-        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-        const textColor = isDark ? '#A1A1A1' : '#6B7280';
 
         window.statsChartInstance = new Chart(ctx, {
           type: 'line',
@@ -1570,24 +1630,24 @@
               {
                 label: 'Тікети',
                 data: chartTickets,
-                borderColor: '#3B82F6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
                 yAxisID: 'yTickets',
                 tension: 0.4,
-                pointRadius: 3,
-                pointHoverRadius: 5,
+                pointRadius: 4,
+                pointHoverRadius: 6,
                 borderWidth: 2,
                 fill: true,
               },
               {
                 label: 'Час у грі (години)',
                 data: chartTimeHours,
-                borderColor: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.2)',
                 yAxisID: 'yTime',
                 tension: 0.4,
-                pointRadius: 3,
-                pointHoverRadius: 5,
+                pointRadius: 4,
+                pointHoverRadius: 6,
                 borderWidth: 2,
                 fill: true,
               }
@@ -1608,16 +1668,17 @@
                 title: {
                   display: true,
                   text: 'Тікети',
-                  color: textColor,
-                  font: { size: 12, weight: '600' },
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                  font: { size: 14, weight: '600' },
                 },
                 beginAtZero: true,
                 ticks: { 
-                  color: textColor,
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
                   precision: 0,
+                  maxTicksLimit: 6,
                 },
                 grid: { 
-                  color: gridColor,
+                  color: 'rgba(255, 255, 255, 0.1)',
                 },
               },
               yTime: {
@@ -1627,13 +1688,14 @@
                 title: {
                   display: true,
                   text: 'Час (години)',
-                  color: textColor,
-                  font: { size: 12, weight: '600' },
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                  font: { size: 14, weight: '600' },
                 },
                 beginAtZero: true,
                 ticks: { 
-                  color: textColor,
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
                   precision: 1,
+                  maxTicksLimit: 6,
                 },
                 grid: { drawOnChartArea: false },
               },
@@ -1641,8 +1703,9 @@
                 ticks: {
                   maxRotation: 0,
                   minRotation: 0,
-                  color: textColor,
-                  font: { size: 11 },
+                  maxTicksLimit: 7,
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+                  font: { size: 12 },
                   callback: function(value, index, values) {
                     const date = this.getLabelForValue(value);
                     const [day, month] = date.split('.');
@@ -1650,7 +1713,7 @@
                   }
                 },
                 grid: { 
-                  color: gridColor,
+                  color: 'rgba(255, 255, 255, 0.1)',
                 },
               }
             },
@@ -1658,20 +1721,15 @@
               legend: {
                 position: 'top',
                 labels: { 
-                  color: textColor,
-                  font: { size: 12, weight: '500' },
-                  padding: 12,
-                  boxWidth: 16,
-                  usePointStyle: true,
+                  color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
+                  font: { size: 12, weight: '600' },
+                  padding: 15,
+                  boxWidth: 20,
                 },
               },
               tooltip: {
-                backgroundColor: isDark ? 'rgba(17, 17, 17, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                titleColor: isDark ? '#FAFAFA' : '#111827',
-                bodyColor: isDark ? '#A1A1A1' : '#6B7280',
-                borderColor: isDark ? '#2A2A2A' : '#E5E7EB',
-                borderWidth: 1,
-                titleFont: { size: 13, weight: '600' },
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg'),
+                titleFont: { size: 14, weight: '600' },
                 bodyFont: { size: 12 },
                 padding: 12,
                 cornerRadius: 8,
@@ -1682,18 +1740,115 @@
                 }
               }
             },
+            animation: {
+              duration: 1500,
+              easing: 'easeOutCubic',
+            }
           },
         });
       } catch (error) {
         console.error('Помилка під час завантаження даних:', error);
+        alert('Помилка під час завантаження даних');
+      }
+    }
+
+    function renderCalendar(dateCols, userTicketsRow, userTimeRow, timeHeaders, monthStart, today) {
+      const calendarGrid = document.getElementById('calendar-grid');
+      calendarGrid.innerHTML = '';
+      
+      // Day headers
+      const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+      dayNames.forEach(day => {
+        const header = document.createElement('div');
+        header.className = 'calendar-day-header';
+        header.textContent = day;
+        calendarGrid.appendChild(header);
+      });
+      
+      // Get first day of month (0 = Sunday, 1 = Monday, etc.)
+      const firstDay = new Date(monthStart);
+      let dayOfWeek = firstDay.getDay();
+      // Convert Sunday (0) to 7 for our Monday-first week
+      dayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+      
+      // Add empty cells for days before month starts
+      for (let i = 1; i < dayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day inactive';
+        calendarGrid.appendChild(emptyDay);
+      }
+      
+      // Create map of dates to data
+      const dateMap = new Map();
+      dateCols.forEach(({ header, index }) => {
+        const dt = parseDate(header);
+        if (dt >= monthStart && dt <= today) {
+          const dayTickets = parseInt(userTicketsRow[index]) || 0;
+          const timeColIndex = timeHeaders.indexOf(header);
+          let dayTimeStr = 'Н';
+          let dayTimeSeconds = 0;
+          if (timeColIndex >= 0 && userTimeRow[timeColIndex]) {
+            dayTimeStr = userTimeRow[timeColIndex];
+            if (dayTimeStr !== 'Н') {
+              const [hh, mm, ss] = dayTimeStr.split(':').map(Number);
+              dayTimeSeconds = (hh || 0) * 3600 + (mm || 0) * 60 + (ss || 0);
+            }
+          }
+          dateMap.set(dt.getTime(), {
+            tickets: dayTickets,
+            time: dayTimeStr,
+            timeSeconds: dayTimeSeconds,
+            isInactive: dayTimeStr === 'Н'
+          });
+        }
+      });
+      
+      // Add days of the month
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      for (let day = 1; day <= lastDay.getDate(); day++) {
+        const currentDate = new Date(today.getFullYear(), today.getMonth(), day);
+        const dayData = dateMap.get(currentDate.getTime());
+        
+        const dayCell = document.createElement('div');
+        dayCell.className = 'calendar-day';
+        
+        if (dayData) {
+          if (dayData.isInactive) {
+            dayCell.classList.add('no-activity');
+          } else {
+            dayCell.classList.add('has-data');
+          }
+          
+          dayCell.innerHTML = `
+            <div class="calendar-day-number">${day}</div>
+            <div class="calendar-day-stats">
+              <div class="calendar-day-stat">
+                <i class="fas fa-ticket-alt"></i>
+                <span>${dayData.tickets}</span>
+              </div>
+              <div class="calendar-day-stat">
+                <i class="fas fa-clock"></i>
+                <span>${dayData.time}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          dayCell.classList.add('inactive');
+          dayCell.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+        }
+        
+        calendarGrid.appendChild(dayCell);
       }
     }
 
     function showAccessDenied() {
       document.getElementById('access-denied-section').style.display = 'flex';
       document.getElementById('login-section').style.display = 'none';
-      document.getElementById('main-content').classList.add('hidden');
-      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('themeToggle').classList.add('hidden');
     }
 
     async function onTelegramAuth(user) {
@@ -1778,10 +1933,12 @@
       }
 
       document.getElementById('login-section').style.display = 'none';
-      document.getElementById('main-content').classList.remove('hidden');
-      document.getElementById('top-bar').classList.remove('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('sidebarToggle').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+      document.getElementById('themeToggle').classList.remove('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
-      document.getElementById('top-bar-title').textContent = `Вітаємо, ${nickname}!`;
+      document.getElementById('welcome-header').innerText = `Вітаємо, ${nickname}!`;
       
       if (superAdmins.includes(telegramUsername)) {
         document.getElementById('superMenuCategory').style.display = 'block';
@@ -1790,6 +1947,8 @@
         document.getElementById('superMenuItem3').style.display = 'flex';
       }
       
+      document.getElementById('top-admins-section').classList.remove('hidden');
+      document.getElementById('low-admins-section').classList.remove('hidden');
       await loadAndRenderAdmins();
       
       if (isAdmin) {
@@ -1804,10 +1963,15 @@
 
     function showLoginForm() {
       document.getElementById('login-section').style.display = 'flex';
-      document.getElementById('main-content').classList.add('hidden');
-      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarToggle').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      document.getElementById('themeToggle').classList.remove('hidden');
       document.getElementById('access-denied-section').style.display = 'none';
-      sidebar.classList.remove('open');
+      document.getElementById('welcome-header').innerText = 'Ласкаво просимо!';
+      document.getElementById('top-admins-section').classList.add('hidden');
+      document.getElementById('low-admins-section').classList.add('hidden');
     }
 
     function logout() {
@@ -1832,6 +1996,7 @@
         showLoginForm();
       }
       
+      // Auto-refresh data every 5 minutes
       setInterval(() => {
         if (shouldRefreshTopAdmins()) {
           autoRefreshData();
