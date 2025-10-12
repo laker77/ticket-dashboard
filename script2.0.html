@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Осінній БатлКвас - Оновлення 2.0</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1A1;
+      --text-tertiary: #6B6B6B;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-yellow: #F59E0B;
+      --accent-red: #EF4444;
+      --accent-purple: #8B5CF6;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F9FAFB;
+      --bg-tertiary: #F3F4F6;
+      --border-color: #E5E7EB;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: var(--transition);
+    }
+
+    /* Falling Logos Animation */
+    canvas#logos-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    [data-theme="light"] canvas#logos-canvas {
+      opacity: 0.15;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      padding: 1.5rem 0;
+      overflow-y: auto;
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1rem 0.75rem;
+    }
+
+    .menu-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      padding: 0.5rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: var(--transition);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .menu-item i, .super-menu-item i {
+      width: 16px;
+      font-size: 0.875rem;
+    }
+
+    .super-menu-item {
+      color: var(--accent-yellow);
+    }
+
+    .super-menu-item:hover {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .top-bar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 0;
+      margin-top: 60px;
+      padding: 2rem 1.5rem;
+      min-height: calc(100vh - 60px);
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Login Section */
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      z-index: 2000;
+    }
+
+    .login-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 3rem 2rem;
+      border-radius: 12px;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.5rem;
+      border-radius: 12px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-logo i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: translateY(-2px);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-green);
+    }
+
+    /* Access Denied */
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+    }
+
+    .access-denied-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .access-denied-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .back-to-login-btn {
+      padding: 0.625rem 1.5rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--accent-purple) 0%, #7C3AED 100%);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background-size: cover;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .version-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Content Sections */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .content-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .content-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: white;
+    }
+
+    .card-icon.blue { background: var(--accent-blue); }
+    .card-icon.green { background: var(--accent-green); }
+    .card-icon.yellow { background: var(--accent-yellow); }
+    .card-icon.red { background: var(--accent-red); }
+    .card-icon.purple { background: var(--accent-purple); }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .card-content {
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .card-content p {
+      margin-bottom: 1rem;
+    }
+
+    .card-content ul, .card-content ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-content li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Feature Highlights */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .feature-item:hover {
+      background: var(--bg-secondary);
+    }
+
+    .feature-icon {
+      color: var(--accent-blue);
+      font-size: 1.25rem;
+      margin-top: 0.125rem;
+      flex-shrink: 0;
+    }
+
+    .feature-text {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    /* Warning Banner */
+    .warning-banner {
+      background: linear-gradient(135deg, var(--accent-red) 0%, #DC2626 100%);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .warning-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background-size: cover;
+    }
+
+    .warning-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .warning-icon {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .warning-text {
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    /* Car Showcase */
+    .cars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .car-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: var(--transition);
+    }
+
+    .car-card:hover {
+      border-color: var(--accent-green);
+      transform: translateY(-2px);
+    }
+
+    .car-icon {
+      font-size: 3rem;
+      color: var(--accent-green);
+      margin-bottom: 1rem;
+    }
+
+    .car-name {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .car-source {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      padding: 0.375rem 0.75rem;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mb-2 {
+      margin-bottom: 2rem;
+    }
+
+    .mt-2 {
+      margin-top: 2rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 0 1rem;
+      }
+
+      .main-content {
+        padding: 1.5rem 1rem;
+        margin-top: 60px;
+      }
+
+      .hero-banner {
+        padding: 2rem 1rem;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cars-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 1.75rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .content-card {
+        padding: 1rem;
+      }
+
+      .warning-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-tertiary);
+    }
+  </style>
+</head>
+<body data-theme="dark">
+  <canvas id="logos-canvas"></canvas>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-code"></i>
+      </div>
+      <div class="sidebar-title">Осінній БатлКвас</div>
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-category">Навігація</div>
+      <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      
+      <div class="menu-category">Інформація</div>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar hidden" id="top-bar">
+    <div class="top-bar-left">
+      <button class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="top-bar-title" id="top-bar-title">Осінній БатлКвас - Оновлення 2.0</div>
+    </div>
+    <div class="top-bar-right">
+      <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="logout-btn" id="logout-btn">Вийти</button>
+    </div>
+  </div>
+
+  <!-- Access Denied Section -->
+  <div id="access-denied-section">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">🚫</div>
+      <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+      <p class="access-denied-message">
+        Ваш обліковий запис не має доступу до цієї системи.<br>
+        Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+      </p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
+
+  <!-- Login Section -->
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-code"></i>
+      </div>
+      <h1 class="login-title">Осінній БатлКвас</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до скрипту</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content hidden" id="main-content">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-icon">
+          <i class="fas fa-leaf"></i>
+        </div>
+        <h1 class="hero-title">Осінній БатлКвас</h1>
+        <p class="hero-subtitle">Масштабне оновлення 2.0 з новими механіками, транспортом та системами для покращення ігрового досвіду</p>
+        <div class="version-badge">Версія 2.0</div>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      <!-- Таємні ящики -->
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <i class="fas fa-box"></i>
+          </div>
+          <h2 class="card-title">Івент "Таємні ящики"</h2>
+        </div>
+        <div class="card-content">
+          <p>Івент проходить кожні 3 години на сервері. За 15 хв до оновлення ящиків в чаті приходить повідомлення.</p>
+          
+          <p><strong>Види ящиків:</strong></p>
+          <ul>
+            <li>🔵 Синій</li>
+            <li>🟢 Зелений</li>
+            <li>🔴 Червоний</li>
+          </ul>
+
+          <p><strong>Ключ-карти:</strong></p>
+          <ul>
+            <li>🔵 Синя - AirDrop/Безодня</li>
+            <li>🟢 Зелена - В синьому ящику</li>
+            <li>🔴 Червона - В зеленому ящику</li>
+          </ul>
+
+          <p><strong>Міцність ключ-карт:</strong></p>
+          <ul>
+            <li>🔵 Синя - 20 відкриттів</li>
+            <li>🟢 Зелена - 10 відкриттів</li>
+            <li>🔴 Червона - 5 відкриттів</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Колл-Центр -->
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon green">
+            <i class="fas fa-headset"></i>
+          </div>
+          <h2 class="card-title">Робота "Колл-Центр"</h2>
+        </div>
+        <div class="card-content">
+          <p><strong>Місце:</strong> Бізнес центр "Аркадіус" → правий ліфт → офіс</p>
+          <p><strong>Вимоги:</strong> 15+ рівень</p>
+          
+          <p><strong>Процес роботи:</strong></p>
+          <ol>
+            <li>Влаштуватись біля NPC</li>
+            <li>Підійти до столу</li>
+            <li>Обрати клієнта та акцію</li>
+            <li>Вести діалог з клієнтом</li>
+          </ol>
+
+          <p><strong>Кнопки діалогу:</strong></p>
+          <ul>
+            <li>📢 Пояснити</li>
+            <li>💬 Запевнити</li>
+            <li>⚡ Надавити</li>
+          </ul>
+
+          <p><strong>Навички роботи:</strong></p>
+          <ul>
+            <li>0-25%: 150 угод (+2%)</li>
+            <li>26-50%: 500 угод (+5%)</li>
+            <li>51-75%: 1300 угод (+10%)</li>
+            <li>76-100%: 2500 угод (+15%)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Налаштування прицілу -->
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon yellow">
+            <i class="fas fa-crosshairs"></i>
+          </div>
+          <h2 class="card-title">Налаштування прицілу та клавіш</h2>
+        </div>
+        <div class="card-content">
+          <p><strong>Шлях до налаштувань:</strong></p>
+          <p>M-Меню → Налаштування → "Приціл та клавіші"</p>
+          
+          <p><strong>Функції:</strong></p>
+          <ul>
+            <li>🔧 Бінд клавіш</li>
+            <li>💾 Автозбереження прицілу</li>
+            <li>🔄 Кнопки збереження/скидання</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Номера та ліцензування -->
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon red">
+            <i class="fas fa-car"></i>
+          </div>
+          <h2 class="card-title">Номера та департамент ліцензування</h2>
+        </div>
+        <div class="card-content">
+          <p><strong>Нова будівля:</strong> Реєстрація номерів на авто</p>
+          
+          <p><strong>Типи номерів:</strong></p>
+          <ul>
+            <li>🇺🇸 Американські (на будь-які авто)</li>
+            <li>🇺🇦 Українські (тільки на нові авто)</li>
+          </ul>
+
+          <p><strong>Варіанти генерації:</strong></p>
+          <ul>
+            <li>🎲 Рандомний номер</li>
+            <li>✏️ Унікальний текст</li>
+            <li>💵 Власний номер (за ігрову валюту)</li>
+          </ul>
+
+          <p><strong>Управління:</strong></p>
+          <ul>
+            <li>📦 Зберігання в інвентарі</li>
+            <li>💰 Продаж іншим гравцям</li>
+            <li>🔧 Встановлення/зняття (клавіша G)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Банківська система -->
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon purple">
+            <i class="fas fa-university"></i>
+          </div>
+          <h2 class="card-title">Система депозиту та кредитів</h2>
+        </div>
+        <div class="card-content">
+          <p><strong>Депозит:</strong></p>
+          <ul>
+            <li>💰 Внесення коштів на термін</li>
+            <li>⏰ Відіграти вказані пейдеї</li>
+            <li>⚠️ Штраф 40% за дострокове зняття</li>
+          </ul>
+
+          <p><strong>Кредити:</strong></p>
+          <ul>
+            <li>🏠 Застава: авто/дома/бізнес</li>
+            <li>💳 Макс. сума: 50кк</li>
+            <li>📈 Відсотки за термін</li>
+            <li>🚫 Обмеження при простроченні</li>
+          </ul>
+
+          <p><strong>Банкомати:</strong> Поповнення, зняття, переказ коштів</p>
+        </div>
+      </div>
+
+      <!-- Повітряний транспорт -->
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <i class="fas fa-helicopter"></i>
+          </div>
+          <h2 class="card-title">Ліцензія на повітряний транспорт</h2>
+        </div>
+        <div class="card-content">
+          <p><strong>Вимоги:</strong></p>
+          <ul>
+            <li>🎫 Здача іспиту</li>
+            <li>💵 Вартість: 125.000 ігрової валюти</li>
+            <li>🚁 Доступ до купівлі гвинтокрилів</li>
+          </ul>
+
+          <p><strong>Парковки:</strong></p>
+          <ul>
+            <li>🏙️ В місті</li>
+            <li>🏖️ В сенді шорс</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Новий інвентар -->
+    <div class="content-card mb-2">
+      <div class="card-header">
+        <div class="card-icon green">
+          <i class="fas fa-backpack"></i>
+        </div>
+        <h2 class="card-title">Новий інвентар</h2>
+      </div>
+      <div class="card-content">
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon">📐</div>
+            <div class="feature-text">Статичний інвентар, не залежить від одягу</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-text">Зменшена кількість квадратів для предметів</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🗑️</div>
+            <div class="feature-text">Викидання предметів (тримати Q)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📦</div>
+            <div class="feature-text">Переміщення предметів (CTRL + клік)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">✂️</div>
+            <div class="feature-text">Розділення предметів (SHIFT + клік)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-text">Швидкі слоти (1/2/3/4)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔫</div>
+            <div class="feature-text">Перетягнення патронів на зброю</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎒</div>
+            <div class="feature-text">Рюкзак + оточення в правій панелі</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📥</div>
+            <div class="feature-text">Підбір предметів з оточення (клавіша G)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔃</div>
+            <div class="feature-text">Кнопка сортування інвентаря</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🚗</div>
+            <div class="feature-text">Індивідуальні обмеження КГ для авто</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Нові автомобілі -->
+    <div class="content-card">
+      <div class="card-header">
+        <div class="card-icon red">
+          <i class="fas fa-car-side"></i>
+        </div>
+        <h2 class="card-title">Нові автомобілі</h2>
+      </div>
+      <div class="card-content">
+        <div class="cars-grid">
+          <div class="car-card">
+            <div class="car-icon">🚗</div>
+            <div class="car-name">Numday Ftaria</div>
+            <div class="car-source">Автосалон Люкс</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🏎️</div>
+            <div class="car-name">Emperor LK500</div>
+            <div class="car-source">Оффер</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🚙</div>
+            <div class="car-name">Chawrole Shevelle CC</div>
+            <div class="car-source">Контейнери</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🚘</div>
+            <div class="car-name">Ubermacht X5</div>
+            <div class="car-source">Автосалон Люкс</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🚔</div>
+            <div class="car-name">Vapid Vacoma</div>
+            <div class="car-source">Автосалон Люкс</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🏁</div>
+            <div class="car-name">Pegassi Tenzo Millennio</div>
+            <div class="car-source">Кейс</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🚖</div>
+            <div class="car-name">Jugular F-Pace S</div>
+            <div class="car-source">Автосалон Люкс</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🚕</div>
+            <div class="car-name">Vollstein Getta CLI</div>
+            <div class="car-source">Автосалон Люкс</div>
+          </div>
+          <div class="car-card">
+            <div class="car-icon">🚓</div>
+            <div class="car-name">Vapid CR-86</div>
+            <div class="car-source">Контейнери</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Додаткові нововведення -->
+    <div class="content-card mt-2">
+      <div class="card-header">
+        <div class="card-icon purple">
+          <i class="fas fa-star"></i>
+        </div>
+        <h2 class="card-title">Додаткові нововведення</h2>
+      </div>
+      <div class="card-content">
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon">👕</div>
+            <div class="feature-text">1800+ нових одягів (донат та ігрова валюта)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">👨‍👩‍👧‍👦</div>
+            <div class="feature-text">Персонажі з 2 однакових батьків</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💄</div>
+            <div class="feature-text">Макіяж для дівчат в барбершопах</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💇</div>
+            <div class="feature-text">Нові зачіски для хлопців та дівчат</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎁</div>
+            <div class="feature-text">Оновлені кейси (5 год) + вихідні 150 карбованців</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎡</div>
+            <div class="feature-text">Колесо фортуни (клавіша O)</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🏠</div>
+            <div class="feature-text">70 нових будинків + 10 для аукціону</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎬</div>
+            <div class="feature-text">Новий екран авторизації з відео та музикою</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">👨‍👩‍👧‍👦</div>
+            <div class="feature-text">Одяг для сімей</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💃</div>
+            <div class="feature-text">Кейс "Ритм" з анімаціями танців</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🏢</div>
+            <div class="feature-text">3 частина інтер'єру FIB</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📰</div>
+            <div class="feature-text">Нове розташування Weazel News</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎙️</div>
+            <div class="feature-text">Озвучка всіх NPC</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📢</div>
+            <div class="feature-text">Оновлені мегафони для фракцій</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🛍️</div>
+            <div class="feature-text">Оновлені товари в донат магазині</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Подвійний досвід -->
+    <div class="warning-banner">
+      <div class="warning-content">
+        <div class="warning-icon">🎉</div>
+        <div class="warning-text">х2 ДОСВІД з 11.10 по 12.10 включно!</div>
+      </div>
+    </div>
+
+    <!-- Важливе попередження -->
+    <div class="warning-banner">
+      <div class="warning-content">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-text">РОЗПОВСЮДЖЕННЯ ЦЬОГО СКРИПТУ ПРИЗВЕДЕ ДО ЧС ПРОЕКТІВ UKRAINE GAMES!</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Falling Logos Animation
+    const canvas = document.getElementById('logos-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const logos = [];
+    const numLogos = 20;
+    const logoSize = 20;
+    
+    // Create a simple leaf logo using canvas (for autumn theme)
+    function drawLogo(x, y, size, opacity) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalAlpha = opacity;
+      
+      // Leaf shape
+      ctx.beginPath();
+      ctx.moveTo(0, -size/2);
+      ctx.bezierCurveTo(size/2, -size/4, size/2, size/4, 0, size/2);
+      ctx.bezierCurveTo(-size/2, size/4, -size/2, -size/4, 0, -size/2);
+      ctx.closePath();
+      
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      ctx.fillStyle = isDark ? 'rgba(139, 92, 246, 0.7)' : 'rgba(139, 92, 246, 0.5)';
+      ctx.fill();
+      
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(139, 92, 246, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Leaf veins
+      ctx.beginPath();
+      ctx.moveTo(0, -size/2);
+      ctx.lineTo(0, size/2);
+      ctx.moveTo(-size/4, -size/8);
+      ctx.lineTo(size/4, size/8);
+      ctx.moveTo(-size/4, size/8);
+      ctx.lineTo(size/4, -size/8);
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      ctx.restore();
+    }
+    
+    class Logo {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 8 + 12;
+        this.speed = Math.random() * 0.5 + 0.3;
+        this.opacity = Math.random() * 0.4 + 0.2;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+      }
+      
+      update() {
+        this.y += this.speed;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height) {
+          this.reset();
+          this.y = -this.size;
+        }
+      }
+      
+      draw() {
+        drawLogo(this.x, this.y, this.size, this.opacity);
+      }
+    }
+    
+    for (let i = 0; i < numLogos; i++) {
+      logos.push(new Logo());
+    }
+    
+    function animateLogos() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
+      });
+      requestAnimationFrame(animateLogos);
+    }
+    
+    animateLogos();
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+    
+    function updateThemeIcon(theme) {
+      const icon = themeToggle.querySelector('i');
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    
+    document.addEventListener('click', (event) => {
+      if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+
+    // Authorization logic
+    const allowedAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    const superAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    function showAccessDenied() {
+      document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+    }
+
+    async function onTelegramAuth(user) {
+      if (!user || !user.username) {
+        showAccessDenied();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
+        };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        await showDashboard(userData.nickname, telegramUsername, true);
+        return;
+      }
+
+      showAccessDenied();
+    }
+
+    async function showDashboard(nickname, telegramUsername, isAdmin) {
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.remove('hidden');
+      document.getElementById('top-bar').classList.remove('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.getElementById('top-bar-title').textContent = `Осінній БатлКвас - Вітаємо, ${nickname}!`;
+      
+      if (superAdmins.includes(telegramUsername)) {
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+      }
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      sidebar.classList.remove('open');
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
+        }
+      } else {
+        showLoginForm();
+      }
+    });
+  </script>
+</body>
+</html>
