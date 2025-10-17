@@ -8,889 +8,850 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #3B82F6;
-            --secondary-color: #10B981;
-            --accent-color: #F59E0B;
-            --background-dark: #0A0C1A;
-            --card-bg: rgba(20, 22, 35, 0.9);
-            --glass-bg: rgba(20, 22, 35, 0.7);
-            --glass-blur: blur(15px);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            --text-primary: #F3F4F6;
-            --text-secondary: #D1D5DB;
-            --card-border: rgba(59, 130, 246, 0.2);
-            --category-general: #4caf50;
-            --category-rules: #ff9800;
-            --category-admin: #9c27b0;
-            --category-fractions: #2196f3;
-            --category-supply: #e91e63;
-            --category-gps: #ff5722;
-            --category-map: #03a9f4;
-            --category-licenses: #8bc34a;
-            --category-work: #ffeb3b;
-            --category-vehicles: #795548;
-            --category-items: #607d8b;
-            --category-money: #4caf50;
-            --category-penalties: #f44336;
-            --category-health: #009688;
-            --category-quests: #3f51b5;
-            --category-communication: #9e9e9e;
-            --category-security: #ff9800;
-            --category-settings: #2196f3;
-            --category-fishing: #00bcd4;
-            --category-character: #673ab7;
-            --category-properties: #8bc34a;
-            --category-market: #ff5722;
-            --category-animations: #e91e63;
-            --category-combat: #f44336;
-            --scrollbar: #3b82f6;
-            --scrollbar-bg: #1a1a1a;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, var(--background-dark), #1E293B);
-            color: var(--text-primary);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        canvas#stars-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.8;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow);
-            transition: left 0.3s ease;
-            z-index: 1000;
-            padding: 1.5rem;
-            overflow-y: auto;
-        }
-        .sidebar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .sidebar::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-            border-radius: 4px;
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: var(--scrollbar);
-            border-radius: 4px;
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-toggle {
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            width: 2.5rem;
-            height: 2.5rem;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(59, 130, 246, 0.2);
-        }
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 3rem;
-        }
-        .menu-category {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            text-transform: uppercase;
-        }
-        .menu-item, .super-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        .menu-item:hover, .super-menu-item:hover {
-            background: rgba(59, 130, 246, 0.3);
-            transform: translateX(5px);
-        }
-        .menu-item.active {
-            background: rgba(59, 130, 246, 0.3);
-        }
-        .super-menu-item {
-            color: var(--accent-color);
-        }
-        #login-section {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0A0C1A, #1E293B);
-            z-index: 1000;
-            overflow: hidden;
-        }
-        .login-container {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 3rem 2rem;
-            border-radius: 1.5rem;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 1s ease-out;
-        }
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
-            background-size: 40px 40px;
-            animation: moveBackground 30s linear infinite;
-            z-index: -1;
-        }
-        .login-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            border-radius: 50%;
-            background: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-            animation: pulse 2s infinite;
-        }
-        .login-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        .login-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-        .telegram-button-wrapper {
-            display: inline-block;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 0 20px var(--primary-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .telegram-button-wrapper:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--primary-color);
-        }
-        .login-footer {
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .login-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .login-footer a:hover {
-            color: var(--secondary-color);
-        }
-        #access-denied-section {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1E293B, #334155);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .access-denied-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
-            text-align: center;
-            max-width: 500px;
-        }
-        .access-denied-icon {
-            font-size: 4rem;
-            color: #EF4444;
-            margin-bottom: 1rem;
-            animation: pulse 2s infinite;
-        }
-        .access-denied-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-        }
-        .access-denied-message {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-        .back-to-login-btn {
-            background: #EF4444;
-            color: var(--text-primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .back-to-login-btn:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-        }
-        #logout-btn {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: #EF4444;
-            color: var(--text-primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 1001;
-            transition: all 0.3s ease;
-        }
-        #logout-btn:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 1.5rem;
-        }
-        header {
-            text-align: center;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-        }
-        .header-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 2rem;
-            border-radius: 1rem;
-            border: 1px solid var(--card-border);
-            box-shadow: var(--shadow);
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 1rem;
-        }
-        .logo i {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-        }
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-        .search-container {
-            max-width: 700px;
-            margin: 40px auto;
-            position: relative;
-        }
-        .search-box {
-            width: 100%;
-            padding: 18px 25px;
-            padding-left: 60px;
-            border-radius: 50px;
-            background: var(--glass-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-        .search-box:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
-        .search-icon {
-            position: absolute;
-            left: 25px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-        .commands-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-        .level-card {
-            background: var(--glass-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 15px;
-        }
-        .level-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-        .card-header {
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        .level-faq .card-header {
-            background: linear-gradient(135deg, rgba(156, 39, 176, 0.15), transparent);
-        }
-        .card-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            flex-shrink: 0;
-            background: var(--category-admin);
-        }
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--category-admin);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .card-content {
-            padding: 0 25px 25px;
-            overflow-y: auto;
-            max-height: 750px;
-            flex-grow: 1;
-        }
-        .card-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        .card-content::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-            border-radius: 4px;
-        }
-        .card-content::-webkit-scrollbar-thumb {
-            background: var(--scrollbar);
-            border-radius: 4px;
-        }
-        .card-content::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-        .faq-item {
-            margin-bottom: 25px;
-            padding: 18px;
-            border-radius: 12px;
-            background: rgba(40, 40, 40, 0.5);
-            transition: all 0.3s ease;
-            border-left: 3px solid var(--card-border);
-            position: relative;
-        }
-        .faq-item:hover {
-            background: rgba(50, 50, 50, 0.7);
-            border-left-color: var(--primary-color);
-            transform: translateX(5px);
-        }
-        .faq-question {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .faq-question i {
-            flex-shrink: 0;
-        }
-        .faq-item[data-category="general"] .faq-question i { color: var(--category-general); }
-        .faq-item[data-category="rules"] .faq-question i { color: var(--category-rules); }
-        .faq-item[data-category="admin"] .faq-question i { color: var(--category-admin); }
-        .faq-item[data-category="fractions"] .faq-question i { color: var(--category-fractions); }
-        .faq-item[data-category="supply"] .faq-question i { color: var(--category-supply); }
-        .faq-item[data-category="gps"] .faq-question i { color: var(--category-gps); }
-        .faq-item[data-category="map"] .faq-question i { color: var(--category-map); }
-        .faq-item[data-category="licenses"] .faq-question i { color: var(--category-licenses); }
-        .faq-item[data-category="work"] .faq-question i { color: var(--category-work); }
-        .faq-item[data-category="vehicles"] .faq-question i { color: var(--category-vehicles); }
-        .faq-item[data-category="items"] .faq-question i { color: var(--category-items); }
-        .faq-item[data-category="money"] .faq-question i { color: var(--category-money); }
-        .faq-item[data-category="penalties"] .faq-question i { color: var(--category-penalties); }
-        .faq-item[data-category="health"] .faq-question i { color: var(--category-health); }
-        .faq-item[data-category="quests"] .faq-question i { color: var(--category-quests); }
-        .faq-item[data-category="communication"] .faq-question i { color: var(--category-communication); }
-        .faq-item[data-category="security"] .faq-question i { color: var(--category-security); }
-        .faq-item[data-category="settings"] .faq-question i { color: var(--category-settings); }
-        .faq-item[data-category="fishing"] .faq-question i { color: var(--category-fishing); }
-        .faq-item[data-category="character"] .faq-question i { color: var(--category-character); }
-        .faq-item[data-category="properties"] .faq-question i { color: var(--category-properties); }
-        .faq-item[data-category="market"] .faq-question i { color: var(--category-market); }
-        .faq-item[data-category="animations"] .faq-question i { color: var(--category-animations); }
-        .faq-item[data-category="combat"] .faq-question i { color: var(--category-combat); }
-        .faq-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            transition: background-color 0.3s;
-        }
-        .faq-item[data-category="general"]::before { background-color: var(--category-general); }
-        .faq-item[data-category="rules"]::before { background-color: var(--category-rules); }
-        .faq-item[data-category="admin"]::before { background-color: var(--category-admin); }
-        .faq-item[data-category="fractions"]::before { background-color: var(--category-fractions); }
-        .faq-item[data-category="supply"]::before { background-color: var(--category-supply); }
-        .faq-item[data-category="gps"]::before { background-color: var(--category-gps); }
-        .faq-item[data-category="map"]::before { background-color: var(--category-map); }
-        .faq-item[data-category="licenses"]::before { background-color: var(--category-licenses); }
-        .faq-item[data-category="work"]::before { background-color: var(--category-work); }
-        .faq-item[data-category="vehicles"]::before { background-color: var(--category-vehicles); }
-        .faq-item[data-category="items"]::before { background-color: var(--category-items); }
-        .faq-item[data-category="money"]::before { background-color: var(--category-money); }
-        .faq-item[data-category="penalties"]::before { background-color: var(--category-penalties); }
-        .faq-item[data-category="health"]::before { background-color: var(--category-health); }
-        .faq-item[data-category="quests"]::before { background-color: var(--category-quests); }
-        .faq-item[data-category="communication"]::before { background-color: var(--category-communication); }
-        .faq-item[data-category="security"]::before { background-color: var(--category-security); }
-        .faq-item[data-category="settings"]::before { background-color: var(--category-settings); }
-        .faq-item[data-category="fishing"]::before { background-color: var(--category-fishing); }
-        .faq-item[data-category="character"]::before { background-color: var(--category-character); }
-        .faq-item[data-category="properties"]::before { background-color: var(--category-properties); }
-        .faq-item[data-category="market"]::before { background-color: var(--category-market); }
-        .faq-item[data-category="animations"]::before { background-color: var(--category-animations); }
-        .faq-item[data-category="combat"]::before { background-color: var(--category-combat); }
-        .faq-answer {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            word-break: break-word;
-        }
-        .categories-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 30px 0;
-            justify-content: center;
-        }
-        .category-tab {
-            padding: 10px 20px;
-            border-radius: 30px;
-            background: rgba(50, 50, 50, 0.5);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            border: 2px solid transparent;
-        }
-        .category-tab:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        .category-tab.active {
-            border-color: currentColor;
-            box-shadow: 0 0 15px currentColor;
-        }
-        .category-general { color: var(--category-general); }
-        .category-rules { color: var(--category-rules); }
-        .category-admin { color: var(--category-admin); }
-        .category-fractions { color: var(--category-fractions); }
-        .category-supply { color: var(--category-supply); }
-        .category-gps { color: var(--category-gps); }
-        .category-map { color: var(--category-map); }
-        .category-licenses { color: var(--category-licenses); }
-        .category-work { color: var(--category-work); }
-        .category-vehicles { color: var(--category-vehicles); }
-        .category-items { color: var(--category-items); }
-        .category-money { color: var(--category-money); }
-        .category-penalties { color: var(--category-penalties); }
-        .category-health { color: var(--category-health); }
-        .category-quests { color: var(--category-quests); }
-        .category-communication { color: var(--category-communication); }
-        .category-security { color: var(--category-security); }
-        .category-settings { color: var(--category-settings); }
-        .category-fishing { color: var(--category-fishing); }
-        .category-character { color: var(--category-character); }
-        .category-properties { color: var(--category-properties); }
-        .category-market { color: var(--category-market); }
-        .category-animations { color: var(--category-animations); }
-        .category-combat { color: var(--category-combat); }
-        .category-counter {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2px 8px;
-            font-size: 0.8rem;
-            margin-left: 8px;
-        }
-        .faq-wide {
-            grid-column: 1 / -1;
-            max-height: none;
-        }
-        .faq-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--primary-color);
-            color: var(--text-primary);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-        .back-to-top.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        footer {
-            text-align: center;
-            padding: 50px 0 30px;
-            color: var(--text-secondary);
-            margin-top: 60px;
-            border-top: 1px solid var(--card-border);
-        }
-        .footer-logo {
-            color: var(--primary-color);
-            font-weight: bold;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 1.5rem;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid var(--card-border);
-        }
-        .copyright {
-            font-size: 0.9rem;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes moveBackground {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-50%, -50%); }
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 250px;
-            }
-            .container {
-                padding: 1rem;
-            }
-            h1 {
-                font-size: 2.2rem;
-            }
-            .commands-container {
-                grid-template-columns: 1fr;
-            }
-            .faq-grid {
-                grid-template-columns: 1fr;
-            }
-            .search-box {
-                padding: 15px 20px;
-                padding-left: 50px;
-                font-size: 1rem;
-            }
-            .search-icon {
-                left: 20px;
-                top: 54%;
-            }
-            .login-container {
-                padding: 2rem 1.5rem;
-            }
-            .login-title {
-                font-size: 1.5rem;
-            }
-            .login-subtitle {
-                font-size: 0.9rem;
-            }
-            .categories-tabs {
-                flex-direction: column;
-                align-items: center;
-                margin: 20px 0;
-            }
-            .category-tab {
-                width: 100%;
-                text-align: center;
-                padding: 12px 24px;
-                font-size: 1.05rem;
-            }
-        }
-    </style>
+   <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1A1;
+      --text-tertiary: #6B6B6B;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-yellow: #F59E0B;
+      --accent-red: #EF4444;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F9FAFB;
+      --bg-tertiary: #F3F4F6;
+      --border-color: #E5E7EB;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: var(--transition);
+    }
+
+    /* Falling Logos Animation */
+    canvas#logos-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    [data-theme="light"] canvas#logos-canvas {
+      opacity: 0.15;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      padding: 1.5rem 0;
+      overflow-y: auto;
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1rem 0.75rem;
+    }
+
+    .menu-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      padding: 0.5rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: var(--transition);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .menu-item i, .super-menu-item i {
+      width: 16px;
+      font-size: 0.875rem;
+    }
+
+    .menu-item.active {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .super-menu-item {
+      color: var(--accent-yellow);
+    }
+
+    .super-menu-item:hover {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .top-bar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 0;
+      margin-top: 60px;
+      padding: 2rem 1.5rem;
+      min-height: calc(100vh - 60px);
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Login Section */
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      z-index: 2000;
+    }
+
+    .login-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 3rem 2rem;
+      border-radius: 12px;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.5rem;
+      border-radius: 12px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-logo i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: translateY(-2px);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-green);
+    }
+
+    /* Access Denied */
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+    }
+
+    .access-denied-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .access-denied-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .back-to-login-btn {
+      padding: 0.625rem 1.5rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+    }
+
+    /* FAQ Specific Styles */
+    .faq-header {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, #1D4ED8 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .faq-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background-size: cover;
+    }
+
+    .faq-header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .faq-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .faq-subtitle {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .search-container {
+      max-width: 600px;
+      margin: 2rem auto 0;
+      position: relative;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      padding-left: 3rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 50px;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-blue);
+    }
+
+    .categories-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 2rem 0;
+      justify-content: center;
+    }
+
+    .category-tab {
+      padding: 0.5rem 1rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .category-tab:hover {
+      background: var(--bg-tertiary);
+      transform: translateY(-1px);
+    }
+
+    .category-tab.active {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+
+    .category-counter {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 0.125rem 0.5rem;
+      font-size: 0.6875rem;
+      font-weight: 600;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .faq-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .faq-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .faq-question {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .faq-question i {
+      color: var(--accent-blue);
+      margin-top: 0.125rem;
+      flex-shrink: 0;
+    }
+
+    .faq-answer {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-left: 1.75rem;
+    }
+
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 48px;
+      height: 48px;
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: var(--transition);
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .back-to-top:hover {
+      background: #2563EB;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border-color);
+      margin-top: 3rem;
+    }
+
+    .footer-logo {
+      color: var(--accent-blue);
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .copyright {
+      font-size: 0.75rem;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 0 1rem;
+      }
+
+      .main-content {
+        padding: 1.5rem 1rem;
+        margin-top: 60px;
+      }
+
+      .faq-header {
+        padding: 1.5rem;
+      }
+
+      .faq-title {
+        font-size: 1.5rem;
+      }
+
+      .faq-subtitle {
+        font-size: 0.875rem;
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .categories-tabs {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+      }
+
+      .category-tab {
+        flex-shrink: 0;
+      }
+
+      .sidebar {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .faq-card {
+        padding: 1.25rem;
+      }
+
+      .search-box {
+        padding: 0.875rem 1.25rem;
+        padding-left: 2.75rem;
+      }
+
+      .search-icon {
+        left: 1rem;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-tertiary);
+    }
+  </style>
 </head>
-<body>
-    <canvas id="stars-canvas"></canvas>
-    <button id="logout-btn" class="hidden">Вийти</button>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <div class="menu-category">Скрипти</div>
-            <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
-            <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
-            <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
-            <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
-            <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
-            <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
-            <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
-            <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
-            <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
-            <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
-            <div class="menu-category">Інформація</div>
-            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
-            <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
-            <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
-            <a href="commands.html" class="menu-item active"><i class="fas fa-terminal"></i> Команди адміністратора</a>
-            <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
-            <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
-            <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
-            <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
-            <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
-            <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
-            <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+<body data-theme="dark">
+  <canvas id="logos-canvas"></canvas>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="sidebar-title">Адмін Панель</div>
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
+      <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+      <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
+      <a href="script2.0.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 2.0</a>
+      
+      <div class="menu-category">Інформація</div>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item active"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item"><i class="fas fa-robot"></i> BinderBot</a>
+      
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
+    </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar hidden" id="top-bar">
+    <div class="top-bar-left">
+      <button class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="top-bar-title" id="top-bar-title">Питання та відповіді</div>
+    </div>
+    <div class="top-bar-right">
+      <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="logout-btn" id="logout-btn">Вийти</button>
+    </div>
+  </div>
+
+  <!-- Access Denied Section -->
+  <div id="access-denied-section">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">🚫</div>
+      <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+      <p class="access-denied-message">
+        Ваш обліковий запис не має доступу до цієї системи.<br>
+        Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+      </p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
+
+  <!-- Login Section -->
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-question-circle"></i>
+      </div>
+      <h1 class="login-title">Питання та відповіді</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content hidden" id="main-content">
+    <!-- FAQ Header -->
+    <div class="faq-header">
+      <div class="faq-header-content">
+        <h1 class="faq-title">
+          <i class="fas fa-book"></i>
+          Адміністративний посібник
+        </h1>
+        <p class="faq-subtitle">
+          Перелік правил та відповідей на питання для адміністрації сервера Ukraine GTA 5 RolePlay
+        </p>
+        <div class="search-container">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-box" id="search-input" placeholder="Пошук питання або відповіді...">
         </div>
+      </div>
     </div>
-    <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
-    <div id="access-denied-section">
-        <div class="access-denied-content">
-            <div class="access-denied-icon">🚫</div>
-            <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
-            <p class="access-denied-message">
-                Ваш обліковий запис не має доступу до цієї системи.<br>
-                Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
-            </p>
-            <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
-        </div>
+
+    <!-- Categories -->
+    <div class="categories-tabs" id="categories-tabs">
+      <!-- Categories will be populated by JavaScript -->
     </div>
-    <div id="login-section">
-        <div class="login-container">
-            <div class="login-logo">
-                <i class="fas fa-book" style="font-size: 2.5rem; color: var(--text-primary);"></i>
-            </div>
-            <h1 class="login-title">Адміністративний посібник</h1>
-            <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
-            <div class="telegram-button-wrapper">
-                <script async src="https://telegram.org/js/telegram-widget.js?7"
-                        data-telegram-login="ticket_tracker_UG_bot"
-                        data-size="large"
-                        data-userpic="false"
-                        data-request-access="write"
-                        data-onauth="onTelegramAuth(user)">
-                </script>
-            </div>
-            <div class="login-footer">
-                Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
-            </div>
-        </div>
+
+    <!-- FAQ Grid -->
+    <div class="faq-grid" id="faq-container">
+      <!-- FAQ items will be populated by JavaScript -->
     </div>
-    <div id="content" class="container hidden">
-        <header>
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-book"></i>
-                    <h1>Адміністративний посібник Ukraine GTA 5</h1>
-                </div>
-                <p class="subtitle">Перелік правил та відповідей на питання для адміністрації сервера Ukraine GTA 5 RolePlay.</p>
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-box" id="search-input" placeholder="Пошук питання або відповіді...">
-                </div>
-            </div>
-        </header>
-        <div class="commands-container">
-            <div class="level-card level-faq faq-wide">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-question-circle"></i>
-                    </div>
-                    <h2 class="card-title">Питання та Відповіді</h2>
-                </div>
-                <div class="card-content">
-                    <div class="categories-tabs">
-                        <div class="category-tab category-general active" data-category="all">
-                            Усі питання <span class="category-counter" id="count-all">353</span>
-                        </div>
-                        <div class="category-tab category-general" data-category="general">
-                            Загальні <span class="category-counter" id="count-general">8</span>
-                        </div>
-                        <div class="category-tab category-rules" data-category="rules">
-                            Правила <span class="category-counter" id="count-rules">35</span>
-                        </div>
-                        <div class="category-tab category-admin" data-category="admin">
-                            Адміністрація <span class="category-counter" id="count-admin">37</span>
-                        </div>
-                        <div class="category-tab category-fractions" data-category="fractions">
-                            Фракції <span class="category-counter" id="count-fractions">21</span>
-                        </div>
-                        <div class="category-tab category-supply" data-category="supply">
-                            Постачання <span class="category-counter" id="count-supply">17</span>
-                        </div>
-                        <div class="category-tab category-gps" data-category="gps">
-                            GPS <span class="category-counter" id="count-gps">1</span>
-                        </div>
-                        <div class="category-tab category-map" data-category="map">
-                            Карта <span class="category-counter" id="count-map">4</span>
-                        </div>
-                        <div class="category-tab category-licenses" data-category="licenses">
-                            Ліцензії <span class="category-counter" id="count-licenses">2</span>
-                        </div>
-                        <div class="category-tab category-work" data-category="work">
-                            Робота <span class="category-counter" id="count-work">7</span>
-                        </div>
-                        <div class="category-tab category-vehicles" data-category="vehicles">
-                            Транспорт <span class="category-counter" id="count-vehicles">8</span>
-                        </div>
-                        <div class="category-tab category-items" data-category="items">
-                            Предмети <span class="category-counter" id="count-items">6</span>
-                        </div>
-                        <div class="category-tab category-money" data-category="money">
-                            Гроші <span class="category-counter" id="count-money">2</span>
-                        </div>
-                        <div class="category-tab category-penalties" data-category="penalties">
-                            Штрафи <span class="category-counter" id="count-penalties">1</span>
-                        </div>
-                        <div class="category-tab category-health" data-category="health">
-                            Здоров’я <span class="category-counter" id="count-health">3</span>
-                        </div>
-                        <div class="category-tab category-quests" data-category="quests">
-                            Квести <span class="category-counter" id="count-quests">2</span>
-                        </div>
-                        <div class="category-tab category-communication" data-category="communication">
-                            Комунікація <span class="category-counter" id="count-communication">2</span>
-                        </div>
-                        <div class="category-tab category-security" data-category="security">
-                            Безпека <span class="category-counter" id="count-security">1</span>
-                        </div>
-                        <div class="category-tab category-settings" data-category="settings">
-                            Налаштування <span class="category-counter" id="count-settings">2</span>
-                        </div>
-                        <div class="category-tab category-fishing" data-category="fishing">
-                            Риболовля <span class="category-counter" id="count-fishing">4</span>
-                        </div>
-                        <div class="category-tab category-character" data-category="character">
-                            Персонаж <span class="category-counter" id="count-character">4</span>
-                        </div>
-                        <div class="category-tab category-properties" data-category="properties">
-                            Нерухомість <span class="category-counter" id="count-properties">3</span>
-                        </div>
-                        <div class="category-tab category-market" data-category="market">
-                            Маркетплейс <span class="category-counter" id="count-market">3</span>
-                        </div>
-                        <div class="category-tab category-animations" data-category="animations">
-                            Анімації <span class="category-counter" id="count-animations">2</span>
-                        </div>
-                        <div class="category-tab category-combat" data-category="combat">
-                            Бій <span class="category-counter" id="count-combat">2</span>
-                        </div>
-                    </div>
-                    <div class="faq-grid" id="faq-container"></div>
-                </div>
-            </div>
-        </div>
-        <footer>
-            <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
-            <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-        </footer>
-    </div>
-    <div class="back-to-top">
-        <i class="fas fa-arrow-up"></i>
-    </div>
+
+    <footer>
+      <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
+      <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+    </footer>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="back-to-top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
      <script>
         // Falling Logos Animation
         const canvas = document.getElementById('stars-canvas');
