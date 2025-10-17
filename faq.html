@@ -6,7 +6,6 @@
     <title>Адміністративний посібник | Ukraine GTA 5</title>
     <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
    <style>
     :root {
@@ -21,6 +20,8 @@
       --accent-green: #10B981;
       --accent-yellow: #F59E0B;
       --accent-red: #EF4444;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
       --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -410,12 +411,12 @@
       background: #DC2626;
     }
 
-    /* FAQ Specific Styles */
+    /* <CHANGE> Improved FAQ Header with better gradient and layout */
     .faq-header {
       background: linear-gradient(135deg, var(--accent-blue) 0%, #1D4ED8 100%);
       border: none;
       border-radius: 12px;
-      padding: 2rem;
+      padding: 2.5rem 2rem;
       margin-bottom: 2rem;
       text-align: center;
       position: relative;
@@ -439,7 +440,7 @@
     }
 
     .faq-title {
-      font-size: 1.75rem;
+      font-size: 2rem;
       font-weight: 700;
       color: white;
       margin-bottom: 0.75rem;
@@ -451,34 +452,40 @@
 
     .faq-subtitle {
       font-size: 1rem;
-      color: rgba(255, 255, 255, 0.9);
-      max-width: 600px;
-      margin: 0 auto;
+      color: rgba(255, 255, 255, 0.95);
+      max-width: 700px;
+      margin: 0 auto 2rem;
       line-height: 1.6;
     }
 
+    /* <CHANGE> Enhanced search container with better styling */
     .search-container {
       max-width: 600px;
-      margin: 2rem auto 0;
+      margin: 0 auto;
       position: relative;
     }
 
     .search-box {
       width: 100%;
-      padding: 1rem 1.5rem;
-      padding-left: 3rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      padding: 1rem 1.5rem 1rem 3.5rem;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 50px;
-      color: var(--text-primary);
-      font-size: 0.875rem;
+      color: #111827;
+      font-size: 0.9375rem;
       transition: var(--transition);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
 
     .search-box:focus {
       outline: none;
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      border-color: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      background: white;
+    }
+
+    .search-box::placeholder {
+      color: #6B7280;
     }
 
     .search-icon {
@@ -487,24 +494,26 @@
       top: 50%;
       transform: translateY(-50%);
       color: var(--accent-blue);
+      font-size: 1.125rem;
     }
 
+    /* <CHANGE> Improved category tabs with icons and better colors */
     .categories-tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.75rem;
       margin: 2rem 0;
       justify-content: center;
     }
 
     .category-tab {
-      padding: 0.5rem 1rem;
+      padding: 0.625rem 1.25rem;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
-      border-radius: 20px;
+      border-radius: 25px;
       color: var(--text-secondary);
-      font-size: 0.75rem;
-      font-weight: 500;
+      font-size: 0.8125rem;
+      font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       display: flex;
@@ -514,27 +523,56 @@
 
     .category-tab:hover {
       background: var(--bg-tertiary);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .category-tab.active {
       background: var(--accent-blue);
       color: white;
       border-color: var(--accent-blue);
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+    }
+
+    .category-tab[data-category="admin"].active {
+      background: var(--accent-purple);
+      border-color: var(--accent-purple);
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+    }
+
+    .category-tab[data-category="rules"].active {
+      background: var(--accent-red);
+      border-color: var(--accent-red);
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+    }
+
+    .category-tab[data-category="fractions"].active {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .category-tab[data-category="supply"].active {
+      background: var(--accent-yellow);
+      border-color: var(--accent-yellow);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
     }
 
     .category-counter {
       background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 0.125rem 0.5rem;
       font-size: 0.6875rem;
-      font-weight: 600;
+      font-weight: 700;
+      min-width: 24px;
+      text-align: center;
     }
 
+    /* <CHANGE> Completely redesigned FAQ grid with better card layout */
     .faq-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.25rem;
       margin-bottom: 2rem;
     }
 
@@ -544,36 +582,170 @@
       border-radius: 12px;
       padding: 1.5rem;
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .faq-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent-blue);
+      opacity: 0;
+      transition: var(--transition);
     }
 
     .faq-card:hover {
       border-color: var(--accent-blue);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(59, 130, 246, 0.2);
+    }
+
+    .faq-card:hover::before {
+      opacity: 1;
+    }
+
+    .faq-card[data-category="admin"]::before {
+      background: var(--accent-purple);
+    }
+
+    .faq-card[data-category="admin"]:hover {
+      border-color: var(--accent-purple);
+      box-shadow: 0 12px 32px rgba(139, 92, 246, 0.2);
+    }
+
+    .faq-card[data-category="rules"]::before {
+      background: var(--accent-red);
+    }
+
+    .faq-card[data-category="rules"]:hover {
+      border-color: var(--accent-red);
+      box-shadow: 0 12px 32px rgba(239, 68, 68, 0.2);
+    }
+
+    .faq-card[data-category="fractions"]::before {
+      background: var(--accent-green);
+    }
+
+    .faq-card[data-category="fractions"]:hover {
+      border-color: var(--accent-green);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.2);
+    }
+
+    .faq-card[data-category="supply"]::before {
+      background: var(--accent-yellow);
+    }
+
+    .faq-card[data-category="supply"]:hover {
+      border-color: var(--accent-yellow);
+      box-shadow: 0 12px 32px rgba(245, 158, 11, 0.2);
     }
 
     .faq-question {
       font-size: 1rem;
       font-weight: 600;
       color: var(--text-primary);
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.875rem;
       display: flex;
       align-items: flex-start;
       gap: 0.75rem;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
     .faq-question i {
       color: var(--accent-blue);
-      margin-top: 0.125rem;
+      margin-top: 0.25rem;
       flex-shrink: 0;
+      font-size: 1.125rem;
+    }
+
+    .faq-card[data-category="admin"] .faq-question i {
+      color: var(--accent-purple);
+    }
+
+    .faq-card[data-category="rules"] .faq-question i {
+      color: var(--accent-red);
+    }
+
+    .faq-card[data-category="fractions"] .faq-question i {
+      color: var(--accent-green);
+    }
+
+    .faq-card[data-category="supply"] .faq-question i {
+      color: var(--accent-yellow);
     }
 
     .faq-answer {
       font-size: 0.875rem;
       color: var(--text-secondary);
-      line-height: 1.6;
-      margin-left: 1.75rem;
+      line-height: 1.7;
+      padding-left: 2rem;
+    }
+
+    /* <CHANGE> Added category badge to cards */
+    .faq-category-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      background: var(--bg-tertiary);
+      color: var(--text-tertiary);
+    }
+
+    .faq-card[data-category="admin"] .faq-category-badge {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+    }
+
+    .faq-card[data-category="rules"] .faq-category-badge {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--accent-red);
+    }
+
+    .faq-card[data-category="fractions"] .faq-category-badge {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+    }
+
+    .faq-card[data-category="supply"] .faq-category-badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-yellow);
+    }
+
+    .faq-card[data-category="general"] .faq-category-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent-blue);
+    }
+
+    /* <CHANGE> Added no results message */
+    .no-results {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .no-results i {
+      font-size: 4rem;
+      color: var(--text-tertiary);
+      margin-bottom: 1rem;
+    }
+
+    .no-results h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .no-results p {
+      font-size: 0.875rem;
     }
 
     .back-to-top {
@@ -594,7 +766,7 @@
       transform: translateY(20px);
       transition: var(--transition);
       z-index: 100;
-      box-shadow: var(--shadow);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
     }
 
     .back-to-top.visible {
@@ -604,7 +776,8 @@
 
     .back-to-top:hover {
       background: #2563EB;
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(59, 130, 246, 0.5);
     }
 
     footer {
@@ -643,6 +816,19 @@
       }
     }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .faq-card {
+      animation: fadeIn 0.4s ease-out;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .top-bar {
@@ -655,7 +841,7 @@
       }
 
       .faq-header {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
       }
 
       .faq-title {
@@ -684,6 +870,13 @@
       .sidebar {
         width: 280px;
       }
+
+      .back-to-top {
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 44px;
+        height: 44px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -692,12 +885,21 @@
       }
 
       .search-box {
-        padding: 0.875rem 1.25rem;
-        padding-left: 2.75rem;
+        padding: 0.875rem 1.25rem 0.875rem 3rem;
+        font-size: 0.875rem;
       }
 
       .search-icon {
         left: 1rem;
+      }
+
+      .faq-question {
+        font-size: 0.9375rem;
+      }
+
+      .faq-answer {
+        font-size: 0.8125rem;
+        padding-left: 1.75rem;
       }
     }
 
@@ -819,27 +1021,63 @@
     <div class="faq-header">
       <div class="faq-header-content">
         <h1 class="faq-title">
-          <i class="fas fa-book"></i>
+          <i class="fas fa-book-open"></i>
           Адміністративний посібник
         </h1>
         <p class="faq-subtitle">
-          Перелік правил та відповідей на питання для адміністрації сервера Ukraine GTA 5 RolePlay
+          Повний перелік правил, відповідей на питання та інструкцій для адміністрації сервера Ukraine GTA 5 RolePlay
         </p>
         <div class="search-container">
           <i class="fas fa-search search-icon"></i>
-          <input type="text" class="search-box" id="search-input" placeholder="Пошук питання або відповіді...">
+          <input type="text" class="search-box" id="search-input" placeholder="Знайти питання або відповідь...">
         </div>
       </div>
     </div>
 
     <!-- Categories -->
     <div class="categories-tabs" id="categories-tabs">
-      <!-- Categories will be populated by JavaScript -->
+      <button class="category-tab active" data-category="all">
+        <i class="fas fa-th"></i>
+        Всі
+        <span class="category-counter" id="count-all">0</span>
+      </button>
+      <button class="category-tab" data-category="general">
+        <i class="fas fa-info-circle"></i>
+        Загальні
+        <span class="category-counter" id="count-general">0</span>
+      </button>
+      <button class="category-tab" data-category="admin">
+        <i class="fas fa-user-shield"></i>
+        Адміністрація
+        <span class="category-counter" id="count-admin">0</span>
+      </button>
+      <button class="category-tab" data-category="rules">
+        <i class="fas fa-gavel"></i>
+        Правила
+        <span class="category-counter" id="count-rules">0</span>
+      </button>
+      <button class="category-tab" data-category="fractions">
+        <i class="fas fa-users"></i>
+        Фракції
+        <span class="category-counter" id="count-fractions">0</span>
+      </button>
+      <button class="category-tab" data-category="supply">
+        <i class="fas fa-truck"></i>
+        Постачання
+        <span class="category-counter" id="count-supply">0</span>
+      </button>
     </div>
 
     <!-- FAQ Grid -->
     <div class="faq-grid" id="faq-container">
       <!-- FAQ items will be populated by JavaScript -->
+    </div>
+
+    <!-- No Results Message -->
+    <div class="no-results hidden" id="no-results">
+      <i class="fas fa-search"></i>
+      <h3>Нічого не знайдено</h3>
+      <p>Спробуйте змінити пошуковий запит або оберіть іншу категорію</p>
     </div>
 
     <footer>
@@ -852,588 +1090,417 @@
   <button class="back-to-top" id="back-to-top">
     <i class="fas fa-arrow-up"></i>
   </button>
-     <script>
-        // Falling Logos Animation
-        const canvas = document.getElementById('stars-canvas');
-        const ctx = canvas.getContext('2d');
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+
+  <script>
+    // Falling Logos Animation
+    const canvas = document.getElementById('logos-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const logos = [];
+    const numLogos = 30;
+    const logoImage = new Image();
+    logoImage.src = '1-17ffebdc.ico';
+    
+    class Logo {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 20 + 15;
+        this.speed = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.3 + 0.2;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 2 - 1;
+        this.wind = Math.random() * 0.5 - 0.25;
+      }
+      
+      update() {
+        this.y += this.speed;
+        this.x += this.wind;
+        this.rotation += this.rotationSpeed;
+        
+        if (this.y > canvas.height || this.x < 0 || this.x > canvas.width) {
+          this.reset();
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        const logos = [];
-        const numLogos = 30;
-        const logoImage = new Image();
-        logoImage.src = '1-17ffebdc.ico';
-        class Logo {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 20 + 15;
-                this.speed = Math.random() * 3 + 1;
-                this.opacity = Math.random() * 0.3 + 0.2;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = Math.random() * 2 - 1;
-                this.wind = Math.random() * 0.5 - 0.25;
-            }
-            update() {
-                this.y += this.speed;
-                this.x += this.wind;
-                this.rotation += this.rotationSpeed;
-                if (this.y > canvas.height || this.x < 0 || this.x > canvas.width) {
-                    this.reset();
-                }
-            }
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation * Math.PI / 180);
-                ctx.globalAlpha = this.opacity;
-                ctx.drawImage(logoImage, -this.size / 2, -this.size / 2, this.size, this.size);
-                ctx.restore();
-            }
-        }
-        logoImage.onload = function() {
-            for (let i = 0; i < numLogos; i++) {
-                logos.push(new Logo());
-            }
-            animateLogos();
+      }
+      
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation * Math.PI / 180);
+        ctx.globalAlpha = this.opacity;
+        ctx.drawImage(logoImage, -this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+    
+    logoImage.onload = function() {
+      for (let i = 0; i < numLogos; i++) {
+        logos.push(new Logo());
+      }
+      animateLogos();
+    };
+    
+    function animateLogos() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
+      });
+      requestAnimationFrame(animateLogos);
+    }
+
+    // <CHANGE> Updated FAQ data with all categories properly mapped
+    const faqData = [
+      { category: "general", question: "Як відкрити GPS?", answer: "Щоб відкрити та налаштувати GPS, Вам необхідно купити мобільний телефон в 24/7, дістати його стрілкою вверх та натиснути на іконку 'Карта' знизу справа на телефоні." },
+      { category: "general", question: "Де можна отримати водійське посвідчення?", answer: "Дістати телефон стрілкою вверх та натиснути на іконку 'Карта' знизу справа на телефоні. Після чого зайти в розділ Загальні та знайти Автошкола." },
+      { category: "general", question: "Де знайти Арену?", answer: "Дістати телефон стрілкою вверх та натиснути на іконку 'Карта' знизу справа на телефоні. Після чого зайти в розділ Цікаві місця та знайти Арена." },
+      { category: "general", question: "Як отримати ліцензію на зброю?", answer: "Потрібно звернутися до працівників правоохоронних органів, а саме BCSD або LSPD. Також вам потрібно знати закони про зброю, пройти іспит практичний та перебувати в штаті мінімум 5 днів. Графік видачі: 12:00 - 14:00, 17:00 - 19:00, 22:00 - 00:00." },
+      { category: "general", question: "У мене закінчився бензин, чи можете заправити?", answer: "Адміністрація не втручається в RP-процеси. Вам потрібно самостійно дістатися заправки або замовити таксі. Можна придбати каністру в магазині 24/7, заправити її на АЗС та використати для заправки авто." },
+      { category: "general", question: "Як працювати на Фермі?", answer: "Для роботи на Фермі потрібно влаштуватися на роботу у NPC на локації. Більш детально можете дізнатися на Сайті гри в розділі WIKI." },
+      { category: "general", question: "Можете полагодити авто?", answer: "Адміністрація гри не втручається в RP-процес. Полагодити ваше авто можете на СТО." },
+      { category: "admin", question: "Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?", answer: "Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом." },
+      { category: "admin", question: "Скільки днів адміністратор зобов'язаний зберігати докази після видачі покарання?", answer: "7 днів." },
+      { category: "admin", question: "Що буде, якщо адміністратор використає F2 без інвізу?", answer: "Попередження або догана." },
+      { category: "admin", question: "Чи може адміністратор змінити або скасувати покарання, видане іншим адміном?", answer: "Ні, це заборонено." },
+      { category: "admin", question: "Скільки усних попереджень прирівнюється до одного письмового?", answer: "Два." },
+      { category: "rules", question: "Скільки скарга має бути актуальною, щоб її розглянули?", answer: "Не більше 7 днів з моменту запису відео/скріншота." },
+      { category: "rules", question: "Чи можна подавати скаргу, використовуючи відео від третьої особи?", answer: "Так, лише якщо там зафіксовані критичні порушення." },
+      { category: "rules", question: "Яка максимальна тривалість відео в скарзі без тайм-кодів?", answer: "2 хвилини." },
+      { category: "rules", question: "Чи дозволено гравцям відповідати порушенням на порушення?", answer: "Ні." },
+      { category: "rules", question: "Яке покарання за рекламу сторонніх проєктів у чаті?", answer: "Ban 1–30 днів або Permban." },
+      { category: "rules", question: "Що таке NonRP Drive?", answer: "Нереалістичне водіння (наприклад, по горах на спорткарі)." },
+      { category: "fractions", question: "Чи можна зайти на сервер і одразу бути у фракції?", answer: "Ні, потрібно пройти співбесіду, або подати електронну заявку." },
+      { category: "fractions", question: "Як влаштуватись у Фракцію?", answer: "Вам потрібно відписати лідеру або заступнику лідера в дискорді. Або ж приїхати на їхній титул, попросити вас прийняти і пройти усний обдзвон." },
+      { category: "fractions", question: "Як звільнитись з фракції?", answer: "Наразі з фракції звільнити може тільки лідер або вищий склад, котрому наданий такий функціонал." },
+      { category: "supply", question: "Яке покарання за перехоплення матеріалів із постачання поза правилами?", answer: "- Бали лідеру / Demorgan." },
+      { category: "supply", question: "Чи дозволено брати участь у постачанні без бодікамери?", answer: "Ні, відео обов'язкове" },
+      { category: "supply", question: "Як довго зберігається відео з ловлі майна?", answer: "3 доби" },
+      { category: "supply", question: "Скільки учасників потрібно для рейду на мафію?", answer: "25 осіб (мінімум 5 з FIB)" },
+      { category: "supply", question: "Скільки матеріалів мінімум має бути в постачанні?", answer: "30 000" }
+    ];
+
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
+    const allowedAdmins = ['@laker_77', '@c10mm', '@noxx_uagtaV', '@zhdanovrostyslav'];
+    const superAdmins = ['@laker_77', '@B_m_b1', '@c10mm'];
+
+    // <CHANGE> Added category name mapping for badges
+    const categoryNames = {
+      all: 'Всі',
+      general: 'Загальні',
+      admin: 'Адміністрація',
+      rules: 'Правила',
+      fractions: 'Фракції',
+      supply: 'Постачання'
+    };
+
+    // Menu toggle
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    document.addEventListener('click', (event) => {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('menu-toggle');
+      if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+
+    // Theme toggle
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const body = document.body;
+      const themeToggle = document.getElementById('theme-toggle');
+      const currentTheme = body.getAttribute('data-theme');
+      
+      if (currentTheme === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+      }
+    });
+
+    async function getSheetData(sheetName) {
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
+    }
+
+    function showAccessDenied() {
+      document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    async function onTelegramAuth(user) {
+      if (!user || !user.username) {
+        showAccessDenied();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
         };
-        function animateLogos() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            logos.forEach(logo => {
-                logo.update();
-                logo.draw();
-            });
-            requestAnimationFrame(animateLogos);
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        await showContent(userData);
+        return;
+      }
+
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          showAccessDenied();
+          return;
         }
-        // FAQ Data
-        const faqData = [
-    { "category": "gps", "question": "Як відкрити GPS?", "answer": "Щоб відкрити та налаштувати GPS, Вам необхідно купити мобільний телефон в 24/7, дістати його стрілкою вверх та натиснути на іконку 'Карта' знизу справа на телефоні." },
-    { "category": "map", "question": "Де можна отримати водійське посвідчення?", "answer": "Дістати телефон стрілкою вверх та натиснути на іконку 'Карта' знизу справа на телефоні. Після чого зайти в розділ Загальні та знайти Автошкола." },
-    { "category": "map", "question": "Де знайти Арену?", "answer": "Дістати телефон стрілкою вверх та натиснути на іконку 'Карта' знизу справа на телефоні. Після чого зайти в розділ Цікаві місця та знайти Арена." },
-    { "category": "licenses", "question": "Як отримати ліцензію на зброю?", "answer": "Потрібно звернутися до працівників правоохоронних органів, а саме BCSD або LSPD. Також вам потрібно знати закони про зброю, пройти іспит практичний та перебувати в штаті мінімум 5 днів. Графік видачі: 12:00 - 14:00, 17:00 - 19:00, 22:00 - 00:00." },
-    { "category": "general", "question": "У мене закінчився бензин, чи можете заправити?", "answer": "Адміністрація не втручається в RP-процеси. Вам потрібно самостійно дістатися заправки або замовити таксі. Можна придбати каністру в магазині 24/7, заправити її на АЗС та використати для заправки авто." },
-    { "category": "work", "question": "Як працювати на Фермі?", "answer": "Для роботи на Фермі потрібно влаштуватися на роботу у NPC на локації. Більш детально можете дізнатися на Сайті гри в розділі WIKI." },
-    { "category": "vehicles", "question": "Можете полагодити авто?", "answer": "Адміністрація гри не втручається в RP-процес. Полагодити ваше авто можете на СТО." },
-    { "category": "general", "question": "Як прокрутити безкоштовну рулетку?", "answer": "Перейдіть на офіційний сайт - ukraine-gta5.com.ua - авторизуйтесь через 'Особистий кабінет' - на сторінці 'Загальна інформація' натисніть на кнопку 'Рулетка'." },
-    { "category": "items", "question": "Де купити Кока-Колу?", "answer": "Кока-Колу, а також бургер, піццу тощо ви можете придбати в 'закусочній' неподалік Казино." },
-    { "category": "general", "question": "Де крутити рулетку за пей-дей?", "answer": "Рулетку Ви можете прокрутити на офіційному сайті ukraine-gta5.com.ua, в особистому кабінеті." },
-    { "category": "vehicles", "question": "Мені з рулетки випала машина, де її знайти?", "answer": "TAB >> Мій транспорт >> Обираєте автомобіль >> Пошук за GPS." },
-    { "category": "factions", "question": "Чому я не можу взяти завдання від NPC у банді або мафії?", "answer": "Для того щоб виконувати злочинні дії (угонка, закладки, сутенерка) у Вас повинен бути мінімум 4 ранг у фракції." },
-    { "category": "money", "question": "Як заробити гроші на сервері?", "answer": "Ви можете влаштуватися на роботу (таксі, снігоприбиральник, фермер, лісоруб), рибачити або виконувати квести." },
-    { "category": "admin", "question": "Як стати адміністратором?", "answer": "Спершу активно грайте, дотримуйтесь правил та допомагайте новачкам. Потім подайте заявку під час відкритого набору на адміністрацію." },
-    { "category": "admin", "question": "Що робити, якщо зіткнувся з порушником правил?", "answer": "Зробіть скріншот або відео порушення та подайте скаргу через форум сервера." },
-    { "category": "rules", "question": "Що таке Green Zone, Зелена зона, ЗЗ?", "answer": "Це мирні зони (наприклад, центральна площа чи лікарня), де заборонені будь-які конфлікти або бойові дії." },
-    { "category": "vehicles", "question": "Як зробити дублікат ключів від свого транспортного засобу?", "answer": "Відкрийте мапу натиснувши клавішу 'ESC' - знайдіть мітку 'Послуги держави' - увійшовши в приміщення Мерії підійдіть до синьої сітки та виберіть потрібну вам послугу." },
-    { "category": "vehicles", "question": "Загубив ключі від свого транспортного засобу, що робити?", "answer": "Відкрийте мапу натиснувши клавішу 'ESC' - знайдіть мітку 'Послуги держави' - увійшовши в приміщення Мерії підійдіть до синьої мітки та виберіть потрібну вам послугу." },
-    { "category": "penalties", "question": "Як сплатити штраф?", "answer": "Відкрийте мапу натиснувши клавішу 'ESC' - знайдіть мітку 'Послуги держави' - увійшовши в приміщення Мерії підійдіть до синьої мітки та виберіть потрібну вам послугу." },
-    { "category": "health", "question": "Полікуйте мене.", "answer": "Ви можете лікуватися в лікарні чи в магазині 24/7 придбати аптечку." },
-    { "category": "quests", "question": "Як подивитись активний квест?", "answer": "Натисніть клавішу 'F3', після чого знизу відобразиться активний квест для виконання." },
-    { "category": "communication", "question": "Як написати оголошення?", "answer": "Вам знадобиться телефон. Відкрийте його, зайдіть у розділ 'News', оберіть відповідну категорію та напишіть своє оголошення." },
-    { "category": "licenses", "question": "Які є види ліцензій?", "answer": "Ліцензія на зброю, ліцензія військового. Ліцензії транспортних засобів: 'А' - мототранспорт, 'B' - легкові автомобілі, 'D' - автобуси, 'С' - вантажний автомобіль, 'AIR' - повітряний транспорт, 'BOAT' - водний транспорт." },
-    { "category": "general", "question": "Який офіційний сайт, форум, discord проекту та медіа платформи?", "answer": "Офіційний сайт та форум проекту - ukraine-gta5.com.ua. Discord - discord.com/invite/ukraine-gta-5. Instagram - instagram.com/ukraine_gta_5. Youtube - youtube.com/@ukrainegta. Tiktok - tiktok.com/@ukraine.gta.5. Telegram - t.me/ukraine_gta_5." },
-    { "category": "security", "question": "Навіщо підключати 2 факторну аутентифікацію?", "answer": "Двофакторна аутентифікація (2FA) підвищує безпеку, вимагаючи додаткове підтвердження після пароля. Вона захищає ваш обліковий запис від зламу, фішингу та несанкціонованого доступу." },
-    { "category": "settings", "question": "Як збільшити / зменшити ігровий чат?", "answer": "Натисніть клавішу 'М' - перейдіть у вкладку 'Налаштування' - Тут ви можете налаштувати розмір чату, місце спавну, час у чаті і т.д." },
-    { "category": "fishing", "question": "Де придбати вудочки та приманки для риболовлі?", "answer": "Придбати снасті можна у спеціалізованих 'Риболовних магазинах'. Знайти риболовний магазин можна на мапі, мітка білий гачок 'Риболовний магазин'." },
-    { "category": "health", "question": "Чи можна самореанімуватись?", "answer": "Так, використайте набір для самореанімації або викличте лікарів." },
-    { "category": "quests", "question": "Чи обов’язково виконувати квести?", "answer": "Квести допомагають вам зрозуміти краще ігрові механіки та особливості серверу, можете виконати за бажанням, на ігровий процес вони не впливають." },
-    { "category": "factions", "question": "Як звільнитись з фракції?", "answer": "Наразі з фракції звільнити може тільки лідер або вищий склад, котрому наданий такий функціонал." },
-    { "category": "general", "question": "Не можу увійти на форум, що робити?", "answer": "Щоб увійти на форум, потрібно зареєструватись індивідуально. Рекомендуємо не використовувати один і той самий пароль." },
-    { "category": "admin", "question": "Мене за дмили (DM), що мені робити?", "answer": "Відпишіть, будь ласка, айді порушника. Якщо у вас є відеофіксація порушення, можете подати скаргу на гравця на нашому форумі, і гравець буде покараний." },
-    { "category": "character", "question": "Як змінити зовнішність персонажа?", "answer": "Зовнішність персонажа ви можете змінити, натиснувши - М - Магазин - Послуги." },
-    { "category": "fishing", "question": "Де знайти найкращі місця для риболовлі?", "answer": "Відкривши карту, ви можете побачити два червоні гачки з боків карти, там гарний улов, але на жаль нелегальний." },
-    { "category": "vehicles", "question": "Де можна продати свій транспорт в гос?", "answer": "На карті є автозвалище. Заїдьте в синій круг та натисніть 'Е'." },
-    { "category": "properties", "question": "Як збільшити парковочні місця?", "answer": "Ви можете отримати додаткові місця, купивши будинок або натиснувши М - Магазин - Послуги - Додаткове місце для паркування." },
-    { "category": "general", "question": "Що робити, якщо під час прокруту рулетки випав предмет/одяг/скат, але немає місця в інвентарі?", "answer": "Речі з рулетки випадають вам в інвентар, якщо у вас є вільне місце. Якщо немає, речі потрапляють на склад пошти. Відкриваєте карту - по центру буде синій гараж - Пошта. Заходьте усередину і, натиснувши Е, забираєте предмети." },
-    { "category": "factions", "question": "Як влаштуватись у Фракцію?", "answer": "Вам потрібно відписати лідеру або заступнику лідера в дискорді. Або ж приїхати на їхній титул, попросити вас прийняти і пройти усний обдзвон." },
-    { "category": "map", "question": "Де знайти казино в грі?", "answer": "Відкрийте карту - знайдіть білий алмаз (казино) або GPS - цікаві місця - Казино." },
-    { "category": "properties", "question": "Якщо мене заселить друг в свою квартиру, чи додаються додаткові слоти для авто?", "answer": "Так, з'явиться одне паркомісце." },
-    { "category": "rules", "question": "Як уникнути бану на сервері?", "answer": "Не порушувати правила сервера, які ви можете прочитати на нашому форумі: https://forum.ukraine-gta5.com.ua." },
-    { "category": "items", "question": "Де знайти бронежилет?", "answer": "Ви можете його купити в магазині зброї або на маркетплейсі (в його Dark версії)." },
-    { "category": "rules", "question": "Що робити, якщо в грі мене обманули?", "answer": "При обміні ви повинні робити відеофіксацію, щоб у крайньому випадку подати скаргу на людину і повернути вкрадені речі." },
-    { "category": "character", "question": "Як прокачати навички персонажа?", "answer": "Якщо ви багато працюєте на певній роботі, навичка буде зростати." },
-    { "category": "communication", "question": "Як потиснути руку?", "answer": "Вам потрібно підійти до будь-якого гравця, натиснути G - зверху обрати 'Познайомитись'." },
-    { "category": "inventory", "question": "Як зробити більше місця у інвентарі?", "answer": "Ви можете придбати сумку в магазині 24/7 або натиснути на М - Магазин - Товари." },
-    { "category": "settings", "question": "Як збільшити гучність і чутність гравців у грі?", "answer": "Вам потрібно натиснути ESC - Налаштування - Аудіо - Гучність звукових ефектів налаштуйте під себе." },
-    { "category": "map", "question": "Що таке гетто?", "answer": "Це червона зона, де гравці можуть проводити власні заходи, бої або просто відпочивати від гри." },
-    { "category": "properties", "question": "Як поставити авто в гараж?", "answer": "Біля дому є знак 'Р' — це гараж. Під'їдьте до нього та натисніть 'Е'." },
-    { "category": "general", "question": "Чи можу я отримати бонус за запрошення друзів на сервер?", "answer": "Так. Створіть промокод у меню персонажу (М - Промокод), скопіюйте його і надішліть друзям. Ви отримаєте нагороду за кожного гравця, який його використає." },
-    { "category": "general", "question": "Чому здоров'я персонажа постійно зменшується?", "answer": "На сервері працює система контролю голоду та спраги. Час від часу вашому персонажу необхідно їсти та пити." },
-    { "category": "vehicles", "question": "Як відремонтувати шини на авто?", "answer": "Відремонтувати шини можна на 'СТО'. Знайти СТО можна на мапі - ESC - мапа 'СТО' (металевий ключик)." },
-    { "category": "work", "question": "Як закінчити зміну у державній структурі?", "answer": "Прийдіть до NPC і натисніть 'Завершити'." },
-    { "category": "work", "question": "Що дають прокачані навички на роботі?", "answer": "Чим більше ви відпрацювали на певній роботі - тим більше ви отримуєте ігрового досвіду ХР, а також бонуси до заробітної плати. Також відкривається можливість обирати вищу посаду." },
-    { "category": "health", "question": "Як отримати медичну карту?", "answer": "Медичну карту може виписати лікар. Для цього вам потрібно вирушити до 'EMS'. Відкрийте телефон - знайдіть GPS - Організації - оберіть 'EMS Hospital'." },
-    { "category": "items", "question": "Як відкрити кейс, який в мене в інвентарі?", "answer": "Натисніть М - Магазин-Кейси - Оберіть кейс, який у Вас є - Відкрити кейс." },
-    { "category": "map", "question": "Як знайти скупника обладнання?", "answer": "Натисніть Esc, у вас відкриється Карта. На карті шукайте жовтий комп'ютер. Натисніть на нього, і вам буде писати 'Скупник Обладнання'." },
-    { "category": "market", "question": "Де можна знайти маркетплейс?", "answer": "Відкрийте планшет: TAB - Мій планшет - Маркетплейс." },
-    { "category": "vehicles", "question": "Як викликати Механіка?", "answer": "Відкрийте телефон, зайдіть у контакти, знайдіть 'Механік', натисніть на нього, напишіть повідомлення йому і надішліть. Очікуйте, поки до вас прибуде механік." },
-    { "category": "general", "question": "Як і де шукати скарби?", "answer": "Купіть лопату та металошукач. Відправляйтесь на пляж. Візьміть в руки металошукач та ходіть. Якщо неподалік скарб - з'явиться звук та коло. Візьміть лопату в руки та натисніть E, коли з'явиться підказка 'Викопати скарб'." },
-    { "category": "admin", "question": "Як написати у Репорт Адміністрації?", "answer": "Натисніть M, у вас відкривається Меню, тоді натисніть 'Репорт', опишіть свою проблему. Адміністрація зв'яжеться з вами." },
-    { "category": "vehicles", "question": "Де придбати ремкомплект?", "answer": "Відкрийте карту, знайдіть мітку СТО, підійдіть до NPC та купіть ремкомплект." },
-    { "category": "general", "question": "Де знайти донат-магазин?", "answer": "Натисніть M, у вас відкриється Меню, тоді натисніть Магазин, і там натисніть на Товари." },
-    { "category": "character", "question": "Як змінити нікнейм?", "answer": "Натисніть M, у вас відкриється Меню, тоді натисніть Магазин, і там будуть Послуги. Натисніть, і там буде 'Зміна Nick Name'." },
-    { "category": "work", "question": "Що мені потрібно, для того, щоб збирати гриби?", "answer": "Купіть мисливський ніж в магазині зброї та відправтесь на відповідну локацію." },
-    { "category": "character", "question": "Де можна змінити зовнішність Персонажа?", "answer": "Натисніть M, у вас відкриється Меню, тоді натисніть Магазин, там буде 'Послуги'. Натисніть, і там буде 'Зміна Зовнішності Персонажа'." },
-    { "category": "items", "question": "Де можна купити Зброю та Бронежилет?", "answer": "Зброю та бронежилет ви можете купити у магазині Зброї. Знайти магазин: натисніть Esc і шукайте чорний пістолет на карті." },
-    { "category": "work", "question": "На яких роботах я можу почати свій шлях?", "answer": "На перших рівнях Вам доступні такі роботи, як ферма, лісопилка, будівельник, збір сміття, хендімен." },
-    { "category": "items", "question": "Де я можу купити шоколадку та воду?", "answer": "Шоколадку та воду ви можете купити у Супермаркеті. Знайдіть на карті чорну корзину." },
-    { "category": "work", "question": "На якій роботі дає саме більше EX?", "answer": "Найбільше EX дає на роботі Лісопилка." },
-    { "category": "phone", "question": "Як відкрити телефон?", "answer": "Натисніть стрілку Вгору на клавіатурі, і у вас відкриється телефон." },
-    { "category": "general", "question": "Де я можу створити сім'ю?", "answer": "Для створення сім’ї потрібно приїхати до мерії, стати на мітку і вибрать 'Створення сім’ї'." },
-    { "category": "work", "question": "Як закінчити зміну на роботі?", "answer": "Вам потрібно натиснути F6, щоб закінчити зміну на роботі." },
-    { "category": "vehicles", "question": "Де можна орендувати човен?", "answer": "Відкрийте карту та знайдіть зелений човен, там можете орендувати транспорт." },
-    { "category": "admin", "question": "Чи є на сервері анти-чіт?", "answer": "Так, на сервері встановлений анти-чіт, який постійно працює для забезпечення чесної гри." },
-    { "category": "general", "question": "Як передати гроші гравцю?", "answer": "Вам потрібно підійти до гравця та натиснути G - гроші." },
-    { "category": "money", "question": "Як переказати моєму другу гроші на карту?", "answer": "Приїдьте до найближчого банку, запитайте у друга номер картки, і перекажіть гроші, натиснувши кнопку 'Перекази та платежі'." },
-    { "category": "phone", "question": "Як викликати поліцію/швидку?", "answer": "Дістаньте телефон (стрілочка вгору), зліва знизу натисніть на зелену трубку, і виберіть в контактах поліція або швидка." },
-    { "category": "animations", "question": "Як включати анімації?", "answer": "Натисніть TAB - Анімації." },
-    { "category": "vehicles", "question": "Як продати машину іншому гравцю?", "answer": "Авто можна продати тільки на території авторинку. Сядьте в машину, натисніть TAB - продати Т/С - введіть айді гравця та суму." },
-    { "category": "vehicles", "question": "Як пристебнутись?", "answer": "Сидячи в машині, натисніть на англійську B, і ви успішно пристебнетесь." },
-    { "category": "items", "question": "Як передавати предмети/речі?", "answer": "Ви повинні біля гравця натиснути G - Обмін." },
-    { "category": "map", "question": "Де знайти NPC Стефана?", "answer": "Відкрийте карту і знайдіть жовтого чоловічка на карті, там стоятиме Стефан." },
-    { "category": "items", "question": "Де взяти адреналін?", "answer": "Адреналін можна отримувати в бандах, вигравати в рулетці, забороненому магазині та в лікарні." },
-    { "category": "health", "question": "Як використовувати аптечку?", "answer": "Купіть її в магазині 24/7, після чого з інвентарю візьміть в руки та натисніть ЛКМ." },
-    { "category": "general", "question": "Як швидко дістати зброю?", "answer": "Зайте в інвентар, виберіть зброю і перемістіть її в швидкий слот (1,2,3,4,5). Натискайте відповідну цифру, щоб дістати зброю." },
-    { "category": "vehicles", "question": "Забув, де залишив машину, як її тепер знайти?", "answer": "Натисніть TAB - Мій транспорт - Пошук по GPS, і вам автоматично поставиться мітка, де ваша машина." },
-    { "category": "work", "question": "Які роботи доступні саме для 1 лвл?", "answer": "Будівельник, Хендімен." },
-    { "category": "phone", "question": "Як надіслати особисте повідомлення іншому гравцю по телефону?", "answer": "Дізнайтесь номер телефону гравця. Зайдіть в телефон, додайте контакт, після чого натисніть на його контакт і відправте SMS." },
-    { "category": "fishing", "question": "Як зловити рибу?", "answer": "Приїдьте на місце рибалки (гачок на карті). Візьміть вудку в руки, підійдіть до води і двічі натиснути ЛКМ. Коли риба зловиться, натисніть Space(пробіл) та натискайте A або D, щоб її витягнути." },
-    { "category": "fishing", "question": "Де продати рибу?", "answer": "Знайдіть на карті Синю Касу, приїдьте туди, і там стоятиме NPC, який скуповує рибу." },
-    { "category": "market", "question": "Як продати свої речі, де я можу повідомити про продаж?", "answer": "Ви можете написати про продаж речей у новинах. Дістаньте телефон, натисніть NEWS, виберіть категорію та напишіть, що ви продаєте." },
-    { "category": "market", "question": "Як продати свої речі?", "answer": "Речі можна продати на маркетплейсі. Для цього вам потрібен планшет (TAB - Мій планшет - Маркетплейс)." },
-    { "category": "vehicles", "question": "Де знайти тюнінг?", "answer": "Відкрийте карту, знайдіть чорний балончик, LOS SANTOS CUSTOMS, та приїдьте туди." },
-    { "category": "combat", "question": "Як битися?", "answer": "Ви можете битися на ЛКМ (ліва кнопка миші) не в зеленій зоні." },
-    { "category": "work", "question": "Що потрібно для того, щоб працювати інкасатором?", "answer": "Вам потрібен 8 лвл, ліцензія на зброю, ліцензія на водіння та не перебувати в кримінальних організаціях." },
-    { "category": "items", "question": "Де купити маску?", "answer": "Відкрийте карту, зліва знизу знайдіть значок Маски, і там буде продаж масок." },
-    { "category": "character", "question": "Як швидко бігати?", "answer": "Коли ви йдете звичайним кроком, натисніть на SHIFT, і тоді ви будете бігти." },
-    { "category": "combat", "question": "Як стріляти/сховатися за стінку?", "answer": "Біля стіни натисніть Q." },
-    { "category": "fishing", "question": "Як подивитись рівень рибалки?", "answer": "На місці риболовлі натискаєте клавішу 'R'." },
-    { "category": "work", "question": "Що можна здавати на сміттєзвалище?", "answer": "Мотлох, газети, зіпсований акумулятор, макулатуру і т.д., які можна знайти у смітниках по штату." },
-    { "category": "properties", "question": "Як купити будинок?", "answer": "Ви можете купити будинок у державному агентстві нерухомості або напряму у гравця. Для цього необхідно мати достатньо грошей на рахунку та бути бездомним." },
-    { "category": "rules", "question": "Що буде, якщо мене зловить поліція (LSPD)?", "answer": "Вас можуть оштрафувати, забрати водійські права або арештувати." },
-    { "category": "fishing", "question": "Чи можна ловити рибу без приманки?", "answer": "Так, можна. Для риболовлі вам достатньо тільки мати будь-яку вудочку." },
-    { "category": "work", "question": "Як працювати Гровером?", "answer": "Купіть насіння на маркетплейсі або зберіть на острові Кайо Періко. Знайдіть мітку 'Вирощування рослин' на мапі. Підійдіть до лунок з насінням у руках та натисніть 'Е'. Зачекайте, поки виросте врожай, і зберіть його так само на 'Е'." },
-    { "category": "animations", "question": "Як використовувати парні анімації?", "answer": "Наведіть камеру на людину навпроти, натисніть 'G' та виберіть пункт 'Парні анімації'." },
-    { "category": "character", "question": "Як змінити стать?", "answer": "Відкрийте М меню - зліва натисніть магазин - послуги - зміна зовнішності персонажу." },
-    { "category": "items", "question": "Де знайти насіння?", "answer": "Насіння можна знайти на острові Кайо-Періко або купити на маркетплейсі." },
-    { "category": "admin", "question": "Як зняти ВАРН?", "answer": "Через М меню в магазині послуги зняття Варну (якщо є діамант VIP, одне зняття безкоштовне в 2 тижні)." },
-    { "category": "settings", "question": "Як зменшити гучність Бумбокса?", "answer": "Натисніть М, перейдіть в Налаштування, прогорніть вниз, побачите налаштування бумбокса." },
-    { "category": "map", "question": "Де здавати контрабанду?", "answer": "Відкрийте карту, знайдіть мітку 'Збут контрабанди'." },
-    { "category": "items", "question": "Де взяти Heavy Sniper?", "answer": "Його можна забрати в батлпасі або купити на маркетплейсі в його dark версії." },
-    { "category": "market", "question": "Як зайти в Dark маркет?", "answer": "Для цього вам потрібна dark flash. Її можна купити на маркетплейсі або знайти в сміттєвому баку та на пляжі за допомогою металошукача." },
-            { category: "admin", question: "Чи мають право гравці продовжити РП процесс при телепортації Адміністрації з червоним ніком?", answer: "Ні, RP-процес має бути зупинений при появі адміністратора з червоним нікнеймом." },
-            { category: "admin", question: "Скільки днів адміністратор зобов’язаний зберігати докази після видачі покарання?", answer: "7 днів." },
-            { category: "admin", question: "Що буде, якщо адміністратор використає F2 без інвізу?", answer: "Попередження або догана." },
-            { category: "admin", question: "Чи може адміністратор змінити або скасувати покарання, видане іншим адміном?", answer: "Ні, це заборонено." },
-            { category: "admin", question: "Скільки усних попереджень прирівнюється до одного письмового?", answer: "Два." },
-            { category: "admin", question: "Коли адміністратор може вийти у відпустку і на який термін?", answer: "За погодженням ГА/ЗГА, максимум на 5 днів." },
-            { category: "admin", question: "Чи може адміністратор перебувати в фракції, за якою він не стежить?", answer: "Ні." },
-            { category: "admin", question: "Що потрібно адміну, щоб отримати підвищення?", answer: "Не мати активних попереджень і бути активним на поточному рівні." },
-            { category: "admin", question: "Чи дозволено адміністратору використовувати адмін-команди для розваг?", answer: "Ні, тільки за узгодженням з ГА." },
-            { category: "admin", question: "Який формат ніку повинен мати адміністратор у Discord?", answer: "Посада | Ім’я Прізвище (наприклад: Cur.LSPD | Sergo Buffalo)." },
-            { category: "admin", question: "Що буде за обман адміністрації або надання підроблених доказів?", answer: "Бан 15–30 днів." },
-            { category: "admin", question: "Що робити, якщо адміністратор бачить порушення, граючи на RP-персонажі?", answer: "Оформити запит на покарання в Discord адміністрації." },
-            { category: "admin", question: "Чи має адміністрація право ігнорувати репорт?", answer: "Ні, за це видається дисциплінарне покарання." },
-            { category: "admin", question: "Чи можна адміністратору використовувати адмінку під час гри за RP-персонажа?", answer: "Ні, якщо це не виконання обов’язків." },
-            { category: "admin", question: "Чи дозволено адміністратору мати майно?", answer: "Ні, заборонено мати будинки та бізнеси, автомобілі дозволено." },
-            { category: "admin", question: "Що буде, якщо адміністратор ображає гравців?", answer: "Зняття з посади та блокування." },
-            { category: "admin", question: "Що має зробити адміністратор після виявлення грубого порушення гравцем?", answer: "Видати покарання згідно правил проєкту." },
-            { category: "admin", question: "Чи можна адміністратору перебувати на керуючих посадах на інших проєктах?", answer: "Ні, це заборонено.(Зняття + ЧСА )" },
-            { category: "admin", question: "Чи можна адміністратору видати покарання без доказів?", answer: "Ні, він забов’язаний мати відеодоказ та зберігати його протягом 7 днів." },
-            { category: "admin", question: "Чи може адміністратор відмовитись відповідати на тікет без поважної причини?", answer: "Ні." },
-            { category: "admin", question: "Чи можна адміністратору грати на твинку, маючи адмін-акаунт?", answer: "Тільки якщо твинк не має відношення до адміністрації та адміністративна норма виконана." },
-            { category: "admin", question: "Що робити, якщо адміністратор хоче змінити нікнейм?", answer: "Погодити з головною адміністрацією та подати запит на форму у відповідний розділ." },
-            { category: "admin", question: "Чи може адміністратор бути підписаний в Discord як “JustAdmin”?", answer: "Ні, лише згідно з форматом." },
-            { category: "admin", question: "Чи зобов’язаний адміністратор пояснити причину покарання гравцю?", answer: "Так, якщо це не порушує політику безпеки." },
-            { category: "admin", question: "Чи має право адміністратор зберігати особисту інформацію гравців?", answer: "Ні." },
-            { category: "admin", question: "Що буде, якщо адміністратор змінить покарання іншого адміна без погодження?", answer: "Дисциплінарне стягнення." },
-            { category: "admin", question: "Що буде за використання адмін-команд не за призначенням?", answer: "Попередження або догана." },
-            { category: "admin", question: "Чи може адміністратор створити скаргу з доказами від іншого гравця?", answer: "Ні, він забов’язаний передати форму у адмін чаті." },
-            { category: "admin", question: "Яке покарання за блат?", answer: "Зняття з посади + бан на 30 днів + ЧС адміністрації." },
-            { category: "admin", question: "Чи зобов’язаний адміністратор відповідати культурно в Discord-обговореннях?", answer: "Так." },
-            { category: "admin", question: "Чи має право адміністратор розповідати про результати та розголошувати відповіді з співбесіди?", answer: "Ні." },
-            { category: "admin", question: "Що буде за грубість у сторону головної адміністрації?", answer: "Попередження або зняття з посади." },
-            { category: "admin", question: "Чи дозволено критикувати рішення адміністрації публічно?", answer: "Ні." },
-            { category: "admin", question: "Чи дозволено адміністратору мати фракційне майно?", answer: "Ні." },
-            { category: "admin", question: "Чи зобов’язаний адміністратор попереджати про свою неактивність?", answer: "Так." },
-            { category: "admin", question: "Чи дозволено адміністратору передавати адмін-права іншій особі?", answer: "Ні." },
-            { category: "admin", question: "Чи має право адміністратор виконувати дії в RP-чаті від імені RP-персонажа?", answer: "Так, лише якщо він не використовує при цьому адмін-команди." },
-            { category: "admin", question: "Що буде за ігнорування скарги на форумі протягом більше 48 годин?", answer: "Догана або попередження." },
-            { category: "admin", question: "Який статус має адміністратор у грі?", answer: "NonRP персонаж." },
-            { category: "admin", question: "Яке покарання за дискредитацію адміністрації на форумі чи в грі?", answer: "Mute / Ban / зняття з посади (залежно від ситуації)." },
-            { category: "rules", question: "Скільки скарга має бути актуальною, щоб її розглянули?", answer: "Не більше 7 днів з моменту запису відео/скріншота." },
-            { category: "rules", question: "Чи можна подавати скаргу, використовуючи відео від третьої особи?", answer: "Так, лише якщо там зафіксовані критичні порушення." },
-            { category: "rules", question: "Яка максимальна тривалість відео в скарзі без тайм-кодів?", answer: "2 хвилини." },
-            { category: "rules", question: "Чи дозволено гравцям відповідати порушенням на порушення?", answer: "Ні." },
-            { category: "rules", question: "Яке покарання за рекламу сторонніх проєктів у чаті?", answer: "Ban 1–30 днів або Permban." },
-            { category: "rules", question: "Що таке NonRP Drive?", answer: "Нереалістичне водіння (наприклад, по горах на спорткарі)." },
-            { category: "general", question: "Якою мовою дозволено спілкуватися у IC чаті?", answer: "Українською або суржиком." },
-            { category: "general", question: "Чи можна створити персонажа іншої статі?", answer: "Ні, Demorgan до зміни статі." },
-            { category: "rules", question: "Чи дозволено використовувати Redux, що вирізає текстури?", answer: "Ні, Ban 1–30 днів, при повторі — Permban." },
-            { category: "rules", question: "Що таке MG (Metagaming)?", answer: "Використання OOC-інформації у IC-ситуації." },
-            { category: "rules", question: "Скільки часу має пройти, щоб повернутись після смерті на місце?", answer: "15 хвилин (правило RK)." },
-            { category: "rules", question: "Що таке Powergaming (PG)?", answer: "Нереалістична поведінка, неможлива в реальному житті." },
-            { category: "rules", question: "Що означає SK?", answer: "SpawnKill — вбивство на місці спавну." },
-            { category: "rules", question: "Яке покарання за стрільбу з водійського місця?", answer: "Demorgan 30–60 хв / WARN / Ban 3–5 днів." },
-            { category: "rules", question: "Чи можна використовувати SoundPad без відігравання?", answer: "Ні, можна використовувати лише в автомобілі з відіграванням рп." },
-            { category: "rules", question: "Яке покарання за погрози в реальному житті?", answer: "Ban 5–15 днів." },
-            { category: "rules", question: "Що таке DriveBy (DB)?", answer: "Наїзд транспортом на гравця без IC-причини." },
-            { category: "rules", question: "Чи можна під час бою використовувати аптечки?", answer: "Ні, тільки під прикриттям або після перестрілки." },
-            { category: "rules", question: "Що буде, якщо захопити заручника і вимагати більше ніж дозволено?", answer: "Demorgan / відмова в перемовинах." },
-            { category: "rules", question: "Яке покарання за втечу з гри для уникнення покарання?", answer: "x2 покарання." },
-            { category: "rules", question: "Яка поведінка вважається NonRP при пограбуванні інкасаторів?", answer: "Відсутність маски, зброї або плану дій." },
-            { category: "rules", question: "Скільки учасників мінімум потрібно для грабунку інкасаторів?", answer: "Щонайменше 3 особи." },
-            { category: "rules", question: "Яке покарання за стрілянину в гравців у ноці?", answer: "Mute 15–30 хвилин." },
-            { category: "rules", question: "Що буде за приховування багів?", answer: "HardBan 7–30 днів або Permban." },
-            { category: "rules", question: "Що буде за провокації на релігійній основі?", answer: "Mute 60–120 хв / Ban 5–30 днів." },
-            { category: "rules", question: "Що буде за образу проєкту?", answer: "PermBan." },
-            { category: "fractions", question: "Чи можна зайти на сервер і одразу бути у фракції?", answer: "Ні, потрібно пройти співбесіду, або подати електронну заявку." },
-            { category: "rules", question: "Яке покарання за спам символами в VIP-чаті?", answer: "Mute 30–60 хвилин." },
-            { category: "rules", question: "Що таке \"Втеча від RP\"?", answer: "Вихід з гри/у воду/інтер’єр/Green Zone під час RP." },
-            { category: "rules", question: "Яке покарання за передачу грошей між основним і твинк-акаунтом?", answer: "Ban 14 днів + конфіскація майна." },
-            { category: "rules", question: "Що буде, якщо змінити RP-нік на nonRP без біографії?", answer: "Demorgan до зміни ніка." },
-            { category: "rules", question: "Чи можна рекламувати промокоди в VIP-чаті?", answer: "Ні, Mute 15–30 хвилин." },
-            { category: "rules", question: "Чи дозволено шантажувати за ігрову або реальну валюту?", answer: "Ні, Ban 10–30 днів." },
-            { category: "fractions", question: "Скільки бізнесів можна мати на одному акаунті?", answer: "Один." },
-            { category: "rules", question: "Чи дозволено використовувати Discord-переписку як доказ?", answer: "Так, але лише в особливих випадках." },
-            { category: "rules", question: "Чи дозволено вносити фальшиві докази до скарг?", answer: "Ні, Ban 15–30 днів." },
-            { category: "supply", question: "Яке покарання за перехоплення матеріалів із постачання поза правилами?", answer: "- Бали лідеру / Demorgan." },
-            { category: "rules", question: "Яке покарання за стрілянину з Green Zone у гравця за її межами?", answer: "Demorgan 30–90 хвилин." },
-            { category: "fractions", question: "Що таке \"капт\"?", answer: "RP-бій за територію." },
-            { category: "admin", question: "Чи має право адміністрація видати покарання без звернення гравця?", answer: "Так, якщо бачить порушення самостійно." },
-            { category: "rules", question: "Що буде за видавання себе за адміністратора в Discord?", answer: "Ban 3–15 днів." },
-            { category: "supply", question: "Чи дозволено брати участь у постачанні без бодікамери?", answer: "Ні, відео обов’язкове" },
-            { category: "rules", question: "Що буде за рекламу промокоду у робочому чаті?", answer: "Mute 30–60 хвилин" },
-            { category: "rules", question: "Що буде за відмову пройти перевірку на софт?", answer: "Permban без права на оскарження" },
-            { category: "admin", question: "Чи дозволено використовувати політ (F2) без інвізу?", answer: "Ні" },
-            { category: "rules", question: "Що буде за спам у радіо /r?", answer: "Mute 15–30 хвилин" },
-            { category: "supply", question: "Як довго зберігається відео з ловлі майна?", answer: "3 доби" },
-            { category: "rules", question: "Чи дозволено застосовувати силу до заручника без IC-причини?", answer: "Ні" },
-            { category: "fractions", question: "Чи можна здавати EMS в заручники під час терористичного акту?", answer: "Ні" },
-            { category: "supply", question: "Скільки учасників потрібно для рейду на мафію?", answer: "25 осіб (мінімум 5 з FIB)" },
-            { category: "fractions", question: "Що буде, якщо мафія тричі отримає успішний рейд?", answer: "Автоматичне зняття лідера" },
-            { category: "fractions", question: "Чи можна продавати інвентар держструктури?", answer: "Ні, Ban 3–30 днів" },
-            { category: "fractions", question: "Хто має право на допит із застосуванням поліграфу?", answer: "FIB, ранг 6+" },
-            { category: "rules", question: "Яке мінімальне покарання за SK?", answer: "Demorgan 60 хвилин" },
-            { category: "rules", question: "Яке покарання за байт у гетто?", answer: "Demorgan 30–90 хвилин" },
-            { category: "fractions", question: "Що буде, якщо не оформити CASE-файл після замовного вбивства?", answer: "Покарання за NonRP" },
-            { category: "supply", question: "Чи дозволено брати участь у теракті без погодження з куратором?", answer: "Ні" },
-            { category: "supply", question: "Скільки матеріалів мінімум має бути в постачанні?", answer: "30 000" },
-            { category: "rules", question: "Що буде за обман гравця на суму понад 1.000.000?", answer: "Обнулення + Ban 14–30 днів" },
-            { category: "rules", question: "Яке максимальне покарання за DM у GZ?", answer: "Demorgan 120 хв / WARN" },
-            { category: "fractions", question: "Що таке \"титул\" мафії або банди?", answer: "Їхня основна територія або місце спавну" },
-            { category: "fractions", question: "Чи можна проводити набір у мафію без RP-відігравання?", answer: "Ні" },
-            { category: "fractions", question: "Що буде за бездіяльність на ФЗ?", answer: "Demorgan 60–120 хвилин" },
-            { category: "fractions", question: "Що таке RP-стрілка?", answer: "Перемовини між фракціями перед оголошенням війни" },
-            { category: "fractions", question: "Чи дозволено стріляти з титулу у ворожого гравця?", answer: "Ні" },
-            { category: "fractions", question: "Що буде за перешкоджання медіа-зйомці?", answer: "Demorgan 30–60 хв / WARN" },
-            { category: "supply", question: "Скільки коштує матовозка у нелегальному продажі?", answer: "Не більше 65 000$" },
-            { category: "rules", question: "Яке мінімальне покарання за NonRP?", answer: "Demorgan 15 хвилин" },
-            { category: "supply", question: "Що буде за викрадення EMS під час постачання?", answer: "WARN / Ban 3 дні" },
-            { category: "fractions", question: "Скільки часу діє імунітет після рейду?", answer: "5 днів" },
-            { category: "supply", question: "Скільки гравців можуть представляти одну банду на постачанні?", answer: "Максимум 30" },
-            { category: "fractions", question: "Хто затверджує союз між мафією і бандою?", answer: "Куратор" },
-            { category: "supply", question: "Чи можна використовувати спостерігачів на гвинтокрилі під час постачань?", answer: "Так" },
-            { category: "supply", question: "Чи дозволено завантажувати матовозку під час перестрілки?", answer: "Ні" },
-            { category: "rules", question: "Чи можна вести RP із гравцем в AFK?", answer: "Ні, Demorgan 30–60 хвилин" },
-            { category: "fractions", question: "Чи дозволено займати дах на ФЗ, куди можна потрапити тільки гелікоптером?", answer: "Ні" },
-            { category: "supply", question: "Чи дозволено перехоплювати матовозки інших фракцій після ФЗ?", answer: "Ні" },
-            { category: "supply", question: "Скільки разів можна напасти на ФЗ однією мафією на день?", answer: "3 рази" },
-            { category: "supply", question: "Що буде, якщо не зберігати запис постачання?", answer: "- бали лідеру" },
-            { category: "supply", question: "Яке покарання за використання Heavy Sniper на рейді?", answer: "Demorgan 30–60 хвилин" },
-            { category: "admin", question: "Скільки часу має адміністратор на закриття скарги у форумі?", answer: "До 2 днів" },
-            { category: "fractions", question: "Чи дозволено лідеру Government мати більше одного заступника?", answer: "Ні" },
-            { category: "fractions", question: "Скільки балів стартує лідер при призначенні?", answer: "10 балів" },
-            { category: "fractions", question: "Що буде, якщо лідер держструктури не проведе Глобальний захід?", answer: "Зняття балів" },
-            { category: "fractions", question: "Який максимальний термін лідерства у Government?", answer: "45 днів" },
-            { category: "fractions", question: "Що буде, якщо лідер фракції знімається до завершення терміну, пробувши менше 15 днів?", answer: "Ban 3 дні + WARN" },
-            { category: "fractions", question: "Яке мінімальне щоденне онлайнове навантаження для лідера?", answer: "3 години" },
-            { category: "fractions", question: "Який ранг максимально дозволено призначити в день блату?", answer: "Максимум 3" },
-            { category: "fractions", question: "Скільки лідерських термінів поспіль дозволено?", answer: "3 терміна лідера" },
-            { category: "fractions", question: "Чи можна мати в складі мафії nonRP нікнейми?", answer: "Ні" },
-            { category: "fractions", question: "Чи зобов’язаний куратор перевіряти звіти щотижня?", answer: "Так" },
-            { category: "supply", question: "Яка максимальна кількість учасників від державних структур у ВЗХ?", answer: "60 (по 20 з фракції)" },
-            { category: "supply", question: "Чи можна брати участь у ВЗХ без фракційної форми?", answer: "Ні" },
-            { category: "rules", question: "Чи дозволено обговорювати адмінів у VIP-чаті?", answer: "Ні, Mute 30–60 хвилин" },
-            { category: "rules", question: "Яка мінімальна якість відео для скарги?", answer: "480p (у деяких випадках 720p для постачання/рейду)" },
-            { category: "admin", question: "Чи має право гравець вимагати докази свого покарання?", answer: "Ні, лише голова адміністрації має доступ" },
-            { category: "admin", question: "Чи має право адміністратор самостійно проводити обшуки RP-шляхом?", answer: "Ні, тільки через фракційний функціонал" },
-            { category: "supply", question: "Що буде за стрілянину в хамер на ВЗХ?", answer: "Demorgan 15–30 хвилин" },
-            { category: "fractions", question: "Чи може гравець одночасно бути у двох фракціях?", answer: "Ні, навіть твинком" },
-            { category: "supply", question: "Чи дозволено викликати EMS на територію ВЗХ?", answer: "Ні" },
-            { category: "admin", question: "Що буде, якщо адмін не зберіг докази покарання гравця?", answer: "Покарання за порушення правил адміністрації" },
-            { category: "admin", question: "Що робити адміну, якщо не впевнений у відповіді в /report?", answer: "Перевірити інформацію ще раз, уточнити у коллег в чаті." },
-            { category: "rules", question: "Що буде за використання Caps Lock у VIP чаті?", answer: "Mute 15–30 хвилин" },
-            { category: "fractions", question: "Чи можна використовувати бронежилети іншої фракції?", answer: "Ні" },
-            { category: "fractions", question: "Скільки дозволено використовувати союзників у теракті?", answer: "Одна союзна фракція" },
-            { category: "rules", question: "Чи дозволено рекламувати Twitch-канал в OOC чаті?", answer: "Ні, це реклама стороннього ресурсу" },
-            { category: "rules", question: "Що буде, якщо гравець під час судної ночі атакує працівника EMS?", answer: "Demorgan 60–120 хвилин" },
-            { category: "supply", question: "Чи можна ловити майно без відео?", answer: "Ні, майно буде конфісковано" },
-            { category: "supply", question: "Яке покарання за вихід з гри під час пограбування інкасаторів?", answer: "WARN" },
-            { category: "admin", question: "Чи має право адміністратор допомагати фракції, якій він симпатизує?", answer: "Ні, це блат" },
-            { category: "rules", question: "Що буде за програш у RP, де гравець відмовився визнавати поразку?", answer: "Порушення RP, можливе покарання" },
-            { category: "rules", question: "Що буде за використання неприйнятної музики через Soundpad?", answer: "Mute 15–30 хвилин" },
-            { category: "fractions", question: "Чи має право FIB допитувати без процесуального обґрунтування?", answer: "Ні" },
-            { category: "admin", question: "Хто ухвалює рішення про визнання доказів \"підробленими\"?", answer: "Головна адміністрація" },
-            { category: "rules", question: "Чи можна провокувати стрілянину в Green Zone?", answer: "Ні" },
-            { category: "fractions", question: "Який максимальний розмір хабаря для групи держслужбовців?", answer: "100 окладів" },
-            { category: "rules", question: "Чи дозволено ображати медіа-партнерів?", answer: "Ні, Mute 30–60 хвилин або Ban" },
-            { category: "admin", question: "Чи дозволено тестувати адмін-команди без узгодження?", answer: "Ні" },
-            { category: "supply", question: "Що буде, якщо гравець без маски викрадає інкасацію?", answer: "Demorgan 30–60 хвилин" },
-            { category: "supply", question: "Скільки можна зберігати записів постачань?", answer: "72 години" },
-            { category: "admin", question: "Який мінімальний вік для адміністратора?", answer: "Встановлюється Головним Адміністратором, на данний момент з 17 років." },
-            { category: "fractions", question: "Що таке \"злив складу\" в мафії?", answer: "Передача фракційних ресурсів або інформації третім особам." },
-            { category: "supply", question: "Чи дозволено використовувати особистий транспорт для перекриття при постачанні?", answer: "Ні, лише фракційний або перефарбований у колір фракції." },
-            { category: "rules", question: "Що таке \"деморган\"?", answer: "Ігрове місце утримання як покарання за порушення правил." },
-            { category: "supply", question: "Чи може EMS використовувати бронежилет на постачанні?", answer: "Так." },
-            { category: "fractions", question: "Чи дозволено брати участь у каптах без фракційного одягу?", answer: "Ні." },
-            { category: "admin", question: "Що вважається зловживанням адміністративним ресурсом?", answer: "Перевага для друзів, RP-персонажа, вплив на івенти тощо." },
-            { category: "fractions", question: "Чи може гравець з 1 рангом брати участь у кримінальних заходах мафії?", answer: "Ні." },
-            { category: "fractions", question: "Хто відповідальний за ведення форумного розділу фракції?", answer: "Лідер фракції." },
-            { category: "fractions", question: "Чи дозволено державним структурам продавати зброю мафіям?", answer: "Ні, це вважається порушенням правил Держ. 1.32" },
-            { category: "supply", question: "Що буде за перешкоджання руху хамера після ВЗХ?", answer: "Demorgan 30–60 хвилин." },
-            { category: "admin", question: "Яке покарання за невиконання наказів під час заходів адміністрації (наприклад, MP)?", answer: "Kick / вбивство гравця." },
-            { category: "fractions", question: "Скільки організацій може бути задіяно у теракті?", answer: "Максимум 2." },
-            { category: "general", question: "Чи можна використовувати особисті теги в імені Discord?", answer: "Ні, формат має бути офіційний." },
-            { category: "rules", question: "Чи дозволено використовувати баги інтер’єрів для укриття?", answer: "Ні." },
-            { category: "rules", question: "Що буде за спробу вбити гравця, який здобуває рибу?", answer: "Demorgan за DM" },
-            { category: "rules", question: "Чи дозволено прикриватися правилами під час RP (наприклад, \"це не по правилах\" в IC)?", answer: "Ні, це MG." },
-            { category: "rules", question: "Скільки секунд мінімум має тривати відео для скарги?", answer: "10–15 секунд до і після порушення." },
-            { category: "general", question: "Чи дозволено гравцям вести себе як \"божевільні\" без легенди?", answer: "Ні, потрібна попередня реєстрація/біографія." }
-        ];
-        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-        const allowedAdmins = ['@laker_77', '@c10mm', '@noxx_uagtaV', '@zhdanovrostyslav'];
-        const superAdmins = ['@laker_77', '@B_m_b1', '@c10mm'];
-        document.getElementById('sidebarToggle').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('open');
+
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+
+        if (telegramColIndex === -1) {
+          showAccessDenied();
+          return;
+        }
+
+        const userTicketsRow = ticketsData.find(row =>
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+
+        if (userTicketsRow) {
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: false
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          await showContent(userData);
+        } else {
+          localStorage.removeItem('tg_auth');
+          showAccessDenied();
+        }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        showAccessDenied();
+      }
+    }
+
+    async function showContent(userData) {
+      try {
+        if (!userData.isAdmin) {
+          const ticketsData = await getSheetData('Май_2025_таблица');
+          if (!ticketsData.length) {
+            showAccessDenied();
+            return;
+          }
+
+          const ticketsHeaders = ticketsData[0];
+          const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+          const userExists = ticketsData.some(row =>
+            row[telegramColIndex]?.trim().toLowerCase() === userData.username.toLowerCase()
+          );
+
+          if (!userExists) {
+            showAccessDenied();
+            return;
+          }
+        }
+
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('main-content').classList.remove('hidden');
+        document.getElementById('top-bar').classList.remove('hidden');
+        document.getElementById('access-denied-section').style.display = 'none';
+
+        if (superAdmins.includes(userData.username)) {
+          document.getElementById('superMenuCategory').style.display = 'block';
+          document.getElementById('superMenuItem1').style.display = 'flex';
+          document.getElementById('superMenuItem2').style.display = 'flex';
+          document.getElementById('superMenuItem3').style.display = 'flex';
+        }
+      } catch (error) {
+        console.error('Помилка відображення контенту:', error);
+        showAccessDenied();
+      }
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('access-denied-section').style.display = 'none';
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    // <CHANGE> Improved FAQ generation with category badges
+    function generateFAQ() {
+      const container = document.getElementById('faq-container');
+      container.innerHTML = '';
+      
+      faqData.forEach((item, index) => {
+        const faqCard = document.createElement('div');
+        faqCard.className = 'faq-card';
+        faqCard.dataset.category = item.category;
+        faqCard.style.animationDelay = `${index * 0.05}s`;
+        
+        faqCard.innerHTML = `
+          <div class="faq-category-badge">${categoryNames[item.category] || item.category}</div>
+          <div class="faq-question"><i class="fas fa-question-circle"></i> ${item.question}</div>
+          <div class="faq-answer">${item.answer}</div>
+        `;
+        
+        container.appendChild(faqCard);
+      });
+      
+      updateCategoryCounters();
+    }
+
+    function updateCategoryCounters() {
+      const categories = ['all', 'general', 'admin', 'rules', 'fractions', 'supply'];
+      
+      categories.forEach(category => {
+        let count;
+        if (category === 'all') {
+          count = faqData.length;
+        } else {
+          count = faqData.filter(item => item.category === category).length;
+        }
+        
+        const counterElement = document.getElementById(`count-${category}`);
+        if (counterElement) {
+          counterElement.textContent = count;
+        }
+      });
+    }
+
+    // <CHANGE> Improved filter function with no results handling
+    function filterByCategory(category) {
+      const cards = document.querySelectorAll('.faq-card');
+      const noResults = document.getElementById('no-results');
+      let visibleCount = 0;
+      
+      cards.forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      if (visibleCount === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+
+    // <CHANGE> Improved search function with no results handling
+    function searchFAQ(term) {
+      const cards = document.querySelectorAll('.faq-card');
+      const noResults = document.getElementById('no-results');
+      term = term.toLowerCase().trim();
+      let visibleCount = 0;
+      
+      cards.forEach(card => {
+        const question = card.querySelector('.faq-question').textContent.toLowerCase();
+        const answer = card.querySelector('.faq-answer').textContent.toLowerCase();
+        
+        if (term === '' || question.includes(term) || answer.includes(term)) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      if (visibleCount === 0 && term !== '') {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      generateFAQ();
+
+      // Category tabs
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.category-tab').forEach(t => {
+            t.classList.remove('active');
+          });
+          this.classList.add('active');
+          filterByCategory(this.dataset.category);
         });
-        document.addEventListener('click', (event) => {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-            }
+      });
+
+      // Search
+      document.getElementById('search-input').addEventListener('input', function() {
+        searchFAQ(this.value);
+      });
+
+      // Back to top button
+      const backToTopBtn = document.querySelector('.back-to-top');
+      window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+
+      backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
         });
-        async function getSheetData(sheetName) {
-            try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-                const res = await axios.get(url, { timeout: 10000 });
-                return res.data.values || [];
-            } catch (error) {
-                console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
-                return [];
-            }
+      });
+
+      // Check auth
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showContent(userData);
+        } catch (e) {
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
         }
-        function showAccessDenied() {
-            document.getElementById('access-denied-section').style.display = 'flex';
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('content').style.display = 'none';
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('sidebarToggle').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-        }
-        async function onTelegramAuth(user) {
-            if (!user || !user.username) {
-                showAccessDenied();
-                return;
-            }
-            const telegramUsername = '@' + user.username;
-            if (allowedAdmins.includes(telegramUsername)) {
-                const userData = {
-                    username: telegramUsername,
-                    nickname: user.first_name || user.username,
-                    isAdmin: true
-                };
-                localStorage.setItem('tg_auth', JSON.stringify(userData));
-                await showContent(userData);
-                return;
-            }
-            try {
-                const ticketsData = await getSheetData('Май_2025_таблица');
-                if (!ticketsData.length) {
-                    showAccessDenied();
-                    return;
-                }
-                const ticketsHeaders = ticketsData[0];
-                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                if (telegramColIndex === -1) {
-                    showAccessDenied();
-                    return;
-                }
-                const userTicketsRow = ticketsData.find(row =>
-                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-                );
-                if (userTicketsRow) {
-                    const userData = {
-                        username: telegramUsername,
-                        nickname: userTicketsRow[0] || user.first_name || user.username,
-                        isAdmin: false
-                    };
-                    localStorage.setItem('tg_auth', JSON.stringify(userData));
-                    await showContent(userData);
-                } else {
-                    localStorage.removeItem('tg_auth');
-                    showAccessDenied();
-                }
-            } catch (error) {
-                console.error('Помилка перевірки авторизації:', error);
-                showAccessDenied();
-            }
-        }
-        async function showContent(userData) {
-            try {
-                if (!userData.isAdmin) {
-                    const ticketsData = await getSheetData('Май_2025_таблица');
-                    if (!ticketsData.length) {
-                        showAccessDenied();
-                        return;
-                    }
-                    const ticketsHeaders = ticketsData[0];
-                    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                    const userExists = ticketsData.some(row =>
-                        row[telegramColIndex]?.trim().toLowerCase() === userData.username.toLowerCase()
-                    );
-                    if (!userExists) {
-                        showAccessDenied();
-                        return;
-                    }
-                }
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-                document.getElementById('sidebarToggle').classList.remove('hidden');
-                document.getElementById('logout-btn').classList.remove('hidden');
-                document.getElementById('access-denied-section').style.display = 'none';
-                if (superAdmins.includes(userData.username)) {
-                    document.getElementById('superMenuCategory').style.display = 'block';
-                    document.getElementById('superMenuItem1').style.display = 'flex';
-                    document.getElementById('superMenuItem2').style.display = 'flex';
-                    document.getElementById('superMenuItem3').style.display = 'flex';
-                }
-            } catch (error) {
-                console.error('Помилка відображення контенту:', error);
-                showAccessDenied();
-            }
-        }
-        function showLoginForm() {
-            document.getElementById('login-section').style.display = 'flex';
-            document.getElementById('content').style.display = 'none';
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('sidebarToggle').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-            document.getElementById('access-denied-section').style.display = 'none';
-        }
-        function logout() {
-            localStorage.removeItem('tg_auth');
-            showLoginForm();
-        }
-        function generateFAQ() {
-            const container = document.getElementById('faq-container');
-            container.innerHTML = '';
-            faqData.forEach(item => {
-                const faqItem = document.createElement('div');
-                faqItem.className = 'faq-item';
-                faqItem.dataset.category = item.category;
-                faqItem.innerHTML = `
-                    <div class="faq-question"><i class="fas fa-question"></i> Питання: ${item.question}</div>
-                    <div class="faq-answer">Відповідь: ${item.answer}</div>
-                `;
-                container.appendChild(faqItem);
-            });
-            updateCategoryCounters();
-        }
-        function updateCategoryCounters() {
-            const categories = ['all', 'general', 'rules', 'admin', 'fractions', 'supply'];
-            categories.forEach(category => {
-                let count;
-                if (category === 'all') {
-                    count = faqData.length;
-                } else {
-                    count = faqData.filter(item => item.category === category).length;
-                }
-                document.getElementById(`count-${category}`).textContent = count;
-            });
-        }
-        function filterByCategory(category) {
-            const items = document.querySelectorAll('.faq-item');
-            items.forEach(item => {
-                if (category === 'all' || item.dataset.category === category) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-        function searchFAQ(term) {
-            const items = document.querySelectorAll('.faq-item');
-            term = term.toLowerCase().trim();
-            items.forEach(item => {
-                const question = item.querySelector('.faq-question').textContent.toLowerCase();
-                const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
-                if (term === '' || question.includes(term) || answer.includes(term)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            generateFAQ();
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.category-tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    filterByCategory(this.dataset.category);
-                });
-            });
-            document.getElementById('search-input').addEventListener('input', function() {
-                searchFAQ(this.value);
-            });
-            const backToTopBtn = document.querySelector('.back-to-top');
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopBtn.classList.add('visible');
-                } else {
-                    backToTopBtn.classList.remove('visible');
-                }
-            });
-            backToTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-            const savedAuth = localStorage.getItem('tg_auth');
-            if (savedAuth) {
-                try {
-                    const userData = JSON.parse(savedAuth);
-                    showContent(userData);
-                } catch (e) {
-                    localStorage.removeItem('tg_auth');
-                    showLoginForm();
-                }
-            } else {
-                showLoginForm();
-            }
-            const levelCards = document.querySelectorAll('.level-card');
-            levelCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 150 * index);
-            });
-        });
-    </script>
+      } else {
+        showLoginForm();
+      }
+    });
+  </script>
 </body>
 </html>
