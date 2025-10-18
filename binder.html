@@ -1,982 +1,1379 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Біндер для Адміністрації | Ukraine GTA 5</title>
-    <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #3B82F6;
-            --secondary-color: #10B981;
-            --accent-color: #F59E0B;
-            --background-dark: #0A0C1A;
-            --card-bg: rgba(20, 22, 35, 0.9);
-            --glass-bg: rgba(20, 22, 35, 0.7);
-            --glass-blur: blur(15px);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            --text-primary: #F3F4F6;
-            --text-secondary: #D1D5DB;
-            --card-border: rgba(59, 130, 246, 0.2);
-            --owner: #FFD700;
-            --tech: #60a5fa;
-            --test: #4ade80;
-            --media: #ec4899;
-            --management: #c084fc;
-            --curators: #fbbf24;
-            --scrollbar: #3b82f6;
-            --scrollbar-bg: #1a1a1a;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, var(--background-dark), #1E293B);
-            color: var(--text-primary);
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-        canvas#stars-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.8;
-        }
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow);
-            transition: left 0.3s ease;
-            z-index: 1000;
-            padding: 1.5rem;
-            overflow-y: auto; /* Enable vertical scrolling */
-        }
-        .sidebar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .sidebar::-webkit-scrollbar-track {
-            background: var(--scrollbar-bg);
-            border-radius: 4px;
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: var(--scrollbar);
-            border-radius: 4px;
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-toggle {
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            width: 2.5rem;
-            height: 2.5rem;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1001;
-        }
-        .sidebar-toggle:hover {
-            transform: scale(1.1);
-            background: rgba(59, 130, 246, 0.2);
-        }
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 3rem;
-        }
-        .menu-category {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            padding: 0.5rem 1rem;
-            text-transform: uppercase;
-        }
-        .menu-item, .super-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-        .menu-item:hover, .super-menu-item:hover {
-            background: rgba(59, 130, 246, 0.3);
-            transform: translateX(5px);
-        }
-        .menu-item.active {
-            background: rgba(59, 130, 246, 0.3);
-        }
-        .super-menu-item {
-            color: var(--accent-color);
-        }
-        #login-section {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #0A0C1A, #1E293B);
-            z-index: 1000;
-            overflow: hidden;
-        }
-        .login-container {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 3rem 2rem;
-            border-radius: 1.5rem;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 1s ease-out;
-        }
-        .login-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 10%, transparent 10.01%);
-            background-size: 40px 40px;
-            animation: moveBackground 30s linear infinite;
-            z-index: -1;
-        }
-        .login-logo {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            border-radius: 50%;
-            background: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-            animation: pulse 2s infinite;
-        }
-        .login-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-        .login-subtitle {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-        .telegram-button-wrapper {
-            display: inline-block;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 0 20px var(--primary-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .telegram-button-wrapper:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px var(--primary-color);
-        }
-        .login-footer {
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .login-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .login-footer a:hover {
-            color: var(--secondary-color);
-        }
-        #access-denied-section {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1E293B, #334155);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .access-denied-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
-            text-align: center;
-            max-width: 500px;
-        }
-        .access-denied-icon {
-            font-size: 4rem;
-            color: #EF4444;
-            margin-bottom: 1rem;
-            animation: pulse 2s infinite;
-        }
-        .access-denied-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.75rem;
-        }
-        .access-denied-message {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-        .back-to-login-btn {
-            background: #EF4444;
-            color: var(--text-primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .back-to-login-btn:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-        }
-        #logout-btn {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: #EF4444;
-            color: var(--text-primary);
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 1001;
-            transition: all 0.3s ease;
-        }
-        #logout-btn:hover {
-            background: #DC2626;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 1.5rem;
-        }
-        header {
-            text-align: center;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-        }
-        .header-content {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 2rem;
-            border-radius: 1rem;
-            border: 1px solid var(--card-border);
-            box-shadow: var(--shadow);
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 1rem;
-        }
-        .logo i {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-        }
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-        .section-title {
-            margin: 50px 0 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .section-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            background: var(--primary-color);
-        }
-        .card {
-            background: var(--glass-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-            backdrop-filter: var(--glass-blur);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-        .download-section {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-        .download-info {
-            flex: 1;
-            min-width: 300px;
-        }
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .download-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 30px;
-            background: var(--secondary-color);
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-            flex: 1;
-            min-width: 200px;
-        }
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
-            background: #059669;
-        }
-        .youtube-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 25px;
-            background: #ff0000;
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
-            flex: 1;
-            min-width: 200px;
-        }
-        .youtube-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);
-            background: #cc0000;
-        }
-        .youtube-btn i, .download-btn i {
-            margin-right: 10px;
-            font-size: 1.3rem;
-        }
-        .hotkeys-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: rgba(40, 40, 40, 0.5);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .hotkeys-table th {
-            background: rgba(59, 130, 246, 0.2);
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        .hotkeys-table td {
-            padding: 15px;
-            border-bottom: 1px solid var(--card-border);
-            color: var(--text-secondary);
-        }
-        .hotkeys-table tr:last-child td {
-            border-bottom: none;
-        }
-        .hotkeys-table tr:hover {
-            background: rgba(59, 130, 246, 0.1);
-        }
-        .key-combo {
-            display: inline-block;
-            padding: 5px 12px;
-            background: rgba(59, 130, 246, 0.2);
-            border-radius: 6px;
-            font-weight: 600;
-            margin-right: 5px;
-            color: var(--text-primary);
-        }
-        .support-section {
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent);
-            padding: 30px;
-            border-radius: 16px;
-            margin-top: 40px;
-        }
-        .support-title {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            color: var(--curators);
-            font-size: 1.5rem;
-        }
-        .support-content {
-            line-height: 1.8;
-            color: var(--text-secondary);
-        }
-        .support-content p {
-            margin-bottom: 15px;
-        }
-        footer {
-            text-align: center;
-            padding: 50px 0 30px;
-            color: var(--text-secondary);
-            margin-top: 60px;
-            border-top: 1px solid var(--card-border);
-        }
-        .footer-logo {
-            color: var(--primary-color);
-            font-weight: bold;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 1.5rem;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid var(--card-border);
-        }
-        .copyright {
-            font-size: 0.9rem;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes moveBackground {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-50%, -50%); }
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 250px;
-            }
-            .container {
-                padding: 1rem;
-            }
-            h1 {
-                font-size: 2.2rem;
-            }
-            .download-section {
-                flex-direction: column;
-            }
-            .btn-group {
-                flex-direction: column;
-            }
-            .login-container {
-                padding: 2rem 1.5rem;
-            }
-            .login-title {
-                font-size: 1.5rem;
-            }
-            .login-subtitle {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Біндер для Адміністрації | Ukraine GTA 5</title>
+  <link rel="icon" href="1-17ffebdc.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.2/dist/vanilla-tilt.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1A1;
+      --text-tertiary: #6B6B6B;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-yellow: #F59E0B;
+      --accent-red: #EF4444;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F9FAFB;
+      --bg-tertiary: #F3F4F6;
+      --border-color: #E5E7EB;
+      --text-primary: #111827;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: var(--transition);
+    }
+
+    /* Falling Logos Animation */
+    canvas#logos-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    [data-theme="light"] canvas#logos-canvas {
+      opacity: 0.15;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 260px;
+      height: 100%;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      padding: 1.5rem 0;
+      overflow-y: auto;
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .sidebar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 1rem 0.75rem;
+    }
+
+    .menu-category {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      padding: 0.5rem 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .menu-item, .super-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: var(--transition);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .menu-item:hover, .super-menu-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .menu-item i, .super-menu-item i {
+      width: 16px;
+      font-size: 0.875rem;
+    }
+
+    .menu-item.active {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .super-menu-item {
+      color: var(--accent-yellow);
+    }
+
+    .super-menu-item:hover {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* Top Bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 999;
+      backdrop-filter: blur(8px);
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .menu-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .top-bar-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .top-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 0;
+      margin-top: 60px;
+      padding: 2rem 1.5rem;
+      min-height: calc(100vh - 60px);
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Login Section */
+    #login-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-primary);
+      z-index: 2000;
+    }
+
+    .login-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 3rem 2rem;
+      border-radius: 12px;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: var(--shadow);
+      text-align: center;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.5rem;
+      border-radius: 12px;
+      background: var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-logo i {
+      font-size: 2rem;
+      color: white;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .telegram-button-wrapper {
+      display: inline-block;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .telegram-button-wrapper:hover {
+      transform: translateY(-2px);
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    .login-footer a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .login-footer a:hover {
+      color: var(--accent-green);
+    }
+
+    /* Access Denied */
+    #access-denied-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .access-denied-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+    }
+
+    .access-denied-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .access-denied-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    .access-denied-message {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .back-to-login-btn {
+      padding: 0.625rem 1.5rem;
+      background: var(--accent-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .back-to-login-btn:hover {
+      background: #DC2626;
+    }
+
+    /* Banner */
+    .banner {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, #1D4ED8 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(255,255,255,0.1)"/></svg>');
+      background-size: cover;
+    }
+
+    .banner-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .banner-text {
+      flex: 1;
+      min-width: 200px;
+      text-align: left;
+    }
+
+    .banner-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .banner-description {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .banner-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      color: white;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .banner-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Binder Specific Styles */
+    .binder-header {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .binder-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .binder-logo i {
+      font-size: 2.5rem;
+      color: var(--accent-blue);
+    }
+
+    .binder-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .binder-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .section-title {
+      margin: 2rem 0 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--accent-blue);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent-blue);
+      color: white;
+      font-size: 1rem;
+    }
+
+    .download-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      transition: var(--transition);
+    }
+
+    .download-card:hover {
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      background: var(--accent-green);
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: var(--transition);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .download-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .youtube-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      background: #EF4444;
+      color: white;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: var(--transition);
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .youtube-btn:hover {
+      background: #DC2626;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .hotkeys-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .hotkeys-table th {
+      background: var(--bg-tertiary);
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+
+    .hotkeys-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .hotkeys-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .hotkeys-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .key-combo {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      font-weight: 600;
+      margin-right: 0.25rem;
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .support-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-top: 2rem;
+    }
+
+    .support-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      color: var(--accent-yellow);
+      font-size: 1.125rem;
+    }
+
+    .support-content {
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .support-content p {
+      margin-bottom: 0.75rem;
+    }
+
+    .success-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-top: 2rem;
+      text-align: center;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0 1rem;
+      color: var(--text-secondary);
+      margin-top: 3rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .footer-logo {
+      color: var(--accent-blue);
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid var(--border-color);
+    }
+
+    .copyright {
+      font-size: 0.75rem;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .top-bar {
+        padding: 0 1rem;
+      }
+
+      .main-content {
+        padding: 1.5rem 1rem;
+        margin-top: 60px;
+      }
+
+      .banner-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .banner-text {
+        text-align: center;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .binder-title {
+        font-size: 1.5rem;
+      }
+
+      .sidebar {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hotkeys-table {
+        font-size: 0.75rem;
+      }
+
+      .hotkeys-table th,
+      .hotkeys-table td {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .binder-logo {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-tertiary);
+    }
+  </style>
 </head>
-<body>
-    <canvas id="stars-canvas"></canvas>
-    <button id="logout-btn" class="hidden">Вийти</button>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-menu">
-            <div class="menu-category">Скрипти</div>
-            <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
-            <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
-            <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
-            <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
-            <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
-            <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
-            <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
-            <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
-            <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
-                  <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
-            <div class="menu-category">Інформація</div>
-            <a href="index.html" class="menu-item"><i class="fas fa-home"></i> Головна</a>
-            <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
-            <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
-            <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
-            <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
-            <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
-            <a href="binder.html" class="menu-item active"><i class="fas fa-robot"></i> BinderBot</a>
-            <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
-            <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
-            <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
-            <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
-        </div>
+<body data-theme="dark">
+  <canvas id="logos-canvas"></canvas>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="sidebar-title">Адмін Панель</div>
     </div>
-    <div class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></div>
-    <div id="access-denied-section">
-        <div class="access-denied-content">
-            <div class="access-denied-icon">🚫</div>
-            <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
-            <p class="access-denied-message">
-                Ваш обліковий запис не має доступу до цієї системи.<br>
-                Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
-            </p>
-            <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
-        </div>
+    <div class="sidebar-menu">
+      <div class="menu-category">Скрипти</div>
+      <a href="script1.1.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.1</a>
+      <a href="script1.2.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.2</a>
+      <a href="script1.3.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.3</a>
+      <a href="script1.4.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.4</a>
+      <a href="script1.5.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.5</a>
+      <a href="script1.6.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.6</a>
+      <a href="script1.7.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.7</a>
+      <a href="script1.8.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.8</a>
+      <a href="script1.9.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 1.9</a>
+      <a href="scriptbaltpass.html" class="menu-item"><i class="fas fa-code"></i> Осінній БатлКвас</a>
+      <a href="script2.0.html" class="menu-item"><i class="fas fa-code"></i> Скрипт 2.0</a>
+      
+      <div class="menu-category">Інформація</div>
+      <a href="team.html" class="menu-item"><i class="fas fa-users"></i> Команда проєкту</a>
+      <a href="tickets.html" class="menu-item"><i class="fas fa-ticket-alt"></i> Регламент тікетів</a>
+      <a href="commands.html" class="menu-item"><i class="fas fa-terminal"></i> Команди адміністратора</a>
+      <a href="faq.html" class="menu-item"><i class="fas fa-question-circle"></i> Питання та відповіді</a>
+      <a href="frac.html" class="menu-item"><i class="fas fa-flag"></i> Фракції</a>
+      <a href="binder.html" class="menu-item active"><i class="fas fa-robot"></i> BinderBot</a>
+      
+      <div class="menu-category" id="superMenuCategory" style="display: none;">Суперадмін</div>
+      <a href="test.html" class="super-menu-item" id="superMenuItem1" style="display: none;"><i class="fas fa-chart-bar"></i> Статистика</a>
+      <a href="super-script2.html" class="super-menu-item" id="superMenuItem2" style="display: none;"><i class="fas fa-calculator"></i> Калькулятор онлайну</a>
+      <a href="super-script3.html" class="super-menu-item" id="superMenuItem3" style="display: none;"><i class="fas fa-warehouse"></i> Контроль складу</a>
     </div>
-    <div id="login-section">
-        <div class="login-container">
-            <div class="login-logo">
-                <i class="fas fa-keyboard" style="font-size: 2.5rem; color: var(--text-primary);"></i>
-            </div>
-            <h1 class="login-title">Біндер для Адміністрації</h1>
-            <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
-            <div class="telegram-button-wrapper">
-                <script async src="https://telegram.org/js/telegram-widget.js?7"
-                        data-telegram-login="ticket_tracker_UG_bot"
-                        data-size="large"
-                        data-userpic="false"
-                        data-request-access="write"
-                        data-onauth="onTelegramAuth(user)">
-                </script>
-            </div>
-            <div class="login-footer">
-                Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
-            </div>
-        </div>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="top-bar hidden" id="top-bar">
+    <div class="top-bar-left">
+      <button class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="top-bar-title" id="top-bar-title">Біндер для Адміністрації</div>
     </div>
-    <div id="content" class="container hidden">
-        <header>
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-keyboard"></i>
-                    <h1>Біндер для Адміністрації Ukraine GTA 5</h1>
-                </div>
-                <p class="subtitle">Вітаємо в адміністративній зоні! Тут ви знайдете все необхідне для ефективної роботи на сервері.</p>
-            </div>
-        </header>
-        <div class="section-title">
-            <div class="section-icon">
-                <i class="fas fa-download"></i>
-            </div>
-            <h2>Встановлення біндера</h2>
-        </div>
-        <div class="download-section">
-            <div class="download-info">
-                <div class="card">
-                    <h3>Завантажте біндер для адміністрації</h3>
-                    <p>Цей інструмент дозволить швидко виконувати адміністративні дії за допомогою зручних гарячих клавіш. Просто завантажте файл та дотримуйтесь інструкцій з встановлення.</p>
-                    <div class="btn-group">
-                        <a href="https://drive.google.com/drive/folders/1gnKvG5_8UUL2l2oEkKuXOMuc2cZprwom?usp=drive_link" target="_blank" class="download-btn">
-                            <i class="fas fa-download"></i>Завантажити біндер
-                        </a>
-                        <a href="https://youtu.be/Fh0FaawjnHk" target="_blank" class="youtube-btn">
-                            <i class="fab fa-youtube"></i>Переглянути інструкцію
-                        </a>
-                    </div>
-                    <p style="margin-top: 20px; color: var(--text-secondary);">
-                        <i class="fas fa-info-circle"></i> Розмір файлу: 75.7 MB | Версія: 0.1
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="section-title">
-            <div class="section-icon">
-                <i class="fas fa-keyboard"></i>
-            </div>
-            <h2>Стандартні Гарячі Клавіші</h2>
-        </div>
-        <div class="card">
-            <p>Нижче наведено список стандартних клавіш, які вже налаштовані у біндері. За потреби ви завжди можете змінити їх на власний розсуд у налаштуваннях.</p>
-            <table class="hotkeys-table">
-                <thead>
-                    <tr>
-                        <th>Клавіші</th>
-                        <th>Дія</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">0</span></td>
-                        <td>Увімкнути Інвіз (невидимість)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">1</span></td>
-                        <td>Зробити нік червоним (позначення адміністратора)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Ctrl</span> + <span class="key-combo">9</span></td>
-                        <td>Увімкнути безсмертя</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">3</span></td>
-                        <td>Телепортуватися до гравця</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">4</span></td>
-                        <td>Телепортувати гравця до себе</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">9</span></td>
-                        <td>Видати мут (заборона на чат)</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Ctrl</span> + <span class="key-combo">4</span></td>
-                        <td>Зняти мут</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Ctrl</span> + <span class="key-combo">2</span></td>
-                        <td>Безшумно відключити гравця від сервера</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">F6</span></td>
-                        <td>Кікнути гравця з сервера</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">F6</span></td>
-                        <td>Видати блокування гравцю</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Alt</span> + <span class="key-combo">7</span></td>
-                        <td>Посадити гравця в деморган</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Ctrl</span> + <span class="key-combo">Num7</span></td>
-                        <td>Почати працювати з тікетом</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Ctrl</span> + <span class="key-combo">Num8</span></td>
-                        <td>Запитати у гравця, чи залишились ще запитання</td>
-                    </tr>
-                    <tr>
-                        <td><span class="key-combo">Ctrl</span> + <span class="key-combo">Num9</span></td>
-                        <td>Закрити тікет</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="support-section">
-            <div class="support-title">
-                <i class="fas fa-hands-helping"></i>
-                <h3>🛠 Потрібна допомога?</h3>
-            </div>
-            <div class="support-content">
-                <p>Якщо у вас виникли питання щодо встановлення чи використання біндера, або ви знайшли технічну проблему:</p>
-                <p>➤ Звертайтесь до Куратора адміністраторів: <strong>@laker_77</strong></p>
-            </div>
-        </div>
-        <div class="card" style="text-align: center; margin-top: 40px; background: rgba(16, 185, 129, 0.1);">
-            <h3 style="color: var(--secondary-color); margin-bottom: 15px;">Успіхів у роботі! 💼</h3>
-            <p>Ваша робота важлива для підтримки якості та порядку на сервері. Дякуємо за ваш внесок!</p>
-        </div>
-        <footer>
-            <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
-            <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
-        </footer>
+    <div class="top-bar-right">
+      <button class="theme-toggle" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="logout-btn" id="logout-btn">Вийти</button>
     </div>
-    <script>
-        // Falling Logos Animation
-        const canvas = document.getElementById('stars-canvas');
-        const ctx = canvas.getContext('2d');
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+  </div>
+
+  <!-- Access Denied Section -->
+  <div id="access-denied-section">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">🚫</div>
+      <h1 class="access-denied-title">ВІДМОВЛЕНО У ДОСТУПІ</h1>
+      <p class="access-denied-message">
+        Ваш обліковий запис не має доступу до цієї системи.<br>
+        Будь ласка, зверніться до суперадміністратора для отримання додаткової інформації.
+      </p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
+
+  <!-- Login Section -->
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-keyboard"></i>
+      </div>
+      <h1 class="login-title">Біндер для Адміністрації</h1>
+      <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?7"
+                data-telegram-login="ticket_tracker_UG_bot" 
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)">
+        </script>
+      </div>
+      <div class="login-footer">
+        Потрібна допомога? <a href="support.html">Зверніться до підтримки</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content hidden" id="main-content">
+    <!-- Banner -->
+    <div class="banner">
+      <div class="banner-content">
+        <div class="banner-text">
+          <h2 class="banner-title">
+            <i class="fas fa-keyboard" style="color: #F59E0B;"></i>
+            Біндер для Адміністрації
+          </h2>
+          <p class="banner-description">
+            Потужний інструмент для ефективної роботи адміністраторів сервера
+          </p>
+        </div>
+        <a href="#download" class="banner-link">
+          <i class="fas fa-download"></i>
+          Завантажити зараз!
+        </a>
+      </div>
+    </div>
+
+    <!-- Binder Header -->
+    <div class="binder-header">
+      <div class="binder-logo">
+        <i class="fas fa-keyboard"></i>
+        <h1 class="binder-title">Біндер для Адміністрації Ukraine GTA 5</h1>
+      </div>
+      <p class="binder-subtitle">
+        Вітаємо в адміністративній зоні! Тут ви знайдете все необхідне для ефективної роботи на сервері. 
+        Біндер дозволить швидко виконувати адміністративні дії за допомогою зручних гарячих клавіш.
+      </p>
+    </div>
+
+    <!-- Download Section -->
+    <div class="section-title" id="download">
+      <div class="section-icon">
+        <i class="fas fa-download"></i>
+      </div>
+      <h2>Встановлення біндера</h2>
+    </div>
+
+    <div class="download-card">
+      <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.75rem;">
+        Завантажте біндер для адміністрації
+      </h3>
+      <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+        Цей інструмент дозволить швидко виконувати адміністративні дії за допомогою зручних гарячих клавіш. 
+        Просто завантажте файл та дотримуйтесь інструкцій з встановлення.
+      </p>
+      
+      <div class="btn-group">
+        <a href="https://drive.google.com/drive/folders/1gnKvG5_8UUL2l2oEkKuXOMuc2cZprwom?usp=drive_link" 
+           target="_blank" 
+           class="download-btn">
+          <i class="fas fa-download"></i>Завантажити біндер
+        </a>
+        <a href="https://youtu.be/Fh0FaawjnHk" 
+           target="_blank" 
+           class="youtube-btn">
+          <i class="fab fa-youtube"></i>Переглянути інструкцію
+        </a>
+      </div>
+      
+      <div style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.875rem;">
+        <i class="fas fa-info-circle"></i> Розмір файлу: 75.7 MB | Версія: 0.1
+      </div>
+    </div>
+
+    <!-- Hotkeys Section -->
+    <div class="section-title">
+      <div class="section-icon">
+        <i class="fas fa-keyboard"></i>
+      </div>
+      <h2>Стандартні Гарячі Клавіші</h2>
+    </div>
+
+    <div class="download-card">
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+        Нижче наведено список стандартних клавіш, які вже налаштовані у біндері. 
+        За потреби ви завжди можете змінити їх на власний розсуд у налаштуваннях.
+      </p>
+      
+      <table class="hotkeys-table">
+        <thead>
+          <tr>
+            <th>Клавіші</th>
+            <th>Дія</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">0</span></td>
+            <td>Увімкнути Інвіз (невидимість)</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">1</span></td>
+            <td>Зробити нік червоним (позначення адміністратора)</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Ctrl</span> + <span class="key-combo">9</span></td>
+            <td>Увімкнути безсмертя</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">3</span></td>
+            <td>Телепортуватися до гравця</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">4</span></td>
+            <td>Телепортувати гравця до себе</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">9</span></td>
+            <td>Видати мут (заборона на чат)</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Ctrl</span> + <span class="key-combo">4</span></td>
+            <td>Зняти мут</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Ctrl</span> + <span class="key-combo">2</span></td>
+            <td>Безшумно відключити гравця від сервера</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">F6</span></td>
+            <td>Кікнути гравця з сервера</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">F6</span></td>
+            <td>Видати блокування гравцю</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Alt</span> + <span class="key-combo">7</span></td>
+            <td>Посадити гравця в деморган</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Ctrl</span> + <span class="key-combo">Num7</span></td>
+            <td>Почати працювати з тікетом</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Ctrl</span> + <span class="key-combo">Num8</span></td>
+            <td>Запитати у гравця, чи залишились ще запитання</td>
+          </tr>
+          <tr>
+            <td><span class="key-combo">Ctrl</span> + <span class="key-combo">Num9</span></td>
+            <td>Закрити тікет</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Support Section -->
+    <div class="support-section">
+      <div class="support-title">
+        <i class="fas fa-hands-helping"></i>
+        <h3>Потрібна допомога?</h3>
+      </div>
+      <div class="support-content">
+        <p>Якщо у вас виникли питання щодо встановлення чи використання біндера, або ви знайшли технічну проблему:</p>
+        <p><strong>➤ Звертайтесь до Куратора адміністраторів: @laker_77</strong></p>
+      </div>
+    </div>
+
+    <!-- Success Card -->
+    <div class="success-card">
+      <h3 style="color: var(--accent-green); margin-bottom: 0.75rem; font-size: 1.125rem;">
+        Успіхів у роботі! 💼
+      </h3>
+      <p style="color: var(--text-secondary); margin: 0;">
+        Ваша робота важлива для підтримки якості та порядку на сервері. Дякуємо за ваш внесок!
+      </p>
+    </div>
+
+    <footer>
+      <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
+      <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+    </footer>
+  </div>
+
+  <script>
+    // Falling Logos Animation
+    const canvas = document.getElementById('logos-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    const logos = [];
+    const numLogos = 20;
+    const logoSize = 20;
+    
+    // Create a simple shield logo using canvas
+    function drawLogo(x, y, size, opacity) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalAlpha = opacity;
+      
+      // Shield shape
+      ctx.beginPath();
+      ctx.moveTo(0, -size/2);
+      ctx.lineTo(size/2, size/3);
+      ctx.lineTo(0, size/2);
+      ctx.lineTo(-size/2, size/3);
+      ctx.closePath();
+      
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      ctx.fillStyle = isDark ? 'rgba(59, 130, 246, 0.7)' : 'rgba(59, 130, 246, 0.5)';
+      ctx.fill();
+      
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(59, 130, 246, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Cross in the middle
+      ctx.beginPath();
+      ctx.moveTo(0, -size/6);
+      ctx.lineTo(0, size/6);
+      ctx.moveTo(-size/6, 0);
+      ctx.lineTo(size/6, 0);
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.9)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      
+      ctx.restore();
+    }
+    
+    class Logo {
+      constructor() {
+        this.reset();
+      }
+      
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.size = Math.random() * 8 + 12;
+        this.speed = Math.random() * 0.5 + 0.3;
+        this.opacity = Math.random() * 0.4 + 0.2;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+      }
+      
+      update() {
+        this.y += this.speed;
+        this.rotation += this.rotationSpeed;
+        if (this.y > canvas.height) {
+          this.reset();
+          this.y = -this.size;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        const logos = [];
-        const numLogos = 50;
-        const logoImage = new Image();
-        logoImage.src = '1-17ffebdc.ico';
-        class Logo {
-            constructor() {
-                this.reset();
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 20 + 15;
-                this.speed = Math.random() * 3 + 1;
-                this.opacity = Math.random() * 0.5 + 0.3;
-                this.rotation = Math.random() * 360;
-                this.rotationSpeed = Math.random() * 2 - 1;
-                this.wind = Math.random() * 0.5 - 0.25;
-            }
-            update() {
-                this.y += this.speed;
-                this.x += this.wind;
-                this.rotation += this.rotationSpeed;
-                if (this.y > canvas.height || this.x < 0 || this.x > canvas.width) {
-                    this.reset();
-                }
-            }
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation * Math.PI / 180);
-                ctx.globalAlpha = this.opacity;
-                ctx.drawImage(logoImage, -this.size / 2, -this.size / 2, this.size, this.size);
-                ctx.restore();
-            }
-        }
-        logoImage.onload = function() {
-            for (let i = 0; i < numLogos; i++) {
-                logos.push(new Logo());
-            }
-            animateLogos();
+      }
+      
+      draw() {
+        drawLogo(this.x, this.y, this.size, this.opacity);
+      }
+    }
+    
+    for (let i = 0; i < numLogos; i++) {
+      logos.push(new Logo());
+    }
+    
+    function animateLogos() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      logos.forEach(logo => {
+        logo.update();
+        logo.draw();
+      });
+      requestAnimationFrame(animateLogos);
+    }
+    
+    animateLogos();
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const body = document.body;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+    });
+    
+    function updateThemeIcon(theme) {
+      const icon = themeToggle.querySelector('i');
+      icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    // Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+    
+    document.addEventListener('click', (event) => {
+      if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+      }
+    });
+
+    // Google Sheets Configuration
+    const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+
+    const allowedAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    const superAdmins = [
+      '@laker_77',
+      '@c10mm',
+      '@noxx_uagtaV',
+      '@zhdanovrostyslav',
+      '@blisssbabe'
+    ];
+
+    async function getSheetData(sheetName, useCache = true) {
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+        const res = await axios.get(url, { timeout: 10000 });
+        return res.data.values || [];
+      } catch (error) {
+        console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
+        return [];
+      }
+    }
+
+    function showAccessDenied() {
+      document.getElementById('access-denied-section').style.display = 'flex';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+    }
+
+    async function onTelegramAuth(user) {
+      if (!user || !user.username) {
+        showAccessDenied();
+        return;
+      }
+
+      const telegramUsername = '@' + user.username;
+
+      // Quick check for allowed admins first
+      if (allowedAdmins.includes(telegramUsername)) {
+        const userData = {
+          username: telegramUsername,
+          nickname: user.first_name || user.username,
+          isAdmin: true
         };
-        function animateLogos() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            logos.forEach(logo => {
-                logo.update();
-                logo.draw();
-            });
-            requestAnimationFrame(animateLogos);
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        await showDashboard(userData.nickname, telegramUsername, true);
+        return;
+      }
+
+      // For regular users, check in the sheet
+      try {
+        const ticketsData = await getSheetData('Май_2025_таблица');
+        if (!ticketsData.length) {
+          showAccessDenied();
+          return;
         }
-        const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU';
-        const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
-        const allowedAdmins = [
-            '@laker_77',
-            '@c10mm',
-            '@noxx_uagtaV',
-            '@zhdanovrostyslav',
-            '@blisssbabe'
-        ];
-        const superAdmins = [
-            '@laker_77',
-            '@c10mm',
-            '@noxx_uagtaV',
-            '@zhdanovrostyslav',
-            '@blisssbabe'
-        ];
-        document.getElementById('sidebarToggle').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('open');
-        });
-        document.addEventListener('click', (event) => {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            if (!sidebar.contains(event.target) && !toggle.contains(event.target) && sidebar.classList.contains('open')) {
-                sidebar.classList.remove('open');
-            }
-        });
-        async function getSheetData(sheetName) {
-            try {
-                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
-                const res = await axios.get(url, { timeout: 10000 });
-                console.log(`Data fetched for sheet ${sheetName}:`, res.data.values);
-                return res.data.values || [];
-            } catch (error) {
-                console.error(`Помилка при отриманні даних з ${sheetName}:`, error);
-                return [];
-            }
+        const ticketsHeaders = ticketsData[0];
+        const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+        
+        if (telegramColIndex === -1) {
+          showAccessDenied();
+          return;
         }
-        function showAccessDenied() {
-            console.log('Showing access denied section');
-            document.getElementById('access-denied-section').style.display = 'flex';
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('content').style.display = 'none';
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('sidebarToggle').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
+
+        const userTicketsRow = ticketsData.find(row => 
+          row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+        );
+        
+        if (userTicketsRow) {
+          const userData = {
+            username: telegramUsername,
+            nickname: userTicketsRow[0] || user.first_name || user.username,
+            isAdmin: false
+          };
+          localStorage.setItem('tg_auth', JSON.stringify(userData));
+          await showDashboard(userData.nickname, telegramUsername, false);
+        } else {
+          localStorage.removeItem('tg_auth');
+          showAccessDenied();
         }
-        async function onTelegramAuth(user) {
-            console.log('Telegram auth triggered:', user);
-            if (!user || !user.username) {
-                console.error('Invalid user data:', user);
-                showAccessDenied();
-                return;
-            }
-            const telegramUsername = '@' + user.username;
-            console.log('Processing user:', telegramUsername);
-            if (allowedAdmins.includes(telegramUsername)) {
-                console.log('User is in allowedAdmins');
-                const userData = {
-                    username: telegramUsername,
-                    nickname: user.first_name || user.username,
-                    isAdmin: true
-                };
-                localStorage.setItem('tg_auth', JSON.stringify(userData));
-                console.log('Calling showContent for admin');
-                await showContent(userData);
-                return;
-            }
-            try {
-                console.log('Fetching tickets data for non-admin user');
-                const ticketsData = await getSheetData('Май_2025_таблица');
-                if (!ticketsData.length) {
-                    console.error('No tickets data found');
-                    showAccessDenied();
-                    return;
-                }
-                const ticketsHeaders = ticketsData[0];
-                const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                if (telegramColIndex === -1) {
-                    console.error('Telegram column not found in tickets data');
-                    showAccessDenied();
-                    return;
-                }
-                const userTicketsRow = ticketsData.find(row =>
-                    row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
-                );
-                if (userTicketsRow) {
-                    console.log('User found in tickets data:', userTicketsRow);
-                    const userData = {
-                        username: telegramUsername,
-                        nickname: userTicketsRow[0] || user.first_name || user.username,
-                        isAdmin: false
-                    };
-                    localStorage.setItem('tg_auth', JSON.stringify(userData));
-                    console.log('Calling showContent for non-admin');
-                    await showContent(userData);
-                } else {
-                    console.error('User not found in tickets data:', telegramUsername);
-                    localStorage.removeItem('tg_auth');
-                    showAccessDenied();
-                }
-            } catch (error) {
-                console.error('Помилка перевірки авторизації:', error);
-                showAccessDenied();
-            }
+      } catch (error) {
+        console.error('Помилка перевірки авторизації:', error);
+        showAccessDenied();
+      }
+    }
+
+    async function showDashboard(nickname, telegramUsername, isAdmin) {
+      if (!isAdmin) {
+        try {
+          const ticketsData = await getSheetData('Май_2025_таблица');
+          if (!ticketsData.length) {
+            showAccessDenied();
+            return;
+          }
+          const ticketsHeaders = ticketsData[0];
+          const telegramColIndex = ticketsHeaders.indexOf('Telegram');
+          
+          const userExists = ticketsData.some(row => 
+            row[telegramColIndex]?.trim().toLowerCase() === telegramUsername.toLowerCase()
+          );
+          
+          if (!userExists) {
+            showAccessDenied();
+            return;
+          }
+        } catch (error) {
+          console.error('Помилка перевірки доступу:', error);
+          showAccessDenied();
+          return;
         }
-        async function showContent(userData) {
-            console.log('showContent called:', userData);
-            try {
-                if (!userData.isAdmin) {
-                    console.log('Verifying non-admin user access');
-                    const ticketsData = await getSheetData('Май_2025_таблица');
-                    if (!ticketsData.length) {
-                        console.error('No tickets data for verification');
-                        showAccessDenied();
-                        return;
-                    }
-                    const ticketsHeaders = ticketsData[0];
-                    const telegramColIndex = ticketsHeaders.indexOf('Telegram');
-                    const userExists = ticketsData.some(row =>
-                        row[telegramColIndex]?.trim().toLowerCase() === userData.username.toLowerCase()
-                    );
-                    if (!userExists) {
-                        console.error('User not found during verification:', userData.username);
-                        showAccessDenied();
-                        return;
-                    }
-                }
-                console.log('Showing content');
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-                document.getElementById('sidebarToggle').classList.remove('hidden');
-                document.getElementById('logout-btn').classList.remove('hidden');
-                document.getElementById('access-denied-section').style.display = 'none';
-                if (superAdmins.includes(userData.username)) {
-                    console.log('User is superAdmin, showing super menu');
-                    document.getElementById('superMenuCategory').style.display = 'block';
-                    document.getElementById('superMenuItem1').style.display = 'flex';
-                    document.getElementById('superMenuItem2').style.display = 'flex';
-                    document.getElementById('superMenuItem3').style.display = 'flex';
-                }
-            } catch (error) {
-                console.error('Помилка відображення контенту:', error);
-                showAccessDenied();
-            }
+      }
+
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('main-content').classList.remove('hidden');
+      document.getElementById('top-bar').classList.remove('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      document.getElementById('top-bar-title').textContent = `Біндер для Адміністрації | ${nickname}`;
+      
+      if (superAdmins.includes(telegramUsername)) {
+        document.getElementById('superMenuCategory').style.display = 'block';
+        document.getElementById('superMenuItem1').style.display = 'flex';
+        document.getElementById('superMenuItem2').style.display = 'flex';
+        document.getElementById('superMenuItem3').style.display = 'flex';
+      }
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-section').style.display = 'flex';
+      document.getElementById('main-content').classList.add('hidden');
+      document.getElementById('top-bar').classList.add('hidden');
+      document.getElementById('access-denied-section').style.display = 'none';
+      sidebar.classList.remove('open');
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      showLoginForm();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('logout-btn').addEventListener('click', logout);
+      
+      const savedAuth = localStorage.getItem('tg_auth');
+      if (savedAuth) {
+        try {
+          const userData = JSON.parse(savedAuth);
+          showDashboard(userData.nickname, userData.username, userData.isAdmin || false);
+        } catch (e) {
+          console.error('Error parsing saved auth:', e);
+          localStorage.removeItem('tg_auth');
+          showLoginForm();
         }
-        function showLoginForm() {
-            console.log('Showing login form');
-            document.getElementById('login-section').style.display = 'flex';
-            document.getElementById('content').style.display = 'none';
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('sidebarToggle').classList.add('hidden');
-            document.getElementById('logout-btn').classList.add('hidden');
-            document.getElementById('access-denied-section').style.display = 'none';
-        }
-        function logout() {
-            console.log('Logging out');
-            localStorage.removeItem('tg_auth');
-            showLoginForm();
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded');
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            const savedAuth = localStorage.getItem('tg_auth');
-            if (savedAuth) {
-                try {
-                    console.log('Found saved auth:', savedAuth);
-                    const userData = JSON.parse(savedAuth);
-                    showContent(userData);
-                } catch (e) {
-                    console.error('Error parsing saved auth:', e);
-                    localStorage.removeItem('tg_auth');
-                    showLoginForm();
-                }
-            } else {
-                console.log('No saved auth, showing login form');
-                showLoginForm();
-            }
-        });
-    </script>
+      } else {
+        showLoginForm();
+      }
+    });
+  </script>
 </body>
 </html>
