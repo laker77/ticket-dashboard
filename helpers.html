@@ -91,6 +91,7 @@
             justify-content: center;
             color: white;
             font-size: 1.25rem;
+            flex-shrink: 0;
         }
 
         .sidebar-title {
@@ -136,6 +137,7 @@
         .menu-item i, .super-menu-item i {
             width: 16px;
             font-size: 0.875rem;
+            flex-shrink: 0;
         }
 
         .super-menu-item {
@@ -182,6 +184,7 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .menu-toggle:hover {
@@ -192,6 +195,9 @@
             font-size: 0.875rem;
             font-weight: 600;
             color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .top-bar-right {
@@ -210,6 +216,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
+            white-space: nowrap;
         }
 
         .logout-btn:hover {
@@ -228,6 +235,7 @@
             justify-content: center;
             background: var(--bg-primary);
             z-index: 2000;
+            padding: 1rem;
         }
 
         .login-container {
@@ -236,7 +244,7 @@
             padding: 3rem 2rem;
             border-radius: 12px;
             max-width: 440px;
-            width: 90%;
+            width: 100%;
             box-shadow: var(--shadow);
             text-align: center;
             animation: fadeInUp 0.6s ease-out;
@@ -310,6 +318,7 @@
             z-index: 2000;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
 
         .access-denied-content {
@@ -320,7 +329,7 @@
             box-shadow: var(--shadow);
             text-align: center;
             max-width: 440px;
-            width: 90%;
+            width: 100%;
         }
 
         .access-denied-icon {
@@ -388,8 +397,7 @@
 
         /* Original Styles for Applications Page */
         .admin-container {
-            display: flex;
-            min-height: 100vh;
+            width: 100%;
         }
 
         .header {
@@ -399,6 +407,8 @@
             margin-bottom: 2.5rem;
             padding-bottom: 1.5rem;
             border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .header h1 {
@@ -413,6 +423,7 @@
         .header h1 svg {
             width: 32px;
             height: 32px;
+            flex-shrink: 0;
         }
 
         /* Stats Grid */
@@ -474,6 +485,7 @@
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-primary);
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .stat-card:hover .stat-icon {
@@ -507,6 +519,7 @@
 
         .stat-info {
             flex: 1;
+            min-width: 0;
         }
 
         .stat-number {
@@ -637,9 +650,14 @@
             height: 20px;
         }
 
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         th, td {
@@ -655,6 +673,7 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            white-space: nowrap;
         }
 
         td {
@@ -685,6 +704,7 @@
             display: inline-flex;
             align-items: center;
             gap: 0.375rem;
+            white-space: nowrap;
         }
 
         .status-badge::before {
@@ -693,6 +713,7 @@
             height: 6px;
             border-radius: 50%;
             animation: pulse-dot 2s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
         @keyframes pulse-dot {
@@ -733,6 +754,7 @@
         .action-buttons {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .btn-sm {
@@ -746,11 +768,13 @@
             display: flex;
             align-items: center;
             gap: 0.375rem;
+            white-space: nowrap;
         }
 
         .btn-sm svg {
             width: 14px;
             height: 14px;
+            flex-shrink: 0;
         }
 
         .btn-success {
@@ -825,6 +849,7 @@
         .message svg {
             width: 20px;
             height: 20px;
+            flex-shrink: 0;
         }
 
         /* Loading */
@@ -918,6 +943,7 @@
         .modal-title svg {
             width: 24px;
             height: 24px;
+            flex-shrink: 0;
         }
 
         .modal-close {
@@ -932,6 +958,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .modal-close:hover {
@@ -972,6 +999,7 @@
         .section-title svg {
             width: 16px;
             height: 16px;
+            flex-shrink: 0;
         }
 
         .detail-grid {
@@ -1016,6 +1044,61 @@
             gap: 1rem;
             justify-content: flex-end;
             background: var(--bg-tertiary);
+            flex-wrap: wrap;
+        }
+
+        /* Added rejection reason input styles */
+        .rejection-reason-section {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .rejection-reason-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .rejection-reason-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: var(--transition);
+        }
+
+        .rejection-reason-input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        .rejection-reason-display {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .rejection-reason-display .detail-label {
+            color: var(--accent-red);
+        }
+
+        .rejection-reason-display .detail-value {
+            color: var(--text-primary);
+            margin-top: 0.5rem;
         }
 
         /* Responsive */
@@ -1032,6 +1115,24 @@
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+            }
+
+            .stat-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
             }
 
             .filter-row {
@@ -1088,6 +1189,11 @@
 
             .detail-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -1331,7 +1437,7 @@
                         Список заявок
                     </div>
                 </div>
-                <div style="overflow-x: auto;">
+                <div class="table-wrapper">
                     <table>
                         <thead>
                             <tr>
@@ -1521,6 +1627,29 @@
             }
         }
 
+        function formatDateOnly(dateString) {
+            if (!dateString || dateString === 'Не вказано') return 'Не вказано';
+            
+            // Try to parse the date
+            const date = new Date(dateString);
+            
+            // Check if valid date
+            if (isNaN(date.getTime())) {
+                // If it's already in DD.MM.YYYY format, return as is
+                if (/^\d{2}\.\d{2}\.\d{4}$/.test(dateString)) {
+                    return dateString;
+                }
+                return dateString;
+            }
+            
+            // Format as DD.MM.YYYY
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}.${month}.${year}`;
+        }
+
         async function fetchApplicationsFromSheets() {
             showLoading(true);
             
@@ -1549,7 +1678,7 @@
                             id: row[1] || 'N/A',
                             timestamp: timestamp,
                             fullName: row[2] || 'Не вказано',
-                            birthDate: row[3] || 'Не вказано',
+                            birthDate: formatDateOnly(row[3]), // Format date without time
                             location: row[4] || 'Не вказано',
                             languages: row[5] || 'Не вказано',
                             hoursPerDay: row[6] || 'Не вказано',
@@ -1565,6 +1694,7 @@
                             hoursPlayed: row[29] || 'Не вказано',
                             onlineHours: row[31] || 'Не вказано',
                             status: row[34] || 'pending',
+                            rejectionReason: row[35] || '', // Added rejection reason field
                             strengths: row[18] || 'Не вказано',
                             weaknesses: row[19] || 'Не вказано',
                         };
@@ -1624,6 +1754,7 @@
                     hoursPlayed: '1200',
                     onlineHours: '800',
                     status: 'pending',
+                    rejectionReason: '',
                     strengths: 'Комунікабельність, відповідальність',
                     weaknesses: 'Іноді занадто прискіпливий'
                 },
@@ -1647,6 +1778,7 @@
                     hoursPlayed: '1780',
                     onlineHours: '1200',
                     status: 'approved',
+                    rejectionReason: '',
                     strengths: 'Досвід модерації, знання правил',
                     weaknesses: 'Не завжди доступний у вихідні'
                 }
@@ -1717,7 +1849,7 @@
                                 </svg>
                                 Схв
                             </button>
-                            <button class="btn-sm btn-danger" onclick="event.stopPropagation(); updateApplicationStatus('${app.id}', 'rejected')">
+                            <button class="btn-sm btn-danger" onclick="event.stopPropagation(); showRejectionModal('${app.id}')">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="18" y1="6" x2="6" y2="18"/>
                                     <line x1="6" y1="6" x2="18" y2="18"/>
@@ -1774,6 +1906,67 @@
             document.getElementById('rejectedApplications').textContent = rejected;
         }
 
+        function showRejectionModal(appId) {
+            const app = applications.find(a => a.id === appId);
+            if (!app) return;
+
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            const modalFooter = document.getElementById('modalFooter');
+
+            modalTitle.textContent = `Відхилити заявку ${app.id}`;
+
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <div class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        Причина відхилення
+                    </div>
+                    <div class="rejection-reason-section">
+                        <label class="rejection-reason-label" for="rejectionReasonInput">
+                            Вкажіть причину відхилення заявки:
+                        </label>
+                        <textarea 
+                            id="rejectionReasonInput" 
+                            class="rejection-reason-input" 
+                            placeholder="Наприклад: Недостатньо годин на сервері, не відповідає вимогам..."
+                        ></textarea>
+                    </div>
+                </div>
+            `;
+
+            modalFooter.innerHTML = `
+                <button class="btn btn-secondary" onclick="closeModal()">Скасувати</button>
+                <button class="btn-sm btn-danger" onclick="confirmRejection('${app.id}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Підтвердити відхилення
+                </button>
+            `;
+
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        async function confirmRejection(appId) {
+            const reasonInput = document.getElementById('rejectionReasonInput');
+            const reason = reasonInput.value.trim();
+
+            if (!reason) {
+                alert('Будь ласка, вкажіть причину відхилення');
+                return;
+            }
+
+            await updateApplicationStatus(appId, 'rejected', reason);
+            closeModal();
+        }
+
         function viewApplication(appId) {
             const app = applications.find(a => a.id === appId);
             if (!app) return;
@@ -1784,7 +1977,26 @@
 
             modalTitle.textContent = `Заявка ${app.id}`;
 
+            const rejectionReasonSection = app.status === 'rejected' && app.rejectionReason ? `
+                <div class="detail-section">
+                    <div class="section-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        Причина відхилення
+                    </div>
+                    <div class="rejection-reason-display">
+                        <div class="detail-label">Причина</div>
+                        <div class="detail-value">${app.rejectionReason}</div>
+                    </div>
+                </div>
+            ` : '';
+
             modalBody.innerHTML = `
+                ${rejectionReasonSection}
+                
                 <div class="detail-section">
                     <div class="section-title">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1928,7 +2140,7 @@
             if (app.status === 'pending') {
                 footerActions = `
                     <button class="btn btn-secondary" onclick="closeModal()">Закрити</button>
-                    <button class="btn-sm btn-danger" onclick="updateApplicationStatus('${app.id}', 'rejected'); closeModal()">
+                    <button class="btn-sm btn-danger" onclick="closeModal(); showRejectionModal('${app.id}')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"/>
                             <line x1="6" y1="6" x2="18" y2="18"/>
@@ -1969,11 +2181,17 @@
             }
         });
 
-        async function updateApplicationStatus(appId, newStatus) {
+        async function updateApplicationStatus(appId, newStatus, rejectionReason = '') {
             const action = newStatus === 'approved' ? 'схвалити' : 'відхилити';
             if (confirm(`Ви впевнені, що хочете ${action} цю заявку?`)) {
                 try {
-                    const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=updateStatus&appId=${encodeURIComponent(appId)}&status=${newStatus}`, {
+                    let url = `${GOOGLE_SCRIPT_URL}?action=updateStatus&appId=${encodeURIComponent(appId)}&status=${newStatus}`;
+                    
+                    if (newStatus === 'rejected' && rejectionReason) {
+                        url += `&rejectionReason=${encodeURIComponent(rejectionReason)}`;
+                    }
+                    
+                    const response = await fetch(url, {
                         method: 'GET'
                     });
 
@@ -1983,6 +2201,9 @@
                         const app = applications.find(a => a.id === appId);
                         if (app) {
                             app.status = newStatus;
+                            if (newStatus === 'rejected' && rejectionReason) {
+                                app.rejectionReason = rejectionReason;
+                            }
                         }
                         loadApplications();
                         showMessage(`Статус заявки оновлено на "${newStatus}"`, 'success');
