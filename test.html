@@ -1056,15 +1056,15 @@
       <div class="summary-cards">
         <div class="summary-card animate-fade-in-up">
           <h3>Тикети</h3>
-          <p>За вчора: <span id="total-tickets-yesterday" class="value">...</span></p>
+          <p>За сьогодні: <span id="total-tickets-today" class="value">...</span></p>
           <p>За тиждень: <span id="total-tickets-week" class="value">...</span></p>
           <p>За місяць: <span id="total-tickets-month" class="value">...</span></p>
         </div>
         
         <div class="summary-card animate-fade-in-up" style="animation-delay: 0.1s">
           <h3>Топ співробітників</h3>
-          <p>Тікети (вчора): <span id="top-tickets" class="value">...</span></p>
-          <p>Час у грі (вчора): <span id="top-time" class="value">...</span></p>
+          <p>Тікети (сьогодні): <span id="top-tickets" class="value">...</span></p>
+          <p>Час у грі (сьогодні): <span id="top-time" class="value">...</span></p>
           <p>Конкурс: <span id="top-contest" class="value">...</span></p>
         </div>
         
@@ -1078,6 +1078,7 @@
           <h3>Загальна статистика</h3>
           <p>Тікети (всього): <span id="total-tickets-all" class="value">...</span></p>
           <p>Час (всього): <span id="total-time-all" class="value">...</span></p>
+          <p>Часи адмінів (місяць): <span id="total-admin-hours-month" class="value">...</span></p>
         </div>
       </div>
 
@@ -1095,8 +1096,8 @@
             <thead>
               <tr>
                 <th data-sort="name">Співробітник</th>
-                <th data-sort="yesterday-tickets">Тікети (вчора)</th>
-                <th data-sort="yesterday-time">Час (вчора)</th>
+                <th data-sort="today-tickets">Тікети (сьогодні)</th>
+                <th data-sort="today-time">Час (сьогодні)</th>
                 <th data-sort="week-tickets">Тікети (тиждень)</th>
                 <th data-sort="week-time">Час (тиждень)</th>
                 <th data-sort="month-tickets">Тікети (місяць)</th>
@@ -1379,14 +1380,12 @@
     async function calculateAdminStats() {
       try {
         const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
         
         const weekStart = new Date(today);
         weekStart.setDate(today.getDate() - 7);
         
+        // Устанавливаем начало месяца на 1 число
         const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-        const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         
         ticketsData = await getSheetData('Май_2025_таблица');
         timeData = await getSheetData('Время_в_игре');
@@ -1407,18 +1406,21 @@
           .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
         
         const employees = [];
-        let totalTicketsYesterday = 0;
+        let totalTicketsToday = 0;
         let totalTicketsWeek = 0;
         let totalTicketsMonth = 0;
         let totalTicketsAll = 0;
         let totalTimeAll = 0;
         let totalActiveDays = 0;
-        let maxTicketsYesterday = 0;
-        let maxTimeYesterday = 0;
+        let maxTicketsToday = 0;
+        let maxTimeToday = 0;
         let maxTicketsEmployee = "";
         let maxTimeEmployee = "";
         
-        const yesterdayStr = formatDate(yesterday);
+        // ДОБАВЛЕНО: Переменная для суммы часов всех админов за месяц
+        let totalAdminHoursMonth = 0;
+        
+        const todayStr = formatDate(today);
         
         for (let i = 1; i < ticketsData.length; i++) {
           const ticketRow = ticketsData[i];
@@ -1428,8 +1430,8 @@
           const timeRow = timeData.find(row => row[timeNameColIndex] === employeeName);
           if (!timeRow) continue;
           
-          let yesterdayTickets = 0;
-          let yesterdayTime = 0;
+          let todayTickets = 0;
+          let todayTime = 0;
           let weekTickets = 0;
           let weekTime = 0;
           let monthTickets = 0;
@@ -1452,17 +1454,18 @@
             totalTickets += tickets;
             totalTime += timeSeconds;
             
-            if (dateStr === yesterdayStr) {
-              yesterdayTickets = tickets;
-              yesterdayTime = timeSeconds;
-              totalTicketsYesterday += tickets;
+            // ИЗМЕНЕНО: Вместо вчерашнего дня используем сегодняшний
+            if (dateStr === todayStr) {
+              todayTickets = tickets;
+              todayTime = timeSeconds;
+              totalTicketsToday += tickets;
               
-              if (tickets > maxTicketsYesterday) {
-                maxTicketsYesterday = tickets;
+              if (tickets > maxTicketsToday) {
+                maxTicketsToday = tickets;
                 maxTicketsEmployee = employeeName;
               }
-              if (timeSeconds > maxTimeYesterday) {
-                maxTimeYesterday = timeSeconds;
+              if (timeSeconds > maxTimeToday) {
+                maxTimeToday = timeSeconds;
                 maxTimeEmployee = employeeName;
               }
             }
@@ -1472,7 +1475,8 @@
               weekTime += timeSeconds;
             }
             
-            if (date >= monthStart && date <= monthEnd) {
+            // ДОБАВЛЕНО: Подсчет времени за месяц с 1 числа по сегодня
+            if (date >= monthStart && date <= today) {
               monthTickets += tickets;
               monthTime += timeSeconds;
             }
@@ -1484,11 +1488,14 @@
           totalTimeAll += totalTime;
           totalActiveDays += activeDays;
           
+          // ДОБАВЛЕНО: Суммируем часы всех админов за текущий месяц
+          totalAdminHoursMonth += monthTime;
+          
           employees.push({
             name: employeeName,
             telegram: telegram,
             stats: {
-              yesterday: { tickets: yesterdayTickets, time: yesterdayTime },
+              today: { tickets: todayTickets, time: todayTime },
               week: { tickets: weekTickets, time: weekTime },
               month: { tickets: monthTickets, time: monthTime },
               total: { tickets: totalTickets, time: totalTime }
@@ -1508,11 +1515,14 @@
         });
         
         document.getElementById('total-employees').textContent = employees.length;
-        document.getElementById('total-tickets-yesterday').textContent = totalTicketsYesterday;
+        document.getElementById('total-tickets-today').textContent = totalTicketsToday;
         document.getElementById('total-tickets-week').textContent = totalTicketsWeek;
         document.getElementById('total-tickets-month').textContent = totalTicketsMonth;
         document.getElementById('total-tickets-all').textContent = totalTicketsAll;
         document.getElementById('total-time-all').textContent = secondsToHHMMSS(totalTimeAll);
+        
+        // ДОБАВЛЕНО: Отображение суммы часов всех админов за месяц
+        document.getElementById('total-admin-hours-month').textContent = secondsToHHMMSS(totalAdminHoursMonth);
         
         const avgActivity = totalActiveDays > 0 
           ? Math.round((totalActiveDays / employees.length) * 100) / 100 
@@ -1520,10 +1530,10 @@
         document.getElementById('avg-activity').textContent = `${avgActivity} дн/м`;
         
         document.getElementById('top-tickets').textContent = 
-          maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsYesterday}` : "Немає даних";
+          maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsToday}` : "Немає даних";
         
         document.getElementById('top-time').textContent = 
-          maxTimeEmployee ? `${maxTimeEmployee} - ${secondsToHHMMSS(maxTimeYesterday)}` : "Немає даних";
+          maxTimeEmployee ? `${maxTimeEmployee} - ${secondsToHHMMSS(maxTimeToday)}` : "Немає даних";
         
         document.getElementById('top-contest').textContent = 
           employees[0] ? `${employees[0].name} - 1 місце` : "Немає даних";
@@ -1549,14 +1559,14 @@
               ? valueA.localeCompare(valueB) 
               : valueB.localeCompare(valueA);
             
-          case 'yesterday-tickets':
-            valueA = a.stats.yesterday.tickets;
-            valueB = b.stats.yesterday.tickets;
+          case 'today-tickets':
+            valueA = a.stats.today.tickets;
+            valueB = b.stats.today.tickets;
             break;
             
-          case 'yesterday-time':
-            valueA = a.stats.yesterday.time;
-            valueB = b.stats.yesterday.time;
+          case 'today-time':
+            valueA = a.stats.today.time;
+            valueB = b.stats.today.time;
             break;
             
           case 'week-tickets':
@@ -1622,8 +1632,8 @@
             <div class="font-medium">${employee.name}</div>
             <div class="text-sm" style="color: var(--text-secondary)">${employee.telegram}</div>
           </td>
-          <td>${employee.stats.yesterday.tickets}</td>
-          <td>${secondsToHHMMSS(employee.stats.yesterday.time)}</td>
+          <td>${employee.stats.today.tickets}</td>
+          <td>${secondsToHHMMSS(employee.stats.today.time)}</td>
           <td>${employee.stats.week.tickets}</td>
           <td>${secondsToHHMMSS(employee.stats.week.time)}</td>
           <td>${employee.stats.month.tickets}</td>
@@ -1903,4 +1913,3 @@
   </script>
 </body>
 </html>
-
