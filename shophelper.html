@@ -5,288 +5,417 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Магазин баллов | Ukraine GTA 5 RP</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     :root {
-      --bg-primary: #0A0A0A; --bg-secondary: #111111; --bg-tertiary: #1A1A1A;
-      --border-color: #2A2A2A; --text-primary: #FAFAFA; --text-secondary: #A1A1A1;
-      --accent-blue: #3B82F6; --accent-yellow: #F59E0B; --accent-green: #10B981; --accent-red: #EF4444;
+      --bg-primary: #0A0A0A;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1A1;
+      --text-tertiary: #6B6B6B;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-yellow: #F59E0B;
+      --accent-red: #EF4444;
+      --accent-purple: #8B5CF6;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; min-height: 100vh; }
 
-    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;
-      padding: 0 1.5rem; z-index: 999; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; overflow-x: hidden; transition: var(--transition); }
+    .hidden { display: none !important; }
+
+    /* ====================== АВТОРИЗАЦИЯ ====================== */
+    #login-section, #access-denied-section {
+      position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 3000;
+    }
+    .login-container, .access-denied-content {
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2.5rem 2rem; max-width: 460px; width: 90%; text-align: center; box-shadow: var(--shadow);
+    }
+    .login-logo {
+      width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: white;
+    }
+    .login-title { font-size: 1.8rem; margin-bottom: .5rem; }
+    .login-subtitle { color: var(--text-secondary); margin-bottom: 2rem; }
+    .telegram-button-wrapper { display: inline-block; border-radius: .75rem; overflow: hidden; box-shadow: 0 0 20px rgba(59,130,246,.4); }
+    .telegram-button-wrapper:hover { transform: scale(1.04); }
+    .access-denied-icon { font-size: 4rem; color: var(--accent-red); margin-bottom: .5rem; }
+    .back-to-login-btn {
+      margin-top: 1rem; background: var(--accent-red); color: white; padding: .6rem 1.5rem; border-radius: .5rem; cursor: pointer; border: none; font-weight: 600;
+    }
+    #logout-btn {
+      position: fixed; top: 1rem; right: 1rem; background: var(--accent-red); color: white; padding: .5rem 1rem; border-radius: .5rem; font-weight: 600; cursor: pointer; z-index: 1001;
+    }
+
+    /* ====================== ТОП-БАР ====================== */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; z-index: 999; backdrop-filter: blur(8px);
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 1rem; }
     .top-bar-title { font-size: 0.875rem; font-weight: 600; }
-    .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem;
-      background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color); }
+    .top-bar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color); }
     .user-balance { font-size: 0.875rem; font-weight: 600; }
     .balance-amount { color: var(--accent-yellow); }
 
-    .main-content { margin-top: 60px; padding: 2rem 1.5rem; max-width: 1400px; margin: 0 auto; }
-
-    .banner { background: linear-gradient(135deg, var(--accent-blue), #1D4ED8); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: center; }
-    .banner-title { font-size: 1.25rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem; justify-content: center; }
+    /* ====================== ОСНОВНОЙ КОНТЕНТ ====================== */
+    .main-content {
+      margin-top: 60px; padding: 2rem 1.5rem; min-height: calc(100vh - 60px); max-width: 1400px; margin-left: auto; margin-right: auto;
+    }
+    .banner {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, #1D4ED8 100%); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .banner-content { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1; }
+    .banner-text { flex: 1; min-width: 200px; text-align: left; }
+    .banner-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .banner-description { font-size: 0.875rem; color: rgba(255, 255, 255, 0.9); }
+    .banner-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; border-radius: 8px; font-size: 0.875rem; font-weight: 600; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.3); }
+    .banner-link:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
 
     .shop-header { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center; }
+    .shop-logo { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; }
+    .shop-logo i { font-size: 2.5rem; color: var(--accent-yellow); }
     .shop-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .shop-subtitle { font-size: 1rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto; line-height: 1.6; }
 
-    .categories { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
-    .category-btn { padding: 0.75rem 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color);
-      color: var(--text-secondary); border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
-    .category-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+    .categories { display: flex; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.5rem; }
+    .category-btn { padding: 0.75rem 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: var(--transition); }
+    .category-btn.active, .category-btn:hover { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
 
-    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-    .product-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
-    .product-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
-    .product-image { height: 200px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .product-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: var(--transition); position: relative; }
+    .product-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15); }
+    .product-image { height: 200px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     .product-image img { width: 100%; height: 100%; object-fit: cover; }
-    .product-image-placeholder { color: var(--text-secondary); font-size: 3rem; text-align: center; }
-    .product-image-placeholder span { font-size: 0.875rem; display: block; margin-top: 0.5rem; }
+    .product-image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 3rem; }
+    .product-image-placeholder span { font-size: 0.875rem; margin-top: 0.5rem; }
     .product-info { padding: 1.5rem; }
     .product-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; }
-    .product-description { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; }
+    .product-description { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5; min-height: 40px; }
+    .product-price { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
     .price { font-weight: 700; color: var(--accent-yellow); font-size: 1.25rem; }
-    .buy-btn { width: 100%; padding: 0.75rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px;
-      font-size: 0.875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-    .buy-btn:disabled { background: #666; cursor: not-allowed; }
-    .product-stock { position: absolute; top: 1rem; right: 1rem; background: var(--accent-green); color: white;
-      padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+    .buy-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--accent-blue); color: white; font-size: 0.875rem; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; transition: var(--transition); width: 100%; }
+    .buy-btn:hover { background: #2563EB; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
+    .buy-btn:disabled { background: var(--text-tertiary); cursor: not-allowed; transform: none; box-shadow: none; }
+    .product-stock { position: absolute; top: 1rem; right: 1rem; background: var(--accent-green); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
     .product-stock.low { background: var(--accent-red); }
 
-    .purchase-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
+    .purchase-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; align-items: center; justify-content: center; }
     .purchase-modal.active { display: flex; }
-    .modal-content { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; }
+    .modal-content { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
     .modal-title { font-size: 1.25rem; font-weight: 600; }
-    .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
-    .cancel-btn, .confirm-btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.875rem; cursor: pointer; }
+    .close-modal { background: transparent; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; }
+    .modal-message { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+    .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; }
+    .cancel-btn, .confirm-btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
     .cancel-btn { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
     .confirm-btn { background: var(--accent-green); color: white; border: none; }
 
-    /* Экран регистрации */
-    .register-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
-    .register-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 400px; width: 100%; }
-    .register-box h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; text-align: center; }
-    .register-box input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: white; }
-    .register-box button { width: 100%; padding: 0.75rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-    .register-box p { font-size: 0.875rem; color: var(--text-secondary); text-align: center; margin-top: 1rem; }
+    footer { text-align: center; padding: 2rem 0 1rem; color: var(--text-secondary); margin-top: 3rem; border-top: 1px solid var(--border-color); }
+    .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; background: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transform: translateY(20px); transition: var(--transition); z-index: 100; box-shadow: var(--shadow); border: none; }
+    .back-to-top.visible { opacity: 1; transform: translateY(0); }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      .top-bar { padding: 0 1rem; }
+      .main-content { padding: 1.5rem 1rem; margin-top: 60px; }
+      .banner-content { flex-direction: column; text-align: center; }
+      .shop-title { font-size: 1.5rem; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ЭКРАН РЕГИСТРАЦИИ -->
-  <div id="register-screen" class="register-screen">
-    <div class="register-box">
-      <h2>Реєстрація</h2>
-      <input type="text" id="username" placeholder="@твій_тег" />
-      <input type="text" id="nickname" placeholder="Нік в грі" />
-      <button onclick="register()">Зареєструватися</button>
-      <p id="register-status">Очікуйте схвалення адміна...</p>
+  <!-- ====================== ЭКРАН ВХОДА ====================== -->
+  <div id="login-section">
+    <div class="login-container">
+      <div class="login-logo"><i class="fab fa-telegram-plane"></i></div>
+      <h1 class="login-title">Вхід через Telegram</h1>
+      <p class="login-subtitle">Авторизуйтесь, щоб отримати доступ до магазину балів</p>
+      <div class="telegram-button-wrapper">
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="YOUR_BOT_USERNAME_bot"
+                data-size="large"
+                data-userpic="false"
+                data-request-access="write"
+                data-onauth="onTelegramAuth(user)"></script>
+      </div>
     </div>
   </div>
 
-  <!-- ОСНОВНОЙ МАГАЗИН -->
-  <div id="shop-content" style="display: none;">
-    <div class="top-bar">
-      <div class="top-bar-left">
-        <div class="top-bar-title">Магазин баллов Ukraine GTA 5 RP</div>
-      </div>
+  <!-- ====================== ОТКАЗ В ДОСТУПЕ ====================== -->
+  <div id="access-denied-section" class="hidden">
+    <div class="access-denied-content">
+      <div class="access-denied-icon">Prohibited</div>
+      <h1 class="login-title">ДОСТУП ЗАБОРОНЕНО</h1>
+      <p class="login-subtitle">Ваш Telegram‑акаунт не має прав доступу.</p>
+      <button class="back-to-login-btn" onclick="logout()">Повернутися до входу</button>
+    </div>
+  </div>
+
+  <button id="logout-btn" class="hidden" onclick="logout()">Вийти</button>
+
+  <!-- ====================== ТОП-БАР ====================== -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="top-bar-title">Магазин баллов Ukraine GTA 5 RP</div>
+    </div>
+    <div class="top-bar-right">
       <div class="user-info">
-        <div style="text-align: right;">
-          <div style="font-size: 0.75rem; color: var(--text-secondary);" id="user-name">Іван</div>
-          <div class="user-balance">Баланс: <span class="balance-amount" id="user-balance">0</span> балів</div>
-          <button onclick="logout()" style="margin-left: 1rem; background: #EF4444; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.75rem; border: none; cursor: pointer;">Вийти</button>
-        </div>
+        <div class="user-balance">Баланс: <span class="balance-amount" id="user-balance">0</span> балів</div>
       </div>
-    </div>
-
-    <div class="purchase-modal" id="purchase-modal">
-      <div class="modal-content">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
-          <h3 class="modal-title">Підтвердження покупки</h3>
-          <button style="background:none; border:none; color:#aaa; font-size:1.25rem; cursor:pointer;" id="close-modal">x</button>
-        </div>
-        <p>Ви впевнені, що хочете купити <strong id="product-name-modal"></strong> за <strong id="product-price-modal"></strong> балів?</p>
-        <div class="modal-footer">
-          <button class="cancel-btn" id="cancel-purchase">Скасувати</button>
-          <button class="confirm-btn" id="confirm-purchase">Підтвердити</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="main-content">
-      <div class="banner">
-        <h2 class="banner-title">Магазин баллов</h2>
-      </div>
-      <div class="shop-header">
-        <h1 class="shop-title">Магазин баллов Ukraine GTA 5 RP</h1>
-        <p style="color:#aaa;">Після покупки заявка відправляється адміністрації.</p>
-      </div>
-
-      <div class="categories">
-        <button class="category-btn active" data-category="all">Всі</button>
-        <button class="category-btn" data-category="transport">Транспорт</button>
-        <button class="category-btn" data-category="clothing">Одяг</button>
-        <button class="category-btn" data-category="accessories">Аксесуари</button>
-      </div>
-
-      <div class="products-grid" id="products-grid"></div>
     </div>
   </div>
 
+  <!-- ====================== МОДАЛЬНОЕ ОКНО ====================== -->
+  <div class="purchase-modal" id="purchase-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Підтвердження покупки</h3>
+        <button class="close-modal" id="close-modal"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" id="modal-message">
+          Ви впевнені, що хочете купити <strong id="product-name-modal">Товар</strong> за <strong id="product-price-modal">0</strong> балів?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" id="cancel-purchase">Скасувати</button>
+        <button class="confirm-btn" id="confirm-purchase">Підтвердити</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== ОСНОВНОЙ КОНТЕНТ ====================== -->
+  <div class="main-content hidden" id="mainContent">
+    <div class="banner">
+      <div class="banner-content">
+        <div class="banner-text">
+          <h2 class="banner-title"><i class="fas fa-gem" style="color: #F59E0B;"></i> Магазин баллов Ukraine GTA 5 RP</h2>
+          <p class="banner-description">Обмінюйте свої бали на ексклюзивні предмети та привілеї на сервері</p>
+        </div>
+        <a href="#" class="banner-link"><i class="fas fa-question-circle"></i> Як отримати бали?</a>
+      </div>
+    </div>
+
+    <div class="shop-header">
+      <div class="shop-logo">
+        <i class="fas fa-coins"></i>
+        <h1 class="shop-title">Магазин баллов Ukraine GTA 5 RP</h1>
+      </div>
+      <p class="shop-subtitle">
+        Обмінюйте бали, отримані за допомогу проекту, на ексклюзивні предмети та привілеї. 
+        Після покупки заявка автоматично відправляється адміністрації для виплати.
+      </p>
+    </div>
+
+    <div class="categories">
+      <button class="category-btn active" data-category="all">Всі товари</button>
+      <button class="category-btn" data-category="transport">Транспорт</button>
+      <button class="category-btn" data-category="clothing">Одяг</button>
+      <button class="category-btn" data-category="accessories">Аксесуари</button>
+    </div>
+
+    <div class="products-grid" id="products-grid"></div>
+
+    <footer>
+      <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
+      <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
+    </footer>
+  </div>
+
+  <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- ====================== СКРИПТЫ ====================== -->
   <script>
-    // === ЗАМЕНИ ЭТИ ДВЕ СТРОКИ ===
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwdjvlWyI7lEofgPKHJi6BQ7vsa9z2yCl3ULjC4z8dHLb5GjbS-BxaMu94p8YFqJHh2lw/exec';
-    const BOT_TOKEN = '123456789:ABCdefGhIJKlmNoPQRstuVWXyz'; // ← ТВОЙ ТОКЕН БОТА
+    // ==================== КОНФИГ GOOGLE SHEETS ====================
+    const SHEET_ID   = 'YOUR_SPREADSHEET_ID';
+    const API_KEY    = 'YOUR_GOOGLE_API_KEY';
+    const SHEET_NAME = 'Discord'; // колонка с Telegram
 
-    let products = [], userData = null;
+    // ==================== Telegram Auth ====================
+    async function onTelegramAuth(user) {
+      if (!user?.username) return showAccessDenied();
+      const tgUsername = '@' + user.username;
 
-    // РЕГИСТРАЦИЯ
-    async function register() {
-      const username = document.getElementById('username').value.trim();
-      const nickname = document.getElementById('nickname').value.trim();
-      if (!username.startsWith('@') || !nickname) return alert('Заповніть обидва поля');
+      try {
+        const data = await getSheetData(SHEET_NAME);
+        const headers = data[0];
+        const tgCol = headers.indexOf('Telegram');
+        if (tgCol === -1) throw new Error('Колонка Telegram не знайдена');
 
-      const res = await fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'register', username: username.slice(1), nickname, botToken: BOT_TOKEN }),
-        headers: { 'Content-Type': 'application/json' }
-      }).then(r => r.json());
+        const row = data.find(r => r[tgCol]?.trim().toLowerCase() === tgUsername.toLowerCase());
+        if (!row) throw new Error('Користувач не знайдений');
 
-      if (res.success) {
-        localStorage.setItem('pendingUser', JSON.stringify({ username: username.slice(1), nickname }));
-        document.getElementById('register-status').textContent = 'Очікуйте схвалення адміна...';
-        setTimeout(checkApproval, 3000);
-      } else {
-        alert(res.error || 'Помилка реєстрації');
+        const userData = { username: tgUsername, nickname: user.first_name || user.username };
+        localStorage.setItem('tg_auth', JSON.stringify(userData));
+        showShop(userData);
+      } catch (e) {
+        console.error(e);
+        showAccessDenied();
       }
     }
 
-    // ПРОВЕРКА ОДОБРЕНИЯ
-    async function checkApproval() {
-      const pending = JSON.parse(localStorage.getItem('pendingUser'));
-      if (!pending) return;
+    async function getSheetData(name) {
+      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(name)}?key=${API_KEY}`;
+      const res = await axios.get(url);
+      return res.data.values || [];
+    }
 
-      const res = await fetch(`${WEB_APP_URL}?action=checkUser&username=${pending.username}`).then(r => r.json());
-      if (res.exists && res.status === 'approved') {
-        userData = { username: '@' + pending.username, nickname: res.nickname, balance: res.balance };
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.removeItem('pendingUser');
-        showShop();
-      } else if (res.exists && res.status === 'pending') {
-        setTimeout(checkApproval, 5000);
-      } else {
-        alert('Реєстрацію відхилено або видалено.');
-        localStorage.removeItem('pendingUser');
+    function showShop({nickname}) {
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('mainContent').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+
+      const savedBalance = localStorage.getItem('user_balance');
+      const balance = savedBalance ? parseInt(savedBalance) : 15000;
+      document.getElementById('user-balance').textContent = balance;
+
+      loadProducts();
+    }
+
+    function showAccessDenied() {
+      document.getElementById('access-denied-section').classList.remove('hidden');
+      document.getElementById('login-section').classList.add('hidden');
+    }
+
+    function logout() {
+      localStorage.removeItem('tg_auth');
+      localStorage.removeItem('user_balance');
+      location.reload();
+    }
+
+    // ==================== Проверка сессии ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      const auth = localStorage.getItem('tg_auth');
+      if (auth) {
+        try {
+          const user = JSON.parse(auth);
+          showShop(user);
+        } catch { logout(); }
       }
-    }
+    });
 
-    // ПОКАЗАТЬ МАГАЗИН
-    function showShop() {
-      document.getElementById('register-screen').style.display = 'none';
-      document.getElementById('shop-content').style.display = 'block';
-      document.getElementById('user-name').textContent = userData.nickname;
-      document.getElementById('user-balance').textContent = userData.balance;
+    // ==================== ДАННЫЕ ТОВАРОВ ====================
+    const products = [
+      { id: 1, name: "Болид", description: "Эксклюзивный спортивный автомобиль", price: 8440, category: "transport", stock: 1, image: null },
+      { id: 2, name: "Дива", description: "Роскошный диван для вашего дома", price: 9345, category: "transport", stock: 1, image: null },
+      { id: 3, name: "Колонка маршал", description: "Мощная колонка для качественного звука", price: 1800, category: "accessories", stock: 1, image: null },
+      { id: 4, name: "Сумка Элит", description: "Элитная сумка для повседневного использования", price: 839, category: "accessories", stock: 2, image: null },
+      { id: 5, name: "Рюкзак Милитари", description: "Стильный военный рюкзак", price: 990, category: "accessories", stock: 1, image: null },
+      { id: 6, name: "Крылья Ангел", description: "Элегантные крылья для вашего образа", price: 724, category: "clothing", stock: 2, image: null },
+      { id: 7, name: "Платье Кай", description: "Красивое платье для особых случаев", price: 839, category: "clothing", stock: 2, image: null },
+      { id: 8, name: "Кофта Кохання", description: "Уютная кофта с романтичным дизайном", price: 524, category: "clothing", stock: 2, image: null },
+      { id: 9, name: "Футболка For all cases", description: "Универсальная футболка на все случаи жизни", price: 366, category: "clothing", stock: 1, image: null },
+      { id: 10, name: "Штаны найк", description: "Комфортные спортивные штаны", price: 416, category: "clothing", stock: 1, image: null },
+      { id: 11, name: "Тактические ботинки", description: "Прочные тактические ботинки", price: 205, category: "clothing", stock: 1, image: null },
+      { id: 12, name: "Брюки", description: "Классические брюки", price: 472, category: "clothing", stock: 1, image: null },
+      { id: 13, name: "Платье Sweater", description: "Стильное платье-свитер", price: 582, category: "clothing", stock: 1, image: null },
+      { id: 14, name: "Пижама Мишка", description: "Милые пижамы с мишками", price: 814, category: "clothing", stock: 1, image: null },
+      { id: 15, name: "Ботфорты", description: "Элегантные ботфорты", price: 450, category: "clothing", stock: 1, image: null },
+      { id: 16, name: "Маска икла", description: "Стильная маска для анонимности", price: 433, category: "accessories", stock: 1, image: null },
+      { id: 17, name: "Борода", description: "Стильная борода для вашего персонажа", price: 236, category: "accessories", stock: 1, image: null },
+      { id: 18, name: "Рюкзак Лабубу", description: "Модный рюкзак от Лабубу", price: 1120, category: "accessories", stock: 1, image: null },
+      { id: 19, name: "Ньюроки", description: "Стильная обувь Ньюроки", price: 216, category: "clothing", stock: 1, image: null },
+      { id: 20, name: "Рюкзак Микки", description: "Рюкзак с дизайном Микки Мауса", price: 1633, category: "accessories", stock: 1, image: null },
+      { id: 21, name: "Кобура Минимум", description: "Минималистичная кобура для оружия", price: 526, category: "accessories", stock: 1, image: null }
+    ];
 
-      fetchProducts();
-    }
-
-    // ЗАГРУЗКА ТОВАРОВ
-    function fetchProducts() {
-      fetch(`${WEB_APP_URL}?action=getProducts`)
-        .then(r => r.json())
-        .then(data => { products = data; loadProducts('all'); });
-    }
-
-    function loadProducts(category) {
-      const grid = document.getElementById('products-grid'); grid.innerHTML = '';
+    // ==================== ЗАГРУЗКА ТОВАРОВ ====================
+    function loadProducts(category = 'all') {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
       const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+      const balance = parseInt(document.getElementById('user-balance').textContent);
+
       filtered.forEach(p => {
-        const canBuy = userData && userData.balance >= p.price && p.stock > 0;
-        const card = document.createElement('div'); card.className = 'product-card';
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.dataset.category = p.category;
+        const canBuy = balance >= p.price && p.stock > 0;
+
         card.innerHTML = `
           <div class="product-image">
-            ${p.image ? `<img src="${p.image}">` : `<div class="product-image-placeholder">Фото</div>`}
+            ${p.image ? `<img src="${p.image}" alt="${p.name}">` : `<div class="product-image-placeholder"><i class="fas fa-image"></i><span>Зображення товару</span></div>`}
           </div>
           <div class="product-info">
             <h3 class="product-name">${p.name}</h3>
             <p class="product-description">${p.description}</p>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="price">${p.price} балів</span>
-            </div>
+            <div class="product-price"><span class="price">${p.price} балів</span></div>
             <button class="buy-btn" data-id="${p.id}" ${!canBuy ? 'disabled' : ''}>
-              ${p.stock <= 0 ? 'Немає' : userData.balance < p.price ? 'Недостатньо' : 'Купити'}
+              <i class="fas fa-shopping-cart"></i>
+              ${p.stock === 0 ? 'Немає' : !canBuy ? 'Недостатньо' : 'Купити'}
             </button>
           </div>
-          ${p.stock < 5 ? `<div class="product-stock ${p.stock === 0 ? 'low' : ''}">${p.stock} шт</div>` : ''}
+          ${p.stock < 5 ? `<div class="product-stock ${p.stock === 0 ? 'low' : ''}">${p.stock} в наявності</div>` : ''}
         `;
         grid.appendChild(card);
       });
-      document.querySelectorAll('.buy-btn').forEach(b => b.onclick = () => {
-        const prod = products.find(p => p.id == b.dataset.id);
-        document.getElementById('product-name-modal').textContent = prod.name;
-        document.getElementById('product-price-modal').textContent = prod.price;
-        document.getElementById('purchase-modal').classList.add('active');
-        window.currentProduct = prod;
+
+      document.querySelectorAll('.buy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const product = products.find(p => p.id == btn.dataset.id);
+          openPurchaseModal(product);
+        });
       });
     }
 
-    // ПОКУПКА
+    // ==================== МОДАЛЬНОЕ ОКНО ====================
+    let currentProduct = null;
+    function openPurchaseModal(product) {
+      currentProduct = product;
+      document.getElementById('product-name-modal').textContent = product.name;
+      document.getElementById('product-price-modal').textContent = product.price;
+      document.getElementById('purchase-modal').classList.add('active');
+    }
+    function closePurchaseModal() {
+      document.getElementById('purchase-modal').classList.remove('active');
+      currentProduct = null;
+    }
+
+    document.getElementById('close-modal').onclick = closePurchaseModal;
+    document.getElementById('cancel-purchase').onclick = closePurchaseModal;
     document.getElementById('confirm-purchase').onclick = () => {
-      fetch(WEB_APP_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'purchase', username: userData.username, productId: window.currentProduct.id, botToken: BOT_TOKEN
-        }),
-        headers: { 'Content-Type': 'application/json' }
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          userData.balance = data.newBalance;
-          document.getElementById('user-balance').textContent = data.newBalance;
-          localStorage.setItem('user', JSON.stringify(userData));
-          alert('Успішно! Заявка відправлена.');
-          fetchProducts();
-        } else alert(data.error || 'Помилка');
-        document.getElementById('purchase-modal').classList.remove('active');
-      });
+      if (!currentProduct) return;
+      const balance = parseInt(document.getElementById('user-balance').textContent);
+      if (balance >= currentProduct.price) {
+        const newBalance = balance - currentProduct.price;
+        document.getElementById('user-balance').textContent = newBalance;
+        localStorage.setItem('user_balance', newBalance);
+
+        const idx = products.findIndex(p => p.id === currentProduct.id);
+        products[idx].stock--;
+
+        alert(`Покупка "${currentProduct.name}" успішна! Заявка відправлена.`);
+        loadProducts(document.querySelector('.category-btn.active').dataset.category);
+        closePurchaseModal();
+      }
     };
 
-    ['close-modal', 'cancel-purchase'].forEach(id => {
-      document.getElementById(id).onclick = () => document.getElementById('purchase-modal').classList.remove('active');
-    });
-
-    // ВЫХОД
-    function logout() {
-      localStorage.removeItem('user');
-      localStorage.removeItem('pendingUser');
-      location.reload();
-    }
-
-    // ЗАГРУЗКА ПРИ СТАРТЕ
-    document.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('user');
-      if (saved) {
-        userData = JSON.parse(saved);
-        showShop();
-      } else {
-        const pending = localStorage.getItem('pendingUser');
-        if (pending) {
-          document.getElementById('register-status').textContent = 'Очікуйте схвалення...';
-          checkApproval();
-        }
-      }
-
-      document.querySelectorAll('.category-btn').forEach(b => {
-        b.onclick = () => {
-          document.querySelectorAll('.category-btn').forEach(x => x.classList.remove('active'));
-          b.classList.add('active');
-          loadProducts(b.dataset.category);
-        };
+    // ==================== КАТЕГОРИИ ====================
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadProducts(btn.dataset.category);
       });
     });
+
+    // ==================== КНОПКА НАВЕРХ ====================
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('visible', window.pageYOffset > 300);
+    });
+    backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
   </script>
 </body>
 </html>
