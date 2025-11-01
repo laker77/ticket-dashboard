@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Магазин баллов | Ukraine GTA 5 RP</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0A0A0A; --bg-secondary: #111111; --bg-tertiary: #1A1A1A;
+      --border-color: #2A2A2A; --text-primary: #FAFAFA; --text-secondary: #A1A1A1;
+      --accent-blue: #3B82F6; --accent-yellow: #F59E0B; --accent-green: #10B981; --accent-red: #EF4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem; z-index: 999; }
+    .top-bar-title { font-size: 0.875rem; font-weight: 600; }
+    .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem;
+      background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color); }
+    .user-balance { font-size: 0.875rem; font-weight: 600; }
+    .balance-amount { color: var(--accent-yellow); }
+
+    .main-content { margin-top: 60px; padding: 2rem 1.5rem; max-width: 1400px; margin: 0 auto; }
+
+    .banner { background: linear-gradient(135deg, var(--accent-blue), #1D4ED8); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: center; }
+    .banner-title { font-size: 1.25rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.5rem; justify-content: center; }
+
+    .shop-header { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center; }
+    .shop-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+    .categories { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .category-btn { padding: 0.75rem 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color);
+      color: var(--text-secondary); border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
+    .category-btn.active { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .product-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+    .product-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
+    .product-image { height: 200px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; }
+    .product-image-placeholder { color: var(--text-secondary); font-size: 3rem; text-align: center; }
+    .product-image-placeholder span { font-size: 0.875rem; display: block; margin-top: 0.5rem; }
+    .product-info { padding: 1.5rem; }
+    .product-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .product-description { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; }
+    .price { font-weight: 700; color: var(--accent-yellow); font-size: 1.25rem; }
+    .buy-btn { width: 100%; padding: 0.75rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .buy-btn:disabled { background: #666; cursor: not-allowed; }
+    .product-stock { position: absolute; top: 1rem; right: 1rem; background: var(--accent-green); color: white;
+      padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+    .product-stock.low { background: var(--accent-red); }
+
+    .purchase-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
+    .purchase-modal.active { display: flex; }
+    .modal-content { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; }
+    .modal-title { font-size: 1.25rem; font-weight: 600; }
+    .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .cancel-btn, .confirm-btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.875rem; cursor: pointer; }
+    .cancel-btn { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .confirm-btn { background: var(--accent-green); color: white; border: none; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="top-bar-title">Магазин баллов Ukraine GTA 5 RP</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div id="login-widget">
+        <script async src="https://telegram.org/js/telegram-widget.js?22" 
+          data-telegram-login="Ukrainegta_helpers_bot" 
+          data-size="small" data-onauth="onTelegramAuth(user)" data-radius="8"></script>
+      </div>
+      <div id="user-info" class="user-info" style="display: none;">
+        <div style="text-align: right;">
+          <div style="font-size: 0.75rem; color: var(--text-secondary);" id="user-name">Іван</div>
+          <div class="user-balance">Баланс: <span class="balance-amount" id="user-balance">0</span> балів</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="purchase-modal" id="purchase-modal">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h3 class="modal-title">Підтвердження покупки</h3>
+        <button style="background:none; border:none; color:#aaa; font-size:1.25rem; cursor:pointer;" id="close-modal">x</button>
+      </div>
+      <p>Ви впевнені, що хочете купити <strong id="product-name-modal"></strong> за <strong id="product-price-modal"></strong> балів?</p>
+      <div class="modal-footer">
+        <button class="cancel-btn" id="cancel-purchase">Скасувати</button>
+        <button class="confirm-btn" id="confirm-purchase">Підтвердити</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="banner">
+      <h2 class="banner-title">Магазин баллов</h2>
+    </div>
+    <div class="shop-header">
+      <h1 class="shop-title">Магазин баллов Ukraine GTA 5 RP</h1>
+      <p style="color:#aaa;">Після покупки заявка відправляється адміністрації.</p>
+    </div>
+
+    <div class="categories">
+      <button class="category-btn active" data-category="all">Всі</button>
+      <button class="category-btn" data-category="transport">Транспорт</button>
+      <button class="category-btn" data-category="clothing">Одяг</button>
+      <button class="category-btn" data-category="accessories">Аксесуари</button>
+    </div>
+
+    <div class="products-grid" id="products-grid"></div>
+  </div>
+
+  <script>
+    // === ЗАМЕНИ ЭТУ ССЫЛКУ ===
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwdjvlWyI7lEofgPKHJi6BQ7vsa9z2yCl3ULjC4z8dHLb5GjbS-BxaMu94p8YFqJHh2lw/exec';
+
+    let products = [], userBalance = 0, userId = null;
+
+    function onTelegramAuth(user) {
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'auth', user: user }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          userId = user.id;
+          localStorage.setItem('userId', user.id);
+          userBalance = data.balance;
+          document.getElementById('user-name').textContent = data.name + (data.username ? ` (${data.username})` : '');
+          document.getElementById('user-balance').textContent = data.balance;
+          document.getElementById('login-widget').style.display = 'none';
+          document.getElementById('user-info').style.display = 'flex';
+          loadProducts('all');
+        }
+      });
+    }
+
+    function fetchProducts() {
+      fetch(`${WEB_APP_URL}?action=getProducts`)
+        .then(r => r.json())
+        .then(data => { products = data; loadProducts(document.querySelector('.category-btn.active').dataset.category); });
+    }
+
+    function loadProducts(category) {
+      const grid = document.getElementById('products-grid'); grid.innerHTML = '';
+      const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+      filtered.forEach(p => {
+        const canBuy = userId && userBalance >= p.price && p.stock > 0;
+        const card = document.createElement('div'); card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-image">
+            ${p.image ? `<img src="${p.image}">` : `<div class="product-image-placeholder">Фото</div>`}
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${p.name}</h3>
+            <p class="product-description">${p.description}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="price">${p.price} балів</span>
+            </div>
+            <button class="buy-btn" data-id="${p.id}" ${!canBuy ? 'disabled' : ''}>
+              ${p.stock <= 0 ? 'Немає' : !userId ? 'Увійти' : userBalance < p.price ? 'Недостатньо' : 'Купити'}
+            </button>
+          </div>
+          ${p.stock < 5 ? `<div class="product-stock ${p.stock === 0 ? 'low' : ''}">${p.stock} шт</div>` : ''}
+        `;
+        grid.appendChild(card);
+      });
+      document.querySelectorAll('.buy-btn').forEach(b => b.onclick = () => {
+        const prod = products.find(p => p.id == b.dataset.id);
+        document.getElementById('product-name-modal').textContent = prod.name;
+        document.getElementById('product-price-modal').textContent = prod.price;
+        document.getElementById('purchase-modal').classList.add('active');
+        window.currentProduct = prod;
+      });
+    }
+
+    document.getElementById('confirm-purchase').onclick = () => {
+      fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'purchase', userId: userId,
+          productId: window.currentProduct.id, price: window.currentProduct.price,
+          productName: window.currentProduct.name
+        }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          userBalance = data.newBalance;
+          document.getElementById('user-balance').textContent = data.newBalance;
+          alert('Успішно! Заявка відправлена.');
+          fetchProducts();
+        } else alert(data.error || 'Помилка');
+        document.getElementById('purchase-modal').classList.remove('active');
+      });
+    };
+
+    ['close-modal', 'cancel-purchase'].forEach(id => {
+      document.getElementById(id).onclick = () => document.getElementById('purchase-modal').classList.remove('active');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      userId = localStorage.getItem('userId');
+      if (userId) {
+        fetch(`${WEB_APP_URL}?action=getBalance&userId=${userId}`)
+          .then(r => r.json())
+          .then(d => {
+            userBalance = d.balance;
+            document.getElementById('user-name').textContent = d.name + (d.username ? ` (${d.username})` : '');
+            document.getElementById('user-balance').textContent = d.balance;
+            document.getElementById('login-widget').style.display = 'none';
+            document.getElementById('user-info').style.display = 'flex';
+          });
+      }
+      fetchProducts();
+
+      document.querySelectorAll('.category-btn').forEach(b => {
+        b.onclick = () => {
+          document.querySelectorAll('.category-btn').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          loadProducts(b.dataset.category);
+        };
+      });
+    });
+  </script>
+</body>
+</html>
