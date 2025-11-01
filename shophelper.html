@@ -63,100 +63,147 @@
     .cancel-btn, .confirm-btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.875rem; cursor: pointer; }
     .cancel-btn { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
     .confirm-btn { background: var(--accent-green); color: white; border: none; }
+
+    /* Экран регистрации */
+    .register-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem; }
+    .register-box { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 400px; width: 100%; }
+    .register-box h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; text-align: center; }
+    .register-box input { width: 100%; padding: 0.75rem; margin-bottom: 1rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: white; }
+    .register-box button { width: 100%; padding: 0.75rem; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .register-box p { font-size: 0.875rem; color: var(--text-secondary); text-align: center; margin-top: 1rem; }
   </style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <div class="top-bar-title">Магазин баллов Ukraine GTA 5 RP</div>
+  <!-- ЭКРАН РЕГИСТРАЦИИ -->
+  <div id="register-screen" class="register-screen">
+    <div class="register-box">
+      <h2>Реєстрація</h2>
+      <input type="text" id="username" placeholder="@твій_тег" />
+      <input type="text" id="nickname" placeholder="Нік в грі" />
+      <button onclick="register()">Зареєструватися</button>
+      <p id="register-status">Очікуйте схвалення адміна...</p>
     </div>
-    <div style="display: flex; align-items: center; gap: 0.75rem;">
-      <div id="login-widget">
-        <script async src="https://telegram.org/js/telegram-widget.js?22" 
-          data-telegram-login="Ukrainegta_helpers_bot" 
-          data-size="small" data-onauth="onTelegramAuth(user)" data-radius="8"></script>
+  </div>
+
+  <!-- ОСНОВНОЙ МАГАЗИН -->
+  <div id="shop-content" style="display: none;">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <div class="top-bar-title">Магазин баллов Ukraine GTA 5 RP</div>
       </div>
-      <div id="user-info" class="user-info" style="display: none;">
+      <div class="user-info">
         <div style="text-align: right;">
           <div style="font-size: 0.75rem; color: var(--text-secondary);" id="user-name">Іван</div>
           <div class="user-balance">Баланс: <span class="balance-amount" id="user-balance">0</span> балів</div>
+          <button onclick="logout()" style="margin-left: 1rem; background: #EF4444; color: white; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.75rem; border: none; cursor: pointer;">Вийти</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="purchase-modal" id="purchase-modal">
-    <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
-        <h3 class="modal-title">Підтвердження покупки</h3>
-        <button style="background:none; border:none; color:#aaa; font-size:1.25rem; cursor:pointer;" id="close-modal">x</button>
+    <div class="purchase-modal" id="purchase-modal">
+      <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 class="modal-title">Підтвердження покупки</h3>
+          <button style="background:none; border:none; color:#aaa; font-size:1.25rem; cursor:pointer;" id="close-modal">x</button>
+        </div>
+        <p>Ви впевнені, що хочете купити <strong id="product-name-modal"></strong> за <strong id="product-price-modal"></strong> балів?</p>
+        <div class="modal-footer">
+          <button class="cancel-btn" id="cancel-purchase">Скасувати</button>
+          <button class="confirm-btn" id="confirm-purchase">Підтвердити</button>
+        </div>
       </div>
-      <p>Ви впевнені, що хочете купити <strong id="product-name-modal"></strong> за <strong id="product-price-modal"></strong> балів?</p>
-      <div class="modal-footer">
-        <button class="cancel-btn" id="cancel-purchase">Скасувати</button>
-        <button class="confirm-btn" id="confirm-purchase">Підтвердити</button>
+    </div>
+
+    <div class="main-content">
+      <div class="banner">
+        <h2 class="banner-title">Магазин баллов</h2>
       </div>
-    </div>
-  </div>
+      <div class="shop-header">
+        <h1 class="shop-title">Магазин баллов Ukraine GTA 5 RP</h1>
+        <p style="color:#aaa;">Після покупки заявка відправляється адміністрації.</p>
+      </div>
 
-  <div class="main-content">
-    <div class="banner">
-      <h2 class="banner-title">Магазин баллов</h2>
-    </div>
-    <div class="shop-header">
-      <h1 class="shop-title">Магазин баллов Ukraine GTA 5 RP</h1>
-      <p style="color:#aaa;">Після покупки заявка відправляється адміністрації.</p>
-    </div>
+      <div class="categories">
+        <button class="category-btn active" data-category="all">Всі</button>
+        <button class="category-btn" data-category="transport">Транспорт</button>
+        <button class="category-btn" data-category="clothing">Одяг</button>
+        <button class="category-btn" data-category="accessories">Аксесуари</button>
+      </div>
 
-    <div class="categories">
-      <button class="category-btn active" data-category="all">Всі</button>
-      <button class="category-btn" data-category="transport">Транспорт</button>
-      <button class="category-btn" data-category="clothing">Одяг</button>
-      <button class="category-btn" data-category="accessories">Аксесуари</button>
+      <div class="products-grid" id="products-grid"></div>
     </div>
-
-    <div class="products-grid" id="products-grid"></div>
   </div>
 
   <script>
-    // === ЗАМЕНИ ЭТУ ССЫЛКУ ===
+    // === ЗАМЕНИ ЭТИ ДВЕ СТРОКИ ===
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwdjvlWyI7lEofgPKHJi6BQ7vsa9z2yCl3ULjC4z8dHLb5GjbS-BxaMu94p8YFqJHh2lw/exec';
+    const BOT_TOKEN = '123456789:ABCdefGhIJKlmNoPQRstuVWXyz'; // ← ТВОЙ ТОКЕН БОТА
 
-    let products = [], userBalance = 0, userId = null;
+    let products = [], userData = null;
 
-    function onTelegramAuth(user) {
-      fetch(WEB_APP_URL, {
+    // РЕГИСТРАЦИЯ
+    async function register() {
+      const username = document.getElementById('username').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      if (!username.startsWith('@') || !nickname) return alert('Заповніть обидва поля');
+
+      const res = await fetch(WEB_APP_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: 'auth', user: user }),
+        body: JSON.stringify({ action: 'register', username: username.slice(1), nickname, botToken: BOT_TOKEN }),
         headers: { 'Content-Type': 'application/json' }
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          userId = user.id;
-          localStorage.setItem('userId', user.id);
-          userBalance = data.balance;
-          document.getElementById('user-name').textContent = data.name + (data.username ? ` (${data.username})` : '');
-          document.getElementById('user-balance').textContent = data.balance;
-          document.getElementById('login-widget').style.display = 'none';
-          document.getElementById('user-info').style.display = 'flex';
-          loadProducts('all');
-        }
-      });
+      }).then(r => r.json());
+
+      if (res.success) {
+        localStorage.setItem('pendingUser', JSON.stringify({ username: username.slice(1), nickname }));
+        document.getElementById('register-status').textContent = 'Очікуйте схвалення адміна...';
+        setTimeout(checkApproval, 3000);
+      } else {
+        alert(res.error || 'Помилка реєстрації');
+      }
     }
 
+    // ПРОВЕРКА ОДОБРЕНИЯ
+    async function checkApproval() {
+      const pending = JSON.parse(localStorage.getItem('pendingUser'));
+      if (!pending) return;
+
+      const res = await fetch(`${WEB_APP_URL}?action=checkUser&username=${pending.username}`).then(r => r.json());
+      if (res.exists && res.status === 'approved') {
+        userData = { username: '@' + pending.username, nickname: res.nickname, balance: res.balance };
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.removeItem('pendingUser');
+        showShop();
+      } else if (res.exists && res.status === 'pending') {
+        setTimeout(checkApproval, 5000);
+      } else {
+        alert('Реєстрацію відхилено або видалено.');
+        localStorage.removeItem('pendingUser');
+      }
+    }
+
+    // ПОКАЗАТЬ МАГАЗИН
+    function showShop() {
+      document.getElementById('register-screen').style.display = 'none';
+      document.getElementById('shop-content').style.display = 'block';
+      document.getElementById('user-name').textContent = userData.nickname;
+      document.getElementById('user-balance').textContent = userData.balance;
+
+      fetchProducts();
+    }
+
+    // ЗАГРУЗКА ТОВАРОВ
     function fetchProducts() {
       fetch(`${WEB_APP_URL}?action=getProducts`)
         .then(r => r.json())
-        .then(data => { products = data; loadProducts(document.querySelector('.category-btn.active').dataset.category); });
+        .then(data => { products = data; loadProducts('all'); });
     }
 
     function loadProducts(category) {
       const grid = document.getElementById('products-grid'); grid.innerHTML = '';
       const filtered = category === 'all' ? products : products.filter(p => p.category === category);
       filtered.forEach(p => {
-        const canBuy = userId && userBalance >= p.price && p.stock > 0;
+        const canBuy = userData && userData.balance >= p.price && p.stock > 0;
         const card = document.createElement('div'); card.className = 'product-card';
         card.innerHTML = `
           <div class="product-image">
@@ -169,7 +216,7 @@
               <span class="price">${p.price} балів</span>
             </div>
             <button class="buy-btn" data-id="${p.id}" ${!canBuy ? 'disabled' : ''}>
-              ${p.stock <= 0 ? 'Немає' : !userId ? 'Увійти' : userBalance < p.price ? 'Недостатньо' : 'Купити'}
+              ${p.stock <= 0 ? 'Немає' : userData.balance < p.price ? 'Недостатньо' : 'Купити'}
             </button>
           </div>
           ${p.stock < 5 ? `<div class="product-stock ${p.stock === 0 ? 'low' : ''}">${p.stock} шт</div>` : ''}
@@ -185,21 +232,21 @@
       });
     }
 
+    // ПОКУПКА
     document.getElementById('confirm-purchase').onclick = () => {
       fetch(WEB_APP_URL, {
         method: 'POST',
         body: JSON.stringify({
-          action: 'purchase', userId: userId,
-          productId: window.currentProduct.id, price: window.currentProduct.price,
-          productName: window.currentProduct.name
+          action: 'purchase', username: userData.username, productId: window.currentProduct.id, botToken: BOT_TOKEN
         }),
         headers: { 'Content-Type': 'application/json' }
       })
       .then(r => r.json())
       .then(data => {
         if (data.success) {
-          userBalance = data.newBalance;
+          userData.balance = data.newBalance;
           document.getElementById('user-balance').textContent = data.newBalance;
+          localStorage.setItem('user', JSON.stringify(userData));
           alert('Успішно! Заявка відправлена.');
           fetchProducts();
         } else alert(data.error || 'Помилка');
@@ -211,20 +258,26 @@
       document.getElementById(id).onclick = () => document.getElementById('purchase-modal').classList.remove('active');
     });
 
+    // ВЫХОД
+    function logout() {
+      localStorage.removeItem('user');
+      localStorage.removeItem('pendingUser');
+      location.reload();
+    }
+
+    // ЗАГРУЗКА ПРИ СТАРТЕ
     document.addEventListener('DOMContentLoaded', () => {
-      userId = localStorage.getItem('userId');
-      if (userId) {
-        fetch(`${WEB_APP_URL}?action=getBalance&userId=${userId}`)
-          .then(r => r.json())
-          .then(d => {
-            userBalance = d.balance;
-            document.getElementById('user-name').textContent = d.name + (d.username ? ` (${d.username})` : '');
-            document.getElementById('user-balance').textContent = d.balance;
-            document.getElementById('login-widget').style.display = 'none';
-            document.getElementById('user-info').style.display = 'flex';
-          });
+      const saved = localStorage.getItem('user');
+      if (saved) {
+        userData = JSON.parse(saved);
+        showShop();
+      } else {
+        const pending = localStorage.getItem('pendingUser');
+        if (pending) {
+          document.getElementById('register-status').textContent = 'Очікуйте схвалення...';
+          checkApproval();
+        }
       }
-      fetchProducts();
 
       document.querySelectorAll('.category-btn').forEach(b => {
         b.onclick = () => {
