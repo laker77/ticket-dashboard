@@ -405,30 +405,35 @@
 
     // ==================== ОБНОВЛЕНИЕ БАЛАНСА ====================
 async function updateBalanceInSheets(userData, newBalance, productName, productPrice) {
-  return new Promise((resolve) => {
-    google.script.run
-      .withSuccessHandler(result => {
-        if (result.success) {
-          showNotification(`Куплено: "${productName}"! Баланс: ${newBalance}`, 'success');
-          resolve(true);
-        } else {
-          showNotification('Помилка: ' + result.error, 'error');
-          resolve(false);
-        }
-      })
-      .withFailureHandler(error => {
-        console.error('Google Script Error:', error);
-        showNotification('Серверна помилка. Повідом адміна.', 'error');
-        resolve(false);
-      })
-      .updateBalance(
-        userData.rowIndex,
-        userData.balanceCol,
-        newBalance,
-        userData.username,
-        productName,
-        productPrice
-      );
+  return new Promise(async (resolve) => {
+    try {
+      const PROXY = 'https://api.allorigins.win/raw?url=';
+      const SCRIPT_URL = PROXY + encodeURIComponent('https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec');
+
+      const payload = {
+        row: userData.rowIndex,
+        col: userData.balanceCol,
+        newValue: newBalance,
+        username: userData.username,
+        productName: productName,
+        productPrice: productPrice
+      };
+
+      const response = await axios.post(SCRIPT_URL, payload, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.data && response.data.success) {
+        showNotification(`Куплено: "${productName}"! Баланс: ${newBalance}`, 'success');
+        resolve(true);
+      } else {
+        throw new Error(response.data.error || 'Сервер не відповів');
+      }
+    } catch (error) {
+      console.error('ПОМИЛКА:', error);
+      showNotification('Покупка прийнята, але баланс не оновлено. Повідом адміна!', 'warning');
+      resolve(false);
+    }
   });
 }
 
