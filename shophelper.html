@@ -264,7 +264,12 @@
     </div>
 
     <div class="products-grid" id="products-grid"></div>
-
+<!-- КНОПКА ПОКУПКИ (вставь куда угодно) -->
+<div style="padding: 20px; text-align: center;">
+  <button onclick="buyTestProduct()" style="padding: 12px 24px; background: #DC2626; color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;">
+    Купити "Тестовий товар" за 100 балів
+  </button>
+</div>
     <footer>
       <p class="footer-logo">Ukraine GTA 5 RolePlay</p>
       <p class="copyright">© 2025 Ukraine GTA 5 RolePlay | Адміністрація сервера</p>
@@ -690,6 +695,52 @@ async function updateBalanceInSheets(userData, newBalance, productName, productP
       console.error('Глобальна помилка:', e.error);
       showNotification('Сталася неочікувана помилка. Спробуйте оновити сторінку.', 'error');
     });
+
+    // === НОВАЯ ФУНКЦИЯ: ПОКУПКА ===
+async function buyTestProduct() {
+  const telegram = '@laker_77'; // ← ТВОЙ ТЕЛЕГРАМ
+  const productPrice = 100;
+  
+  try {
+    // 1. Получаем баланс
+    const balanceRes = await fetch(`${appsScriptUrl}?action=getBalanceData&telegram=${telegram}&t=${Date.now()}`);
+    const balanceData = await balanceRes.json();
+    
+    if (!balanceData.success) throw new Error(balanceData.error);
+    
+    const currentBalance = balanceData.balance;
+    if (currentBalance < productPrice) {
+      alert('Недостатньо балів!');
+      return;
+    }
+    
+    const newBalance = currentBalance - productPrice;
+    
+    // 2. Обновляем баланс
+    const updateRes = await fetch(appsScriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'updateBalance',
+        row: balanceData.rowIndex,
+        col: balanceData.balanceCol,
+        newValue: newBalance,
+        username: telegram,
+        productName: 'Тестовий товар',
+        productPrice: productPrice
+      })
+    });
+    
+    const updateData = await updateRes.json();
+    if (!updateData.success) throw new Error(updateData.error);
+    
+    alert(`Куплено! Новий баланс: ${newBalance} балів`);
+    
+  } catch (error) {
+    console.error('Помилка покупки:', error);
+    alert('Помилка: ' + error.message);
+  }
+}
   </script>
 </body>
 </html>
