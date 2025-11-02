@@ -281,7 +281,6 @@
     const BALANCE_SHEET_NAME = 'Баланси'; // Лист с балансами
 
     // ==================== Google Apps Script URL ====================
-    // Нужно создать Google Apps Script для записи данных
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec';
 
     // ==================== Telegram Auth ====================
@@ -410,20 +409,6 @@
     // ==================== ОБНОВЛЕНИЕ БАЛАНСА В GOOGLE SHEETS ====================
     async function updateBalanceInSheets(userData, newBalance) {
       try {
-         Способ 1: Использование Google Apps Script (рекомендуется)
-        // Нужно создать Google Apps Script с следующим кодом:
-        
-        function doPost(e) {
-          var sheet = SpreadsheetApp.openById('YOUR_SHEET_ID').getSheetByName('Баланси');
-          var data = JSON.parse(e.postData.contents);
-          
-          sheet.getRange(data.row, data.column).setValue(data.newBalance);
-          
-          return ContentService.createTextOutput(JSON.stringify({success: true}))
-            .setMimeType(ContentService.MimeType.JSON);
-        }
-        
-        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           headers: {
@@ -443,19 +428,13 @@
         
       } catch (error) {
         console.error('Ошибка обновления баланса в Google Sheets:', error);
-        
-        // Способ 2: Альтернативный метод через Google Sheets API (требует OAuth2)
-        // Этот метод сложнее в настройке, но может работать если настроить правильно
-        
         return false;
       }
     }
 
-    // ==================== АЛЬТЕРНАТИВНЫЙ МЕТОД ЧЕРЕЗ GOOGLE SHEETS API ====================
+    // ==================== АЛЬТЕРНАТИВНЫЙ МЕТОД ====================
     async function updateBalanceAlternative(userData, newBalance) {
       try {
-        // Этот метод требует настройки OAuth2 и серверной части
-        // Показываем уведомление, что баланс обновлен локально
         showNotification('Баланс оновлено локально. Адміністрація буде повідомлена про покупку.', 'warning');
         return true;
       } catch (error) {
