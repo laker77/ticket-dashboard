@@ -404,82 +404,38 @@
     }
 
     // ==================== ОБНОВЛЕНИЕ БАЛАНСА ====================
-    async function updateBalanceInSheets(userData, newBalance, productName, productPrice) {
-      return new Promise((resolve) => {
-        try {
-          console.log('🔄 Попытка обновления баланса...', {
-            пользователь: userData.username,
-            новый_баланс: newBalance,
-            товар: productName,
-            цена: productPrice,
-            строка: userData.rowIndex,
-            колонка: userData.balanceCol
-          });
-
-          // Способ 1: Используем Google Forms как прокси (обход CORS)
-          const formUrl = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
-          
-          // Создаем скрытую форму
-          const form = document.createElement('form');
-          form.method = 'POST';
-          form.action = formUrl;
-          form.style.display = 'none';
-          form.target = 'hiddenIframe';
-
-          // Добавляем поля
-          const fields = {
-            'entry.1234567890': `ПОКУПКА: ${userData.username}`,
-            'entry.1234567891': `Товар: ${productName}`,
-            'entry.1234567892': `Цена: ${productPrice}`,
-            'entry.1234567893': `Новый баланс: ${newBalance}`,
-            'entry.1234567894': `Время: ${new Date().toLocaleString()}`
-          };
-
-          for (const [name, value] of Object.entries(fields)) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
-          }
-
-          // Создаем iframe для отправки
-          let iframe = document.getElementById('hiddenIframe');
-          if (!iframe) {
-            iframe = document.createElement('iframe');
-            iframe.name = 'hiddenIframe';
-            iframe.style.display = 'none';
-            iframe.id = 'hiddenIframe';
-            document.body.appendChild(iframe);
-          }
-
-          // Отправляем форму
-          document.body.appendChild(form);
-          form.submit();
-          document.body.removeChild(form);
-
-          // Всегда считаем успешным (в реальном приложении нужно подтверждение)
-          setTimeout(() => {
-            console.log('✅ Баланс обновлен в системе');
-            showNotification(`✅ Покупка "${productName}" успешна! Новый баланс: ${newBalance} баллов`, 'success');
-            
-            // Логируем в консоль для администратора
-            console.log(`💸 ЗАПИСЬ ДЛЯ АДМИНА: ${userData.username} купил "${productName}" за ${productPrice} баллов. Новый баланс: ${newBalance}. Обновите вручную в таблице.`);
-            
-            resolve(true);
-          }, 1000);
-
-        } catch (error) {
-          console.error('Ошибка обновления баланса:', error);
-          
-          // Даже при ошибке показываем успех пользователю
-          showNotification(`✅ Покупка "${productName}" принята! Администратор уведомлен.`, 'success');
-          console.log(`📋 ДЛЯ РУЧНОГО ОБНОВЛЕНИЯ: ${userData.username} → новый баланс: ${newBalance}`);
-          
-          resolve(true);
-        }
+async function updateBalanceInSheets(userData, newBalance, productName, productPrice) {
+  return new Promise(async (resolve) => {
+    try {
+      console.log('🔄 Оновлення балансу в Google Sheets...', {
+        row: userData.rowIndex,
+        col: userData.balanceCol,
+        newBalance,
+        user: userData.username
       });
+
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec'; // ← ВСТАВ СЮДИ СВІЙ URL
+
+      const response = await axios.post(SCRIPT_URL, {
+        row: userData.rowIndex,
+        col: userData.balanceCol,
+        newValue: newBalance
+      });
+
+      if (response.data.success) {
+        console.log('✅ Баланс успішно оновлено в Google Sheets');
+        showNotification(`Покупка "${productName}" успішна! Новий баланс: ${newBalance} балів`, 'success');
+        resolve(true);
+      } else {
+        throw new Error(response.data.error);
+      }
+    } catch (error) {
+      console.error('❌ Помилка оновлення балансу:', error);
+      showNotification(`Покупка прийнята, але баланс не оновлено. Повідом адміна!`, 'warning');
+      resolve(false); // Але покупка все одно "успішна" для користувача
     }
+  });
+}
 
     function showShop(userData) {
       console.log('Показываем магазин для:', userData);
