@@ -31,7 +31,149 @@
     body { background: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; overflow-x: hidden; transition: var(--transition); }
     .hidden { display: none !important; }
 
-    <!-- ====================== ЕКРАН ВХОДУ ====================== -->
+    /* ====================== АВТОРИЗАЦИЯ ====================== */
+    #login-section, #access-denied-section {
+      position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 3000;
+    }
+    .login-container, .access-denied-content {
+      background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2.5rem 2rem; max-width: 460px; width: 90%; text-align: center; box-shadow: var(--shadow);
+    }
+    .login-logo {
+      width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: white;
+    }
+    .login-title { font-size: 1.8rem; margin-bottom: .5rem; }
+    .login-subtitle { color: var(--text-secondary); margin-bottom: 2rem; }
+    .telegram-button-wrapper { display: inline-block; border-radius: .75rem; overflow: hidden; box-shadow: 0 0 20px rgba(59,130,246,.4); transition: var(--transition); }
+    .telegram-button-wrapper:hover { transform: scale(1.04); }
+    .access-denied-icon { font-size: 4rem; color: var(--accent-red); margin-bottom: .5rem; }
+    .back-to-login-btn {
+      margin-top: 1rem; background: var(--accent-red); color: white; padding: .6rem 1.5rem; border-radius: .5rem; cursor: pointer; border: none; font-weight: 600; transition: var(--transition);
+    }
+    .back-to-login-btn:hover { background: #DC2626; }
+    #logout-btn {
+      position: fixed; top: 1rem; right: 1rem; background: var(--accent-red); color: white; padding: .5rem 1rem; border-radius: .5rem; font-weight: 600; cursor: pointer; z-index: 1001; transition: var(--transition); border: none;
+    }
+    #logout-btn:hover { background: #DC2626; }
+
+    /* ====================== ТОП-БАР ====================== */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; z-index: 999; backdrop-filter: blur(8px);
+    }
+    .top-bar-left { display: flex; align-items: center; gap: 1rem; }
+    .top-bar-title { font-size: 0.875rem; font-weight: 600; }
+    .top-bar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .user-info { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 1rem; background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color); }
+    .user-balance { font-size: 0.875rem; font-weight: 600; }
+    .balance-amount { color: var(--accent-yellow); }
+
+    /* ====================== ОСНОВНОЙ КОНТЕНТ ====================== */
+    .main-content {
+      margin-top: 60px; padding: 2rem 1.5rem; min-height: calc(100vh - 60px); max-width: 1400px; margin-left: auto; margin-right: auto;
+    }
+    .banner {
+      background: linear-gradient(135deg, var(--accent-blue) 0%, #1D4ED8 100%); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .banner-content { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1; }
+    .banner-text { flex: 1; min-width: 200px; text-align: left; }
+    .banner-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .banner-description { font-size: 0.875rem; color: rgba(255, 255, 255, 0.9); }
+    .banner-link { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; border-radius: 8px; font-size: 0.875rem; font-weight: 600; text-decoration: none; border: 1px solid rgba(255, 255, 255, 0.3); transition: var(--transition); }
+    .banner-link:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+
+    .shop-header { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; text-align: center; }
+    .shop-logo { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; }
+    .shop-logo i { font-size: 2.5rem; color: var(--accent-yellow); }
+    .shop-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .shop-subtitle { font-size: 1rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto; line-height: 1.6; }
+
+    .categories { display: flex; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.5rem; }
+    .category-btn { padding: 0.75rem 1.5rem; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary); border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: var(--transition); }
+    .category-btn.active, .category-btn:hover { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .product-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; transition: var(--transition); position: relative; }
+    .product-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); box-shadow: 0 8px 32px rgba(59, 130, 246, 0.15); }
+    .product-image { height: 200px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .product-image img { width: 100%; height: 100%; object-fit: cover; }
+    .product-image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-tertiary); font-size: 3rem; }
+    .product-image-placeholder span { font-size: 0.875rem; margin-top: 0.5rem; }
+    .product-info { padding: 1.5rem; }
+    .product-name { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .product-description { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5; min-height: 40px; }
+    .product-price { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .price { font-weight: 700; color: var(--accent-yellow); font-size: 1.25rem; }
+    .buy-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--accent-blue); color: white; font-size: 0.875rem; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; transition: var(--transition); width: 100%; }
+    .buy-btn:hover { background: #2563EB; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
+    .buy-btn:disabled { background: var(--text-tertiary); cursor: not-allowed; transform: none; box-shadow: none; }
+    .product-stock { position: absolute; top: 1rem; right: 1rem; background: var(--accent-green); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .product-stock.low { background: var(--accent-red); }
+
+    .purchase-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; align-items: center; justify-content: center; }
+    .purchase-modal.active { display: flex; }
+    .modal-content { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%; box-shadow: var(--shadow); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .modal-title { font-size: 1.25rem; font-weight: 600; }
+    .close-modal { background: transparent; border: none; color: var(--text-secondary); font-size: 1.25rem; cursor: pointer; transition: var(--transition); }
+    .close-modal:hover { color: var(--text-primary); }
+    .modal-message { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; }
+    .modal-footer { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .cancel-btn, .confirm-btn { padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: var(--transition); border: none; }
+    .cancel-btn { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+    .cancel-btn:hover { background: var(--border-color); }
+    .confirm-btn { background: var(--accent-green); color: white; }
+    .confirm-btn:hover { background: #059669; }
+
+    /* Уведомления */
+    .notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 10000;
+      box-shadow: var(--shadow);
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+    }
+    .notification.show {
+      transform: translateX(0);
+    }
+    .notification.success {
+      background: var(--accent-green);
+    }
+    .notification.error {
+      background: var(--accent-red);
+    }
+    .notification.warning {
+      background: var(--accent-yellow);
+    }
+
+    /* Индикатор загрузки */
+    .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer { text-align: center; padding: 2rem 0 1rem; color: var(--text-secondary); margin-top: 3rem; border-top: 1px solid var(--border-color); }
+    .back-to-top { position: fixed; bottom: 2rem; right: 2rem; width: 48px; height: 48px; background: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transform: translateY(20px); transition: var(--transition); z-index: 100; box-shadow: var(--shadow); border: none; }
+    .back-to-top:hover { background: #2563EB; }
+    .back-to-top.visible { opacity: 1; transform: translateY(0); }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      .top-bar { padding: 0 1rem; }
+      .main-content { padding: 1.5rem 1rem; margin-top: 60px; }
+      .banner-content { flex-direction: column; text-align: center; }
+      .shop-title { font-size: 1.5rem; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+      .modal-footer { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====================== ЕКРАН ВХОДУ ====================== -->
   <div id="login-section">
     <div class="login-container">
       <div class="login-logo"><i class="fab fa-telegram-plane"></i></div>
