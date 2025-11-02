@@ -407,8 +407,11 @@
 async function updateBalanceInSheets(userData, newBalance, productName, productPrice) {
   return new Promise(async (resolve) => {
     try {
-      const PROXY = 'https://api.allorigins.win/raw?url=';
-      const SCRIPT_URL = PROXY + encodeURIComponent('https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec');
+      console.log('Оновлюємо баланс...', { row: userData.rowIndex, col: userData.balanceCol, newBalance });
+
+      // НАДІЙНИЙ ПРОКСІ, який передає POST + JSON
+      const PROXY = 'https://thingproxy.freeboard.io/fetch/';
+      const SCRIPT_URL = PROXY + 'https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec';
 
       const payload = {
         row: userData.rowIndex,
@@ -420,23 +423,26 @@ async function updateBalanceInSheets(userData, newBalance, productName, productP
       };
 
       const response = await axios.post(SCRIPT_URL, payload, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
+      console.log('Відповідь від проксі:', response.data);
+
       if (response.data && response.data.success) {
-        showNotification(`Куплено: "${productName}"! Баланс: ${newBalance}`, 'success');
+        showNotification(`Куплено: "${productName}"! Баланс: ${newBalance} балів`, 'success');
         resolve(true);
       } else {
         throw new Error(response.data.error || 'Сервер не відповів');
       }
     } catch (error) {
-      console.error('ПОМИЛКА:', error);
+      console.error('ПОМИЛКА ОНОВЛЕННЯ:', error);
       showNotification('Покупка прийнята, але баланс не оновлено. Повідом адміна!', 'warning');
       resolve(false);
     }
   });
 }
-
     function showShop(userData) {
       console.log('Показываем магазин для:', userData);
       
