@@ -407,10 +407,16 @@
 async function updateBalanceInSheets(userData, newBalance, productName, productPrice) {
   return new Promise(async (resolve) => {
     try {
-      console.log('Оновлюємо баланс...', { userData, newBalance });
+      console.log('Оновлюємо баланс...', { 
+        row: userData.rowIndex, 
+        col: userData.balanceCol, 
+        newBalance, 
+        user: userData.username 
+      });
 
-    const PROXY = 'https://corsproxy.io/?';
-const SCRIPT_URL = PROXY + encodeURIComponent('https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec');
+      // CORS PROXY + ТВІЙ WEB APP
+      const PROXY = 'https://corsproxy.io/?';
+      const SCRIPT_URL = PROXY + encodeURIComponent('https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec');
 
       const payload = {
         row: userData.rowIndex,
@@ -422,20 +428,18 @@ const SCRIPT_URL = PROXY + encodeURIComponent('https://script.google.com/macros/
       };
 
       const response = await axios.post(SCRIPT_URL, payload, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
 
       if (response.data.success) {
-        console.log('Баланс оновлено в Google Sheets!');
-        showNotification(`Куплено: "${productName}"! Баланс: ${newBalance}`, 'success');
+        console.log('БАЛАНС УСПІШНО ОНОВЛЕНО В GOOGLE SHEETS!');
+        showNotification(`Куплено: "${productName}"! Баланс: ${newBalance} балів`, 'success');
         resolve(true);
       } else {
-        throw new Error(response.data.error || 'Невідома помилка');
+        throw new Error(response.data.error || 'Невідома помилка сервера');
       }
     } catch (error) {
-      console.error('Помилка оновлення:', error);
+      console.error('ПОМИЛКА ОНОВЛЕННЯ БАЛАНСУ:', error);
       showNotification('Покупка прийнята, але баланс не оновлено. Повідом адміна!', 'warning');
       resolve(false);
     }
