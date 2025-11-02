@@ -407,32 +407,36 @@
 async function updateBalanceInSheets(userData, newBalance, productName, productPrice) {
   return new Promise(async (resolve) => {
     try {
-      console.log('🔄 Оновлення балансу в Google Sheets...', {
+      console.log('Оновлюємо баланс...', { userData, newBalance });
+
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec';
+
+      const payload = {
         row: userData.rowIndex,
         col: userData.balanceCol,
-        newBalance,
-        user: userData.username
-      });
+        newValue: newBalance,
+        username: userData.username,
+        productName: productName,
+        productPrice: productPrice
+      };
 
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec'; // ← ВСТАВ СЮДИ СВІЙ URL
-
-      const response = await axios.post(SCRIPT_URL, {
-        row: userData.rowIndex,
-        col: userData.balanceCol,
-        newValue: newBalance
+      const response = await axios.post(SCRIPT_URL, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.data.success) {
-        console.log('✅ Баланс успішно оновлено в Google Sheets');
-        showNotification(`Покупка "${productName}" успішна! Новий баланс: ${newBalance} балів`, 'success');
+        console.log('Баланс оновлено в Google Sheets!');
+        showNotification(`Куплено: "${productName}"! Баланс: ${newBalance}`, 'success');
         resolve(true);
       } else {
-        throw new Error(response.data.error);
+        throw new Error(response.data.error || 'Невідома помилка');
       }
     } catch (error) {
-      console.error('❌ Помилка оновлення балансу:', error);
-      showNotification(`Покупка прийнята, але баланс не оновлено. Повідом адміна!`, 'warning');
-      resolve(false); // Але покупка все одно "успішна" для користувача
+      console.error('Помилка оновлення:', error);
+      showNotification('Покупка прийнята, але баланс не оновлено. Повідом адміна!', 'warning');
+      resolve(false);
     }
   });
 }
