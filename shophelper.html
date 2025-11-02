@@ -279,6 +279,31 @@
   const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
   const BALANCE_SHEET_NAME = 'Баланси';
 
+  // ==================== ДАНІ ТОВАРІВ (ПОВНИЙ МАСИВ) ====================
+  const products = [
+    { id: 1, name: "Болид", description: "Ексклюзивний спортивний автомобіль", price: 8440, category: "transport", stock: 1, image: null },
+    { id: 2, name: "Диван", description: "Розкішний диван для вашого будинку", price: 9345, category: "transport", stock: 1, image: null },
+    { id: 3, name: "Колонка маршал", description: "Потужна колонка для якісного звуку", price: 1800, category: "accessories", stock: 1, image: null },
+    { id: 4, name: "Сумка Еліт", description: "Елітна сумка для повсякденного використання", price: 839, category: "accessories", stock: 2, image: null },
+    { id: 5, name: "Рюкзак Мілітарі", description: "Стильний військовий рюкзак", price: 990, category: "accessories", stock: 1, image: null },
+    { id: 6, name: "Крила Ангел", description: "Елегантні крила для вашого образу", price: 724, category: "clothing", stock: 2, image: null },
+    { id: 7, name: "Плаття Кай", description: "Красиве плаття для особливих випадків", price: 839, category: "clothing", stock: 2, image: null },
+    { id: 8, name: "Кофта Кохання", description: "Затишна кофта з романтичним дизайном", price: 524, category: "clothing", stock: 2, image: null },
+    { id: 9, name: "Футболка For all cases", description: "Універсальна футболка на всі випадки життя", price: 366, category: "clothing", stock: 1, image: null },
+    { id: 10, name: "Штани найк", description: "Комфортні спортивні штани", price: 416, category: "clothing", stock: 1, image: null },
+    { id: 11, name: "Тактичні черевики", description: "Міцні тактичні черевики", price: 205, category: "clothing", stock: 1, image: null },
+    { id: 12, name: "Брюки", description: "Класичні брюки", price: 472, category: "clothing", stock: 1, image: null },
+    { id: 13, name: "Плаття Светр", description: "Стильне плаття-светр", price: 582, category: "clothing", stock: 1, image: null },
+    { id: 14, name: "Піжама Ведмедик", description: "Милі піжами з ведмедиками", price: 814, category: "clothing", stock: 1, image: null },
+    { id: 15, name: "Ботфорти", description: "Елегантні ботфорти", price: 450, category: "clothing", stock: 1, image: null },
+    { id: 16, name: "Маска ікла", description: "Стильна маска для анонімності", price: 433, category: "accessories", stock: 1, image: null },
+    { id: 17, name: "Борода", description: "Стильна борода для вашого персонажа", price: 236, category: "accessories", stock: 1, image: null },
+    { id: 18, name: "Рюкзак Лабубу", description: "Модний рюкзак від Лабубу", price: 1120, category: "accessories", stock: 1, image: null },
+    { id: 19, name: "Ньюроки", description: "Стильне взуття Ньюроки", price: 216, category: "clothing", stock: 1, image: null },
+    { id: 20, name: "Рюкзак Міккі", description: "Рюкзак з дизайном Міккі Мауса", price: 1633, category: "accessories", stock: 1, image: null },
+    { id: 21, name: "Кобура Мінімум", description: "Мінімалістична кобура для зброї", price: 526, category: "accessories", stock: 1, image: null }
+  ];
+
   // ==================== Telegram Auth ====================
   async function onTelegramAuth(user) {
     if (!user?.username) return showAccessDenied();
@@ -300,7 +325,7 @@
       for (let i = 1; i < balanceData.length; i++) {
         if (balanceData[i][tgCol]?.toString().trim().toLowerCase() === tgUsername.toLowerCase()) {
           userRow = balanceData[i];
-          userRowIndex = i + 1; // +1 бо API рахує з 1
+          userRowIndex = i + 1;
           break;
         }
       }
@@ -332,24 +357,33 @@
     return res.data.values || [];
   }
 
-  // НОВА ФУНКЦІЯ: Оновлення балансу в Google Sheets
   async function updateBalanceInSheet(rowIndex, newBalance) {
     const range = `${BALANCE_SHEET_NAME}!A${rowIndex}:Z${rowIndex}`;
-    const value = [[...Array(20).fill(''), newBalance]]; // Заповнюємо до 20 колонок
-
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}&valueInputOption=RAW`;
     
     try {
-      await axios.put(url, { values: [value[0].slice(0, 20)] });
+      // Отримуємо поточний рядок, щоб не затерти інші дані
+      const current = await getSheetData(`${BALANCE_SHEET_NAME}!A${rowIndex}:Z${rowIndex}`);
+      const row = current[0] || Array(26).fill('');
+      const balanceCol = (await getSheetData(BALANCE_SHEET_NAME))[0]
+        .findIndex(h => ['бал', 'балл', 'balance', 'score', 'points', 'кількість'].some(n => h?.toString().toLowerCase().includes(n)));
+
+      if (balanceCol === -1) throw new Error('Колонка балансу не знайдена');
+
+      row[balanceCol] = newBalance;
+
+      await axios.put(url, { values: [row] });
       return true;
     } catch (error) {
-      console.error('Помилка оновлення Google Sheets:', error.response?.data || error);
-      showNotification('Не вдалося оновити баланс у таблиці!', 'error');
+      console.error('Помилка оновлення:', error.response?.data || error);
+      showNotification('Не вдалося оновити баланс!', 'error');
       return false;
     }
   }
 
-  // ==================== Покупка з оновленням у Google Sheets ====================
+  // ==================== Покупка ====================
+  let currentProduct = null;
+
   async function confirmPurchaseHandler() {
     if (!currentProduct) return;
 
@@ -360,53 +394,51 @@
       return;
     }
 
-    const balance = user.balance;
-    if (balance < currentProduct.price) {
+    if (user.balance < currentProduct.price) {
       showNotification('Недостатньо балів!', 'error');
       closePurchaseModal();
       return;
     }
 
-    const newBalance = balance - currentProduct.price;
     const button = document.querySelector(`.buy-btn[data-id="${currentProduct.id}"]`);
-    if (button) button.disabled = true;
-    if (button) button.innerHTML = '<span class="loading"></span> Обробка...';
+    if (button) {
+      button.disabled = true;
+      button.innerHTML = '<span class="loading"></span> Обробка...';
+    }
 
-    // Крок 1: Оновлюємо в Google Sheets
+    const newBalance = user.balance - currentProduct.price;
     const success = await updateBalanceInSheet(user.rowIndex, newBalance);
 
     if (!success) {
-      if (button) button.disabled = false;
-      if (button) button.innerHTML = '<i class="fas fa-shopping-cart"></i> Купити';
+      if (button) {
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-shopping-cart"></i> Купити';
+      }
       return;
     }
 
-    // Крок 2: Оновлюємо локально
+    // Оновлюємо локально
     user.balance = newBalance;
     localStorage.setItem('tg_auth', JSON.stringify(user));
+    document.getElementById('user-balance').textContent = newBalance;
 
-    const balanceElement = document.getElementById('user-balance');
-    if (balanceElement) balanceElement.textContent = newBalance;
-
-    // Крок 3: Оновлюємо stock
+    // Оновлюємо stock
     const idx = products.findIndex(p => p.id === currentProduct.id);
     if (idx !== -1) products[idx].stock--;
 
-    showNotification(`Успішно куплено "${currentProduct.name}"! Заявка відправлена.`, 'success');
-    loadProducts(document.querySelector('.category-btn.active').dataset.category);
+    showNotification(`Куплено "${currentProduct.name}"! Заявка відправлена.`, 'success');
+    loadProducts(document.querySelector('.category-btn.active')?.dataset.category || 'all');
     closePurchaseModal();
   }
 
-  // ==================== Ініціалізація ====================
+  // ==================== UI ====================
   function showShop(userData) {
     document.getElementById('login-section').classList.add('hidden');
     document.getElementById('mainContent').classList.remove('hidden');
     document.getElementById('logout-btn').classList.remove('hidden');
+    document.getElementById('user-balance').textContent = userData.balance;
 
-    const balanceElement = document.getElementById('user-balance');
-    if (balanceElement) balanceElement.textContent = userData.balance;
-
-    showNotification(`Вітаємо, ${userData.nickname}! Баланс: ${userData.balance} балів`, 'success');
+    showNotification(`Вітаємо, ${userData.nickname}!`, 'success');
     loadProducts();
   }
 
@@ -420,15 +452,20 @@
     location.reload();
   }
 
-  // ==================== Продукти та UI ====================
-  const products = [ /* ТВІЙ МАСИВ ПРОДУКТІВ БЕЗ ЗМІН */ ];
-
   function loadProducts(category = 'all') {
     const grid = document.getElementById('products-grid');
+    if (!grid) return;
+
     grid.innerHTML = '';
     const filtered = category === 'all' ? products : products.filter(p => p.category === category);
-    const user = JSON.parse(localStorage.getItem('tg_auth') || '{}');
-    const balance = user.balance || 0;
+    const auth = localStorage.getItem('tg_auth');
+    const user = auth ? JSON.parse(auth) : null;
+    const balance = user?.balance || 0;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Товари відсутні</div>';
+      return;
+    }
 
     filtered.forEach(p => {
       const canBuy = balance >= p.price && p.stock > 0;
@@ -453,14 +490,13 @@
     });
 
     document.querySelectorAll('.buy-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.onclick = () => {
         const product = products.find(p => p.id == btn.dataset.id);
         openPurchaseModal(product);
-      });
+      };
     });
   }
 
-  let currentProduct = null;
   function openPurchaseModal(product) {
     currentProduct = product;
     document.getElementById('product-name-modal').textContent = product.name;
@@ -473,7 +509,7 @@
     currentProduct = null;
   }
 
-  // ==================== Події ====================
+  // ==================== Ініціалізація ====================
   document.addEventListener('DOMContentLoaded', () => {
     const auth = localStorage.getItem('tg_auth');
     if (auth) {
@@ -490,11 +526,11 @@
     document.getElementById('confirm-purchase').onclick = confirmPurchaseHandler;
 
     document.querySelectorAll('.category-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.onclick = () => {
         document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         loadProducts(btn.dataset.category);
-      });
+      };
     });
 
     const backToTop = document.getElementById('backToTop');
