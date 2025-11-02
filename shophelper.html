@@ -274,12 +274,11 @@
   <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
 
   <!-- ====================== СКРИПТИ ====================== -->
-  <script>
+<script>
     // ==================== КОНФІГ GOOGLE SHEETS ====================
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
     const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
-    const SHEET_NAME = 'Баланси'; // колонка з Telegram
-    const BALANCE_SHEET_NAME = 'Баланси'; // НОВЫЙ ЛИСТ С БАЛАНСАМИ
+    const BALANCE_SHEET_NAME = 'Баланси'; // Лист с балансами
 
     // ==================== Telegram Auth ====================
     async function onTelegramAuth(user) {
@@ -287,39 +286,99 @@
       const tgUsername = '@' + user.username;
 
       try {
-        // Проверяем доступ в основном листе
-        const data = await getSheetData(SHEET_NAME);
-        const headers = data[0];
-        const tgCol = headers.indexOf('Telegram');
-        if (tgCol === -1) throw new Error('Колонка Telegram не знайдена');
-
-        const row = data.find(r => r[tgCol]?.trim().toLowerCase() === tgUsername.toLowerCase());
-        if (!row) throw new Error('Користувач не знайдений');
-
-        // Получаем баланс из нового листа
-        const balanceData = await getSheetData(BALANCE_SHEET_NAME);
-        const balanceHeaders = balanceData[0];
-        const balanceTgCol = balanceHeaders.indexOf('Телеграм для авторизации');
-        const balanceCol = balanceHeaders.indexOf('Кол-во балов');
+        console.log('Начало авторизации для:', tgUsername);
         
-        if (balanceTgCol === -1 || balanceCol === -1) {
-          throw new Error('Колонки в листе балансов не знайдені');
+        // Получаем данные из листа балансов
+        const balanceData = await getSheetData(BALANCE_SHEET_NAME);
+        console.log('Данные из таблицы:', balanceData);
+        
+        if (!balanceData || balanceData.length < 2) {
+          throw new Error('Таблица балансов пуста или содержит недостаточно данных');
         }
 
-        const balanceRow = balanceData.find(r => r[balanceTgCol]?.trim().toLowerCase() === tgUsername.toLowerCase());
-        const userBalance = balanceRow ? parseInt(balanceRow[balanceCol]) || 0 : 0;
+        const headers = balanceData[0];
+        console.log('Заголовки таблицы:', headers);
+        
+        // Гибкий поиск колонок по различным вариантам названий
+        const findColumnIndex = (possibleNames) => {
+          for (let name of possibleNames) {
+            const index = headers.findIndex(h => 
+              h && h.toString().toLowerCase().includes(name.toLowerCase())
+            );
+            if (index !== -1) return index;
+          }
+          return -1;
+        };
+
+        // Ищем колонки
+        const nameCol = findColumnIndex(['имя', 'игровой', 'ник', 'name', 'nick']);
+        const staticIdCol = findColumnIndex(['static', 'статик', 'id']);
+        const tgCol = findColumnIndex(['telegram', 'телеграм', 'tg', 'username']);
+        const balanceCol = findColumnIndex(['бал', 'балл', 'balance', 'score', 'points', 'кількість']);
+        
+        console.log('Найденные индексы колонок:', { 
+          nameCol, 
+          staticIdCol, 
+          tgCol, 
+          balanceCol,
+          name: headers[nameCol],
+          tg: headers[tgCol],
+          balance: headers[balanceCol]
+        });
+
+        if (tgCol === -1) {
+          throw new Error('Колонка Telegram не найдена. Доступные колонки: ' + headers.join(', '));
+        }
+        if (balanceCol === -1) {
+          throw new Error('Колонка с баллами не найдена. Доступные колонки: ' + headers.join(', '));
+        }
+
+        // Ищем пользователя по Telegram
+        let userRow = null;
+        let userRowIndex = -1;
+
+        for (let i = 1; i < balanceData.length; i++) {
+          const row = balanceData[i];
+          if (row[tgCol] && row[tgCol].toString().trim().toLowerCase() === tgUsername.toLowerCase()) {
+            userRow = row;
+            userRowIndex = i;
+            break;
+          }
+        }
+
+        console.log('Найденная строка пользователя:', userRow);
+        console.log('Индекс строки:', userRowIndex);
+
+        if (!userRow) {
+          // Показываем какие Telegram есть в таблице для отладки
+          const availableTg = balanceData.slice(1)
+            .map(row => row[tgCol])
+            .filter(tg => tg && tg.toString().trim())
+            .map(tg => tg.toString().trim());
+          
+          console.log('Доступные Telegram в таблице:', availableTg);
+          throw new Error(`Пользователь ${tgUsername} не найден в таблице. Убедитесь, что Telegram заполнен в таблице. Доступные: ${availableTg.join(', ')}`);
+        }
+
+        const userBalance = parseInt(userRow[balanceCol]) || 0;
+        const userName = userRow[nameCol] || user.first_name || user.username;
+        const staticId = userRow[staticIdCol] || '';
 
         const userData = { 
           username: tgUsername, 
-          nickname: user.first_name || user.username,
+          nickname: userName,
           id: user.id,
-          balance: userBalance
+          balance: userBalance,
+          staticId: staticId
         };
+        
+        console.log('Данные пользователя:', userData);
         localStorage.setItem('tg_auth', JSON.stringify(userData));
         showShop(userData);
+        
       } catch (e) {
-        console.error('Помилка авторизації:', e);
-        showNotification('Помилка авторизації. Спробуйте пізніше.', 'error');
+        console.error('Полная ошибка авторизации:', e);
+        showNotification('Помилка авторизації: ' + e.message, 'error');
         showAccessDenied();
       }
     }
@@ -327,54 +386,31 @@
     async function getSheetData(name) {
       try {
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(name)}?key=${API_KEY}`;
+        console.log('Запрос к Google Sheets:', url);
         const res = await axios.get(url);
+        console.log('Ответ от Google Sheets:', res.data);
         return res.data.values || [];
       } catch (error) {
         console.error('Помилка отримання даних:', error);
-        showNotification('Помилка завантаження даних. Спробуйте пізніше.', 'error');
+        if (error.response) {
+          console.error('Статус ошибки:', error.response.status);
+          console.error('Данные ошибки:', error.response.data);
+        }
+        showNotification('Помилка завантаження даних з Google Sheets. Спробуйте пізніше.', 'error');
         return [];
-      }
-    }
-
-    // Функция для обновления баланса
-    async function updateUserBalance(tgUsername, newBalance) {
-      try {
-        const balanceData = await getSheetData(BALANCE_SHEET_NAME);
-        const balanceHeaders = balanceData[0];
-        const balanceTgCol = balanceHeaders.indexOf('Телеграм для авторизации');
-        const balanceCol = balanceHeaders.indexOf('Кол-во балов');
-        
-        if (balanceTgCol === -1 || balanceCol === -1) {
-          throw new Error('Колонки в листе балансов не знайдені');
-        }
-
-        // Находим строку пользователя
-        const userRowIndex = balanceData.findIndex(r => r[balanceTgCol]?.trim().toLowerCase() === tgUsername.toLowerCase());
-        
-        if (userRowIndex !== -1) {
-          // Обновляем баланс в данных
-          balanceData[userRowIndex][balanceCol] = newBalance.toString();
-          
-          // Здесь должен быть код для обновления данных в Google Sheets
-          // Для этого нужен более сложный API вызов с OAuth2 аутентификацией
-          console.log(`Баланс обновлен для ${tgUsername}: ${newBalance}`);
-        }
-        
-        return true;
-      } catch (error) {
-        console.error('Ошибка обновления баланса:', error);
-        return false;
       }
     }
 
     function showShop(userData) {
       document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('mainContent').classList.remove('hidden');
+      document.getElementById('main-content').classList.remove('hidden');
       document.getElementById('logout-btn').classList.remove('hidden');
 
       // Устанавливаем баланс из данных пользователя
       document.getElementById('user-balance').textContent = userData.balance || 0;
-
+      
+      showNotification(`Вітаємо, ${userData.nickname}! Ваш баланс: ${userData.balance} балів`, 'success');
+      
       loadProducts();
     }
 
@@ -385,7 +421,6 @@
 
     function logout() {
       localStorage.removeItem('tg_auth');
-      localStorage.removeItem('user_balance');
       location.reload();
     }
 
@@ -395,22 +430,9 @@
       if (auth) {
         try {
           const user = JSON.parse(auth);
-          
-          // Обновляем баланс при загрузке страницы
-          const balanceData = await getSheetData(BALANCE_SHEET_NAME);
-          const balanceHeaders = balanceData[0];
-          const balanceTgCol = balanceHeaders.indexOf('Телеграм для авторизации');
-          const balanceCol = balanceHeaders.indexOf('Кол-во балов');
-          
-          if (balanceTgCol !== -1 && balanceCol !== -1) {
-            const balanceRow = balanceData.find(r => r[balanceTgCol]?.trim().toLowerCase() === user.username.toLowerCase());
-            const currentBalance = balanceRow ? parseInt(balanceRow[balanceCol]) || 0 : 0;
-            user.balance = currentBalance;
-            localStorage.setItem('tg_auth', JSON.stringify(user));
-          }
-          
           showShop(user);
-        } catch { 
+        } catch (e) { 
+          console.error('Ошибка восстановления сессии:', e);
           logout(); 
         }
       }
@@ -444,6 +466,8 @@
     // ==================== ЗАВАНТАЖЕННЯ ТОВАРІВ ====================
     function loadProducts(category = 'all') {
       const grid = document.getElementById('products-grid');
+      if (!grid) return;
+      
       grid.innerHTML = '';
       const filtered = category === 'all' ? products : products.filter(p => p.category === category);
       
@@ -503,7 +527,7 @@
 
     document.getElementById('close-modal').onclick = closePurchaseModal;
     document.getElementById('cancel-purchase').onclick = closePurchaseModal;
-    document.getElementById('confirm-purchase').onclick = async () => {
+    document.getElementById('confirm-purchase').onclick = () => {
       if (!currentProduct) return;
       
       const auth = localStorage.getItem('tg_auth');
@@ -521,9 +545,6 @@
         user.balance = newBalance;
         localStorage.setItem('tg_auth', JSON.stringify(user));
         document.getElementById('user-balance').textContent = newBalance;
-
-        // Обновляем баланс в Google Sheets (в реальном приложении)
-        // await updateUserBalance(user.username, newBalance);
 
         const idx = products.findIndex(p => p.id === currentProduct.id);
         products[idx].stock--;
@@ -548,7 +569,6 @@
 
     // ==================== СПОВІЩЕННЯ ====================
     function showNotification(message, type = 'success') {
-      // Видаляємо попередні сповіщення
       const existingNotifications = document.querySelectorAll('.notification');
       existingNotifications.forEach(notif => notif.remove());
       
@@ -557,10 +577,8 @@
       notification.textContent = message;
       document.body.appendChild(notification);
       
-      // Показуємо сповіщення
       setTimeout(() => notification.classList.add('show'), 100);
       
-      // Ховаємо сповіщення через 5 секунд
       setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
@@ -569,10 +587,12 @@
 
     // ==================== КНОПКА НАГОРУ ====================
     const backToTop = document.getElementById('backToTop');
-    window.addEventListener('scroll', () => {
-      backToTop.classList.toggle('visible', window.pageYOffset > 300);
-    });
-    backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (backToTop) {
+      window.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', window.pageYOffset > 300);
+      });
+      backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     // ==================== ОБРОБКА ПОМИЛОК ====================
     window.addEventListener('error', (e) => {
