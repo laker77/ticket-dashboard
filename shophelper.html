@@ -409,7 +409,8 @@ async function updateBalanceInSheets(userData, newBalance, productName, productP
     try {
       console.log('Оновлюємо баланс...', { userData, newBalance });
 
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec';
+    const PROXY = 'https://corsproxy.io/?';
+const SCRIPT_URL = PROXY + encodeURIComponent('https://script.google.com/macros/s/AKfycbww7QeRvGL-2s12oscpGunEWZqfBBWRic0w-as6Gvy6BTrBXTAQQQitgPxggZzOh9xm/exec');
 
       const payload = {
         row: userData.rowIndex,
