@@ -257,6 +257,136 @@
       background: #DC2626;
     }
 
+    /* Debug Panel */
+    .debug-panel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 500px;
+      max-height: 600px;
+      background: var(--bg-secondary);
+      border: 2px solid var(--accent-red);
+      border-radius: 12px;
+      padding: 15px;
+      z-index: 10000;
+      font-size: 12px;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+      font-family: 'Courier New', monospace;
+    }
+
+    .debug-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .debug-title {
+      font-weight: bold;
+      color: var(--accent-red);
+      font-size: 14px;
+    }
+
+    .debug-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .debug-btn {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: var(--transition);
+    }
+
+    .debug-btn:hover {
+      background: var(--accent-blue);
+      color: white;
+    }
+
+    .debug-btn.test {
+      background: var(--accent-green);
+      color: white;
+    }
+
+    .debug-btn.test:hover {
+      background: #0da371;
+    }
+
+    .debug-logs {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .debug-log {
+      margin-bottom: 8px;
+      padding: 8px;
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      border-left: 4px solid var(--accent-blue);
+    }
+
+    .debug-log.error {
+      border-left-color: var(--accent-red);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .debug-log.success {
+      border-left-color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .debug-log.warning {
+      border-left-color: var(--accent-yellow);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .debug-timestamp {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .debug-message {
+      font-weight: 500;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .debug-data {
+      margin-top: 4px;
+      padding: 6px;
+      background: var(--bg-primary);
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      max-height: 150px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .debug-section {
+      margin: 12px 0;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .debug-section-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--accent-blue);
+      font-size: 13px;
+    }
+
     /* Main Content */
     .main-content {
       margin-left: 0;
@@ -905,6 +1035,12 @@
       .summary-cards {
         grid-template-columns: 1fr;
       }
+
+      .debug-panel {
+        width: 95%;
+        right: 2.5%;
+        left: 2.5%;
+      }
     }
 
     @media (max-width: 480px) {
@@ -950,6 +1086,19 @@
 </head>
 <body data-theme="dark">
   <canvas id="logos-canvas"></canvas>
+
+  <!-- Debug Panel -->
+  <div class="debug-panel" id="debug-panel">
+    <div class="debug-header">
+      <div class="debug-title">🔧 Панель відладки</div>
+      <div class="debug-controls">
+        <button class="debug-btn test" onclick="testApiKey()">Тест API</button>
+        <button class="debug-btn" onclick="clearDebugLogs()">Очистити</button>
+        <button class="debug-btn" onclick="toggleDebugPanel()">Сховати</button>
+      </div>
+    </div>
+    <div class="debug-logs" id="debug-logs"></div>
+  </div>
 
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
@@ -1049,6 +1198,10 @@
           <button id="refresh-btn" class="admin-btn primary">
             <i class="fas fa-sync-alt"></i>
             Оновити
+          </button>
+          <button id="debug-toggle" class="admin-btn">
+            <i class="fas fa-bug"></i>
+            Відладка
           </button>
         </div>
       </div>
@@ -1157,6 +1310,92 @@
   </div>
 
   <script>
+    // ==================== СИСТЕМА ВІДЛАДКИ ====================
+    let debugEnabled = true;
+
+    function debugLog(message, type = 'info', data = null) {
+      if (!debugEnabled) return;
+
+      const debugLogs = document.getElementById('debug-logs');
+      const logEntry = document.createElement('div');
+      logEntry.className = `debug-log debug-${type}`;
+
+      const timestamp = new Date().toLocaleTimeString();
+      
+      let logContent = `
+        <div class="debug-timestamp">${timestamp}</div>
+        <div class="debug-message">${message}</div>
+      `;
+
+      if (data) {
+        logContent += `<div class="debug-data">${typeof data === 'string' ? data : JSON.stringify(data, null, 2)}</div>`;
+      }
+
+      logEntry.innerHTML = logContent;
+      debugLogs.appendChild(logEntry);
+      
+      // Автопрокрутка к новым сообщениям
+      debugLogs.scrollTop = debugLogs.scrollHeight;
+      
+      // Также выводим в консоль
+      console.log(`[DEBUG ${timestamp}] ${message}`, data || '');
+    }
+
+    function clearDebugLogs() {
+      document.getElementById('debug-logs').innerHTML = '';
+      debugLog('Логи очищены', 'info');
+    }
+
+    function toggleDebugPanel() {
+      const panel = document.getElementById('debug-panel');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        debugLog('Панель отладки показана', 'info');
+      } else {
+        panel.style.display = 'none';
+        debugLog('Панель отладки скрыта', 'info');
+      }
+    }
+
+    // ==================== ТЕСТИРОВАНИЕ API ====================
+    async function testApiKey() {
+      debugLog('=== ТЕСТИРОВАНИЕ API КЛЮЧА ===', 'info');
+      
+      const testUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}?key=${API_KEY}`;
+      
+      debugLog('Отправка тестового запроса', 'info', {
+        URL: testUrl,
+        API_KEY: API_KEY ? '***' + API_KEY.slice(-4) : 'НЕТ КЛЮЧА',
+        SHEET_ID: SHEET_ID
+      });
+
+      try {
+        const startTime = Date.now();
+        const response = await axios.get(testUrl);
+        const endTime = Date.now();
+        
+        debugLog('✅ API ключ РАБОТАЕТ', 'success', {
+          времяОтвета: `${endTime - startTime}ms`,
+          названиеТаблицы: response.data.properties.title,
+          количествоЛистов: response.data.sheets.length
+        });
+        
+        showNotification('API ключ работает корректно', 'success');
+        return true;
+      } catch (error) {
+        debugLog('❌ API ключ НЕ РАБОТАЕТ', 'error', {
+          ошибка: error.message,
+          статус: error.response ? error.response.status : 'нет ответа',
+          данныеОшибки: error.response ? error.response.data : 'нет данных'
+        });
+        
+        showNotification('Ошибка API ключа', 'error');
+        return false;
+      }
+    }
+
+    // ==================== ОСНОВНОЙ КОД ====================
+
     // Falling Logos Animation
     const canvas = document.getElementById('logos-canvas');
     const ctx = canvas.getContext('2d');
@@ -1290,7 +1529,7 @@
 
     // Google Sheets Configuration
     const SHEET_ID = '1fobxr4QwD8CLYFaTh2WXNbGwqQ2mWEuQDPkqDzvzkoU'; 
-    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';   
+    const API_KEY = 'AIzaSyB3NNELU9ok5mkbHQnBEoOfRtNtPb-y5LU';
 
     const superAdmins = [
       '@laker_77',
@@ -1318,10 +1557,33 @@
     
     async function getSheetData(sheetName) {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${API_KEY}`;
+      
+      debugLog(`Запрос данных с Google Sheets`, 'info', {
+        sheetName: sheetName,
+        url: url.replace(API_KEY, '***' + API_KEY.slice(-4))
+      });
+
       try {
+        const startTime = Date.now();
         const res = await axios.get(url);
+        const endTime = Date.now();
+        
+        debugLog(`Данные успешно получены`, 'success', {
+          sheetName: sheetName,
+          времяЗапроса: `${endTime - startTime}ms`,
+          количествоСтрок: res.data.values ? res.data.values.length : 0,
+          первыеЗаголовки: res.data.values ? res.data.values[0].slice(0, 5) : 'нет данных'
+        });
+
         return res.data.values;
       } catch (error) {
+        debugLog(`ОШИБКА при получении данных`, 'error', {
+          sheetName: sheetName,
+          ошибка: error.message,
+          статус: error.response ? error.response.status : 'нет ответа',
+          данныеОшибки: error.response ? error.response.data : 'нет данных'
+        });
+
         console.error('Помилка під час отримання даних:', error);
         showNotification('Помилка завантаження даних', 'error');
         return null;
@@ -1378,33 +1640,71 @@
     }
     
     async function calculateAdminStats() {
+      debugLog('=== НАЧАЛО РАСЧЕТА СТАТИСТИКИ ===', 'info');
+      
       try {
         const today = new Date();
         
         const weekStart = new Date(today);
         weekStart.setDate(today.getDate() - 7);
         
-        // Устанавливаем начало месяца на 1 число
         const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
         
-        ticketsData = await getSheetData('Май_2025_таблица');
-        timeData = await getSheetData('Время_в_игре');
-        
+        debugLog('Параметры расчета', 'info', {
+          сегодня: formatDate(today),
+          началоНедели: formatDate(weekStart),
+          началоМесяца: formatDate(monthStart)
+        });
+
+        // Получаем данные параллельно для скорости
+        const [ticketsResult, timeResult] = await Promise.allSettled([
+          getSheetData('Май_2025_таблица'),
+          getSheetData('Время_в_игре')
+        ]);
+
+        ticketsData = ticketsResult.status === 'fulfilled' ? ticketsResult.value : null;
+        timeData = timeResult.status === 'fulfilled' ? timeResult.value : null;
+
+        debugLog('Результаты загрузки данных', 'info', {
+          ticketsData: ticketsData ? `Успешно, ${ticketsData.length} строк` : 'ОШИБКА',
+          timeData: timeData ? `Успешно, ${timeData.length} строк` : 'ОШИБКА'
+        });
+
         if (!ticketsData || !timeData) {
           throw new Error("Не вдалося отримати дані з Google Sheets");
         }
-        
+
         const ticketsHeaders = ticketsData[0];
         const timeHeaders = timeData[0];
-        
+
+        debugLog('Анализ структуры данных', 'info', {
+          заголовкиTickets: ticketsHeaders,
+          заголовкиTime: timeHeaders
+        });
+
         const nameColIndex = ticketsHeaders.indexOf('Имя сотрудника');
         const telegramColIndex = ticketsHeaders.indexOf('Telegram');
         const timeNameColIndex = timeHeaders.indexOf('Имя сотрудника');
-        
+
+        debugLog('Индексы колонок', 'info', {
+          имяСотрудника: nameColIndex,
+          telegram: telegramColIndex,
+          имяВремени: timeNameColIndex
+        });
+
+        if (nameColIndex === -1 || telegramColIndex === -1 || timeNameColIndex === -1) {
+          throw new Error("Не найдены необходимые колонки в данных");
+        }
+
         const dateCols = ticketsHeaders
           .map((h, i) => ({ h, i }))
           .filter(({ h }) => /^\d{2}\.\d{2}\.\d{4}$/.test(h));
-        
+
+        debugLog('Найдены колонки с датами', 'info', {
+          количествоДат: dateCols.length,
+          первыеДаты: dateCols.slice(0, 5).map(d => d.h)
+        });
+
         const employees = [];
         let totalTicketsToday = 0;
         let totalTicketsWeek = 0;
@@ -1412,24 +1712,31 @@
         let totalTicketsAll = 0;
         let totalTimeAll = 0;
         let totalActiveDays = 0;
-        let maxTicketsToday = 0;
-        let maxTimeToday = 0;
-        let maxTicketsEmployee = "";
-        let maxTimeEmployee = "";
-        
-        // ДОБАВЛЕНО: Переменная для суммы часов всех админов за месяц
         let totalAdminHoursMonth = 0;
-        
+
         const todayStr = formatDate(today);
-        
+
+        debugLog('Обработка данных сотрудников', 'info', {
+          сегодняшняяДата: todayStr,
+          количествоСотрудников: ticketsData.length - 1
+        });
+
         for (let i = 1; i < ticketsData.length; i++) {
           const ticketRow = ticketsData[i];
           const employeeName = ticketRow[nameColIndex];
           const telegram = ticketRow[telegramColIndex];
-          
+
+          if (!employeeName) {
+            debugLog(`Пропущена строка ${i} - нет имени сотрудника`, 'warning');
+            continue;
+          }
+
           const timeRow = timeData.find(row => row[timeNameColIndex] === employeeName);
-          if (!timeRow) continue;
-          
+          if (!timeRow) {
+            debugLog(`Не найдены данные времени для сотрудника: ${employeeName}`, 'warning');
+            continue;
+          }
+
           let todayTickets = 0;
           let todayTime = 0;
           let weekTickets = 0;
@@ -1439,58 +1746,45 @@
           let totalTickets = 0;
           let totalTime = 0;
           let activeDays = 0;
-          
+
           for (const { h: dateStr, i: dateIndex } of dateCols) {
             const date = parseDate(dateStr);
             const tickets = parseInt(ticketRow[dateIndex]) || 0;
-            
+
             const timeColIndex = timeHeaders.indexOf(dateStr);
             let timeSeconds = 0;
             if (timeColIndex >= 0 && timeRow[timeColIndex] && timeRow[timeColIndex] !== 'Н') {
               timeSeconds = timeToSeconds(timeRow[timeColIndex]);
               if (timeSeconds > 0) activeDays++;
             }
-            
+
             totalTickets += tickets;
             totalTime += timeSeconds;
-            
-            // ИЗМЕНЕНО: Вместо вчерашнего дня используем сегодняшний
+
             if (dateStr === todayStr) {
               todayTickets = tickets;
               todayTime = timeSeconds;
               totalTicketsToday += tickets;
-              
-              if (tickets > maxTicketsToday) {
-                maxTicketsToday = tickets;
-                maxTicketsEmployee = employeeName;
-              }
-              if (timeSeconds > maxTimeToday) {
-                maxTimeToday = timeSeconds;
-                maxTimeEmployee = employeeName;
-              }
             }
-            
+
             if (date >= weekStart && date <= today) {
               weekTickets += tickets;
               weekTime += timeSeconds;
             }
-            
-            // ДОБАВЛЕНО: Подсчет времени за месяц с 1 числа по сегодня
+
             if (date >= monthStart && date <= today) {
               monthTickets += tickets;
               monthTime += timeSeconds;
             }
           }
-          
+
           totalTicketsWeek += weekTickets;
           totalTicketsMonth += monthTickets;
           totalTicketsAll += totalTickets;
           totalTimeAll += totalTime;
           totalActiveDays += activeDays;
-          
-          // ДОБАВЛЕНО: Суммируем часы всех админов за текущий месяц
           totalAdminHoursMonth += monthTime;
-          
+
           employees.push({
             name: employeeName,
             telegram: telegram,
@@ -1501,34 +1795,57 @@
               total: { tickets: totalTickets, time: totalTime }
             }
           });
+
+          if (i <= 3) { // Логируем только первых 3 сотрудников для отладки
+            debugLog(`Обработан сотрудник: ${employeeName}`, 'info', {
+              сегодня: `${todayTickets} тикетов, ${secondsToHHMMSS(todayTime)}`,
+              месяц: `${monthTickets} тикетов, ${secondsToHHMMSS(monthTime)}`,
+              всего: `${totalTickets} тикетов, ${secondsToHHMMSS(totalTime)}`
+            });
+          }
         }
-        
+
+        debugLog('Итоговая статистика', 'success', {
+          всегоCотрудников: employees.length,
+          тикетовСегодня: totalTicketsToday,
+          тикетовЗаНеделю: totalTicketsWeek,
+          тикетовЗаМесяц: totalTicketsMonth,
+          всегоТикетов: totalTicketsAll,
+          всегоЧасов: secondsToHHMMSS(totalTimeAll),
+          часовАдминовЗаМесяц: secondsToHHMMSS(totalAdminHoursMonth)
+        });
+
         employees.sort((a, b) => {
           if (b.stats.month.tickets !== a.stats.month.tickets) {
             return b.stats.month.tickets - a.stats.month.tickets;
           }
           return b.stats.month.time - a.stats.month.time;
         });
-        
+
         employees.forEach((emp, index) => {
           emp.rank = index + 1;
         });
-        
+
+        // Обновление UI
         document.getElementById('total-employees').textContent = employees.length;
         document.getElementById('total-tickets-today').textContent = totalTicketsToday;
         document.getElementById('total-tickets-week').textContent = totalTicketsWeek;
         document.getElementById('total-tickets-month').textContent = totalTicketsMonth;
         document.getElementById('total-tickets-all').textContent = totalTicketsAll;
         document.getElementById('total-time-all').textContent = secondsToHHMMSS(totalTimeAll);
-        
-        // ДОБАВЛЕНО: Отображение суммы часов всех админов за месяц
         document.getElementById('total-admin-hours-month').textContent = secondsToHHMMSS(totalAdminHoursMonth);
-        
+
         const avgActivity = totalActiveDays > 0 
           ? Math.round((totalActiveDays / employees.length) * 100) / 100 
           : 0;
         document.getElementById('avg-activity').textContent = `${avgActivity} дн/м`;
-        
+
+        // Для топ сотрудников
+        const maxTicketsToday = Math.max(...employees.map(e => e.stats.today.tickets));
+        const maxTimeToday = Math.max(...employees.map(e => e.stats.today.time));
+        const maxTicketsEmployee = employees.find(e => e.stats.today.tickets === maxTicketsToday)?.name || "";
+        const maxTimeEmployee = employees.find(e => e.stats.today.time === maxTimeToday)?.name || "";
+
         document.getElementById('top-tickets').textContent = 
           maxTicketsEmployee ? `${maxTicketsEmployee} - ${maxTicketsToday}` : "Немає даних";
         
@@ -1537,10 +1854,15 @@
         
         document.getElementById('top-contest').textContent = 
           employees[0] ? `${employees[0].name} - 1 місце` : "Немає даних";
-        
+
         return employees;
-        
+
       } catch (error) {
+        debugLog('КРИТИЧЕСКАЯ ОШИБКА при расчете статистики', 'error', {
+          ошибка: error.message,
+          stack: error.stack
+        });
+        
         console.error('Помилка під час отримання даних:', error);
         showNotification('Помилка завантаження даних', 'error');
         return [];
@@ -1654,6 +1976,11 @@
             showEmployeeDetails(employee);
           }
         });
+      });
+
+      debugLog(`Таблица обновлена`, 'success', {
+        количествоСтрок: data.length,
+        поПоиску: searchQuery || 'все'
       });
     }
     
@@ -1772,16 +2099,22 @@
     }
     
     async function refreshData() {
+      debugLog('=== НАЧАЛО ОБНОВЛЕНИЯ ДАННЫХ ===', 'info');
+      
       document.getElementById('loader').classList.remove('hidden');
       document.getElementById('admin-stats-container').classList.add('hidden');
-      
+
       employeesData = await calculateAdminStats();
-      
+
       document.getElementById('loader').classList.add('hidden');
       document.getElementById('admin-stats-container').classList.remove('hidden');
-      
+
       const sortedData = sortData(employeesData, currentSort.column, currentSort.direction);
       renderEmployeeTable(sortedData);
+
+      debugLog('=== ОБНОВЛЕНИЕ ДАННЫХ ЗАВЕРШЕНО ===', 'success', {
+        количествоСотрудников: employeesData.length
+      });
     }
 
     // Authorization System
@@ -1846,7 +2179,14 @@
 
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
+      debugLog('Приложение инициализировано', 'info', {
+        superAdmins: superAdmins,
+        SHEET_ID: SHEET_ID,
+        API_KEY: API_KEY ? '***' + API_KEY.slice(-4) : 'НЕТ КЛЮЧА'
+      });
+
       document.getElementById('logout-btn').addEventListener('click', logout);
+      document.getElementById('debug-toggle').addEventListener('click', toggleDebugPanel);
       
       const savedAuth = localStorage.getItem('tg_auth');
       if (savedAuth) {
@@ -1909,8 +2249,12 @@
           renderEmployeeTable(sortedData);
         });
       });
+
+      // Автоматически тестируем API ключ при загрузке
+      setTimeout(() => {
+        testApiKey();
+      }, 1000);
     });
   </script>
 </body>
 </html>
-
