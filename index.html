@@ -27,9 +27,9 @@
       --accent-red: #EF4444;
       --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --christmas-red: #DC2626;
-      --christmas-green: #059669;
-      --christmas-gold: #D97706;
+      --winter-blue: #1E40AF;
+      --winter-white: #F0F9FF;
+      --winter-silver: #E5E7EB;
     }
 
     [data-theme="light"] {
@@ -41,9 +41,9 @@
       --text-secondary: #6B7280;
       --text-tertiary: #9CA3AF;
       --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-      --christmas-red: #EF4444;
-      --christmas-green: #10B981;
-      --christmas-gold: #F59E0B;
+      --winter-blue: #3B82F6;
+      --winter-white: #FFFFFF;
+      --winter-silver: #6B7280;
     }
 
     * {
@@ -62,7 +62,19 @@
       transition: var(--transition);
     }
 
-    /* Christmas Decorations */
+    /* Winter Background */
+    .winter-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--winter-blue) 100%);
+      opacity: 0.03;
+      z-index: -1;
+    }
+
+    /* Subtle Snow Animation */
     .snow-container {
       position: fixed;
       top: 0;
@@ -70,135 +82,34 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: 9998;
+      z-index: 0;
+      opacity: 0.3;
     }
 
     .snowflake {
       position: absolute;
-      background: white;
+      background: var(--winter-white);
       border-radius: 50%;
-      opacity: 0.8;
+      opacity: 0.6;
       animation: fall linear infinite;
     }
 
     @keyframes fall {
       0% {
-        transform: translateY(-10px) translateX(0) rotate(0deg);
-        opacity: 0.8;
+        transform: translateY(-10px) translateX(0);
+        opacity: 0.6;
       }
       100% {
-        transform: translateY(100vh) translateX(20px) rotate(360deg);
+        transform: translateY(100vh) translateX(20px);
         opacity: 0.2;
       }
     }
 
-    .christmas-lights {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 8px;
-      background: linear-gradient(90deg, 
-        #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
-      background-size: 200% 100%;
-      animation: lights 2s linear infinite;
-      z-index: 9999;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-    }
-
-    @keyframes lights {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
-    }
-
-    .christmas-branch {
-      position: fixed;
-      width: 150px;
-      height: 150px;
-      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,10 L60,40 L80,40 L65,60 L75,90 L50,75 L25,90 L35,60 L20,40 L40,40 Z" fill="%23059669"/></svg>');
-      background-repeat: no-repeat;
-      z-index: 9997;
-      opacity: 0.7;
-      filter: drop-shadow(0 0 10px rgba(5, 150, 105, 0.5));
-    }
-
-    .branch-top-left {
-      top: 20px;
-      left: 20px;
-      transform: rotate(-15deg);
-    }
-
-    .branch-top-right {
-      top: 20px;
-      right: 20px;
-      transform: rotate(15deg);
-    }
-
-    .branch-bottom-left {
-      bottom: 20px;
-      left: 20px;
-      transform: rotate(15deg);
-    }
-
-    .branch-bottom-right {
-      bottom: 20px;
-      right: 20px;
-      transform: rotate(-15deg);
-    }
-
-    /* Garland */
-    .garland {
-      position: fixed;
-      top: 80px;
-      left: 0;
-      width: 100%;
-      height: 30px;
-      z-index: 9996;
-      pointer-events: none;
-    }
-
-    .garland-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--christmas-red) 20%, 
-        var(--christmas-green) 40%, 
-        var(--christmas-gold) 60%, 
-        var(--christmas-red) 80%, 
-        transparent 100%);
-    }
-
-    .garland-light {
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      animation: twinkle 1.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes twinkle {
-      0% { opacity: 0.3; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1.2); }
-    }
-
-    /* Falling Logos Animation */
-    canvas#logos-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-      opacity: 0.4;
-    }
-
-    [data-theme="light"] canvas#logos-canvas {
-      opacity: 0.15;
+    /* Frost Effect on Cards */
+    .frost-effect {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     /* Sidebar */
@@ -233,11 +144,11 @@
       width: 32px;
       height: 32px;
       border-radius: 6px;
-      background: var(--christmas-red);
+      background: var(--winter-blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: var(--winter-white);
       font-size: 1.25rem;
     }
 
@@ -274,14 +185,11 @@
       transition: var(--transition);
       font-size: 0.875rem;
       font-weight: 500;
-      position: relative;
-      overflow: hidden;
     }
 
     .menu-item:hover, .super-menu-item:hover {
       background: var(--bg-tertiary);
       color: var(--text-primary);
-      transform: translateX(5px);
     }
 
     .menu-item i, .super-menu-item i {
@@ -290,25 +198,11 @@
     }
 
     .super-menu-item {
-      color: var(--christmas-gold);
+      color: var(--accent-yellow);
     }
 
     .super-menu-item:hover {
-      background: rgba(217, 119, 6, 0.1);
-    }
-
-    /* Christmas decoration for menu items */
-    .menu-item::before {
-      content: '🎄';
-      position: absolute;
-      left: -20px;
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .menu-item:hover::before {
-      left: 5px;
-      opacity: 1;
+      background: rgba(245, 158, 11, 0.1);
     }
 
     /* Top Bar */
@@ -351,7 +245,7 @@
 
     .menu-toggle:hover {
       background: var(--bg-tertiary);
-      border-color: var(--christmas-red);
+      border-color: var(--winter-blue);
     }
 
     .top-bar-title {
@@ -383,12 +277,12 @@
 
     .theme-toggle:hover {
       background: var(--bg-tertiary);
-      border-color: var(--christmas-green);
+      border-color: var(--winter-blue);
     }
 
     .logout-btn {
       padding: 0.5rem 1rem;
-      background: var(--christmas-red);
+      background: var(--accent-red);
       color: white;
       border: none;
       border-radius: 6px;
@@ -399,8 +293,7 @@
     }
 
     .logout-btn:hover {
-      background: #B91C1C;
-      transform: translateY(-2px);
+      background: #DC2626;
     }
 
     /* Main Content */
@@ -440,18 +333,6 @@
       box-shadow: var(--shadow);
       text-align: center;
       animation: fadeInUp 0.6s ease-out;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .login-container::before {
-      content: '🎅';
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      font-size: 8rem;
-      opacity: 0.1;
-      z-index: 0;
     }
 
     .login-logo {
@@ -459,17 +340,15 @@
       height: 64px;
       margin: 0 auto 1.5rem;
       border-radius: 12px;
-      background: var(--christmas-red);
+      background: var(--winter-blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-      z-index: 1;
     }
 
     .login-logo i {
       font-size: 2rem;
-      color: white;
+      color: var(--winter-white);
     }
 
     .login-title {
@@ -477,16 +356,12 @@
       font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 0.5rem;
-      position: relative;
-      z-index: 1;
     }
 
     .login-subtitle {
       font-size: 0.875rem;
       color: var(--text-secondary);
       margin-bottom: 2rem;
-      position: relative;
-      z-index: 1;
     }
 
     .telegram-button-wrapper {
@@ -494,31 +369,26 @@
       border-radius: 8px;
       overflow: hidden;
       transition: var(--transition);
-      position: relative;
-      z-index: 1;
     }
 
     .telegram-button-wrapper:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
     }
 
     .login-footer {
       margin-top: 1.5rem;
       font-size: 0.8125rem;
       color: var(--text-secondary);
-      position: relative;
-      z-index: 1;
     }
 
     .login-footer a {
-      color: var(--christmas-green);
+      color: var(--winter-blue);
       text-decoration: none;
       transition: var(--transition);
     }
 
     .login-footer a:hover {
-      color: var(--christmas-gold);
+      color: var(--accent-green);
     }
 
     /* Access Denied */
@@ -544,17 +414,6 @@
       text-align: center;
       max-width: 440px;
       width: 90%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .access-denied-content::before {
-      content: '🎄';
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      font-size: 6rem;
-      opacity: 0.1;
     }
 
     .access-denied-icon {
@@ -578,7 +437,7 @@
 
     .back-to-login-btn {
       padding: 0.625rem 1.5rem;
-      background: var(--christmas-red);
+      background: var(--accent-red);
       color: white;
       border: none;
       border-radius: 6px;
@@ -589,13 +448,12 @@
     }
 
     .back-to-login-btn:hover {
-      background: #B91C1C;
-      transform: translateY(-2px);
+      background: #DC2626;
     }
 
     /* Banner */
     .banner {
-      background: linear-gradient(135deg, var(--christmas-red) 0%, var(--christmas-green) 100%);
+      background: linear-gradient(135deg, var(--winter-blue) 0%, #1E3A8A 100%);
       border: none;
       border-radius: 12px;
       padding: 1.5rem;
@@ -684,28 +542,16 @@
       border-radius: 12px;
       padding: 1.5rem;
       transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .admin-card::before {
-      content: '❄️';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      opacity: 0.3;
-      font-size: 1.5rem;
     }
 
     .admin-card:hover {
-      border-color: var(--christmas-red);
-      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
-      transform: translateY(-5px);
+      border-color: var(--winter-blue);
+      box-shadow: 0 8px 32px rgba(30, 64, 175, 0.15);
     }
 
     .admin-card.low:hover {
-      border-color: var(--christmas-red);
-      box-shadow: 0 8px 32px rgba(220, 38, 38, 0.15);
+      border-color: var(--accent-red);
+      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.15);
     }
 
     .admin-card h2 {
@@ -760,27 +606,11 @@
       transition: var(--transition);
       min-width: 160px;
       flex-shrink: 0;
-      position: relative;
-    }
-
-    .admin-item::before {
-      content: '🎁';
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      font-size: 0.8rem;
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .admin-item:hover::before {
-      opacity: 1;
     }
 
     .admin-item:hover {
       background: var(--bg-primary);
       transform: translateY(-2px);
-      border: 1px solid var(--christmas-green);
     }
 
     .admin-avatar {
@@ -793,10 +623,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--christmas-red);
+      background: var(--winter-blue);
       color: white;
       font-size: 1.5rem;
-      transition: var(--transition);
     }
 
     .admin-avatar img {
@@ -806,18 +635,18 @@
     }
 
     .admin-item.gold .admin-avatar {
-      border-color: var(--christmas-gold);
-      box-shadow: 0 0 15px rgba(217, 119, 6, 0.3);
+      border-color: #FBBF24;
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.3);
     }
 
     .admin-item.silver .admin-avatar {
-      border-color: #D1D5DB;
-      box-shadow: 0 0 15px rgba(209, 213, 219, 0.3);
+      border-color: var(--winter-silver);
+      box-shadow: 0 0 15px rgba(229, 231, 235, 0.3);
     }
 
     .admin-item.bronze .admin-avatar {
-      border-color: #92400E;
-      box-shadow: 0 0 15px rgba(146, 64, 14, 0.3);
+      border-color: #D97706;
+      box-shadow: 0 0 15px rgba(217, 119, 6, 0.3);
     }
 
     .admin-info {
@@ -844,12 +673,12 @@
     }
 
     .admin-stat-value {
-      color: var(--christmas-green);
+      color: var(--winter-blue);
       font-weight: 600;
     }
 
     .admin-item.low .admin-stat-value {
-      color: var(--christmas-red);
+      color: var(--accent-red);
     }
 
     .medal {
@@ -864,17 +693,6 @@
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #admin-notice::before {
-      content: '✨';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      opacity: 0.3;
-      font-size: 1.5rem;
     }
 
     #admin-notice h3 {
@@ -907,21 +725,10 @@
       padding: 1.25rem;
       border-radius: 12px;
       transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stats-card::before {
-      content: '🎄';
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      opacity: 0.2;
-      font-size: 1.2rem;
     }
 
     .stats-card:hover {
-      border-color: var(--christmas-green);
+      border-color: var(--winter-blue);
       transform: translateY(-2px);
     }
 
@@ -953,16 +760,6 @@
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      position: relative;
-    }
-
-    .chart-container::before {
-      content: '📊';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      opacity: 0.3;
-      font-size: 1.2rem;
     }
 
     .chart-container h3 {
@@ -984,16 +781,6 @@
       border-radius: 12px;
       padding: 1.5rem;
       margin-bottom: 2rem;
-      position: relative;
-    }
-
-    .calendar-section::before {
-      content: '🎅';
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      opacity: 0.2;
-      font-size: 2rem;
     }
 
     .calendar-section h3 {
@@ -1015,33 +802,17 @@
       border-radius: 8px;
       padding: 0.75rem;
       transition: var(--transition);
-      position: relative;
-    }
-
-    .calendar-day::before {
-      content: '⛄';
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      font-size: 0.8rem;
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .calendar-day:hover::before {
-      opacity: 0.5;
     }
 
     .calendar-day:hover {
       background: var(--bg-primary);
       transform: translateY(-2px);
-      border-color: var(--christmas-green);
     }
 
     .calendar-day.inactive {
       opacity: 0.5;
-      background: rgba(220, 38, 38, 0.1);
-      border-color: rgba(220, 38, 38, 0.3);
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
     }
 
     .calendar-date {
@@ -1066,12 +837,12 @@
     }
 
     .calendar-stat-value {
-      color: var(--christmas-green);
+      color: var(--winter-blue);
       font-weight: 600;
     }
 
     .calendar-day.inactive .calendar-stat-value {
-      color: var(--christmas-red);
+      color: var(--accent-red);
     }
 
     /* Utilities */
@@ -1122,19 +893,6 @@
       .sidebar {
         width: 280px;
       }
-
-      .christmas-branch {
-        width: 100px;
-        height: 100px;
-      }
-
-      .branch-top-left, .branch-top-right {
-        top: 10px;
-      }
-
-      .branch-bottom-left, .branch-bottom-right {
-        bottom: 10px;
-      }
     }
 
     @media (max-width: 480px) {
@@ -1155,11 +913,6 @@
 
       .stats-grid {
         grid-template-columns: 1fr;
-      }
-
-      .christmas-branch {
-        width: 80px;
-        height: 80px;
       }
     }
 
@@ -1184,25 +937,17 @@
   </style>
 </head>
 <body data-theme="dark">
-  <!-- Christmas Decorations -->
-  <div class="christmas-lights"></div>
+  <!-- Winter Background -->
+  <div class="winter-bg"></div>
   
+  <!-- Subtle Snow -->
   <div class="snow-container" id="snow-container"></div>
-  
-  <div class="christmas-branch branch-top-left"></div>
-  <div class="christmas-branch branch-top-right"></div>
-  <div class="christmas-branch branch-bottom-left"></div>
-  <div class="christmas-branch branch-bottom-right"></div>
-  
-  <div class="garland" id="garland"></div>
-
-  <canvas id="logos-canvas"></canvas>
 
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo">
-        <i class="fas fa-tree"></i>
+        <i class="fas fa-snowflake"></i>
       </div>
       <div class="sidebar-title">Адмін Панель</div>
     </div>
@@ -1268,7 +1013,7 @@
   <div id="login-section">
     <div class="login-container">
       <div class="login-logo">
-        <i class="fas fa-tree"></i>
+        <i class="fas fa-snowflake"></i>
       </div>
       <h1 class="login-title">Вітаємо в кабінеті адміністратора</h1>
       <p class="login-subtitle">Увійдіть через Telegram для доступу до системи</p>
@@ -1294,11 +1039,11 @@
       <div class="banner-content">
         <div class="banner-text">
           <h2 class="banner-title">
-            <i class="fas fa-gift" style="color: white;"></i>
-            З Новим Роком! Скрипт Оновлення 2.0 вже доступний!
+            <i class="fas fa-snowflake" style="color: var(--winter-white);"></i>
+            Скрипт Оновлення 2.0 вже доступний!
           </h2>
           <p class="banner-description">
-            Святковий скрипт для покращення ефективності роботи адміністраторів
+            Скрипт для покращення ефективності роботи адміністраторів
           </p>
         </div>
         <a href="script2.0.html" class="banner-link">
@@ -1311,12 +1056,12 @@
     <!-- Admin Cards Row -->
     <div class="admins-row">
       <div class="admin-card" id="top-admins-section">
-        <h2><i class="fas fa-trophy" style="color: var(--christmas-gold);"></i> Адміни тижня</h2>
+        <h2><i class="fas fa-trophy" style="color: var(--accent-yellow);"></i> Адміни тижня</h2>
         <div class="week-info" id="week-range">Період: завантаження...</div>
         <div class="admin-scroll-container" id="top-admins-container"></div>
       </div>
       <div class="admin-card low" id="low-admins-section">
-        <h2><i class="fas fa-exclamation-triangle" style="color: var(--christmas-red);"></i> Низька активність</h2>
+        <h2><i class="fas fa-exclamation-triangle" style="color: var(--accent-red);"></i> Низька активність</h2>
         <div class="week-info" id="low-week-range">Період: завантаження...</div>
         <div class="admin-scroll-container" id="low-admins-container"></div>
       </div>
@@ -1324,7 +1069,7 @@
 
     <!-- Admin Notice -->
     <div id="admin-notice" class="hidden">
-      <h3><i class="fas fa-crown" style="color: var(--christmas-gold);"></i> Ви - адміністратор системи</h3>
+      <h3><i class="fas fa-crown" style="color: var(--accent-yellow);"></i> Ви - адміністратор системи</h3>
       <p>Ваш обліковий запис не пов'язаний зі статистикою тікетів.</p>
       <p>Ви можете використовувати всі інструменти адміністрування через меню скриптів.</p>
     </div>
@@ -1365,18 +1110,18 @@
   </div>
 
   <script>
-    // Christmas Decorations
+    // Subtle Snow Animation
     function createSnow() {
       const snowContainer = document.getElementById('snow-container');
-      const snowflakeCount = 100;
+      const snowflakeCount = 50;
       
       for (let i = 0; i < snowflakeCount; i++) {
         const snowflake = document.createElement('div');
         snowflake.className = 'snowflake';
         
-        const size = Math.random() * 5 + 2;
+        const size = Math.random() * 3 + 1;
         const left = Math.random() * 100;
-        const animationDuration = Math.random() * 5 + 5;
+        const animationDuration = Math.random() * 10 + 10;
         const animationDelay = Math.random() * 5;
         
         snowflake.style.width = `${size}px`;
@@ -1387,119 +1132,6 @@
         
         snowContainer.appendChild(snowflake);
       }
-    }
-
-    function createGarland() {
-      const garland = document.getElementById('garland');
-      const lightCount = 20;
-      
-      for (let i = 0; i < lightCount; i++) {
-        const light = document.createElement('div');
-        light.className = 'garland-light';
-        
-        const left = (i / lightCount) * 100;
-        const colors = ['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff'];
-        const color = colors[i % colors.length];
-        const animationDelay = Math.random() * 2;
-        
-        light.style.left = `${left}%`;
-        light.style.backgroundColor = color;
-        light.style.animationDelay = `${animationDelay}s`;
-        
-        garland.appendChild(light);
-      }
-    }
-
-    // Falling Logos Animation
-    const canvas = document.getElementById('logos-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    const logos = [];
-    const numLogos = 20;
-    const logoSize = 20;
-    
-    // Create a Christmas tree logo using canvas
-    function drawLogo(x, y, size, opacity) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.globalAlpha = opacity;
-      
-      // Tree shape
-      ctx.beginPath();
-      ctx.moveTo(0, -size/2);
-      ctx.lineTo(size/2, size/3);
-      ctx.lineTo(0, size/2);
-      ctx.lineTo(-size/2, size/3);
-      ctx.closePath();
-      
-      const isDark = document.body.getAttribute('data-theme') === 'dark';
-      ctx.fillStyle = isDark ? 'rgba(5, 150, 105, 0.7)' : 'rgba(5, 150, 105, 0.5)';
-      ctx.fill();
-      
-      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(5, 150, 105, 0.3)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-      
-      // Star on top
-      ctx.beginPath();
-      ctx.moveTo(0, -size/2 - 2);
-      ctx.lineTo(2, -size/2 + 2);
-      ctx.lineTo(-2, -size/2 + 2);
-      ctx.closePath();
-      ctx.fillStyle = isDark ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 215, 0, 0.6)';
-      ctx.fill();
-      
-      ctx.restore();
-    }
-    
-    class Logo {
-      constructor() {
-        this.reset();
-      }
-      
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * -canvas.height;
-        this.size = Math.random() * 8 + 12;
-        this.speed = Math.random() * 0.5 + 0.3;
-        this.opacity = Math.random() * 0.4 + 0.2;
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotationSpeed = (Math.random() - 0.5) * 0.02;
-      }
-      
-      update() {
-        this.y += this.speed;
-        this.rotation += this.rotationSpeed;
-        if (this.y > canvas.height) {
-          this.reset();
-          this.y = -this.size;
-        }
-      }
-      
-      draw() {
-        drawLogo(this.x, this.y, this.size, this.opacity);
-      }
-    }
-    
-    for (let i = 0; i < numLogos; i++) {
-      logos.push(new Logo());
-    }
-    
-    function animateLogos() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      logos.forEach(logo => {
-        logo.update();
-        logo.draw();
-      });
-      requestAnimationFrame(animateLogos);
     }
 
     // Theme Toggle
@@ -1945,7 +1577,7 @@
         dayElement.innerHTML = `
           <div class="calendar-date">
             <span>${day.date}</span>
-            ${day.inactive ? '<i class="fas fa-times" style="color: var(--christmas-red);"></i>' : ''}
+            ${day.inactive ? '<i class="fas fa-times" style="color: var(--accent-red);"></i>' : ''}
           </div>
           <div class="calendar-stats">
             <div class="calendar-stat">
@@ -2101,8 +1733,8 @@
               {
                 label: 'Тікети',
                 data: chartTickets,
-                borderColor: '#DC2626',
-                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                borderColor: '#1E40AF',
+                backgroundColor: 'rgba(30, 64, 175, 0.1)',
                 yAxisID: 'yTickets',
                 tension: 0.4,
                 pointRadius: 3,
@@ -2113,8 +1745,8 @@
               {
                 label: 'Час у грі (години)',
                 data: chartTimeHours,
-                borderColor: '#059669',
-                backgroundColor: 'rgba(5, 150, 105, 0.1)',
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 yAxisID: 'yTime',
                 tension: 0.4,
                 pointRadius: 3,
@@ -2349,10 +1981,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      // Initialize Christmas decorations
+      // Initialize winter decorations
       createSnow();
-      createGarland();
-      animateLogos();
       
       document.getElementById('logout-btn').addEventListener('click', logout);
       
