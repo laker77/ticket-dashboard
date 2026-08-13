@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0B2B5C" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Luini Group · Pedidos</title>
+  <style>
+    :root{
+      --navy:#0B2B5C;
+      --navy-700:#0a2450;
+      --navy-900:#071a3a;
+      --ink:#0e2340;
+      --muted:#5b7797;
+      --line:#e6edf6;
+      --line-soft:#eef3fa;
+      --bg:#eef2f8;
+      --card:#ffffff;
+      --gold:#c9a54e;
+      --gold-soft:#f3ead2;
+      --radius:18px;
+    }
+
+    *{
+      margin:0; padding:0; box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+    html,body{ background:var(--navy); }
+    body{
+      display:flex; justify-content:center; align-items:flex-start;
+      min-height:100vh; min-height:100dvh; color:var(--ink);
+      overscroll-behavior-y:none;
+    }
+
+    .app{
+      max-width:520px; width:100%;
+      background:var(--bg);
+      min-height:100vh; min-height:100dvh;
+      display:flex; flex-direction:column; position:relative;
+      padding-bottom:calc(96px + env(safe-area-inset-bottom));
+      box-shadow:0 0 60px rgba(0,0,0,.25);
+    }
+
+    /* ---------- Header ---------- */
+    .app-header{
+      background:linear-gradient(180deg,var(--navy) 0%,var(--navy-700) 100%);
+      color:#fff;
+      padding:calc(14px + env(safe-area-inset-top)) 20px 16px;
+      position:sticky; top:0; z-index:20;
+    }
+    .brand{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand .logo{ display:flex; align-items:center; gap:12px; }
+    .brand .mark{
+      width:42px; height:42px; border-radius:12px;
+      background:#fff; color:var(--navy);
+      display:flex; align-items:center; justify-content:center;
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-weight:800; font-size:22px;
+      box-shadow:0 4px 14px rgba(0,0,0,.25); flex:0 0 auto;
+    }
+    .brand h1{
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-weight:700;
+      font-size:22px; line-height:1; letter-spacing:.2px;
+    }
+    .brand .sub{ font-size:12px; color:#b9c9e2; margin-top:4px; font-weight:500; letter-spacing:.4px; text-transform:uppercase; }
+    .brand .flag{ font-size:12px; color:#cdd9ec; background:rgba(255,255,255,.12); padding:6px 12px; border-radius:30px; font-weight:600; white-space:nowrap; }
+    .gold-line{ height:3px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+
+    /* ---------- Suppliers ---------- */
+    .suppliers-wrap{ background:var(--navy-700); padding:12px 0 14px; position:sticky; top:0; z-index:15; }
+    .suppliers{
+      display:flex; gap:8px; overflow-x:auto; padding:0 16px;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    }
+    .suppliers::-webkit-scrollbar{ display:none; }
+    .supplier-btn{
+      flex:0 0 auto; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+      padding:9px 16px; border-radius:40px; font-weight:600; font-size:14px; color:#dbe6f5;
+      cursor:pointer; transition:transform .1s, background .12s; white-space:nowrap; position:relative;
+    }
+    .supplier-btn .dot{
+      position:absolute; top:-3px; right:-3px; min-width:18px; height:18px; padding:0 4px;
+      background:var(--gold); color:var(--navy-900); border-radius:20px; font-size:11px; font-weight:800;
+      display:none; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.3);
+    }
+    .supplier-btn.has-items .dot{ display:flex; }
+    .supplier-btn.active{ background:#fff; color:var(--navy); border-color:#fff; }
+    .supplier-btn:active{ transform:scale(.95); }
+
+    /* ---------- Supplier info ---------- */
+    .supplier-card{
+      margin:14px 16px 4px; background:var(--card); border-radius:var(--radius);
+      padding:14px 16px; border:1px solid var(--line);
+      box-shadow:0 6px 18px rgba(11,43,92,.06);
+    }
+    .supplier-card .name{
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--navy);
+      display:flex; align-items:center; gap:10px;
+    }
+    .supplier-card .info{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .supplier-card .info span{
+      background:var(--line-soft); color:var(--muted); padding:5px 12px; border-radius:30px;
+      font-size:12.5px; font-weight:600;
+    }
+
+    /* ---------- Search ---------- */
+    .search{ padding:12px 16px 2px; }
+    .search .field{ position:relative; }
+    .search svg{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#9db0ca; }
+    .search input{
+      width:100%; padding:14px 44px 14px 44px; border:1px solid var(--line);
+      border-radius:14px; font-size:16px; background:var(--card); outline:none; color:var(--ink);
+      transition:border-color .15s, box-shadow .15s;
+    }
+    .search input:focus{ border-color:var(--navy); box-shadow:0 0 0 3px rgba(11,43,92,.1); }
+    .search .clear-x{
+      position:absolute; right:8px; top:50%; transform:translateY(-50%);
+      border:none; background:transparent; color:#9db0ca; font-size:20px; padding:8px 10px; cursor:pointer; display:none;
+    }
+
+    /* ---------- Toolbar ---------- */
+    .toolbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 18px 6px; }
+    .toolbar .count{ font-size:13px; color:var(--muted); font-weight:600; }
+    .toolbar .clear-btn{
+      background:transparent; border:none; color:#b0453f; font-size:13px; font-weight:600;
+      padding:6px 8px; border-radius:8px; cursor:pointer;
+    }
+    .toolbar .clear-btn:active{ background:#faeceb; }
+
+    /* ---------- Products ---------- */
+    .products{ padding:2px 16px 12px; flex:1; }
+    .product{
+      background:var(--card); border-radius:16px; margin-bottom:8px; padding:12px 14px;
+      border:1px solid var(--line); transition:border-color .12s, box-shadow .12s;
+    }
+    .product.selected{ border-color:var(--navy); box-shadow:0 4px 14px rgba(11,43,92,.1); }
+    .product-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .names{ flex:1 1 auto; min-width:0; }
+    .name-ru{ font-weight:600; font-size:15px; color:var(--navy); line-height:1.3; }
+    .name-es{ font-size:12.5px; color:var(--muted); margin-top:2px; font-weight:500; }
+    .controls{ display:flex; align-items:center; gap:6px; flex:0 0 auto; }
+    .qty-btn{
+      width:36px; height:36px; border:1px solid var(--line); background:#fff; border-radius:11px;
+      font-size:22px; font-weight:400; line-height:1; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--navy); transition:transform .08s, background .1s;
+    }
+    .qty-btn.plus{ background:var(--navy); color:#fff; border-color:var(--navy); }
+    .qty-btn:active{ transform:scale(.9); }
+    .qty-input{
+      width:52px; height:36px; border:1px solid var(--line); border-radius:11px; text-align:center;
+      font-weight:700; font-size:16px; background:#fff; outline:none; color:var(--ink);
+    }
+    .qty-input:focus{ border-color:var(--navy); box-shadow:0 0 0 3px rgba(11,43,92,.1); }
+    .unit{ color:var(--muted); font-size:12px; font-weight:700; min-width:30px; text-align:left; }
+    .empty{ padding:50px 16px; text-align:center; color:var(--muted); font-size:15px; }
+
+    /* ---------- Bottom bar ---------- */
+    .bottom-bar{
+      position:fixed; left:50%; transform:translateX(-50%); bottom:0;
+      width:min(520px,100%);
+      background:rgba(255,255,255,.94); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+      border-top:1px solid var(--line); z-index:30;
+      box-shadow:0 -8px 26px rgba(11,43,92,.08);
+      display:flex; align-items:center; gap:10px;
+    }
+    .summary{ flex:1; min-width:0; }
+    .summary strong{ display:block; font-size:15px; color:var(--navy); font-weight:700; }
+    .summary span{ font-size:12.5px; color:var(--muted); }
+    .btn-outline{
+      background:#fff; border:1px solid var(--line); border-radius:12px; padding:11px 14px;
+      font-weight:600; color:var(--navy); cursor:pointer; font-size:14px; transition:transform .08s;
+    }
+    .btn-primary{
+      background:var(--navy); border:none; border-radius:12px; padding:11px 20px; font-weight:700;
+      color:#fff; cursor:pointer; font-size:14px; box-shadow:0 6px 16px rgba(11,43,92,.28); transition:transform .08s;
+      display:flex; align-items:center; gap:8px;
+    }
+    .btn-outline:active,.btn-primary:active{ transform:scale(.95); }
+    .btn-primary:disabled,.btn-outline:disabled{ opacity:.45; box-shadow:none; }
+
+    /* ---------- Sheet ---------- */
+    .modal{
+      position:fixed; inset:0; background:rgba(7,26,58,.5); display:none;
+      align-items:flex-end; justify-content:center; z-index:50;
+      backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    }
+    .modal.show{ display:flex; animation:fade .2s ease; }
+    @keyframes fade{ from{opacity:0} to{opacity:1} }
+    .sheet{
+      width:min(520px,100%); max-height:90vh; max-height:90dvh; overflow-y:auto; background:var(--bg);
+      border-radius:26px 26px 0 0; padding:8px 18px calc(20px + env(safe-area-inset-bottom));
+      animation:slide .28s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes slide{ from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .grabber{ width:40px; height:5px; background:#c7d3e3; border-radius:10px; margin:8px auto 14px; }
+    .sheet h3{
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-size:21px; color:var(--navy); margin-bottom:4px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .sheet .sheet-sub{ font-size:13px; color:var(--muted); margin-bottom:14px; }
+    .order-text{
+      background:var(--card); border-radius:16px; padding:16px; font-size:15px; line-height:1.7;
+      white-space:pre-wrap; border:1px solid var(--line); color:var(--ink); word-break:break-word;
+    }
+    .actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+    .actions button{
+      border-radius:14px; padding:14px; font-weight:700; font-size:15px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .08s;
+    }
+    .actions button:active{ transform:scale(.96); }
+    .act-copy{ background:#fff; border:1px solid var(--line); color:var(--navy); }
+    .act-tg{ background:#229ED9; border:none; color:#fff; }
+    .act-wa{ background:#25D366; border:none; color:#fff; }
+    .act-close{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+    .actions .full{ grid-column:1 / -1; }
+
+    /* toast */
+    .toast{
+      position:fixed; left:50%; bottom:calc(110px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px);
+      background:var(--navy-900); color:#fff; padding:12px 20px; border-radius:40px; font-size:14px; font-weight:600;
+      opacity:0; pointer-events:none; transition:all .25s; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,.3);
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo">
+          <div class="mark">L</div>
+          <div>
+            <h1>Luini Group</h1>
+            <div class="sub">Pedidos a proveedores</div>
+          </div>
+        </div>
+        <span class="flag">🇮🇹 Ristorante</span>
+      </div>
+    </header>
+    <div class="gold-line"></div>
+
+    <!-- Suppliers -->
+    <div class="suppliers-wrap">
+      <div class="suppliers" id="supplierButtons"></div>
+    </div>
+
+    <!-- Supplier info -->
+    <div class="supplier-card">
+      <div class="name" id="supplierName"></div>
+      <div class="info" id="supplierInfo"></div>
+    </div>
+
+    <!-- Search -->
+    <div class="search">
+      <div class="field">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInput" type="search" inputmode="search" placeholder="Buscar producto / Найти товар…" />
+        <button class="clear-x" id="clearX" aria-label="Limpiar búsqueda">×</button>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <span class="count" id="toolCount"></span>
+      <button class="clear-btn" id="clearSupplierBtn">Vaciar pedido / Очистить</button>
+    </div>
+
+    <!-- Products -->
+    <main class="products" id="products"></main>
+
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+      <div class="summary">
+        <strong id="summaryMain">0 posiciones</strong>
+        <span id="summarySub">Pedido vacío</span>
+      </div>
+      <button class="btn-outline" id="copyBtn" aria-label="Copiar">📋</button>
+      <button class="btn-primary" id="orderBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Pedido
+      </button>
+    </div>
+
+    <!-- Sheet -->
+    <div class="modal" id="modal">
+      <div class="sheet" id="sheet">
+        <div class="grabber"></div>
+        <h3 id="sheetTitle">Pedido</h3>
+        <div class="sheet-sub">Texto en español · listo para enviar al proveedor</div>
+        <div class="order-text" id="orderText"></div>
+        <div class="actions">
+          <button class="act-copy" id="actCopy">📋 Copiar</button>
+          <button class="act-tg" id="actTg">✈️ Telegram</button>
+          <button class="act-wa full" id="actWa">🟢 WhatsApp</button>
+          <button class="act-close full" id="actClose">Cerrar / Закрыть</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+  /* ================= BASE DE DATOS ================= */
+  const suppliers = {
+    Apozzo: { icon:"🧀", delivery:"Martes, Jueves, Viernes", deliveryRu:"Вт, Чт, Пт", hours:"12:00–00:00",
+      products:[
+        ["Моцарелла","Mozzarella","кг"],
+        ["Мука Semola","Sémola","кг"],
+        ["Мука Lucia","Harina Lucia","кг"],
+        ["Мука Caputo","Harina Caputo","кг"],
+        ["Артишок гриль мар.","Alcachofa a la plancha","кг"],
+        ["Пилати","Pilati","кг"],
+        ["Буррата","Burrata","шт"],
+        ["Пармезан голова","Cabeza de Parmesano Grana Padano","кг"]
+      ]},
+    Linares: { icon:"🐟", delivery:"Miércoles, Sábado", deliveryRu:"Ср, Сб", hours:"12:00–14:00",
+      products:[
+        ["Кальмар беби","Calamares limpios","шт"],
+        ["Кальмар рохо","Calamar rosa","шт"],
+        ["Креветки очищенные","Camarones limpios","кг"],
+        ["Осьминог","Tentáculos de pulpo","ящ"],
+        ["Вонголе","Vongole","кг"],
+        ["Дорадо филе","Filete de dorada","кг"],
+        ["Мясо мидий","Carne de mejillones","кг"],
+        ["Тунец","Atún","кг"],
+        ["Фри","Papas fritas Dipe","кг"],
+        ["Пальпетте","Palpeta","кг"]
+      ]},
+    Urban: { icon:"🥩", delivery:"Martes, Viernes", deliveryRu:"Вт, Пт", hours:"12:00–14:30",
+      products:[
+        ["Оссобуко","Ossobuco","кг"],
+        ["Рибай","Cuberol","шт"],
+        ["Вырезка говяжья","Solomillo de ternera","кг"],
+        ["Курица бедро без кости","Muslo de pollo sin hueso","кг"],
+        ["Филе куриное","Filete de pollo","кг"],
+        ["Фарш говяжий","Carne molida de ternera","кг"],
+        ["Щеки говяжьи","Carrillada de vacuno al vacío","кг"],
+        ["Цыплёнок","Pollo picantón","ящ"],
+        ["Редонда","Redonda","кг"],
+        ["Антрекот","Entrecot","кг"],
+        ["Куриные крылья","Alitas de pollo","кг"],
+        ["Свиная шея","Cuello de cerdo","кг"],
+        ["Куриные ножки","Muslos de pollo","кг"],
+        ["Фарш свиной","Carne de cerdo picada","кг"]
+      ]},
+    Negrini: { icon:"🇮🇹", delivery:"Martes, Viernes", deliveryRu:"Вт, Пт", hours:"12:00–00:00",
+      products:[
+        ["Буррата","Burrata","шт"],
+        ["Рикотта","Ricotta","шт"],
+        ["Горгонзола","Gorgonzola","шт"],
+        ["Трюфельная паста","Pasta de trufa","шт"],
+        ["Вяленые томаты","Tomates secados al sol","шт"],
+        ["Каперсы цветы","Frutti del Cappero","шт"],
+        ["Томленый лук","Cebolla estofada","шт"],
+        ["Сицилийские оливки","Aceitunas sicilianas","шт"],
+        ["Фисташковая паста","Pasta de pistacho dulce","шт"],
+        ["Карпаччо трюфель","Carpaccio de trufa","шт"],
+        ["Трюфельное масло","Aceite de trufa","шт"],
+        ["Оливки Таджаские","Olive Taggiasche","шт"],
+        ["Сыр проволоне","Queso Provolone","шт"],
+        ["Сицилийские оливки (2)","Aceitunas sicilianas","шт"],
+        ["Baby mozzarella","Baby mozzarella","шт"],
+        ["Тертый пекорино","Pecorino rallado","шт"],
+        ["Тертый пармезан","Parmesano rallado","шт"],
+        ["Пармезан кусками","Trozos de Parmesano","кг"],
+        ["Пекорино кусками","Trozos de Pecorino","кг"],
+        ["Mozzarella de búfala","Mozzarella de búfala","ящ"],
+        ["Паста Спагетти","Pasta de espagueti alla chitarra di Bologna","ящ"],
+        ["Оливки каламата","Olive Kalamata","шт"],
+        ["Паста Тальятелле","Pasta fettuccine","ящ"],
+        ["Паста Папарделле","Pasta pappardelle gialle","ящ"],
+        ["Паста безглютеновая","Pasta sin gluten","ящ"],
+        ["Прошутто Котто","Prosciutto Cotto","шт"],
+        ["Салями","Salami Napoli","шт"],
+        ["Гуанчале","Guanciale","кг"],
+        ["Prosciutto crudo","Prosciutto crudo","кг"],
+        ["Ндуя","Nduja","шт"],
+        ["Салями пиканте","Salame piccante","шт"],
+        ["Микс грибов","Mezcla de hongos","кг"],
+        ["Перец фаршированный","Pimientos rellenos","шт"],
+        ["Grisini","Grissini","ящ"],
+        ["Тарт лимонный","Tarta de limón","шт"],
+        ["Каноли","Cannoli","ящ"],
+        ["Сардинский хлеб","Pan sardo","ящ"],
+        ["Каперсы","Alcaparras","шт"],
+        ["Pelati la Regina","Pelati la Regina","шт"],
+        ["Рис карнароли","Arroz Carnaroli","кг"],
+        ["Аранчини Миньон","Arancini Mignon","шт"],
+        ["Радиккио гриль","Radicchio Rosso grigliato","шт"],
+        ["Перец роса","Rocío de pimienta","шт"],
+        ["Orzo","Orzo","кг"],
+        ["Таледжо сыр","Queso Taleggio","шт"],
+        ["Перец сладкий красный","Peperoncini dolci rossi","шт"]
+      ]},
+    Ambasthour: { icon:"🥛", delivery:"Miércoles, Viernes", deliveryRu:"Ср, Пт", hours:"12:00–18:00",
+      products:[
+        ["Молоко","Leche","л"],
+        ["Сливки","Nata","л"],
+        ["Молоко безлактозное","Leche sin lactosa","л"],
+        ["Миндальное молоко","Leche de almendras","л"],
+        ["Алмонд (миндальное молоко)","Leche de almendras Almond","л"],
+        ["Мороженое ванильное","Helado de vainilla","л"],
+        ["Мороженое шоколадное","Helado de chocolate","л"],
+        ["Сорбет лимон","Sorbete de limón","л"],
+        ["Сорбет манго","Sorbete de mango","л"],
+        ["Вино белое (в пачках)","Vino blanco (en paquetes)","шт"],
+        ["Вино красное","Vino tinto","шт"],
+        ["Уксус яблочный","Vinagre de sidra de manzana","шт"],
+        ["Уксус бальзамический","Vinagre balsámico","шт"],
+        ["Бальзамический крем","Crema balsámica","шт"],
+        ["Соевый соус","Salsa de soja","шт"],
+        ["Горчица в зернах","Mostaza en grano","шт"],
+        ["Горчица","Mostaza","шт"],
+        ["Хлопья чили","Copos de chile","шт"],
+        ["Соль","Sal","кг"],
+        ["Сахар","Azúcar","кг"],
+        ["Лавровый лист","Hoja de laurel","шт"],
+        ["Паприка копчёная","Pimentón ahumado","шт"],
+        ["Перец горошек","Pimienta en grano","шт"],
+        ["Перец кайенский","Pimienta de cayena","шт"],
+        ["Желатин","Gelatina","шт"],
+        ["Мускатный орех (целый)","Nuez moscada (entera)","шт"],
+        ["Мускатный орех (молотый)","Nuez moscada (molida)","шт"],
+        ["Кедровый орех","Piñones","кг"],
+        ["Орех грецкий","Nueces","кг"],
+        ["Фисташка","Pistachos","кг"],
+        ["Бульон сухой куриный Knorr","Caldo de pollo seco Knorr","шт"],
+        ["Бульон сухой Демиглас Knorr","Salsa Demi-glace Knorr","шт"],
+        ["Бульон сухой рыбный Knorr","Caldo de pescado Knorr","шт"],
+        ["Кетчуп","Ketchup","шт"],
+        ["Шрирача","Sriracha","шт"],
+        ["Анчоус","Anchoas","шт"],
+        ["Огурцы маринованные","Pepinillos en vinagre","шт"],
+        ["Тунец консервированный","Atún enlatado","шт"],
+        ["Маскарпоне","Mascarpone","шт"],
+        ["Мёд","Miel","кг"],
+        ["Масло сливочное","Manteca","кг"],
+        ["Козий сыр","Queso de cabra","шт"],
+        ["Филадельфия","Queso Philadelphia","шт"],
+        ["Лимонный фреш","Zumo de limón exprimido","л"],
+        ["Оливки зелёные с косточкой","Aceitunas verdes con hueso Bravo","шт"],
+        ["Зеленые оливки без косточек","Aceitunas verdes sin hueso","шт"],
+        ["Масло подсолнечное","Aceite de girasol","л"],
+        ["Масло оливковое","Aceite de oliva","л"],
+        ["Пюре манго","Puré de mango","л"],
+        ["Пюре маракуйя","Puré de maracuyá","л"],
+        ["Голубика свеже мороженая","Arándanos congelados","кг"],
+        ["Клубника свеже мороженная","Fresas congeladas","кг"],
+        ["Перцы пикантные","Pimientos picantes ext. 80/100 Don Molinico","шт"]
+      ]},
+    Eladio: { icon:"🥬", delivery:"Lunes–Domingo", deliveryRu:"Пн–Вс", hours:"24 horas",
+      products:[
+        ["Авокадо","Aguacate","шт"],
+        ["Цукини","Calabacín","г"],
+        ["Спаржа","Espárragos","шт"],
+        ["Огурец","Pepino","г"],
+        ["Болгарский перец","Pimiento rojo","кг"],
+        ["Томаты черные","Tomate azul grande","кг"],
+        ["Томаты розовые","Tomate castellano","г"],
+        ["Томаты желтые","Tomate amarillo","кг"],
+        ["Томаты Черри","Tomate cherry rama","кг"],
+        ["Чищеный чеснок","Ajo pelado","кг"],
+        ["Базилик","Albahaca","шт"],
+        ["Петрушка","Perejil","г"],
+        ["Рукола","Rúcula selvática","шт"],
+        ["Розмарин","Romero","шт"],
+        ["Тимьян","Tomillo","шт"],
+        ["Микс черри","Mix de cherry","шт"],
+        ["Микрогрин","Micromezclum","шт"],
+        ["Мята","Hierbabuena","шт"],
+        ["Айсберг","Lechuga Iceberg","шт"],
+        ["Салатный микс","Ensalada Mezclum","шт"],
+        ["Шпинат","Espinacas","шт"],
+        ["Груша","Pera Comicio grande","шт"],
+        ["Перец Падрон","Pimiento de Padrón","г"],
+        ["Перец Чили","Ají picante","кг"],
+        ["Кукуруза вареная","Maíz dulce cocido","шт"],
+        ["Бейби кар��ошка","Patata baby","кг"],
+        ["Лук","Cebolla","кг"],
+        ["Синий лук","Cebolla roja","г"],
+        ["Картофель","Patatas","кг"],
+        ["Морковь","Zanahoria","кг"],
+        ["Баклажан","Berenjena","кг"],
+        ["Яйца","Huevos","шт"],
+        ["Желтки","Yemas","л"],
+        ["Белок","Claras de huevo","л"],
+        ["Маринованные перцы","Pimientos asados","шт"],
+        ["Листья лайма","Hojas de lima","шт"],
+        ["Голубика (лоток 125г)","Arándanos, bandeja 125g","шт"],
+        ["Малина свежая","Frambuesa","шт"],
+        ["Микс мороженых ягод","Frutos del bosque","кг"],
+        ["Имбирь","Jengibre","кг"],
+        ["Лайм","Lima","шт"],
+        ["Лимон","Limón","кг"],
+        ["Апельсин","Naranja","кг"],
+        ["Клубника мороженная","Fresas congeladas","кг"],
+        ["Голубика свеже мороженая","Arándanos congelados","кг"],
+        ["Цветы бар","Flores variadas gourmet","шт"],
+        ["Редис","Rábano","кг"],
+        ["Микрогрин кинзы","Microbrotes de cilantro","шт"],
+        ["Хрен","Rábano picante","кг"],
+        ["Сельдерей","Apio","кг"],
+        ["Арбуз","Sandía","кг"],
+        ["Шафран","Azafrán","г"],
+        ["Фундук","Avellanas","кг"],
+        ["Персик","Melocotón","кг"],
+        ["Клубника","Fresa","кг"],
+        ["Виноград","Uva blanca sin semillas","кг"],
+        ["Дыня","Melón","шт"],
+        ["Киви","Kiwi","шт"],
+        ["Синяя капуста","Col lombarda","шт"],
+        ["Фенхель","Hinojo","шт"],
+        ["Лисички","Rebozuelos","кг"]
+      ]}
+  };
+
+  /* Unidades → texto para el proveedor (español) */
+  const UNIT_ES = { "кг":"kg", "г":"g", "л":"L", "шт":"ud", "ящ":"caja" };
+  const UNIT_SHORT = { "кг":"кг", "г":"г", "л":"л", "шт":"шт", "ящ":"ящ" };
+
+  /* ================= ESTADO ================= */
+  let currentSupplier = Object.keys(suppliers)[0];
+  let orders = {};
+  try { orders = JSON.parse(localStorage.getItem("luiniOrders") || "{}"); } catch(e){ orders = {}; }
+  let search = "";
+
+  const $ = id => document.getElementById(id);
+
+  function save(){ try{ localStorage.setItem("luiniOrders", JSON.stringify(orders)); }catch(e){} }
+
+  function getQty(s,i){ const v = orders?.[s]?.[i]; return v ? Number(v) : 0; }
+
+  function setQty(s,i,value){
+    value = parseFloat(String(value).replace(",", ".").trim());
+    if(isNaN(value) || value < 0) value = 0;
+    value = Math.round(value*1000)/1000; // hasta 3 decimales
+    if(!orders[s]) orders[s] = {};
+    if(value === 0) delete orders[s][i]; else orders[s][i] = value;
+    if(orders[s] && Object.keys(orders[s]).length === 0) delete orders[s];
+    save(); renderProducts(); renderSummary(); renderSuppliers();
+  }
+
+  function changeQty(i, delta){
+    const cur = getQty(currentSupplier, i);
+    // paso inteligente: 0.5 para kg/L cuando es pequeño, 1 en el resto
+    const unit = suppliers[currentSupplier].products[i][2];
+    let step = 1;
+    if((unit === "кг" || unit === "л")){
+      if(delta < 0 && cur <= 1 && cur > 0) step = 0.5;
+      else if(delta > 0 && cur < 1) step = 0.5;
+    }
+    setQty(currentSupplier, i, cur + delta*step);
+  }
+
+  function supplierItemCount(name){
+    const o = orders[name]; if(!o) return 0;
+    return Object.keys(o).length;
+  }
+
+  /* ================= RENDER ================= */
+  function renderSuppliers(){
+    $("supplierButtons").innerHTML = Object.keys(suppliers).map(name=>{
+      const c = supplierItemCount(name);
+      return `<button class="supplier-btn ${name===currentSupplier?'active':''} ${c>0?'has-items':''}" data-s="${name}">
+        ${suppliers[name].icon} ${name}<span class="dot">${c}</span>
+      </button>`;
+    }).join("");
+    $("supplierButtons").querySelectorAll(".supplier-btn").forEach(b=>{
+      b.addEventListener("click", ()=>selectSupplier(b.dataset.s));
+    });
+  }
+
+  function selectSupplier(name){
+    currentSupplier = name; search = "";
+    $("searchInput").value = ""; $("clearX").style.display = "none";
+    render();
+    document.querySelector(".products").scrollIntoView({behavior:"instant", block:"start"});
+    window.scrollTo({top:0});
+  }
+
+  function renderInfo(){
+    const d = suppliers[currentSupplier];
+    $("supplierName").innerHTML = `<span>${d.icon}</span> ${currentSupplier}`;
+    $("supplierInfo").innerHTML = `<span>🚚 ${d.delivery}</span><span>🕐 ${d.hours}</span>`;
+  }
+
+  function renderProducts(){
+    const d = suppliers[currentSupplier];
+    const q = search.trim().toLowerCase();
+    const el = $("products");
+    const visible = d.products.map((p,i)=>({p,i}))
+      .filter(({p})=> !q || p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q));
+
+    if(!visible.length){ el.innerHTML = '<div class="empty">🔍 Nada encontrado / Ничего не найдено</div>'; return; }
+
+    el.innerHTML = visible.map(({p,i})=>{
+      const qty = getQty(currentSupplier,i);
+      const val = qty ? String(qty).replace(".", ",") : "";
+      return `<div class="product ${qty>0?'selected':''}">
+        <div class="product-top">
+          <div class="names">
+            <div class="name-ru">${escapeHtml(p[0])}</div>
+            <div class="name-es">${escapeHtml(p[1])}</div>
+          </div>
+          <div class="controls">
+            <button class="qty-btn" data-act="minus" data-i="${i}">−</button>
+            <input class="qty-input" type="text" inputmode="decimal" value="${val}" placeholder="0" data-i="${i}">
+            <button class="qty-btn plus" data-act="plus" data-i="${i}">+</button>
+            <span class="unit">${UNIT_SHORT[p[2]]||p[2]}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+
+    el.querySelectorAll('[data-act="minus"]').forEach(b=> b.addEventListener("click", ()=>changeQty(+b.dataset.i,-1)));
+    el.querySelectorAll('[data-act="plus"]').forEach(b=> b.addEventListener("click", ()=>changeQty(+b.dataset.i,+1)));
+    el.querySelectorAll(".qty-input").forEach(inp=>{
+      inp.addEventListener("change", ()=> setQty(currentSupplier, +inp.dataset.i, inp.value));
+      inp.addEventListener("focus", ()=> inp.select());
+    });
+  }
+
+  function renderSummary(){
+    const count = supplierItemCount(currentSupplier);
+    $("summaryMain").textContent = `${count} ${plural(count,'posición','posiciones','posiciones')}`;
+    $("summarySub").textContent = count ? `Proveedor: ${currentSupplier}` : "Pedido vacío / Заказ пуст";
+    $("toolCount").textContent = count ? `${count} en el pedido` : "";
+    $("orderBtn").disabled = count===0;
+    $("copyBtn").disabled = count===0;
+  }
+
+  function plural(n,one,few,many){ return n===1?one : n<5?few : many; }
+
+  function render(){ renderInfo(); renderSuppliers(); renderProducts(); renderSummary(); }
+
+  /* ================= CONSTRUIR PEDIDO (español + gramos) ================= */
+  function fmtNum(n){
+    // muestra sin ceros sobrantes, coma decimal
+    return (Math.round(n*1000)/1000).toString().replace(".", ",");
+  }
+
+  function convertLine(qty, unit){
+    // convertir kg<1 -> g, L<1 -> ml  (para que no manden 0,500 kg)
+    if(unit === "кг" && qty > 0 && qty < 1){
+      return { q: Math.round(qty*1000), u: "g" };
+    }
+    if(unit === "л" && qty > 0 && qty < 1){
+      return { q: Math.round(qty*1000), u: "ml" };
+    }
+    return { q: qty, u: UNIT_ES[unit] || unit };
+  }
+
+  function buildOrder(){
+    const d = suppliers[currentSupplier];
+    const lines = [];
+    d.products.forEach((p,i)=>{
+      const qty = getQty(currentSupplier,i);
+      if(qty>0){
+        const {q,u} = convertLine(qty, p[2]);
+        lines.push(`• ${p[1]} — ${fmtNum(q)} ${u}`);
+      }
+    });
+    if(!lines.length) return `El pedido está vacío.`;
+    const header = `Buenos días! 👋\nPara el próximo suministro de Luini Group necesito lo siguiente:`;
+    const footer = `\n\nMuchas gracias! 🙏\nLuini Group`;
+    return `${header}\n\n${lines.join("\n")}${footer}`;
+  }
+
+  /* ================= ACCIONES ================= */
+  function openOrder(){
+    if(supplierItemCount(currentSupplier)===0) return;
+    $("sheetTitle").textContent = `Pedido · ${currentSupplier}`;
+    $("orderText").textContent = buildOrder();
+    $("modal").classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal(){ $("modal").classList.remove("show"); document.body.style.overflow=""; }
+
+  async function copyText(text){
+    try{ await navigator.clipboard.writeText(text); return true; }
+    catch(e){
+      try{
+        const ta=document.createElement("textarea"); ta.value=text;
+        ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta);
+        ta.focus(); ta.select(); const ok=document.execCommand("copy"); ta.remove(); return ok;
+      }catch(_){ return false; }
+    }
+  }
+
+  function toast(msg){
+    const t=$("toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1800);
+  }
+
+  async function copyOrder(){
+    if(supplierItemCount(currentSupplier)===0) return;
+    const ok = await copyText(buildOrder());
+    toast(ok ? "✅ Copiado / Скопировано" : "No se pudo copiar");
+    if(!ok) openOrder();
+  }
+
+  function shareTelegram(){ window.open(`https://t.me/share/url?url=%20&text=${encodeURIComponent(buildOrder())}`,"_blank"); }
+  function shareWhatsApp(){ window.open(`https://wa.me/?text=${encodeURIComponent(buildOrder())}`,"_blank"); }
+
+  function clearSupplier(){
+    if(supplierItemCount(currentSupplier)===0) return;
+    if(!confirm(`¿Vaciar el pedido de ${currentSupplier}? / Очистить заказ?`)) return;
+    delete orders[currentSupplier]; save(); render();
+    toast("Pedido vaciado / Очищено");
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c])); }
+
+  /* ================= INIT ================= */
+  $("searchInput").addEventListener("input", e=>{
+    search = e.target.value;
+    $("clearX").style.display = search ? "block" : "none";
+    renderProducts();
+  });
+  $("clearX").addEventListener("click", ()=>{ search=""; $("searchInput").value=""; $("clearX").style.display="none"; renderProducts(); $("searchInput").focus(); });
+  $("clearSupplierBtn").addEventListener("click", clearSupplier);
+  $("copyBtn").addEventListener("click", copyOrder);
+  $("orderBtn").addEventListener("click", openOrder);
+  $("actClose").addEventListener("click", closeModal);
+  $("actCopy").addEventListener("click", async ()=>{ const ok=await copyText(buildOrder()); toast(ok?"✅ Copiado":"No se pudo copiar"); });
+  $("actTg").addEventListener("click", shareTelegram);
+  $("actWa").addEventListener("click", shareWhatsApp);
+  $("modal").addEventListener("click", e=>{ if(e.target.id==="modal") closeModal(); });
+
+  render();
+  </script>
+</body>
+</html>
