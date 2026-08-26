@@ -8,1143 +8,271 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Luini San Pedro · Pedidos</title>
   <style>
-    /* ========== CSS VARIABLES ========== */
-    :root {
-      --navy: #0B2B5C;
-      --navy-700: #0a2450;
-      --navy-900: #071a3a;
-      --ink: #0e2340;
-      --muted: #5b7797;
-      --line: #e6edf6;
-      --line-soft: #eef3fa;
-      --bg: #eef2f8;
-      --card: #ffffff;
-      --gold: #c9a54e;
-      --gold-soft: #f3ead2;
-      --radius: 18px;
-      --shadow: 0 6px 18px rgba(11,43,92,.06);
-      --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-
-    /* Dark theme */
-    [data-theme="dark"] {
-      --bg: #0a0e1a;
-      --card: #151e2f;
-      --ink: #e8edf5;
-      --muted: #8a9bb5;
-      --line: #2a3a52;
-      --line-soft: #1a2640;
-      --shadow: 0 6px 18px rgba(0,0,0,.4);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    html, body {
-      background: var(--navy);
-      scroll-behavior: smooth;
-    }
-
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      min-height: 100dvh;
-      color: var(--ink);
-      overscroll-behavior-y: none;
-      transition: background 0.3s ease;
-    }
-
-    /* ========== APP ========== */
-    .app {
-      max-width: 520px;
-      width: 100%;
-      background: var(--bg);
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      padding-bottom: calc(96px + env(safe-area-inset-bottom));
-      box-shadow: 0 0 60px rgba(0, 0, 0, .25);
-      transition: var(--transition);
-    }
-
-    /* ========== HEADER ========== */
-    .app-header {
-      background: linear-gradient(180deg, var(--navy) 0%, var(--navy-700) 100%);
-      color: #fff;
-      padding: calc(14px + env(safe-area-inset-top)) 20px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      transition: var(--transition);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .brand .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand .mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: #fff;
-      color: var(--navy);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Georgia, "Times New Roman", 'Playfair Display', serif;
-      font-weight: 800;
-      font-size: 22px;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
-      flex: 0 0 auto;
-      transition: transform 0.3s ease;
-    }
-
-    .brand .mark:hover {
-      transform: rotate(-10deg) scale(1.05);
-    }
-
-    .brand h1 {
-      font-family: Georgia, "Times New Roman", 'Playfair Display', serif;
-      font-weight: 700;
-      font-size: 22px;
-      line-height: 1;
-      letter-spacing: .2px;
-    }
-
-    .brand .sub {
-      font-size: 12px;
-      color: #b9c9e2;
-      margin-top: 4px;
-      font-weight: 500;
-      letter-spacing: .4px;
-      text-transform: uppercase;
-    }
-
-    .brand .actions-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .theme-toggle {
-      background: rgba(255, 255, 255, .12);
-      border: none;
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .theme-toggle:hover {
-      background: rgba(255, 255, 255, .25);
-      transform: scale(1.1);
-    }
-
-    .flag {
-      font-size: 12px;
-      color: #cdd9ec;
-      background: rgba(255, 255, 255, .12);
-      padding: 6px 12px;
-      border-radius: 30px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .gold-line {
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-
-    /* ========== PROGRESS BAR ========== */
-    .progress-container {
-      padding: 8px 20px 12px;
-      background: var(--navy-700);
-      transition: var(--transition);
-    }
-
-    .progress-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .progress-bar-bg {
-      flex: 1;
-      height: 6px;
-      background: rgba(255, 255, 255, .15);
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), #f0d060);
-      border-radius: 10px;
-      width: 0%;
-      transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-      position: relative;
-    }
-
-    .progress-bar-fill::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    .progress-text {
-      color: rgba(255, 255, 255, .8);
-      font-size: 12px;
-      font-weight: 600;
-      min-width: 45px;
-      text-align: right;
-    }
-
-    /* ========== SUPPLIERS ========== */
-    .suppliers-wrap {
-      background: var(--navy-700);
-      padding: 12px 0 14px;
-      position: sticky;
-      top: 0;
-      z-index: 15;
-      transition: var(--transition);
-    }
-
-    .suppliers {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 0 16px;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .suppliers::-webkit-scrollbar {
-      display: none;
-    }
-
-    .supplier-btn {
-      flex: 0 0 auto;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid rgba(255, 255, 255, .14);
-      padding: 9px 16px;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 14px;
-      color: #dbe6f5;
-      cursor: pointer;
-      transition: var(--transition);
-      white-space: nowrap;
-      position: relative;
-    }
-
-    .supplier-btn .dot {
-      position: absolute;
-      top: -3px;
-      right: -3px;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 4px;
-      background: var(--gold);
-      color: var(--navy-900);
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 800;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
-      animation: bounce 0.3s ease;
-    }
-
-    @keyframes bounce {
-      0%,
-      100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.3);
-      }
-    }
-
-    .supplier-btn.has-items .dot {
-      display: flex;
-    }
-
-    .supplier-btn.active {
-      background: #fff;
-      color: var(--navy);
-      border-color: #fff;
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
-    }
-
-    .supplier-btn:active {
-      transform: scale(.95);
-    }
-
-    /* ========== SUPPLIER CARD ========== */
-    .supplier-card {
-      margin: 14px 16px 4px;
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      transition: var(--transition);
-    }
-
-    .supplier-card .name {
-      font-family: Georgia, "Times New Roman", 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--navy);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .supplier-card .info {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .supplier-card .info span {
-      background: var(--line-soft);
-      color: var(--muted);
-      padding: 5px 12px;
-      border-radius: 30px;
-      font-size: 12.5px;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-
-    /* ========== CATEGORIES ========== */
-    .categories-wrap {
-      padding: 8px 16px 4px;
-    }
-
-    .categories {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-    }
-
-    .categories::-webkit-scrollbar {
-      display: none;
-    }
-
-    .cat-btn {
-      flex: 0 0 auto;
-      background: var(--card);
-      border: 1px solid var(--line);
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      cursor: pointer;
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-
-    .cat-btn.active {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--navy);
-    }
-
-    .cat-btn:active {
-      transform: scale(.95);
-    }
-
-    /* ========== SEARCH ========== */
-    .search {
-      padding: 12px 16px 2px;
-    }
-
-    .search .field {
-      position: relative;
-    }
-
-    .search svg {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #9db0ca;
-      transition: var(--transition);
-    }
-
-    .search input {
-      width: 100%;
-      padding: 14px 44px 14px 44px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      font-size: 16px;
-      background: var(--card);
-      outline: none;
-      color: var(--ink);
-      transition: var(--transition);
-    }
-
-    .search input:focus {
-      border-color: var(--navy);
-      box-shadow: 0 0 0 3px rgba(11, 43, 92, .1);
-    }
-
-    .search .clear-x {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      background: transparent;
-      color: #9db0ca;
-      font-size: 20px;
-      padding: 8px 10px;
-      cursor: pointer;
-      display: none;
-      transition: var(--transition);
-    }
-
-    .search .clear-x:hover {
-      color: var(--ink);
-    }
-
-    .search .voice-btn {
-      position: absolute;
-      right: 48px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      background: transparent;
-      color: #9db0ca;
-      font-size: 18px;
-      padding: 8px 10px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .search .voice-btn:hover {
-      color: var(--navy);
-    }
-
-    .search .voice-btn.recording {
-      color: #ff4444;
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0%,
-      100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.3;
-      }
-    }
-
-    /* ========== TOOLBAR ========== */
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px 6px;
-    }
-
-    .toolbar .count {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
-    .toolbar .clear-btn {
-      background: transparent;
-      border: none;
-      color: #b0453f;
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .toolbar .clear-btn:active {
-      background: #faeceb;
-    }
-
-    .toolbar .template-btn {
-      background: transparent;
-      border: none;
-      color: var(--navy);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 6px 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .toolbar .template-btn:active {
-      background: var(--line-soft);
-    }
-
-    /* ========== PRODUCTS ========== */
-    .products {
-      padding: 2px 16px 12px;
-      flex: 1;
-    }
-
-    .product {
-      background: var(--card);
-      border-radius: 16px;
-      margin-bottom: 8px;
-      padding: 12px 14px;
-      border: 1px solid var(--line);
-      transition: var(--transition);
-      cursor: default;
-      position: relative;
-    }
-
-    .product:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(11, 43, 92, .12);
-    }
-
-    .product.selected {
-      border-color: var(--navy);
-      box-shadow: 0 4px 14px rgba(11, 43, 92, .1);
-    }
-
-    .product .favorite-star {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      opacity: 0.3;
-      transition: var(--transition);
-      background: none;
-      border: none;
-    }
-
-    .product .favorite-star.active {
-      opacity: 1;
-      color: var(--gold);
-    }
-
-    .product .favorite-star:hover {
-      opacity: 1;
-      transform: scale(1.2);
-    }
-
-    .product-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .names {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    .name-ru {
-      font-weight: 600;
-      font-size: 15px;
-      color: var(--navy);
-      line-height: 1.3;
-      transition: var(--transition);
-    }
-
-    .name-es {
-      font-size: 12.5px;
-      color: var(--muted);
-      margin-top: 2px;
-      font-weight: 500;
-    }
-
-    .product .category-tag {
-      display: inline-block;
-      font-size: 10px;
-      background: var(--line-soft);
-      color: var(--muted);
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-top: 4px;
-      font-weight: 600;
-    }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex: 0 0 auto;
-    }
-
-    .qty-btn {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--line);
-      background: var(--card);
-      border-radius: 11px;
-      font-size: 22px;
-      font-weight: 400;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--navy);
-      transition: var(--transition);
-    }
-
-    .qty-btn.plus {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--navy);
-    }
-
-    .qty-btn:active {
-      transform: scale(.85);
-    }
-
-    .qty-btn:hover {
-      box-shadow: 0 2px 8px rgba(11, 43, 92, .15);
-    }
-
-    .qty-input {
-      width: 52px;
-      height: 36px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 16px;
-      background: var(--card);
-      outline: none;
-      color: var(--ink);
-      transition: var(--transition);
-    }
-
-    .qty-input:focus {
-      border-color: var(--navy);
-      box-shadow: 0 0 0 3px rgba(11, 43, 92, .1);
-    }
-
-    .unit {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      min-width: 30px;
-      text-align: left;
-    }
-
-    .suggestions {
-      display: flex;
-      gap: 4px;
-      margin-top: 6px;
-      flex-wrap: wrap;
-    }
-
-    .suggestions button {
-      background: var(--line-soft);
-      border: 1px solid var(--line);
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .suggestions button:hover {
-      background: var(--navy);
-      color: #fff;
-      border-color: var(--navy);
-    }
-
-    .empty {
-      padding: 50px 16px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    /* ========== BOTTOM BAR ========== */
-    .bottom-bar {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 0;
-      width: min(520px, 100%);
-      background: rgba(255, 255, 255, .94);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-      border-top: 1px solid var(--line);
-      z-index: 30;
-      box-shadow: 0 -8px 26px rgba(11, 43, 92, .08);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: var(--transition);
-    }
-
-    [data-theme="dark"] .bottom-bar {
-      background: rgba(20, 30, 50, .94);
-    }
-
-    .summary {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .summary strong {
-      display: block;
-      font-size: 15px;
-      color: var(--navy);
-      font-weight: 700;
-      transition: var(--transition);
-    }
-
-    .summary span {
-      font-size: 12.5px;
-      color: var(--muted);
-    }
-
-    .btn-outline {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 14px;
-      font-weight: 600;
-      color: var(--navy);
-      cursor: pointer;
-      font-size: 14px;
-      transition: var(--transition);
-    }
-
-    .btn-primary {
-      background: var(--navy);
-      border: none;
-      border-radius: 12px;
-      padding: 11px 20px;
-      font-weight: 700;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      box-shadow: 0 6px 16px rgba(11, 43, 92, .28);
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-outline:active,
-    .btn-primary:active {
-      transform: scale(.95);
-    }
-
-    .btn-primary:disabled,
-    .btn-outline:disabled {
-      opacity: .45;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-
-    .btn-outline:hover:not(:disabled) {
-      background: var(--line-soft);
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(11, 43, 92, .4);
-    }
-
-    /* ========== MODAL ========== */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(7, 26, 58, .5);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 50;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    .modal.show {
-      display: flex;
-      animation: fade .2s ease;
-    }
-
-    @keyframes fade {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    .sheet {
-      width: min(520px, 100%);
-      max-height: 90vh;
-      max-height: 90dvh;
-      overflow-y: auto;
-      background: var(--bg);
-      border-radius: 26px 26px 0 0;
-      padding: 8px 18px calc(20px + env(safe-area-inset-bottom));
-      animation: slide .28s cubic-bezier(.2, .8, .2, 1);
-      transition: var(--transition);
-    }
-
-    [data-theme="dark"] .sheet {
-      background: #0a0e1a;
-    }
-
-    @keyframes slide {
-      from {
-        transform: translateY(100%);
-      }
-      to {
-        transform: translateY(0);
-      }
-    }
-
-    .grabber {
-      width: 40px;
-      height: 5px;
-      background: #c7d3e3;
-      border-radius: 10px;
-      margin: 8px auto 14px;
-    }
-
-    .sheet h3 {
-      font-family: Georgia, "Times New Roman", 'Playfair Display', serif;
-      font-size: 21px;
-      color: var(--navy);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .sheet .sheet-sub {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .sheet .history-toggle {
-      font-size: 12px;
-      color: var(--navy);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 8px;
-      transition: var(--transition);
-    }
-
-    .sheet .history-toggle:hover {
-      background: var(--line-soft);
-    }
-
-    .order-text {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 16px;
-      font-size: 15px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      border: 1px solid var(--line);
-      color: var(--ink);
-      word-break: break-word;
-      max-height: 300px;
-      overflow-y: auto;
-      transition: var(--transition);
-    }
-
-    .order-history {
-      margin-top: 12px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .order-history-item {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 8px;
-      border: 1px solid var(--line);
-      font-size: 13px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      transition: var(--transition);
-    }
-
-    .order-history-item .date {
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .actions button {
-      border-radius: 14px;
-      padding: 14px;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: var(--transition);
-    }
-
-    .actions button:active {
-      transform: scale(.96);
-    }
-
-    .act-copy {
-      background: var(--card);
-      border: 1px solid var(--line);
-      color: var(--navy);
-    }
-
-    .act-tg {
-      background: #229ED9;
-      border: none;
-      color: #fff;
-    }
-
-    .act-wa {
-      background: #25D366;
-      border: none;
-      color: #fff;
-    }
-
-    .act-pdf {
-      background: #ff4444;
-      border: none;
-      color: #fff;
-    }
-
-    .act-close {
-      background: transparent;
-      border: 1px solid var(--line);
-      color: var(--muted);
-    }
-
-    .actions .full {
-      grid-column: 1 / -1;
-    }
-
-    /* ========== TOAST ========== */
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: calc(110px + env(safe-area-inset-bottom));
-      transform: translateX(-50%) translateY(20px);
-      background: var(--navy-900);
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 40px;
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0;
-      pointer-events: none;
-      transition: all .25s;
-      z-index: 100;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* ========== SCROLLBAR ========== */
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--line-soft);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--muted);
-      border-radius: 10px;
-    }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 480px) {
-      .brand h1 {
-        font-size: 18px;
-      }
-      .brand .mark {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
-      }
-      .supplier-btn {
-        font-size: 12px;
-        padding: 7px 12px;
-      }
-      .product {
-        padding: 10px 12px;
-      }
-      .qty-btn {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-      }
-      .qty-input {
-        width: 44px;
-        height: 32px;
-        font-size: 14px;
-      }
-      .bottom-bar {
-        padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      }
-      .btn-primary {
-        padding: 9px 14px;
-        font-size: 13px;
-      }
-      .btn-outline {
-        padding: 9px 12px;
-        font-size: 13px;
-      }
-    }
+    :root{
+      --navy:#0B2B5C;
+      --navy-700:#0a2450;
+      --navy-900:#071a3a;
+      --ink:#0e2340;
+      --muted:#5b7797;
+      --line:#e6edf6;
+      --line-soft:#eef3fa;
+      --bg:#eef2f8;
+      --card:#ffffff;
+      --gold:#c9a54e;
+      --gold-soft:#f3ead2;
+      --radius:18px;
+    }
+
+    *{
+      margin:0; padding:0; box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    }
+    html,body{ background:var(--navy); }
+    body{
+      display:flex; justify-content:center; align-items:flex-start;
+      min-height:100vh; min-height:100dvh; color:var(--ink);
+      overscroll-behavior-y:none;
+    }
+
+    .app{
+      max-width:520px; width:100%;
+      background:var(--bg);
+      min-height:100vh; min-height:100dvh;
+      display:flex; flex-direction:column; position:relative;
+      padding-bottom:calc(96px + env(safe-area-inset-bottom));
+      box-shadow:0 0 60px rgba(0,0,0,.25);
+    }
+
+    /* ---------- Header ---------- */
+    .app-header{
+      background:linear-gradient(180deg,var(--navy) 0%,var(--navy-700) 100%);
+      color:#fff;
+      padding:calc(14px + env(safe-area-inset-top)) 20px 16px;
+      position:sticky; top:0; z-index:20;
+    }
+    .brand{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .brand .logo{ display:flex; align-items:center; gap:12px; }
+    .brand .mark{
+      width:42px; height:42px; border-radius:12px;
+      background:#fff; color:var(--navy);
+      display:flex; align-items:center; justify-content:center;
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-weight:800; font-size:22px;
+      box-shadow:0 4px 14px rgba(0,0,0,.25); flex:0 0 auto;
+    }
+    .brand h1{
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-weight:700;
+      font-size:22px; line-height:1; letter-spacing:.2px;
+    }
+    .brand .sub{ font-size:12px; color:#b9c9e2; margin-top:4px; font-weight:500; letter-spacing:.4px; text-transform:uppercase; }
+    .brand .flag{ font-size:12px; color:#cdd9ec; background:rgba(255,255,255,.12); padding:6px 12px; border-radius:30px; font-weight:600; white-space:nowrap; }
+    .gold-line{ height:3px; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+
+    /* ---------- Suppliers ---------- */
+    .suppliers-wrap{ background:var(--navy-700); padding:12px 0 14px; position:sticky; top:0; z-index:15; }
+    .suppliers{
+      display:flex; gap:8px; overflow-x:auto; padding:0 16px;
+      scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    }
+    .suppliers::-webkit-scrollbar{ display:none; }
+    .supplier-btn{
+      flex:0 0 auto; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+      padding:9px 16px; border-radius:40px; font-weight:600; font-size:14px; color:#dbe6f5;
+      cursor:pointer; transition:transform .1s, background .12s; white-space:nowrap; position:relative;
+    }
+    .supplier-btn .dot{
+      position:absolute; top:-3px; right:-3px; min-width:18px; height:18px; padding:0 4px;
+      background:var(--gold); color:var(--navy-900); border-radius:20px; font-size:11px; font-weight:800;
+      display:none; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.3);
+    }
+    .supplier-btn.has-items .dot{ display:flex; }
+    .supplier-btn.active{ background:#fff; color:var(--navy); border-color:#fff; }
+    .supplier-btn:active{ transform:scale(.95); }
+
+    /* ---------- Supplier info ---------- */
+    .supplier-card{
+      margin:14px 16px 4px; background:var(--card); border-radius:var(--radius);
+      padding:14px 16px; border:1px solid var(--line);
+      box-shadow:0 6px 18px rgba(11,43,92,.06);
+    }
+    .supplier-card .name{
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--navy);
+      display:flex; align-items:center; gap:10px;
+    }
+    .supplier-card .info{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .supplier-card .info span{
+      background:var(--line-soft); color:var(--muted); padding:5px 12px; border-radius:30px;
+      font-size:12.5px; font-weight:600;
+    }
+
+    /* ---------- Search ---------- */
+    .search{ padding:12px 16px 2px; }
+    .search .field{ position:relative; }
+    .search svg{ position:absolute; left:16px; top:50%; transform:translateY(-50%); color:#9db0ca; }
+    .search input{
+      width:100%; padding:14px 44px 14px 44px; border:1px solid var(--line);
+      border-radius:14px; font-size:16px; background:var(--card); outline:none; color:var(--ink);
+      transition:border-color .15s, box-shadow .15s;
+    }
+    .search input:focus{ border-color:var(--navy); box-shadow:0 0 0 3px rgba(11,43,92,.1); }
+    .search .clear-x{
+      position:absolute; right:8px; top:50%; transform:translateY(-50%);
+      border:none; background:transparent; color:#9db0ca; font-size:20px; padding:8px 10px; cursor:pointer; display:none;
+    }
+
+    /* ---------- Toolbar ---------- */
+    .toolbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 18px 6px; }
+    .toolbar .count{ font-size:13px; color:var(--muted); font-weight:600; }
+    .toolbar .clear-btn{
+      background:transparent; border:none; color:#b0453f; font-size:13px; font-weight:600;
+      padding:6px 8px; border-radius:8px; cursor:pointer;
+    }
+    .toolbar .clear-btn:active{ background:#faeceb; }
+
+    /* ---------- Products ---------- */
+    .products{ padding:2px 16px 12px; flex:1; }
+    .product{
+      background:var(--card); border-radius:16px; margin-bottom:8px; padding:12px 14px;
+      border:1px solid var(--line); transition:border-color .12s, box-shadow .12s;
+    }
+    .product.selected{ border-color:var(--navy); box-shadow:0 4px 14px rgba(11,43,92,.1); }
+    .product-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .names{ flex:1 1 auto; min-width:0; }
+    .name-ru{ font-weight:600; font-size:15px; color:var(--navy); line-height:1.3; }
+    .name-es{ font-size:12.5px; color:var(--muted); margin-top:2px; font-weight:500; }
+    .controls{ display:flex; align-items:center; gap:6px; flex:0 0 auto; }
+    .qty-btn{
+      width:36px; height:36px; border:1px solid var(--line); background:#fff; border-radius:11px;
+      font-size:22px; font-weight:400; line-height:1; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--navy); transition:transform .08s, background .1s;
+    }
+    .qty-btn.plus{ background:var(--navy); color:#fff; border-color:var(--navy); }
+    .qty-btn:active{ transform:scale(.9); }
+    .qty-input{
+      width:52px; height:36px; border:1px solid var(--line); border-radius:11px; text-align:center;
+      font-weight:700; font-size:16px; background:#fff; outline:none; color:var(--ink);
+    }
+    .qty-input:focus{ border-color:var(--navy); box-shadow:0 0 0 3px rgba(11,43,92,.1); }
+    .unit{ color:var(--muted); font-size:12px; font-weight:700; min-width:30px; text-align:left; }
+    .empty{ padding:50px 16px; text-align:center; color:var(--muted); font-size:15px; }
+
+    /* ---------- Bottom bar ---------- */
+    .bottom-bar{
+      position:fixed; left:50%; transform:translateX(-50%); bottom:0;
+      width:min(520px,100%);
+      background:rgba(255,255,255,.94); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+      border-top:1px solid var(--line); z-index:30;
+      box-shadow:0 -8px 26px rgba(11,43,92,.08);
+      display:flex; align-items:center; gap:10px;
+    }
+    .summary{ flex:1; min-width:0; }
+    .summary strong{ display:block; font-size:15px; color:var(--navy); font-weight:700; }
+    .summary span{ font-size:12.5px; color:var(--muted); }
+    .btn-outline{
+      background:#fff; border:1px solid var(--line); border-radius:12px; padding:11px 14px;
+      font-weight:600; color:var(--navy); cursor:pointer; font-size:14px; transition:transform .08s;
+    }
+    .btn-primary{
+      background:var(--navy); border:none; border-radius:12px; padding:11px 20px; font-weight:700;
+      color:#fff; cursor:pointer; font-size:14px; box-shadow:0 6px 16px rgba(11,43,92,.28); transition:transform .08s;
+      display:flex; align-items:center; gap:8px;
+    }
+    .btn-outline:active,.btn-primary:active{ transform:scale(.95); }
+    .btn-primary:disabled,.btn-outline:disabled{ opacity:.45; box-shadow:none; }
+
+    /* ---------- Sheet ---------- */
+    .modal{
+      position:fixed; inset:0; background:rgba(7,26,58,.5); display:none;
+      align-items:flex-end; justify-content:center; z-index:50;
+      backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+    }
+    .modal.show{ display:flex; animation:fade .2s ease; }
+    @keyframes fade{ from{opacity:0} to{opacity:1} }
+    .sheet{
+      width:min(520px,100%); max-height:90vh; max-height:90dvh; overflow-y:auto; background:var(--bg);
+      border-radius:26px 26px 0 0; padding:8px 18px calc(20px + env(safe-area-inset-bottom));
+      animation:slide .28s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes slide{ from{transform:translateY(100%)} to{transform:translateY(0)} }
+    .grabber{ width:40px; height:5px; background:#c7d3e3; border-radius:10px; margin:8px auto 14px; }
+    .sheet h3{
+      font-family:Georgia,"Times New Roman",'Playfair Display',serif; font-size:21px; color:var(--navy); margin-bottom:4px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .sheet .sheet-sub{ font-size:13px; color:var(--muted); margin-bottom:14px; }
+    .order-text{
+      background:var(--card); border-radius:16px; padding:16px; font-size:15px; line-height:1.7;
+      white-space:pre-wrap; border:1px solid var(--line); color:var(--ink); word-break:break-word;
+    }
+    .actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+    .actions button{
+      border-radius:14px; padding:14px; font-weight:700; font-size:15px; cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .08s;
+    }
+    .actions button:active{ transform:scale(.96); }
+    .act-copy{ background:#fff; border:1px solid var(--line); color:var(--navy); }
+    .act-tg{ background:#229ED9; border:none; color:#fff; }
+    .act-wa{ background:#25D366; border:none; color:#fff; }
+    .act-close{ background:transparent; border:1px solid var(--line); color:var(--muted); }
+    .actions .full{ grid-column:1 / -1; }
+
+    /* toast */
+    .toast{
+      position:fixed; left:50%; bottom:calc(110px + env(safe-area-inset-bottom)); transform:translateX(-50%) translateY(20px);
+      background:var(--navy-900); color:#fff; padding:12px 20px; border-radius:40px; font-size:14px; font-weight:600;
+      opacity:0; pointer-events:none; transition:all .25s; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,.3);
+    }
+    .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
-
-  <div class="app" id="app">
-    <!-- ===== HEADER ===== -->
+  <div class="app">
+    <!-- Header -->
     <header class="app-header">
       <div class="brand">
         <div class="logo">
-          <div class="mark" id="logoMark">L</div>
+          <div class="mark">L</div>
           <div>
             <h1>Luini San Pedro</h1>
             <div class="sub">Pedidos a proveedores</div>
           </div>
         </div>
-        <div class="actions-header">
-          <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
-          <span class="flag">🇮🇹 Ristorante</span>
-        </div>
+        <span class="flag">🇮🇹 Ristorante</span>
       </div>
     </header>
     <div class="gold-line"></div>
 
-    <!-- ===== PROGRESS ===== -->
-    <div class="progress-container">
-      <div class="progress-wrapper">
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
-        </div>
-        <span class="progress-text" id="progressText">0%</span>
-      </div>
-    </div>
-
-    <!-- ===== SUPPLIERS ===== -->
+    <!-- Suppliers -->
     <div class="suppliers-wrap">
       <div class="suppliers" id="supplierButtons"></div>
     </div>
 
-    <!-- ===== SUPPLIER INFO ===== -->
+    <!-- Supplier info -->
     <div class="supplier-card">
       <div class="name" id="supplierName"></div>
       <div class="info" id="supplierInfo"></div>
     </div>
 
-    <!-- ===== CATEGORIES ===== -->
-    <div class="categories-wrap">
-      <div class="categories" id="categories"></div>
-    </div>
-
-    <!-- ===== SEARCH ===== -->
+    <!-- Search -->
     <div class="search">
       <div class="field">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <input id="searchInput" type="search" inputmode="search" placeholder="Buscar producto / Найти товар…" />
-        <button class="voice-btn" id="voiceBtn" aria-label="Voice input">🎤</button>
         <button class="clear-x" id="clearX" aria-label="Limpiar búsqueda">×</button>
       </div>
     </div>
 
-    <!-- ===== TOOLBAR ===== -->
+    <!-- Toolbar -->
     <div class="toolbar">
       <span class="count" id="toolCount"></span>
-      <div>
-        <button class="template-btn" id="templateBtn">📋 Plantillas</button>
-        <button class="clear-btn" id="clearSupplierBtn">Vaciar pedido</button>
-      </div>
+      <button class="clear-btn" id="clearSupplierBtn">Vaciar pedido / Очистить</button>
     </div>
 
-    <!-- ===== PRODUCTS ===== -->
+    <!-- Products -->
     <main class="products" id="products"></main>
 
-    <!-- ===== BOTTOM BAR ===== -->
+    <!-- Bottom bar -->
     <div class="bottom-bar">
       <div class="summary">
         <strong id="summaryMain">0 posiciones</strong>
@@ -1157,999 +285,597 @@
       </button>
     </div>
 
-    <!-- ===== MODAL ===== -->
+    <!-- Sheet -->
     <div class="modal" id="modal">
       <div class="sheet" id="sheet">
         <div class="grabber"></div>
         <h3 id="sheetTitle">Pedido</h3>
-        <div class="sheet-sub">
-          <span>Texto en español · listo para enviar al proveedor</span>
-          <button class="history-toggle" id="historyToggle">📜 Historial</button>
-        </div>
+        <div class="sheet-sub">Texto en español · listo para enviar al proveedor</div>
         <div class="order-text" id="orderText"></div>
-        <div class="order-history" id="orderHistory" style="display:none;"></div>
         <div class="actions">
           <button class="act-copy" id="actCopy">📋 Copiar</button>
           <button class="act-tg" id="actTg">✈️ Telegram</button>
-          <button class="act-wa" id="actWa">🟢 WhatsApp</button>
-          <button class="act-pdf" id="actPdf">📄 PDF</button>
-          <button class="act-close full" id="actClose">Cerrar</button>
+          <button class="act-wa full" id="actWa">🟢 WhatsApp</button>
+          <button class="act-close full" id="actClose">Cerrar / Закрыть</button>
         </div>
       </div>
     </div>
 
-    <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
-
-    <!-- ===== TEMPLATE MODAL ===== -->
-    <div class="modal" id="templateModal">
-      <div class="sheet">
-        <div class="grabber"></div>
-        <h3>📋 Plantillas de pedido</h3>
-        <div class="sheet-sub">Carga un pedido guardado</div>
-        <div id="templateList"></div>
-        <div class="actions">
-          <button class="act-close full" id="templateClose">Cerrar</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
-    /* ============================================================
-       DATA
-    ============================================================ */
-    const suppliers = {
-      Apozzo: {
-        icon: "🧀",
-        delivery: "Martes, Jueves, Viernes",
-        deliveryRu: "Вт, Чт, Пт",
-        hours: "12:00–00:00",
-        products: [
-          ["Моцарелла", "Mozzarella", "кг", "сыры"],
-          ["Мука Semola", "Sémola", "кг", "мука"],
-          ["Мука Lucia", "Harina Lucia", "кг", "мука"],
-          ["Мука Caputo", "Harina Caputo", "кг", "мука"],
-          ["Артишок гриль мар.", "Alcachofa a la plancha", "кг", "овощи"],
-          ["Пармезан голова", "Cabeza de Parmesano Grana Padano", "кг", "сыры"]
-        ]
-      },
-      Linares: {
-        icon: "🐟",
-        delivery: "Miércoles, Sábado",
-        deliveryRu: "Ср, Сб",
-        hours: "12:00–14:00",
-        products: [
-          ["Кальмар беби", "Calamares limpios", "шт", "морепродукты"],
-          ["Кальмар рохо", "Calamar rosa", "шт", "морепродукты"],
-          ["Осьминог", "Tentáculos de pulpo", "ящ", "морепродукты"],
-          ["Вонголе", "Vongole", "кг", "морепродукты"],
-          ["Мясо мидий", "Carne de mejillones", "кг", "морепродукты"],
-          ["Тунец", "Atún", "кг", "морепродукты"],
-          ["Фри", "Papas fritas Dipe", "кг", "заморозка"],
-          ["Пальпетте", "Palpeta", "кг", "мясо"]
-        ]
-      },
-      Urban: {
-        icon: "🥩",
-        delivery: "Martes, Viernes",
-        deliveryRu: "Вт, Пт",
-        hours: "12:00–14:30",
-        products: [
-          ["Оссобуко", "Ossobuco", "кг", "мясо"],
-          ["Рибай", "Cuberol", "шт", "мясо"],
-          ["Вырезка говяжья", "Solomillo de ternera", "кг", "мясо"],
-          ["Курица бедро без кости", "Muslo de pollo sin hueso", "кг", "мясо"],
-          ["Филе куриное", "Filete de pollo", "кг", "мясо"],
-          ["Фарш говяжий", "Carne molida de ternera", "кг", "мясо"],
-          ["Цыплёнок", "Pollo picantón", "ящ", "мясо"],
-          ["Редонда", "Redonda", "кг", "мясо"],
-          ["Антрекот", "Entrecot", "кг", "мясо"],
-          ["Куриные крылья", "Alitas de pollo", "кг", "мясо"],
-          ["Свиная шея", "Cuello de cerdo", "кг", "мясо"],
-          ["Куриные ножки", "Muslos de pollo", "кг", "мясо"]
-        ]
-      },
-      Negrini: {
-        icon: "🇮🇹",
-        delivery: "Martes, Viernes",
-        deliveryRu: "Вт, Пт",
-        hours: "12:00–00:00",
-        products: [
-          ["Буррата", "Burrata", "шт", "сыры"],
-          ["Рикотта", "Ricotta", "шт", "сыры"],
-          ["Горгонзола", "Gorgonzola", "шт", "сыры"],
-          ["Трюфельная паста", "Pasta de trufa", "шт", "соусы"],
-          ["Вяленые томаты", "Tomates secados al sol", "шт", "консервы"],
-          ["Каперсы цветы", "Frutti del Cappero", "шт", "консервы"],
-          ["Томленый лук", "Cebolla estofada", "шт", "консервы"],
-          ["Сицилийские оливки", "Aceitunas sicilianas", "шт", "консервы"],
-          ["Фисташковая паста", "Pasta de pistacho dulce", "шт", "соусы"],
-          ["Карпаччо трюфель", "Carpaccio de trufa", "шт", "соусы"],
-          ["Трюфельное масло", "Aceite de trufa", "шт", "масла"],
-          ["Оливки Таджаские", "Olive Taggiasche", "шт", "консервы"],
-          ["Сыр проволоне", "Queso Provolone", "шт", "сыры"],
-          ["Baby mozzarella", "Baby mozzarella", "шт", "сыры"],
-          ["Тертый пекорино", "Pecorino rallado", "шт", "сыры"],
-          ["Тертый пармезан", "Parmesano rallado", "шт", "сыры"],
-          ["Пармезан кусками", "Trozos de Parmesano", "кг", "сыры"],
-          ["Пекорино кусками", "Trozos de Pecorino", "кг", "сыры"],
-          ["Mozzarella de búfala", "Mozzarella de búfala", "ящ", "сыры"],
-          ["Паста Спагетти", "Pasta de espagueti alla chitarra di Bologna", "ящ", "паста"],
-          ["Оливки каламата", "Olive Kalamata", "шт", "консервы"],
-          ["Паста Тальятелле", "Pasta fettuccine", "ящ", "паста"],
-          ["Паста Папарделле", "Pasta pappardelle gialle", "ящ", "паста"],
-          ["Паста безглютеновая", "Pasta sin gluten", "ящ", "паста"],
-          ["Прошутто Котто", "Prosciutto Cotto", "шт", "мясо"],
-          ["Салями", "Salami Napoli", "шт", "мясо"],
-          ["Гуанчале", "Guanciale", "кг", "мясо"],
-          ["Prosciutto crudo", "Prosciutto crudo", "кг", "мясо"],
-          ["Ндуя", "Nduja", "шт", "мясо"],
-          ["Салями пиканте", "Salame piccante", "шт", "мясо"],
-          ["Микс грибов", "Mezcla de hongos", "кг", "овощи"],
-          ["Перец фаршированный", "Pimientos rellenos", "шт", "консервы"],
-          ["Grisini", "Grissini", "ящ", "хлеб"],
-          ["Тарт лимонный", "Tarta de limón", "шт", "десерты"],
-          ["Каноли", "Cannoli", "ящ", "десерты"],
-          ["Сардинский хлеб", "Pan sardo", "ящ", "хлеб"],
-          ["Каперсы", "Alcaparras", "шт", "консервы"],
-          ["Pelati la Regina", "Pelati la Regina", "шт", "консервы"],
-          ["Рис карнароли", "Arroz Carnaroli", "кг", "рис"],
-          ["Аранчини Миньон", "Arancini Mignon", "шт", "заморозка"],
-          ["Радиккьо Россо гриль", "Radicchio Rosso grigliato", "шт", "овощи"],
-          ["Перец роса", "Rocío de pimienta", "шт", "овощи"],
-          ["Орзо", "Orzo", "кг", "паста"],
-          ["Таледжо сыр", "Queso Taleggio", "шт", "сыры"],
-          ["Клюкво перец", "Peperoncini dolci rossi", "шт", "овощи"]
-        ]
-      },
-      Ambasthour: {
-        icon: "🥛",
-        delivery: "Miércoles, Viernes",
-        deliveryRu: "Ср, Пт",
-        hours: "12:00–18:00",
-        products: [
-          ["Молоко", "Leche", "л", "молочные"],
-          ["Сливки", "Nata", "л", "молочные"],
-          ["Молоко безлактозное", "Leche sin lactosa", "л", "молочные"],
-          ["Миндальное молоко", "Leche de almendras", "л", "молочные"],
-          ["Алмонд (миндальное молоко)", "Leche de almendras Almond", "л", "молочные"],
-          ["Мороженое ванильное", "Helado de vainilla", "л", "заморозка"],
-          ["Мороженое шоколадное", "Helado de chocolate", "л", "заморозка"],
-          ["Сорбет лимон", "Sorbete de limón", "л", "заморозка"],
-          ["Сорбет манго", "Sorbete de mango", "л", "заморозка"],
-          ["Вино белое (в пачках)", "Vino blanco (en paquetes)", "шт", "напитки"],
-          ["Вино красное", "Vino tinto", "шт", "напитки"],
-          ["Уксус яблочный", "Vinagre de sidra de manzana", "шт", "соусы"],
-          ["Уксус бальзамический", "Vinagre balsámico", "шт", "соусы"],
-          ["Бальзамический крем", "Crema balsámica", "шт", "соусы"],
-          ["Соевый соус", "Salsa de soja", "шт", "соусы"],
-          ["Горчица в зернах", "Mostaza en grano", "шт", "соусы"],
-          ["Горчица", "Mostaza", "шт", "соусы"],
-          ["Хлопья чили", "Copos de chile", "шт", "специи"],
-          ["Соль", "Sal", "кг", "специи"],
-          ["Сахар", "Azúcar", "кг", "специи"],
-          ["Лавровый лист", "Hoja de laurel", "шт", "специи"],
-          ["Паприка копчёная", "Pimentón ahumado", "шт", "специи"],
-          ["Перец горошек", "Pimienta en grano", "шт", "специи"],
-          ["Перец кайенский", "Pimienta de cayena", "шт", "специи"],
-          ["Желатин", "Gelatina", "шт", "выпечка"],
-          ["Мускатный орех (целый)", "Nuez moscada (entera)", "шт", "специи"],
-          ["Мускатный орех (молотый)", "Nuez moscada (molida)", "шт", "специи"],
-          ["Кедровый орех", "Piñones", "кг", "орехи"],
-          ["Орех грецкий", "Nueces", "кг", "орехи"],
-          ["Фисташка", "Pistachos", "кг", "орехи"],
-          ["Бульон сухой куриный Knorr", "Caldo de pollo seco Knorr", "шт", "бульоны"],
-          ["Бульон сухой Демиглас Knorr", "Salsa Demi-glace Knorr", "шт", "бульоны"],
-          ["Бульон сухой рыбный Knorr", "Caldo de pescado Knorr", "шт", "бульоны"],
-          ["Кетчуп", "Ketchup", "шт", "соусы"],
-          ["Шрирача", "Sriracha", "шт", "соусы"],
-          ["Анчоус", "Anchoas", "шт", "консервы"],
-          ["Огурцы маринованные", "Pepinillos en vinagre", "шт", "консервы"],
-          ["Тунец консервированный", "Atún enlatado", "шт", "консервы"],
-          ["Маскарпоне", "Mascarpone", "шт", "сыры"],
-          ["Мёд", "Miel", "кг", "сладости"],
-          ["Масло сливочное", "Manteca", "кг", "молочные"],
-          ["Козий сыр", "Queso de cabra", "шт", "сыры"],
-          ["Филадельфия", "Queso Philadelphia", "шт", "сыры"],
-          ["Лимонный фреш", "Zumo de limón exprimido", "л", "напитки"],
-          ["Оливки зелёные с косточкой", "Aceitunas verdes con hueso Bravo", "шт", "консервы"],
-          ["Зеленые оливки без косточек", "Aceitunas verdes sin hueso", "шт", "консервы"],
-          ["Масло подсолнечное", "Aceite de girasol", "л", "масла"],
-          ["Масло оливковое", "Aceite de oliva", "л", "масла"],
-          ["Пюре манго", "Puré de mango", "л", "консервы"],
-          ["Пюре маракуйя", "Puré de maracuyá", "л", "консервы"],
-          ["Голубика свеже мороженая", "Arándanos congelados", "кг", "заморозка"],
-          ["Клубника свеже мороженная", "Fresas congeladas", "кг", "заморозка"],
-          ["Перцы пикантные", "Pimientos picantes ext. 80/100 Don Molinico", "шт", "овощи"]
-        ]
-      },
-      Eladio: {
-        icon: "🥬",
-        delivery: "Lunes–Domingo",
-        deliveryRu: "Пн–Вс",
-        hours: "24 horas",
-        products: [
-          ["Авокадо", "Aguacate", "шт", "овощи"],
-          ["Цукини", "Calabacín", "кг", "овощи"],
-          ["Спаржа", "Espárragos", "шт", "овощи"],
-          ["Огурец", "Pepino", "кг", "овощи"],
-          ["Болгарский перец", "Pimiento rojo", "кг", "овощи"],
-          ["Томаты черные", "Tomate azul grande", "кг", "овощи"],
-          ["Томаты розовые", "Tomate castellano", "кг", "овощи"],
-          ["Томаты желтые", "Tomate amarillo", "кг", "овощи"],
-          ["Томаты Черри", "Tomate cherry rama", "кг", "овощи"],
-          ["Чищеный чеснок", "Ajo pelado", "кг", "овощи"],
-          ["Базилик", "Albahaca", "шт", "зелень"],
-          ["Петрушка", "Perejil", "кг", "зелень"],
-          ["Рукола", "Rúcula selvática", "шт", "зелень"],
-          ["Розмарин", "Romero", "шт", "зелень"],
-          ["Тимьян", "Tomillo", "шт", "зелень"],
-          ["Микс черри", "Mix de cherry", "шт", "овощи"],
-          ["Микрогрин", "Micromezclum", "шт", "зелень"],
-          ["Мята", "Hierbabuena", "шт", "зелень"],
-          ["Айсберг", "Lechuga Iceberg", "шт", "овощи"],
-          ["Салатный микс", "Ensalada Mezclum", "шт", "овощи"],
-          ["Шпинат", "Espinacas", "шт", "овощи"],
-          ["Груша", "Pera Comicio grande", "кг", "фрукты"],
-          ["Перец Падрон", "Pimiento de Padrón", "кг", "овощи"],
-          ["Перец Чили", "Ají picante", "кг", "овощи"],
-          ["Кукуруза вареная", "Maíz dulce cocido", "шт", "овощи"],
-          ["Бейби картошка", "Patata baby", "кг", "овощи"],
-          ["Лук", "Cebolla", "кг", "овощи"],
-          ["Синий лук", "Cebolla roja", "кг", "овощи"],
-          ["Картофель", "Patatas", "кг", "овощи"],
-          ["Морковь", "Zanahoria", "кг", "овощи"],
-          ["Баклажан", "Berenjena", "кг", "овощи"],
-          ["Яйца", "Huevos", "шт", "молочные"],
-          ["Желтки", "Yemas", "л", "молочные"],
-          ["Белок", "Claras de huevo", "л", "молочные"],
-          ["Маринованные перцы", "Pimientos asados", "шт", "консервы"],
-          ["Листья лайма", "Hojas de lima", "шт", "зелень"],
-          ["Голубика (лоток 125г)", "Arándanos, bandeja 125g", "шт", "фрукты"],
-          ["Малина свежая", "Frambuesa", "шт", "фрукты"],
-          ["Микс мороженых ягод", "Frutos del bosque", "кг", "заморозка"],
-          ["Имбирь", "Jengibre", "кг", "овощи"],
-          ["Лайм", "Lima", "шт", "фрукты"],
-          ["Лимон", "Limón", "кг", "фрукты"],
-          ["Апельсин", "Naranja", "кг", "фрукты"],
-          ["Клубника мороженная", "Fresas congeladas", "кг", "заморозка"],
-          ["Голубика свеже мороженая", "Arándanos congelados", "кг", "заморозка"],
-          ["Цветы бар", "Flores variadas gourmet", "шт", "декор"],
-          ["Редис", "Rábano", "кг", "овощи"],
-          ["Микрогрин кинзы", "Microbrotes de cilantro", "шт", "зелень"],
-          ["Хрен", "Rábano picante", "кг", "овощи"],
-          ["Сельдерей", "Apio", "кг", "овощи"],
-          ["Арбуз", "Sandía", "кг", "фрукты"],
-          ["Шафран", "Azafrán", "г", "специи"],
-          ["Фундук", "Avellanas", "кг", "орехи"],
-          ["Персик", "Melocotón", "кг", "фрукты"],
-          ["Клубника", "Fresa", "кг", "фрукты"],
-          ["Виноград", "Uva blanca sin semillas", "кг", "фрукты"],
-          ["Дыня", "Melón", "шт", "фрукты"],
-          ["Киви", "Kiwi", "шт", "фрукты"],
-          ["Синяя капуста", "Col lombarda", "шт", "овощи"],
-          ["Фенхель", "Hinojo", "шт", "овощи"],
-          ["Лисички", "Rebozuelos", "кг", "овощи"]
-        ]
-      },
-      Lopez: {
-        icon: "🥫",
-        delivery: "Lunes, Miércoles, Viernes",
-        deliveryRu: "Пн, Ср, Пт",
-        hours: "08:00–14:00",
-        products: [
-          ["Вяленые помидоры в масле", "Tomates secos en aceite", "шт", "консервы"],
-          ["Карпаччо из трюфеля в оливковом масле", "Carpaccio de trufa en aceite de oliva", "шт", "консервы"],
-          ["Перец пикильо", "Pimientos del piquillo", "шт", "консервы"],
-          ["Артишоки по-римски с ножкой", "Alcachofas a la romana con tallo", "шт", "консервы"],
-          ["Запечённый сладкий перец полосками", "Pimiento asado en tiras", "шт", "консервы"],
-          ["Цветочный мёд", "Miel de flores", "шт", "сладости"],
-          ["Персики в сиропе", "Melocotones en almíbar", "шт", "консервы"],
-          ["Анчоусы в уксусе", "Anchoas en vinagre", "шт", "консервы"],
-          ["Анчоусы", "Anchoas", "шт", "консервы"],
-          ["Сардины", "Sardinas", "шт", "консервы"],
-          ["Пшеничная мука", "Harina de trigo", "кг", "мука"],
-          ["Кукурузная мука", "Harina de maíz", "кг", "мука"],
-          ["Дрожжи", "Levadura", "шт", "выпечка"],
-          ["Кукурузная мука без глютена", "Harina de maíz sin gluten", "кг", "мука"],
-          ["Семолина из твёрдой пшеницы", "Sémola de trigo duro", "кг", "мука"],
-          ["Панировочные сухари", "Pan rallado", "шт", "мука"],
-          ["Рис Carnaroli для ризотто", "Arroz Carnaroli para risotto", "кг", "рис"],
-          ["Грецкий орех, половинки", "Nueces, mitades", "кг", "орехи"],
-          ["Кедровые орехи", "Piñones", "кг", "орехи"],
-          ["Кетчуп Heinz", "Kétchup Heinz", "шт", "соусы"],
-          ["Майонез Heinz Professional", "Mayonesa Heinz Professional", "шт", "соусы"],
-          ["Горчица", "Mostaza", "шт", "соусы"],
-          ["Табаско", "Salsa Tabasco", "шт", "соусы"],
-          ["Соевый соус без глютена", "Salsa de soja sin gluten", "шт", "соусы"],
-          ["Соус Sriracha", "Salsa Sriracha", "шт", "соусы"],
-          ["Соус демиглас Knorr", "Salsa demi-glace Knorr", "шт", "бульоны"],
-          ["Светлый ру Knorr", "Roux claro Knorr", "шт", "бульоны"],
-          ["Мясной бульон Knorr", "Caldo de carne Knorr", "шт", "бульоны"],
-          ["Рыбный бульон Knorr", "Caldo de pescado Knorr", "шт", "бульоны"],
-          ["Крем из омара Knorr", "Crema de langosta Knorr", "шт", "бульоны"],
-          ["Сладкая копчёная паприка", "Pimentón dulce ahumado", "шт", "специи"],
-          ["Чёрный молотый перец", "Pimienta negra molida", "шт", "специи"],
-          ["Приправа Cajun", "Especia Cajun", "шт", "специи"],
-          ["Молотая куркума", "Cúrcuma molida", "шт", "специи"],
-          ["Корица палочками", "Canela en rama", "шт", "специи"],
-          ["Молотый имбирь", "Jengibre molido", "шт", "специи"],
-          ["Чёрный перец горошком", "Pimienta negra en grano", "шт", "специи"],
-          ["Острая паприка", "Pimentón picante", "шт", "специи"],
-          ["Сладкая паприка", "Pimentón dulce", "шт", "специи"],
-          ["Аргентинский острый перец", "Ají argentino picante", "шт", "специи"],
-          ["Лавровый лист", "Hoja de laurel", "шт", "специи"],
-          ["Ямайский перец горошком", "Pimienta de Jamaica en grano", "шт", "специи"],
-          ["Ванильный сахар", "Azúcar vainillado", "шт", "специи"],
-          ["Молотая корица", "Canela molida", "шт", "специи"],
-          ["Розовый перец", "Pimienta rosa", "шт", "специи"],
-          ["Подсолнечное масло", "Aceite de girasol", "шт", "масла"],
-          ["Масло с чёрным трюфелем", "Aceite de trufa negra", "шт", "масла"],
-          ["Оливковое масло Extra Virgin", "Aceite de oliva virgen extra", "шт", "масла"],
-          ["Сливочное масло", "Mantequilla", "кг", "молочные"],
-          ["Зелёные оливки кольцами", "Aceitunas verdes en rodajas", "шт", "консервы"],
-          ["Оливки Kalamata", "Aceitunas Kalamata", "шт", "консервы"],
-          ["Оливки Chupadeos", "Aceitunas Chupadeos", "шт", "консервы"],
-          ["Каперсы", "Alcaparras", "шт", "консервы"],
-          ["Каперсы 10/11", "Alcaparras 10/11", "шт", "консервы"],
-          ["Моцарелла 30/70", "Mozzarella 30/70", "шт", "сыры"],
-          ["Моцарелла 100%", "Mozzarella 100%", "шт", "сыры"],
-          ["Лимонный сок", "Zumo de limón", "шт", "напитки"],
-          ["Цельное молоко", "Leche entera", "шт", "молочные"],
-          ["Сливки 35%", "Nata 35%", "шт", "молочные"],
-          ["Молоко без лактозы", "Leche sin lactosa", "шт", "молочные"],
-          ["Миндальный напиток", "Bebida de almendras", "шт", "напитки"],
-          ["Сгущённое молоко", "Leche condensada", "шт", "молочные"],
-          ["Сок лайма", "Zumo de lima", "шт", "напитки"],
-          ["Жидкая карамель", "Caramelo líquido", "шт", "сладости"],
-          ["Ванильный ароматизатор", "Aroma de vainilla", "шт", "выпечка"],
-          ["Ветчина без кости", "Jamón deshuesado", "кг", "мясо"],
-          ["Мусс из утки 100%", "Mousse de pato 100%", "шт", "мясо"],
-          ["Гуанчале Duroc", "Guanciale Duroc", "кг", "мясо"],
-          ["Мусс из утиной фуа-гра", "Mousse de foie-gras de pato", "шт", "мясо"],
-          ["Смесь грибов", "Mezcla de setas congeladas", "кг", "заморозка"],
-          ["Свиная вырезка", "Solomillo de cerdo", "кг", "мясо"],
-          ["Куриная грудка", "Pechuga de pollo", "кг", "мясо"],
-          ["Жидкий яичный белок", "Clara de huevo líquida", "шт", "молочные"],
-          ["Жидкий яичный желток", "Yema de huevo líquida", "шт", "молочные"],
-          ["Мелкая соль", "Sal fina", "кг", "специи"],
-          ["Цветки артишока в оливковом масле", "Flores de alcachofa en aceite de oliva", "шт", "консервы"],
-          ["Соль хлопьями", "Sal en escamas", "шт", "специи"],
-          ["Белый винный уксус", "Vinagre de vino blanco", "шт", "соусы"],
-          ["Бальзамический уксус", "Vinagre balsámico", "шт", "соусы"],
-          ["Яблочный уксус", "Vinagre de sidra de manzana", "шт", "соусы"],
-          ["Пюре манго", "Puré de mango", "шт", "консервы"],
-          ["Пюре маракуйи", "Puré de maracuyá", "шт", "консервы"],
-          ["Листовой желатин", "Gelatina en láminas", "шт", "выпечка"],
-          ["Пепперончини, фаршированные сыром", "Pepperoncini rellenos de queso", "шт", "консервы"],
-          ["Замороженная дикая черника", "Arándanos silvestres congelados", "кг", "заморозка"],
-          ["Замороженная клубника", "Fresas congeladas", "кг", "заморозка"],
-          ["Белое вино", "Vino blanco", "шт", "напитки"],
-          ["Красное вино", "Vino tinto", "шт", "напитки"],
-          ["Пищевая плёнка 30 см", "Film transparente 30 cm", "шт", "расходники"],
-          ["Термобумага 80×80", "Papel térmico 80×80", "шт", "расходники"],
-          ["Бумажные полотенца", "Toallas de papel", "шт", "расходники"],
-          ["Чёрные нитриловые перчатки L", "Guantes de nitrilo negros L", "шт", "расходники"],
-          ["Чёрные нитриловые перчатки M", "Guantes de nitrilo negros M", "шт", "расходники"],
-          ["Чёрные нитриловые перчатки S", "Guantes de nitrilo negros S", "шт", "расходники"],
-          ["Чёрные нитриловые перчатки XL", "Guantes de nitrilo negros XL", "шт", "расходники"],
-          ["Газовые баллончики для сифона", "Cápsulas de gas para sifón", "шт", "расходники"],
-          ["Алюминиевая фольга 30 см", "Papel de aluminio 30 cm", "шт", "расходники"]
-        ]
-      }
-    };
+  /* ================= BASE DE DATOS ================= */
+  const suppliers = {
+    Apozzo: { icon:"🧀", delivery:"Martes, Jueves, Viernes", deliveryRu:"Вт, Чт, Пт", hours:"12:00–00:00",
+      products:[
+        ["Моцарелла","Mozzarella","кг"],
+        ["Мука Semola","Sémola","кг"],
+        ["Мука Lucia","Harina Lucia","кг"],
+        ["Мука Caputo","Harina Caputo","кг"],
+        ["Артишок гриль мар.","Alcachofa a la plancha","кг"],
+        ["Пармезан голова","Cabeza de Parmesano Grana Padano","кг"]
+      ]},
+    Linares: { icon:"🐟", delivery:"Miércoles, Sábado", deliveryRu:"Ср, Сб", hours:"12:00–14:00",
+      products:[
+        ["Кальмар беби","Calamares limpios","шт"],
+        ["Кальмар рохо","Calamar rosa","шт"],
+        ["Осьминог","Tentáculos de pulpo","ящ"],
+        ["Вонголе","Vongole","кг"],
+        ["Мясо мидий","Carne de mejillones","кг"],
+        ["Тунец","Atún","кг"],
+        ["Фри","Papas fritas Dipe","кг"],
+        ["Пальпетте","Palpeta","кг"]
+      ]},
+    Urban: { icon:"🥩", delivery:"Martes, Viernes", deliveryRu:"Вт, Пт", hours:"12:00–14:30",
+      products:[
+        ["Оссобуко","Ossobuco","кг"],
+        ["Рибай","Cuberol","шт"],
+        ["Вырезка говяжья","Solomillo de ternera","кг"],
+        ["Курица бедро без кости","Muslo de pollo sin hueso","кг"],
+        ["Филе куриное","Filete de pollo","кг"],
+        ["Фарш говяжий","Carne molida de ternera","кг"],
+        ["Цыплёнок","Pollo picantón","ящ"],
+        ["Редонда","Redonda","кг"],
+        ["Антрекот","Entrecot","кг"],
+        ["Куриные крылья","Alitas de pollo","кг"],
+        ["Свиная шея","Cuello de cerdo","кг"],
+        ["Куриные ножки","Muslos de pollo","кг"],
+      ]},
+    Negrini: { icon:"🇮🇹", delivery:"Martes, Viernes", deliveryRu:"Вт, Пт", hours:"12:00–00:00",
+      products:[
+        ["Буррата","Burrata","шт"],
+        ["Рикотта","Ricotta","шт"],
+        ["Горгонзола","Gorgonzola","шт"],
+        ["Трюфельная паста","Pasta de trufa","шт"],
+        ["Вяленые томаты","Tomates secados al sol","шт"],
+        ["Каперсы цветы","Frutti del Cappero","шт"],
+        ["Томленый лук","Cebolla estofada","шт"],
+        ["Сицилийские оливки","Aceitunas sicilianas","шт"],
+        ["Фисташковая паста","Pasta de pistacho dulce","шт"],
+        ["Карпаччо трюфель","Carpaccio de trufa","шт"],
+        ["Трюфельное масло","Aceite de trufa","шт"],
+        ["Оливки Таджаские","Olive Taggiasche","шт"],
+        ["Сыр проволоне","Queso Provolone","шт"],
+        ["Сицилийские оливки (2)","Aceitunas sicilianas","шт"],
+        ["Baby mozzarella","Baby mozzarella","шт"],
+        ["Тертый пекорино","Pecorino rallado","шт"],
+        ["Тертый пармезан","Parmesano rallado","шт"],
+        ["Пармезан кусками","Trozos de Parmesano","кг"],
+        ["Пекорино кусками","Trozos de Pecorino","кг"],
+        ["Mozzarella de búfala","Mozzarella de búfala","ящ"],
+        ["Паста Спагетти","Pasta de espagueti alla chitarra di Bologna","ящ"],
+        ["Оливки каламата","Olive Kalamata","шт"],
+        ["Паста Тальятелле","Pasta fettuccine","ящ"],
+        ["Паста Папарделле","Pasta pappardelle gialle","ящ"],
+        ["Паста безглютеновая","Pasta sin gluten","ящ"],
+        ["Прошутто Котто","Prosciutto Cotto","шт"],
+        ["Салями","Salami Napoli","шт"],
+        ["Гуанчале","Guanciale","кг"],
+        ["Prosciutto crudo","Prosciutto crudo","кг"],
+        ["Ндуя","Nduja","шт"],
+        ["Салями пиканте","Salame piccante","шт"],
+        ["Микс грибов","Mezcla de hongos","кг"],
+        ["Перец фаршированный","Pimientos rellenos","шт"],
+        ["Grisini","Grissini","ящ"],
+        ["Тарт лимонный","Tarta de limón","шт"],
+        ["Каноли","Cannoli","ящ"],
+        ["Сардинский хлеб","Pan sardo","ящ"],
+        ["Каперсы","Alcaparras","шт"],
+        ["Pelati la Regina","Pelati la Regina","шт"],
+        ["Рис карнароли","Arroz Carnaroli","кг"],
+        ["Аранчини Миньон","Arancini Mignon","шт"],
+        ["","Radicchio Rosso grigliato","шт"],
+        ["Перец роса","Rocío de pimienta","шт"],
+        ["Орзо","Orzo","кг"],
+        ["Таледжо сыр","Queso Taleggio","шт"],
+        ["Клюкво перец","Peperoncini dolci rossi","шт"]
+      ]},
+    Ambasthour: { icon:"🥛", delivery:"Miércoles, Viernes", deliveryRu:"Ср, Пт", hours:"12:00–18:00",
+      products:[
+        ["Молоко","Leche","л"],
+        ["Сливки","Nata","л"],
+        ["Молоко безлактозное","Leche sin lactosa","л"],
+        ["Миндальное молоко","Leche de almendras","л"],
+        ["Алмонд (миндальное молоко)","Leche de almendras Almond","л"],
+        ["Мороженое ванильное","Helado de vainilla","л"],
+        ["Мороженое шоколадное","Helado de chocolate","л"],
+        ["Сорбет лимон","Sorbete de limón","л"],
+        ["Сорбет манго","Sorbete de mango","л"],
+        ["Вино белое (в пачках)","Vino blanco (en paquetes)","шт"],
+        ["Вино красное","Vino tinto","шт"],
+        ["Уксус яблочный","Vinagre de sidra de manzana","шт"],
+        ["Уксус бальзамический","Vinagre balsámico","шт"],
+        ["Бальзамический крем","Crema balsámica","шт"],
+        ["Соевый соус","Salsa de soja","шт"],
+        ["Горчица в зернах","Mostaza en grano","шт"],
+        ["Горчица","Mostaza","шт"],
+        ["Хлопья чили","Copos de chile","шт"],
+        ["Соль","Sal","кг"],
+        ["Сахар","Azúcar","кг"],
+        ["Лавровый лист","Hoja de laurel","шт"],
+        ["Паприка копчёная","Pimentón ahumado","шт"],
+        ["Перец горошек","Pimienta en grano","шт"],
+        ["Перец кайенский","Pimienta de cayena","шт"],
+        ["Желатин","Gelatina","шт"],
+        ["Мускатный орех (целый)","Nuez moscada (entera)","шт"],
+        ["Мускатный орех (молотый)","Nuez moscada (molida)","шт"],
+        ["Кедровый орех","Piñones","кг"],
+        ["Орех грецкий","Nueces","кг"],
+        ["Фисташка","Pistachos","кг"],
+        ["Бульон сухой куриный Knorr","Caldo de pollo seco Knorr","шт"],
+        ["Бульон сухой Демиглас Knorr","Salsa Demi-glace Knorr","шт"],
+        ["Бульон сухой рыбный Knorr","Caldo de pescado Knorr","шт"],
+        ["Кетчуп","Ketchup","шт"],
+        ["Шрирача","Sriracha","шт"],
+        ["Анчоус","Anchoas","шт"],
+        ["Огурцы маринованные","Pepinillos en vinagre","шт"],
+        ["Тунец консервированный","Atún enlatado","шт"],
+        ["Маскарпоне","Mascarpone","шт"],
+        ["Мёд","Miel","кг"],
+        ["Масло сливочное","Manteca","кг"],
+        ["Козий сыр","Queso de cabra","шт"],
+        ["Филадельфия","Queso Philadelphia","шт"],
+        ["Лимонный фреш","Zumo de limón exprimido","л"],
+        ["Оливки зелёные с косточкой","Aceitunas verdes con hueso Bravo","шт"],
+        ["Зеленые оливки без косточек","Aceitunas verdes sin hueso","шт"],
+        ["Масло подсолнечное","Aceite de girasol","л"],
+        ["Масло оливковое","Aceite de oliva","л"],
+        ["Пюре манго","Puré de mango","л"],
+        ["Пюре маракуйя","Puré de maracuyá","л"],
+        ["Голубика свеже мороженая","Arándanos congelados","кг"],
+        ["Клубника свеже мороженная","Fresas congeladas","кг"],
+        ["Перцы пикантные","Pimientos picantes ext. 80/100 Don Molinico","шт"]
+      ]},
+    Eladio: { icon:"🥬", delivery:"Lunes–Domingo", deliveryRu:"Пн–Вс", hours:"24 horas",
+      products:[
+        ["Авокадо","Aguacate","шт"],
+        ["Цукини","Calabacín","кг"],
+        ["Спаржа","Espárragos","шт"],
+        ["Огурец","Pepino","кг"],
+        ["Болгарский перец","Pimiento rojo","кг"],
+        ["Томаты черные","Tomate azul grande","кг"],
+        ["Томаты розовые","Tomate castellano","кг"],
+        ["Томаты желтые","Tomate amarillo","кг"],
+        ["Томаты Черри","Tomate cherry rama","кг"],
+        ["Чищеный чеснок","Ajo pelado","кг"],
+        ["Базилик","Albahaca","шт"],
+        ["Петрушка","Perejil","кг"],
+        ["Рукола","Rúcula selvática","шт"],
+        ["Розмарин","Romero","шт"],
+        ["Тимьян","Tomillo","шт"],
+        ["Микс черри","Mix de cherry","шт"],
+        ["Микрогрин","Micromezclum","шт"],
+        ["Мята","Hierbabuena","шт"],
+        ["Айсберг","Lechuga Iceberg","шт"],
+        ["Салатный микс","Ensalada Mezclum","шт"],
+        ["Шпинат","Espinacas","шт"],
+        ["Груша","Pera Comicio grande","кг"],
+        ["Перец Падрон","Pimiento de Padrón","кг"],
+        ["Перец Чили","Ají picante","кг"],
+        ["Кукуруза вареная","Maíz dulce cocido","шт"],
+        ["Бейби картошка","Patata baby","кг"],
+        ["Лук","Cebolla","кг"],
+        ["Синий лук","Cebolla roja","кг"],
+        ["Картофель","Patatas","кг"],
+        ["Морковь","Zanahoria","кг"],
+        ["Баклажан","Berenjena","кг"],
+        ["Яйца","Huevos","шт"],
+        ["Желтки","Yemas","л"],
+        ["Белок","Claras de huevo","л"],
+        ["Маринованные перцы","Pimientos asados","шт"],
+        ["Листья лайма","Hojas de lima","шт"],
+        ["Голубика (лоток 125г)","Arándanos, bandeja 125g","шт"],
+        ["Малина свежая","Frambuesa","шт"],
+        ["Микс мороженых ягод","Frutos del bosque","кг"],
+        ["Имбирь","Jengibre","кг"],
+        ["Лайм","Lima","шт"],
+        ["Лимон","Limón","кг"],
+        ["Апельсин","Naranja","кг"],
+        ["Клубника мороженная","Fresas congeladas","кг"],
+        ["Голубика свеже мороженая","Arándanos congelados","кг"],
+        ["Цветы бар","Flores variadas gourmet","шт"],
+        ["Редис","Rábano","кг"],
+        ["Микрогрин кинзы","Microbrotes de cilantro","шт"],
+        ["Хрен","Rábano picante","кг"],
+        ["Сельдерей","Apio","кг"],
+        ["Арбуз","Sandía","кг"],
+        ["Шафран","Azafrán","г"],
+        ["Фундук","Avellanas","кг"],
+        ["Персик","Melocotón","кг"],
+        ["Клубника","Fresa","кг"],
+        ["Виноград","Uva blanca sin semillas","кг"],
+        ["Дыня","Melón","шт"],
+        ["Киви","Kiwi","шт"],
+        ["Синяя капуста","Col lombarda","шт"],
+        ["Фенхель","Hinojo","шт"],
+        ["Лисички","Rebozuelos","кг"]
+      ]},
+Lopez: {
+  icon: "🥫",
+  delivery: "Lunes, Miércoles, Viernes",
+  deliveryRu: "Пн, Ср, Пт",
+  hours: "08:00–14:00",
+  products: [
+    // Овощи и консервы
+    ["Вяленые помидоры в масле", "Tomates secos en aceite", "шт"],
+    ["Карпаччо из трюфеля в оливковом масле", "Carpaccio de trufa en aceite de oliva", "шт"],
+    ["Перец пикильо", "Pimientos del piquillo", "шт"],
+    ["Артишоки по-римски с ножкой", "Alcachofas a la romana con tallo", "шт"],
+    ["Запечённый сладкий перец полосками", "Pimiento asado en tiras", "шт"],
+    
+    // Консервы в сиропе
+    ["Цветочный мёд", "Miel de flores", "шт"],
+    ["Персики в сиропе", "Melocotones en almíbar", "шт"],
+    
+    // Рыбные консервы
+    ["Анчоусы в уксусе", "Anchoas en vinagre", "шт"],
+    ["Анчоусы", "Anchoas", "шт"],
+    ["Сардины", "Sardinas", "шт"],
+    
+    // Мука и сухие продукты
+    ["Пшеничная мука", "Harina de trigo", "кг"],
+    ["Кукурузная мука", "Harina de maíz", "кг"],
+    ["Дрожжи", "Levadura", "шт"],
+    ["Кукурузная мука без глютена", "Harina de maíz sin gluten", "кг"],
+    ["Семолина из твёрдой пшеницы", "Sémola de trigo duro", "кг"],
+    ["Панировочные сухари", "Pan rallado", "шт"],
+    
+    // Рис
+    ["Рис Carnaroli для ризотто", "Arroz Carnaroli para risotto", "кг"],
+    
+    // Орехи и сухофрукты
+    ["Грецкий орех, половинки", "Nueces, mitades", "кг"],
+    ["Кедровые орехи", "Piñones", "кг"],
+    
+    // Соусы
+    ["Кетчуп Heinz", "Kétchup Heinz", "шт"],
+    ["Майонез Heinz Professional", "Mayonesa Heinz Professional", "шт"],
+    ["Горчица", "Mostaza", "шт"],
+    ["Табаско", "Salsa Tabasco", "шт"],
+    
+    // Азиатские продукты
+    ["Соевый соус без глютена", "Salsa de soja sin gluten", "шт"],
+    ["Соус Sriracha", "Salsa Sriracha", "шт"],
+    
+    // Бульоны и загустители
+    ["Соус демиглас Knorr", "Salsa demi-glace Knorr", "шт"],
+    ["Светлый ру Knorr", "Roux claro Knorr", "шт"],
+    ["Мясной бульон Knorr", "Caldo de carne Knorr", "шт"],
+    ["Рыбный бульон Knorr", "Caldo de pescado Knorr", "шт"],
+    ["Крем из омара Knorr", "Crema de langosta Knorr", "шт"],
+    
+    // Специи
+    ["Сладкая копчёная паприка", "Pimentón dulce ahumado", "шт"],
+    ["Чёрный молотый перец", "Pimienta negra molida", "шт"],
+    ["Приправа Cajun", "Especia Cajun", "шт"],
+    ["Молотая куркума", "Cúrcuma molida", "шт"],
+    ["Корица палочками", "Canela en rama", "шт"],
+    ["Молотый имбирь", "Jengibre molido", "шт"],
+    ["Чёрный перец горошком", "Pimienta negra en grano", "шт"],
+    ["Острая паприка", "Pimentón picante", "шт"],
+    ["Сладкая паприка", "Pimentón dulce", "шт"],
+    ["Аргентинский острый перец", "Ají argentino picante", "шт"],
+    ["Лавровый лист", "Hoja de laurel", "шт"],
+    ["Ямайский перец горошком", "Pimienta de Jamaica en grano", "шт"],
+    ["Ванильный сахар", "Azúcar vainillado", "шт"],
+    ["Молотая корица", "Canela molida", "шт"],
+    ["Розовый перец", "Pimienta rosa", "шт"],
+    
+    // Масла и жиры
+    ["Подсолнечное масло", "Aceite de girasol", "шт"],
+    ["Масло с чёрным трюфелем", "Aceite de trufa negra", "шт"],
+    ["Оливковое масло Extra Virgin", "Aceite de oliva virgen extra", "шт"],
+    ["Сливочное масло", "Mantequilla", "кг"],
+    
+    // Оливки и каперсы
+    ["Зелёные оливки кольцами", "Aceitunas verdes en rodajas", "шт"],
+    ["Оливки Kalamata", "Aceitunas Kalamata", "шт"],
+    ["Оливки Chupadeos", "Aceitunas Chupadeos", "шт"],
+    ["Каперсы", "Alcaparras", "шт"],
+    ["Каперсы 10/11", "Alcaparras 10/11", "шт"],
+    
+    // Молочные продукты
+    ["Моцарелла 30/70", "Mozzarella 30/70", "шт"],
+    ["Моцарелла 100%", "Mozzarella 100%", "шт"],
+    ["Лимонный сок", "Zumo de limón", "шт"],
+    ["Цельное молоко", "Leche entera", "шт"],
+    ["Сливки 35%", "Nata 35%", "шт"],
+    ["Молоко без лактозы", "Leche sin lactosa", "шт"],
+    ["Миндальный напиток", "Bebida de almendras", "шт"],
+    ["Сгущённое молоко", "Leche condensada", "шт"],
+    
+    // Десерты
+    ["Сок лайма", "Zumo de lima", "шт"],
+    ["Жидкая карамель", "Caramelo líquido", "шт"],
+    ["Жидкая карамель", "Caramelo líquido", "шт"],
+    ["Ванильный ароматизатор", "Aroma de vainilla", "шт"],
+    
+    // Мясо и деликатесы
+    ["Ветчина без кости", "Jamón deshuesado", "кг"],
+    ["Мусс из утки 100%", "Mousse de pato 100%", "шт"],
+    ["Гуанчале Duroc", "Guanciale Duroc", "кг"],
+    ["Мусс из утиной фуа-гра", "Mousse de foie-gras de pato", "шт"],
+    
+    // Замороженные продукты
+    ["Смесь грибов", "Mezcla de setas congeladas", "кг"],
+    ["Свиная вырезка", "Solomillo de cerdo", "кг"],
+    ["Куриная грудка", "Pechuga de pollo", "кг"],
+    
+    // Яйца
+    ["Жидкий яичный белок", "Clara de huevo líquida", "шт"],
+    ["Жидкий яичный желток", "Yema de huevo líquida", "шт"],
+    
+    // Уксус и соль
+    ["Мелкая соль", "Sal fina", "кг"],
+    ["Цветки артишока в оливковом масле", "Flores de alcachofa en aceite de oliva", "шт"],
+    ["Соль хлопьями", "Sal en escamas", "шт"],
+    ["Белый винный уксус", "Vinagre de vino blanco", "шт"],
+    ["Бальзамический уксус", "Vinagre balsámico", "шт"],
+    ["Яблочный уксус", "Vinagre de sidra de manzana", "шт"],
+    ["Лимонный сок", "Zumo de limón", "шт"],
+    
+    // Прочее
+    ["Пюре манго", "Puré de mango", "шт"],
+    ["Пюре маракуйи", "Puré de maracuyá", "шт"],
+    ["Листовой желатин", "Gelatina en láminas", "шт"],
+    ["Пепперончини, фаршированные сыром", "Pepperoncini rellenos de queso", "шт"],
+    ["Замороженная дикая черника", "Arándanos silvestres congelados", "кг"],
+    ["Замороженная клубника", "Fresas congeladas", "кг"],
+    ["Смесь грибов", "Mezcla de setas congeladas", "кг"],
+    
+    // Вино
+    ["Белое вино", "Vino blanco", "шт"],
+    ["Красное вино", "Vino tinto", "шт"],
+    
+    // Расходники
+    ["Пищевая плёнка 30 см", "Film transparente 30 cm", "шт"],
+    ["Термобумага 80×80", "Papel térmico 80×80", "шт"],
+    ["Бумажные полотенца", "Toallas de papel", "шт"],
+    ["Чёрные нитриловые перчатки L", "Guantes de nitrilo negros L", "шт"],
+    ["Чёрные нитриловые перчатки M", "Guantes de nitrilo negros M", "шт"],
+    ["Чёрные нитриловые перчатки S", "Guantes de nitrilo negros S", "шт"],
+    ["Чёрные нитриловые перчатки XL", "Guantes de nitrilo negros XL", "шт"],
+    ["Газовые баллончики для сифона", "Cápsulas de gas para sifón", "шт"],
+    ["Алюминиевая фольга 30 см", "Papel de aluminio 30 cm", "шт"]
+  ]
+}
+  };
 
-    /* ============================================================
-       CONSTANTS & STATE
-    ============================================================ */
-    const UNIT_ES = { "кг": "kg", "г": "g", "л": "L", "шт": "ud", "ящ": "caja" };
-    const UNIT_SHORT = { "кг": "кг", "г": "г", "л": "л", "шт": "шт", "ящ": "ящ" };
+  /* Unidades → texto para el proveedor (español) */
+  const UNIT_ES = { "кг":"kg", "г":"g", "л":"L", "шт":"ud", "ящ":"caja" };
+  const UNIT_SHORT = { "кг":"кг", "г":"г", "л":"л", "шт":"шт", "ящ":"ящ" };
 
-    let currentSupplier = Object.keys(suppliers)[0];
-    let orders = {};
-    let search = "";
-    let currentCategory = "all";
-    let favorites = {};
-    let orderHistory = [];
-    let showHistory = false;
+  /* ================= ESTADO ================= */
+  let currentSupplier = Object.keys(suppliers)[0];
+  let orders = {};
+  try { orders = JSON.parse(localStorage.getItem("luiniOrders") || "{}"); } catch(e){ orders = {}; }
+  let search = "";
 
-    // Load state
-    try {
-      orders = JSON.parse(localStorage.getItem("luiniOrders") || "{}");
-      favorites = JSON.parse(localStorage.getItem("luiniFavorites") || "{}");
-      orderHistory = JSON.parse(localStorage.getItem("luiniHistory") || "[]");
-    } catch (e) {}
+  const $ = id => document.getElementById(id);
 
-    // DOM refs
-    const $ = id => document.getElementById(id);
-    const $$ = sel => document.querySelectorAll(sel);
+  function save(){ try{ localStorage.setItem("luiniOrders", JSON.stringify(orders)); }catch(e){} }
 
-    /* ============================================================
-       HELPERS
-    ============================================================ */
-    function save() {
-      try {
-        localStorage.setItem("luiniOrders", JSON.stringify(orders));
-        localStorage.setItem("luiniFavorites", JSON.stringify(favorites));
-        localStorage.setItem("luiniHistory", JSON.stringify(orderHistory));
-      } catch (e) {}
+  function getQty(s,i){ const v = orders?.[s]?.[i]; return v ? Number(v) : 0; }
+
+  function setQty(s,i,value){
+    value = parseFloat(String(value).replace(",", ".").trim());
+    if(isNaN(value) || value < 0) value = 0;
+    value = Math.round(value*1000)/1000; // hasta 3 decimales
+    if(!orders[s]) orders[s] = {};
+    if(value === 0) delete orders[s][i]; else orders[s][i] = value;
+    if(orders[s] && Object.keys(orders[s]).length === 0) delete orders[s];
+    save(); renderProducts(); renderSummary(); renderSuppliers();
+  }
+
+  function changeQty(i, delta){
+    const cur = getQty(currentSupplier, i);
+    // paso inteligente: 0.5 para kg/L cuando es pequeño, 1 en el resto
+    const unit = suppliers[currentSupplier].products[i][2];
+    let step = 1;
+    if((unit === "кг" || unit === "л")){
+      if(delta < 0 && cur <= 1 && cur > 0) step = 0.5;
+      else if(delta > 0 && cur < 1) step = 0.5;
     }
+    setQty(currentSupplier, i, cur + delta*step);
+  }
 
-    function getQty(s, i) {
-      const v = orders?.[s]?.[i];
-      return v ? Number(v) : 0;
-    }
+  function supplierItemCount(name){
+    const o = orders[name]; if(!o) return 0;
+    return Object.keys(o).length;
+  }
 
-    function setQty(s, i, value) {
-      value = parseFloat(String(value).replace(",", ".").trim());
-      if (isNaN(value) || value < 0) value = 0;
-      value = Math.round(value * 1000) / 1000;
-      if (!orders[s]) orders[s] = {};
-      if (value === 0) delete orders[s][i];
-      else orders[s][i] = value;
-      if (orders[s] && Object.keys(orders[s]).length === 0) delete orders[s];
-      save();
-      renderAll();
-    }
+  /* ================= RENDER ================= */
+  function renderSuppliers(){
+    $("supplierButtons").innerHTML = Object.keys(suppliers).map(name=>{
+      const c = supplierItemCount(name);
+      return `<button class="supplier-btn ${name===currentSupplier?'active':''} ${c>0?'has-items':''}" data-s="${name}">
+        ${suppliers[name].icon} ${name}<span class="dot">${c}</span>
+      </button>`;
+    }).join("");
+    $("supplierButtons").querySelectorAll(".supplier-btn").forEach(b=>{
+      b.addEventListener("click", ()=>selectSupplier(b.dataset.s));
+    });
+  }
 
-    function changeQty(i, delta) {
-      const cur = getQty(currentSupplier, i);
-      const unit = suppliers[currentSupplier].products[i][2];
-      let step = 1;
-      if ((unit === "кг" || unit === "л")) {
-        if (delta < 0 && cur <= 1 && cur > 0) step = 0.5;
-        else if (delta > 0 && cur < 1) step = 0.5;
-      }
-      setQty(currentSupplier, i, cur + delta * step);
-    }
+  function selectSupplier(name){
+    currentSupplier = name; search = "";
+    $("searchInput").value = ""; $("clearX").style.display = "none";
+    render();
+    document.querySelector(".products").scrollIntoView({behavior:"instant", block:"start"});
+    window.scrollTo({top:0});
+  }
 
-    function supplierItemCount(name) {
-      const o = orders[name];
-      if (!o) return 0;
-      return Object.keys(o).length;
-    }
+  function renderInfo(){
+    const d = suppliers[currentSupplier];
+    $("supplierName").innerHTML = `<span>${d.icon}</span> ${currentSupplier}`;
+    $("supplierInfo").innerHTML = `<span>🚚 ${d.delivery}</span><span>🕐 ${d.hours}</span>`;
+  }
 
-    function totalItems() {
-      return supplierItemCount(currentSupplier);
-    }
+  function renderProducts(){
+    const d = suppliers[currentSupplier];
+    const q = search.trim().toLowerCase();
+    const el = $("products");
+    const visible = d.products.map((p,i)=>({p,i}))
+      .filter(({p})=> !q || p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q));
 
-    function plural(n, one, few, many) {
-      return n === 1 ? one : (n < 5 ? few : many);
-    }
+    if(!visible.length){ el.innerHTML = '<div class="empty">🔍 Nada encontrado / Ничего не найдено</div>'; return; }
 
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;",
-        "'": "&#039;" }[c]));
-    }
-
-    function getProductCategory(product) {
-      return product[3] || "otros";
-    }
-
-    /* ============================================================
-       RENDER
-    ============================================================ */
-    function renderSuppliers() {
-      const container = $("supplierButtons");
-      container.innerHTML = Object.keys(suppliers).map(name => {
-        const c = supplierItemCount(name);
-        return `<button class="supplier-btn ${name === currentSupplier ? 'active' : ''} ${c > 0 ? 'has-items' : ''}" data-s="${name}">
-          ${suppliers[name].icon} ${name}<span class="dot">${c}</span>
-        </button>`;
-      }).join("");
-
-      container.querySelectorAll(".supplier-btn").forEach(b => {
-        b.addEventListener("click", () => selectSupplier(b.dataset.s));
-      });
-    }
-
-    function selectSupplier(name) {
-      currentSupplier = name;
-      search = "";
-      currentCategory = "all";
-      $("searchInput").value = "";
-      $("clearX").style.display = "none";
-      renderAll();
-      document.querySelector(".products").scrollIntoView({ behavior: "instant", block: "start" });
-      window.scrollTo({ top: 0 });
-    }
-
-    function renderInfo() {
-      const d = suppliers[currentSupplier];
-      $("supplierName").innerHTML = `<span>${d.icon}</span> ${currentSupplier}`;
-      $("supplierInfo").innerHTML = `<span>🚚 ${d.delivery}</span><span>🕐 ${d.hours}</span>`;
-    }
-
-    function renderCategories() {
-      const container = $("categories");
-      const products = suppliers[currentSupplier].products;
-      const cats = new Set();
-      products.forEach(p => cats.add(getProductCategory(p)));
-      const catArray = ["all", ...Array.from(cats)];
-
-      container.innerHTML = catArray.map(cat => {
-        const label = cat === "all" ? "Todos" : cat;
-        return `<button class="cat-btn ${cat === currentCategory ? 'active' : ''}" data-cat="${cat}">${label}</button>`;
-      }).join("");
-
-      container.querySelectorAll(".cat-btn").forEach(b => {
-        b.addEventListener("click", () => {
-          currentCategory = b.dataset.cat;
-          renderCategories();
-          renderProducts();
-        });
-      });
-    }
-
-    function renderProducts() {
-      const d = suppliers[currentSupplier];
-      const q = search.trim().toLowerCase();
-      const el = $("products");
-
-      const visible = d.products.map((p, i) => ({ p, i }))
-        .filter(({ p }) => {
-          const matchSearch = !q || p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q);
-          const matchCategory = currentCategory === "all" || getProductCategory(p) === currentCategory;
-          return matchSearch && matchCategory;
-        });
-
-      if (!visible.length) {
-        el.innerHTML = '<div class="empty">🔍 Nada encontrado / Ничего не найдено</div>';
-        return;
-      }
-
-      el.innerHTML = visible.map(({ p, i }) => {
-        const qty = getQty(currentSupplier, i);
-        const val = qty ? String(qty).replace(".", ",") : "";
-        const isFavorite = favorites[`${currentSupplier}_${i}`];
-        const category = getProductCategory(p);
-        const showSuggestions = qty > 0;
-
-        return `<div class="product ${qty > 0 ? 'selected' : ''}">
-          <button class="favorite-star ${isFavorite ? 'active' : ''}" data-fav="${currentSupplier}_${i}">${isFavorite ? '⭐' : '☆'}</button>
-          <div class="product-top">
-            <div class="names">
-              <div class="name-ru">${escapeHtml(p[0])}</div>
-              <div class="name-es">${escapeHtml(p[1])}</div>
-              <div class="category-tag">${category}</div>
-            </div>
-            <div class="controls">
-              <button class="qty-btn" data-act="minus" data-i="${i}">−</button>
-              <input class="qty-input" type="text" inputmode="decimal" value="${val}" placeholder="0" data-i="${i}">
-              <button class="qty-btn plus" data-act="plus" data-i="${i}">+</button>
-              <span class="unit">${UNIT_SHORT[p[2]] || p[2]}</span>
-            </div>
+    el.innerHTML = visible.map(({p,i})=>{
+      const qty = getQty(currentSupplier,i);
+      const val = qty ? String(qty).replace(".", ",") : "";
+      return `<div class="product ${qty>0?'selected':''}">
+        <div class="product-top">
+          <div class="names">
+            <div class="name-ru">${escapeHtml(p[0])}</div>
+            <div class="name-es">${escapeHtml(p[1])}</div>
           </div>
-          ${showSuggestions ? `<div class="suggestions">
-            ${[0.5, 1, 2, 3, 5, 10].map(s => `<button data-suggest="${i}" data-val="${s}">${s}</button>`).join('')}
-          </div>` : ''}
-        </div>`;
-      }).join("");
+          <div class="controls">
+            <button class="qty-btn" data-act="minus" data-i="${i}">−</button>
+            <input class="qty-input" type="text" inputmode="decimal" value="${val}" placeholder="0" data-i="${i}">
+            <button class="qty-btn plus" data-act="plus" data-i="${i}">+</button>
+            <span class="unit">${UNIT_SHORT[p[2]]||p[2]}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
 
-      // Event listeners
-      el.querySelectorAll('[data-act="minus"]').forEach(b =>
-        b.addEventListener("click", () => changeQty(+b.dataset.i, -1))
-      );
-      el.querySelectorAll('[data-act="plus"]').forEach(b =>
-        b.addEventListener("click", () => changeQty(+b.dataset.i, +1))
-      );
-      el.querySelectorAll(".qty-input").forEach(inp => {
-        inp.addEventListener("change", () => setQty(currentSupplier, +inp.dataset.i, inp.value));
-        inp.addEventListener("focus", () => inp.select());
-        inp.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") inp.blur();
-        });
-      });
-      el.querySelectorAll(".favorite-star").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const key = btn.dataset.fav;
-          favorites[key] = !favorites[key];
-          save();
-          renderProducts();
-        });
-      });
-      el.querySelectorAll("[data-suggest]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          setQty(currentSupplier, +btn.dataset.suggest, +btn.dataset.val);
-        });
-      });
+    el.querySelectorAll('[data-act="minus"]').forEach(b=> b.addEventListener("click", ()=>changeQty(+b.dataset.i,-1)));
+    el.querySelectorAll('[data-act="plus"]').forEach(b=> b.addEventListener("click", ()=>changeQty(+b.dataset.i,+1)));
+    el.querySelectorAll(".qty-input").forEach(inp=>{
+      inp.addEventListener("change", ()=> setQty(currentSupplier, +inp.dataset.i, inp.value));
+      inp.addEventListener("focus", ()=> inp.select());
+    });
+  }
+
+  function renderSummary(){
+    const count = supplierItemCount(currentSupplier);
+    $("summaryMain").textContent = `${count} ${plural(count,'posición','posiciones','posiciones')}`;
+    $("summarySub").textContent = count ? `Proveedor: ${currentSupplier}` : "Pedido vacío / Заказ пуст";
+    $("toolCount").textContent = count ? `${count} en el pedido` : "";
+    $("orderBtn").disabled = count===0;
+    $("copyBtn").disabled = count===0;
+  }
+
+  function plural(n,one,few,many){ return n===1?one : n<5?few : many; }
+
+  function render(){ renderInfo(); renderSuppliers(); renderProducts(); renderSummary(); }
+
+  /* ================= CONSTRUIR PEDIDO (español + gramos) ================= */
+  function fmtNum(n){
+    // muestra sin ceros sobrantes, coma decimal
+    return (Math.round(n*1000)/1000).toString().replace(".", ",");
+  }
+
+  function convertLine(qty, unit){
+    // convertir kg<1 -> g, L<1 -> ml  (para que no manden 0,500 kg)
+    if(unit === "кг" && qty > 0 && qty < 1){
+      return { q: Math.round(qty*1000), u: "g" };
     }
-
-    function renderSummary() {
-      const count = totalItems();
-      $("summaryMain").textContent = `${count} ${plural(count, 'posición', 'posiciones', 'posiciones')}`;
-      $("summarySub").textContent = count ? `Proveedor: ${currentSupplier}` : "Pedido vacío / Заказ пуст";
-      $("toolCount").textContent = count ? `${count} en el pedido` : "";
-      $("orderBtn").disabled = count === 0;
-      $("copyBtn").disabled = count === 0;
-
-      // Progress
-      const total = suppliers[currentSupplier].products.length;
-      const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-      $("progressFill").style.width = Math.min(percent, 100) + "%";
-      $("progressText").textContent = Math.min(percent, 100) + "%";
+    if(unit === "л" && qty > 0 && qty < 1){
+      return { q: Math.round(qty*1000), u: "ml" };
     }
+    return { q: qty, u: UNIT_ES[unit] || unit };
+  }
 
-    function renderAll() {
-      renderInfo();
-      renderSuppliers();
-      renderCategories();
-      renderProducts();
-      renderSummary();
-    }
-
-    /* ============================================================
-       ORDER BUILDING
-    ============================================================ */
-    function fmtNum(n) {
-      return (Math.round(n * 1000) / 1000).toString().replace(".", ",");
-    }
-
-    function convertLine(qty, unit) {
-      if (unit === "кг" && qty > 0 && qty < 1) {
-        return { q: Math.round(qty * 1000), u: "g" };
-      }
-      if (unit === "л" && qty > 0 && qty < 1) {
-        return { q: Math.round(qty * 1000), u: "ml" };
-      }
-      return { q: qty, u: UNIT_ES[unit] || unit };
-    }
-
-    function buildOrder() {
-      const d = suppliers[currentSupplier];
-      const lines = [];
-      d.products.forEach((p, i) => {
-        const qty = getQty(currentSupplier, i);
-        if (qty > 0) {
-          const { q, u } = convertLine(qty, p[2]);
-          lines.push(`• ${p[1]} — ${fmtNum(q)} ${u}`);
-        }
-      });
-      if (!lines.length) return `El pedido está vacío.`;
-      const header = `Hola! 👋\nPara el próximo suministro de Luini San Pedro necesito lo siguiente:`;
-      const footer = `\n\nMuchas gracias! 🙏\nSan Pedro`;
-      return `${header}\n\n${lines.join("\n")}${footer}`;
-    }
-
-    /* ============================================================
-       MODAL
-    ============================================================ */
-    function openOrder() {
-      if (totalItems() === 0) return;
-      $("sheetTitle").textContent = `Pedido · ${currentSupplier}`;
-      $("orderText").textContent = buildOrder();
-      $("orderHistory").style.display = "none";
-      showHistory = false;
-      $("modal").classList.add("show");
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModal() {
-      $("modal").classList.remove("show");
-      document.body.style.overflow = "";
-    }
-
-    /* ============================================================
-       HISTORY
-    ============================================================ */
-    function saveOrderHistory(orderText) {
-      orderHistory.push({
-        date: new Date().toLocaleString(),
-        supplier: currentSupplier,
-        text: orderText
-      });
-      if (orderHistory.length > 50) orderHistory = orderHistory.slice(-50);
-      save();
-    }
-
-    function renderHistory() {
-      const container = $("orderHistory");
-      if (!orderHistory.length) {
-        container.innerHTML = '<div class="empty">No hay historial</div>';
-        return;
-      }
-      container.innerHTML = orderHistory.slice().reverse().map(item =>
-        `<div class="order-history-item">
-          <div class="date">📅 ${item.date} · ${item.supplier}</div>
-          <div>${item.text}</div>
-        </div>`
-      ).join("");
-    }
-
-    /* ============================================================
-       ACTIONS
-    ============================================================ */
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        return true;
-      } catch (e) {
-        try {
-          const ta = document.createElement("textarea");
-          ta.value = text;
-          ta.style.position = "fixed";
-          ta.style.opacity = "0";
-          document.body.appendChild(ta);
-          ta.focus();
-          ta.select();
-          const ok = document.execCommand("copy");
-          ta.remove();
-          return ok;
-        } catch (_) { return false; }
-      }
-    }
-
-    function toast(msg) {
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(t._t);
-      t._t = setTimeout(() => t.classList.remove("show"), 1800);
-    }
-
-    async function copyOrder() {
-      if (totalItems() === 0) return;
-      const text = buildOrder();
-      const ok = await copyText(text);
-      toast(ok ? "✅ Copiado / Скопировано" : "No se pudo copiar");
-      if (ok) saveOrderHistory(text);
-      if (!ok) openOrder();
-    }
-
-    function shareTelegram() {
-      const text = buildOrder();
-      window.open(`https://t.me/share/url?url=%20&text=${encodeURIComponent(text)}`, "_blank");
-      saveOrderHistory(text);
-    }
-
-    function shareWhatsApp() {
-      const text = buildOrder();
-      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
-      saveOrderHistory(text);
-    }
-
-    function exportPDF() {
-      const text = buildOrder();
-      // Simple print as PDF
-      const win = window.open('', '_blank');
-      if (win) {
-        win.document.write(`
-          <html><head><title>Pedido ${currentSupplier}</title>
-          <style>body{font-family:system-ui;padding:40px;max-width:600px;margin:auto;line-height:1.6;}
-          h1{color:#0B2B5C;} .date{color:#666;font-size:14px;}</style></head>
-          <body>
-            <h1>📋 Pedido · ${currentSupplier}</h1>
-            <p class="date">${new Date().toLocaleString()}</p>
-            <pre style="white-space:pre-wrap;font-family:system-ui;">${text}</pre>
-            <p style="margin-top:30px;color:#666;">— Luini San Pedro —</p>
-          </body></html>
-        `);
-        win.document.close();
-        win.print();
-        saveOrderHistory(text);
-      }
-    }
-
-    function clearSupplier() {
-      if (totalItems() === 0) return;
-      if (!confirm(`¿Vaciar el pedido de ${currentSupplier}? / Очистить заказ?`)) return;
-      delete orders[currentSupplier];
-      save();
-      renderAll();
-      toast("Pedido vaciado / Очищено");
-    }
-
-    /* ============================================================
-       TEMPLATES
-    ============================================================ */
-    function showTemplates() {
-      const container = $("templateList");
-      const templates = JSON.parse(localStorage.getItem("luiniTemplates") || "[]");
-      if (!templates.length) {
-        container.innerHTML = '<div class="empty">No hay plantillas guardadas</div>';
-      } else {
-        container.innerHTML = templates.map((t, idx) =>
-          `<div class="order-history-item">
-            <div class="date">📋 ${t.name} · ${t.supplier}</div>
-            <pre style="white-space:pre-wrap;font-size:13px;">${t.text}</pre>
-            <button data-load="${idx}" style="margin-top:8px;padding:6px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;">Cargar</button>
-          </div>`
-        ).join("");
-        container.querySelectorAll("[data-load]").forEach(b => {
-          b.addEventListener("click", () => {
-            const t = templates[+b.dataset.load];
-            if (t && t.supplier === currentSupplier) {
-              // Parse and load
-              toast("Plantilla cargada");
-            } else {
-              toast("Cambia al proveedor correcto");
-            }
-          });
-        });
-      }
-      $("templateModal").classList.add("show");
-      document.body.style.overflow = "hidden";
-    }
-
-    /* ============================================================
-       VOICE INPUT
-    ============================================================ */
-    let isRecording = false;
-
-    function voiceInput() {
-      if (!('webkitSpeechRecognition' in window)) {
-        toast("🎤 No soportado en este navegador");
-        return;
-      }
-
-      const recognition = new webkitSpeechRecognition();
-      recognition.lang = 'ru-RU';
-      recognition.continuous = false;
-      recognition.interimResults = false;
-
-      const btn = $("voiceBtn");
-      btn.classList.add("recording");
-      isRecording = true;
-
-      recognition.onresult = (e) => {
-        const text = e.results[0][0].transcript.trim();
-        // Try to parse as number
-        const num = parseFloat(text.replace(',', '.'));
-        if (!isNaN(num) && num > 0) {
-          // Find first product and set quantity
-          const firstVisible = suppliers[currentSupplier].products.find((p, i) => {
-            const q = search.trim().toLowerCase();
-            return !q || p[0].toLowerCase().includes(q) || p[1].toLowerCase().includes(q);
-          });
-          if (firstVisible) {
-            const idx = suppliers[currentSupplier].products.indexOf(firstVisible);
-            setQty(currentSupplier, idx, num);
-            toast(`✅ ${num} ${firstVisible[2]} para ${firstVisible[0]}`);
-          }
-        } else {
-          // Search by voice
-          $("searchInput").value = text;
-          search = text;
-          $("clearX").style.display = "block";
-          renderProducts();
-          toast(`🔍 Buscando: ${text}`);
-        }
-        btn.classList.remove("recording");
-        isRecording = false;
-      };
-
-      recognition.onerror = () => {
-        btn.classList.remove("recording");
-        isRecording = false;
-        toast("🎤 Error de reconocimiento");
-      };
-
-      recognition.start();
-    }
-
-    /* ============================================================
-       THEME
-    ============================================================ */
-    function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const newTheme = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
-      $("themeToggle").textContent = newTheme === 'dark' ? '☀️' : '🌙';
-    }
-
-    // Load theme
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    $("themeToggle").textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-
-    /* ============================================================
-       KEYBOARD SHORTCUTS
-    ============================================================ */
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'c') {
-        e.preventDefault();
-        copyOrder();
-      }
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        openOrder();
-      }
-      if (e.key === 'Escape') {
-        closeModal();
-        $("templateModal").classList.remove("show");
-      }
-      if (e.ctrlKey && e.key === 'f') {
-        e.preventDefault();
-        $("searchInput").focus();
-        $("searchInput").select();
+  function buildOrder(){
+    const d = suppliers[currentSupplier];
+    const lines = [];
+    d.products.forEach((p,i)=>{
+      const qty = getQty(currentSupplier,i);
+      if(qty>0){
+        const {q,u} = convertLine(qty, p[2]);
+        lines.push(`• ${p[1]} — ${fmtNum(q)} ${u}`);
       }
     });
+    if(!lines.length) return `El pedido está vacío.`;
+    const header = `Hola! 👋\nPara el próximo suministro de Luini San Pedro necesito lo siguiente:`;
+    const footer = `\n\nMuchas gracias! 🙏\nSan Pedro`;
+    return `${header}\n\n${lines.join("\n")}${footer}`;
+  }
 
-    /* ============================================================
-       INIT
-    ============================================================ */
-    // Search
-    $("searchInput").addEventListener("input", e => {
-      search = e.target.value;
-      $("clearX").style.display = search ? "block" : "none";
-      renderProducts();
-    });
+  /* ================= ACCIONES ================= */
+  function openOrder(){
+    if(supplierItemCount(currentSupplier)===0) return;
+    $("sheetTitle").textContent = `Pedido · ${currentSupplier}`;
+    $("orderText").textContent = buildOrder();
+    $("modal").classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal(){ $("modal").classList.remove("show"); document.body.style.overflow=""; }
 
-    $("clearX").addEventListener("click", () => {
-      search = "";
-      $("searchInput").value = "";
-      $("clearX").style.display = "none";
-      renderProducts();
-      $("searchInput").focus();
-    });
-
-    // Voice
-    $("voiceBtn").addEventListener("click", voiceInput);
-
-    // Buttons
-    $("clearSupplierBtn").addEventListener("click", clearSupplier);
-    $("copyBtn").addEventListener("click", copyOrder);
-    $("orderBtn").addEventListener("click", openOrder);
-    $("actClose").addEventListener("click", closeModal);
-    $("templateBtn").addEventListener("click", showTemplates);
-    $("templateClose").addEventListener("click", () => {
-      $("templateModal").classList.remove("show");
-      document.body.style.overflow = "";
-    });
-    $("templateModal").addEventListener("click", e => {
-      if (e.target.id === "templateModal") {
-        $("templateModal").classList.remove("show");
-        document.body.style.overflow = "";
-      }
-    });
-
-    // Modal actions
-    $("actCopy").addEventListener("click", async () => {
-      const text = buildOrder();
-      const ok = await copyText(text);
-      toast(ok ? "✅ Copiado" : "No se pudo copiar");
-      if (ok) saveOrderHistory(text);
-    });
-    $("actTg").addEventListener("click", shareTelegram);
-    $("actWa").addEventListener("click", shareWhatsApp);
-    $("actPdf").addEventListener("click", exportPDF);
-    $("historyToggle").addEventListener("click", () => {
-      showHistory = !showHistory;
-      const container = $("orderHistory");
-      container.style.display = showHistory ? "block" : "none";
-      if (showHistory) renderHistory();
-      $("historyToggle").textContent = showHistory ? "📜 Ocultar" : "📜 Historial";
-    });
-
-    $("modal").addEventListener("click", e => {
-      if (e.target.id === "modal") closeModal();
-    });
-
-    // Theme
-    $("themeToggle").addEventListener("click", toggleTheme);
-
-    // Initial render
-    renderAll();
-
-    // Check deadlines
-    function checkDeadlines() {
-      const today = new Date();
-      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-      const todayName = days[today.getDay()];
-      Object.keys(suppliers).forEach(name => {
-        const delivery = suppliers[name].delivery;
-        if (delivery.includes(todayName)) {
-          toast(`⚠️ ¡Hoy es día de entrega de ${name}!`);
-        }
-      });
+  async function copyText(text){
+    try{ await navigator.clipboard.writeText(text); return true; }
+    catch(e){
+      try{
+        const ta=document.createElement("textarea"); ta.value=text;
+        ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta);
+        ta.focus(); ta.select(); const ok=document.execCommand("copy"); ta.remove(); return ok;
+      }catch(_){ return false; }
     }
-    // Check on load
-    setTimeout(checkDeadlines, 1000);
+  }
 
-    console.log('🚀 Luini San Pedro v2.0 loaded!');
-    console.log('📋 Shortcuts: Ctrl+C (copy), Ctrl+Enter (order), Ctrl+F (search), Esc (close)');
+  function toast(msg){
+    const t=$("toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1800);
+  }
+
+  async function copyOrder(){
+    if(supplierItemCount(currentSupplier)===0) return;
+    const ok = await copyText(buildOrder());
+    toast(ok ? "✅ Copiado / Скопировано" : "No se pudo copiar");
+    if(!ok) openOrder();
+  }
+
+  function shareTelegram(){ window.open(`https://t.me/share/url?url=%20&text=${encodeURIComponent(buildOrder())}`,"_blank"); }
+  function shareWhatsApp(){ window.open(`https://wa.me/?text=${encodeURIComponent(buildOrder())}`,"_blank"); }
+
+  function clearSupplier(){
+    if(supplierItemCount(currentSupplier)===0) return;
+    if(!confirm(`¿Vaciar el pedido de ${currentSupplier}? / Очистить заказ?`)) return;
+    delete orders[currentSupplier]; save(); render();
+    toast("Pedido vaciado / Очищено");
+  }
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c])); }
+
+  /* ================= INIT ================= */
+  $("searchInput").addEventListener("input", e=>{
+    search = e.target.value;
+    $("clearX").style.display = search ? "block" : "none";
+    renderProducts();
+  });
+  $("clearX").addEventListener("click", ()=>{ search=""; $("searchInput").value=""; $("clearX").style.display="none"; renderProducts(); $("searchInput").focus(); });
+  $("clearSupplierBtn").addEventListener("click", clearSupplier);
+  $("copyBtn").addEventListener("click", copyOrder);
+  $("orderBtn").addEventListener("click", openOrder);
+  $("actClose").addEventListener("click", closeModal);
+  $("actCopy").addEventListener("click", async ()=>{ const ok=await copyText(buildOrder()); toast(ok?"✅ Copiado":"No se pudo copiar"); });
+  $("actTg").addEventListener("click", shareTelegram);
+  $("actWa").addEventListener("click", shareWhatsApp);
+  $("modal").addEventListener("click", e=>{ if(e.target.id==="modal") closeModal(); });
+
+  render();
   </script>
 </body>
 </html>
